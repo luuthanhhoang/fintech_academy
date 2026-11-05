@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useMemo, useRef, useState } from 'react'
 import type { Catalog } from '@/lib/content/catalog'
 import type { TutorMessage } from '@/lib/tutor/provider'
@@ -15,12 +16,15 @@ import { useTutor } from './use-tutor'
 type Entry = { q: string; turn: TurnResult | null; error: string | null }
 const WEAK_LIMIT = 5
 
+/** `?mode=<id>` (e.g. from a village guide) preselects a tutor mode defined in tutor.yaml. */
 export function TutorChat({ catalog }: { catalog: Catalog }) {
+  const params = useSearchParams()
   const tutor = useTutor(catalog)
   const { retriever, error } = useRetriever(tutor.status === 'ready')
   const mastery = useMastery(catalog)
   const cfg = catalog.config.tutor
-  const [modeId, setModeId] = useState(cfg.modes[0]?.id ?? '')
+  const asked = params.get('mode')
+  const [modeId, setModeId] = useState(cfg.modes.find((m) => m.id === asked)?.id ?? cfg.modes[0]?.id ?? '')
   const [lessonId, setLessonId] = useState(catalog.lessons[0]?.id ?? '')
   const [q, setQ] = useState('')
   const [entries, setEntries] = useState<Entry[]>([])

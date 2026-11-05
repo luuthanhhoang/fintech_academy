@@ -21,7 +21,7 @@ export function isSimulatorKey(key: string): key is SimulatorKey {
 }
 
 /** Icon names that content (e.g. nav in site.yaml) may reference. */
-export const ICON_KEYS = ['sun', 'map', 'cards', 'chart', 'code', 'alert', 'spark', 'pulse', 'gear', 'info', 'shuffle', 'route', 'book'] as const
+export const ICON_KEYS = ['sun', 'map', 'cards', 'chart', 'code', 'alert', 'spark', 'pulse', 'gear', 'info', 'shuffle', 'route', 'book', 'tree'] as const
 export type IconKey = (typeof ICON_KEYS)[number]
 
 /** Actions that shortcuts.yaml may bind. */
@@ -33,5 +33,29 @@ export const PROVIDER_KINDS = ['anthropic', 'openai-compatible'] as const
 export type ProviderKind = (typeof PROVIDER_KINDS)[number]
 
 /** Learning-method ids that UI blocks link to ("vì sao cách này hiệu quả"); must exist in methods.yaml. */
-export const LEARNING_METHOD_KEYS = ['retrieval-practice', 'spaced-repetition', 'pretesting', 'interleaving', 'worked-examples', 'dual-coding', 'self-explanation', 'scenario-practice'] as const
+export const LEARNING_METHOD_KEYS = ['retrieval-practice', 'spaced-repetition', 'pretesting', 'interleaving', 'worked-examples', 'dual-coding', 'self-explanation', 'scenario-practice', 'method-of-loci', 'timed-breaks'] as const
 export type LearningMethodKey = (typeof LEARNING_METHOD_KEYS)[number]
+
+/** Procedural building models a landmark may use (implemented in components/world/models). */
+export const WORLD_MODEL_KEYS = ['bank', 'granary', 'communal-house', 'market', 'watchtower', 'orchard', 'watermill', 'archive', 'workshop', 'ruin', 'signal-tower'] as const
+export type WorldModelKey = (typeof WORLD_MODEL_KEYS)[number]
+
+/** Synthesised ambience loops that views and weather presets may request (lib/audio/ambience.ts). */
+export const AMBIENCE_KEYS = ['rain', 'wind', 'waves', 'stream', 'birds', 'crickets', 'train'] as const
+export type AmbienceKey = (typeof AMBIENCE_KEYS)[number]
+
+/** Instrument layers a generative music piece may use (lib/audio/instruments.ts). */
+export const MUSIC_LAYER_KEYS = ['pad', 'bell', 'bass', 'pluck'] as const
+export type MusicLayerKey = (typeof MUSIC_LAYER_KEYS)[number]
+
+export function isAmbienceKey(key: string): key is AmbienceKey {
+  return (AMBIENCE_KEYS as readonly string[]).includes(key)
+}
+
+export function isMusicLayerKey(key: string): key is MusicLayerKey {
+  return (MUSIC_LAYER_KEYS as readonly string[]).includes(key)
+}
+
+export function isWorldModelKey(key: string): key is WorldModelKey {
+  return (WORLD_MODEL_KEYS as readonly string[]).includes(key)
+}

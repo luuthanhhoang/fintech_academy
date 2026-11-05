@@ -70,3 +70,19 @@ methods:
     sourceIds: [lavoie-2024]
     features:
       - { label: "Tình huống", href: "/scenarios/" }
+  - id: method-of-loci
+    name: { vi: "Cung điện trí nhớ (gắn kiến thức với nơi chốn)", en: "Method of loci" }
+    summary: "Mỗi khái niệm có một ngôi nhà, mỗi chặng là một ga trên tuyến tàu. Nhớ đường đi trong làng giúp gợi lại thứ tự và quan hệ tiền đề của kiến thức."
+    evidence: "Dresler et al. (2017, Neuron) huấn luyện người bình thường dùng phương pháp loci 6 tuần: số từ nhớ được tăng mạnh và mạng kết nối não thay đổi giống người vô địch trí nhớ."
+    caveat: "Bằng chứng mạnh nhất là cho ghi nhớ danh sách; làng học là một gợi ý không gian, không thay được việc tự kiểm tra và ôn ngắt quãng."
+    sourceIds: [dresler-2017]
+    features:
+      - { label: "Làng học", href: "/village/" }
+  - id: timed-breaks
+    name: { vi: "Học theo chặng có giờ nghỉ cố định", en: "Systematic breaks" }
+    summary: "Bấm giờ theo chặng (ví dụ 24 phút học, 6 phút nghỉ). Tàu chỉ chạy khi bạn tập trung; dừng ga là nghỉ."
+    evidence: "Biwer et al. (2023) so sánh nghỉ tự chọn với nghỉ cố định 24/6 và 12/3: nhóm nghỉ cố định ít mệt và mất tập trung hơn, hoàn thành nhiệm vụ tương đương trong thời gian ngắn hơn."
+    caveat: "Một nghiên cứu với 87 sinh viên; không có độ dài chặng nào tối ưu cho mọi người — hãy tự chỉnh."
+    sourceIds: [biwer-2023]
+    features:
+      - { label: "Hành trình tập trung", href: "/village/" }

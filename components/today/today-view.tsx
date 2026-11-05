@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import type { Catalog } from '@/lib/content/catalog'
 import { db } from '@/lib/db/dexie'
 import { markTodayBlock, setSetting } from '@/lib/db/repos/activity'
-import { ProgressBar } from '@/components/ui/primitives'
+import { LinkButton, ProgressBar } from '@/components/ui/primitives'
 import { Skeleton } from '@/components/ui/states'
 import { TODAY_BLOCKS } from './blocks'
 import { useToday } from './use-today'
@@ -38,6 +38,7 @@ export function TodayView({ catalog }: { catalog: Catalog }) {
           <ProgressBar value={done / blocks.length} label="Tiến độ hôm nay" />
         </div>
         <FocusPicker catalog={catalog} />
+        <LinkButton href={`/village/?journey=${catalog.config.focus.journeys[0]?.id ?? ''}`}>🚆 Học theo chặng ở Làng học</LinkButton>
       </div>
       <ol className="space-y-5">
         {blocks.map((b, i) => {

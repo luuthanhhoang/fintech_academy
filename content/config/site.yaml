@@ -5,6 +5,7 @@ syntheticLabel: Dữ liệu tổng hợp (mô phỏng)
 nav:
   - { href: "/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
   - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", mobile: true }
+  - { href: "/village/", label: "Làng học", en: "Village", icon: "tree", mobile: true }
   - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", mobile: true }
   - { href: "/practice/", label: "Luyện tập", en: "Practice", icon: "shuffle" }
   - { href: "/scenarios/", label: "Tình huống", en: "Scenarios", icon: "route" }

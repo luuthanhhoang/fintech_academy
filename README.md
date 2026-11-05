@@ -42,10 +42,42 @@ Thành phần MDX được phép: `Simulator`, `Lab`, `Case`, `Quiz`, `Fact`, `C
 Mỗi bài bắt buộc có `pretest` (id quiz để đoán trước khi đọc, không tính điểm) và `applications` (bài tập áp dụng vào công việc dev).
 Phương pháp học và bằng chứng nằm ở `content/config/methods.yaml`; luyện tập xen kẽ cấu hình ở `content/config/practice.yaml`.
 
+## Làng học 3D & tập trung theo chặng (`/village`)
+
+Lộ trình được vẽ thành một ngôi làng 3D (three.js / react-three-fiber), **sinh tự động từ nội dung**:
+mỗi chặng là một ga trên tuyến tàu, mỗi khái niệm là một ngôi nhà + thửa ruộng, mỗi simulator/lab/case/tình huống là một công trình.
+
+| Trong làng | Nối với | Dữ liệu thật dùng |
+|---|---|---|
+| Ruộng xanh / úa, cỏ dại | Điểm thành thạo + khả năng nhớ (FSRS) của khái niệm | `lib/mastery`, `lib/world/health.ts` |
+| Nhà sáng đèn ban đêm | Khái niệm đã thành thạo | trạng thái `mastered` |
+| Cá trong ao (góc "Câu cá") | Thẻ ôn đến hạn; ôn ngay trong panel | `cards` đến hạn |
+| Tàu chạy giữa các ga | Hành trình tập trung (chặng học/nghỉ, task lấy từ "Hôm nay") | `focusSessions` |
+| Cây trong rừng của bạn | Mỗi chặng tập trung ≥ `minPlantMinutes`; bỏ dở → cây héo | `focusSessions` |
+| Người dẫn đường | Mở gia sư AI đúng chế độ (`/tutor/?mode=`) | `tutor.yaml` |
+| Trạm tín hiệu (giông bão) | Tình huống giả định | `content/scenarios` |
+
+- Đồng hồ tập trung chạy trên **toàn site** (đọc bài, làm quiz không làm cây héo); rời tab quá `graceSeconds` thì chặng bị bỏ dở.
+- Mặt Trời/Mặt Trăng tính theo giờ máy bạn và ngày thật (xấp xỉ thiên văn, có test với một lần trăng tròn đã biết).
+- Thời tiết là lựa chọn không khí học, không phải dự báo. Nhạc và âm thanh môi trường được **tổng hợp tại chỗ** (Web Audio) — không dùng bản thu của ai.
+- Không có WebGL → bản đồ 2D (SVG) cùng bố cục, điều hướng được bằng bàn phím.
+- Người trong làng là mô hình cách điệu dựng bằng hình khối (không dùng asset tải về).
+
+| Muốn thêm/sửa | File |
+|---|---|
+| Địa hình, vùng, sông, hồ, núi, tuyến ray, cảnh quan, dân làng | `content/world/map.yaml` |
+| Công trình cho simulator/lab/case/tình huống, người dẫn đường | `content/world/landmarks.yaml` (`model` ∈ `WORLD_MODEL_KEYS`) |
+| Góc ngắm (tàu, hiên mưa, ao cá, đỉnh núi, hải đăng…) | `content/world/views.yaml` |
+| Thời tiết, nhạc sinh tự động | `content/world/weather.yaml`, `content/world/music.yaml` |
+| Hành trình tập trung, thời gian ân hạn, mục tiêu ngày | `content/config/focus.yaml` |
+
+Validator bắt buộc: mỗi lộ trình đúng một vùng; mỗi simulator/lab/case/tình huống đúng một công trình; ray không đi qua biển;
+mọi tham chiếu (thời tiết, âm thanh, chế độ gia sư, góc ngắm của hành trình) phải tồn tại; mỗi góc ngắm focus có hành trình dùng.
+
 ## Kiến trúc
 
 - `content/` — dữ liệu (schema zod trong `lib/content/schema`, validate lúc build).
-- `lib/` — logic thuần (finance, srs, mastery, today, search, tutor, db, lab…), có unit test trong `tests/`.
+- `lib/` — logic thuần (finance, srs, mastery, today, search, tutor, db, lab, world, focus, audio…), có unit test trong `tests/`.
 - `components/` — UI theo miền; `app/` — route.
 - `scripts/` — validate, build artefact (catalog, chỉ mục tìm kiếm, đoạn cho gia sư), giới hạn dòng, chép Pyodide.
 

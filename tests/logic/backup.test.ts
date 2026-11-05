@@ -2,7 +2,9 @@ import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { decodeDates, encodeDates, exportBackup, importBackup, validateBackup } from '@/lib/db/backup'
 import { AcademyDB, db, setDb } from '@/lib/db/dexie'
+import { loadActiveFocus, saveFocusSession, storeActiveFocus } from '@/lib/db/repos/focus'
 import { completeLesson, recordQuizAttempt } from '@/lib/db/repos/learning'
+import { startJourney, tick } from '@/lib/focus/machine'
 
 const srs = { requestRetention: 0.9, maximumIntervalDays: 365, enableFuzz: false }
 let n = 0
@@ -35,5 +37,21 @@ describe('backup', () => {
     expect(validateBackup({ app: 'other', schemaVersion: 1, exportedAt: '', tables: {} }).ok).toBe(false)
     const bad = { app: 'finai-academy', schemaVersion: 1, exportedAt: '', tables: { cards: [{ id: 'x' }] } }
     expect(validateBackup(bad).ok).toBe(false)
+  })
+  it('backs up focus segments and keeps the running journey across reloads', async () => {
+    const t0 = Date.UTC(2026, 10, 5, 8)
+    const a = startJourney({ id: 'j', view: 'v', segments: 1, focusMinutes: 24, breakMinutes: 6 }, [], 'r', t0)
+    await storeActiveFocus(a)
+    expect((await loadActiveFocus())?.journeyId).toBe('j')
+    const done = tick(a, t0 + 24 * 60_000).events.find((e) => e.type === 'segment-complete')
+    if (done?.type === 'segment-complete') await saveFocusSession(done.record)
+    await storeActiveFocus(null)
+    const json = await exportBackup()
+    setDb(new AcademyDB(`test-${n++}`))
+    expect((await importBackup(json, 'replace')).ok).toBe(true)
+    const rows = await db().focusSessions.toArray()
+    expect(rows).toHaveLength(1)
+    expect(rows[0]?.startedAt).toBeInstanceOf(Date)
+    expect(await loadActiveFocus()).toBeNull()
   })
 })

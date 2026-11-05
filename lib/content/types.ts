@@ -11,6 +11,7 @@ import type { QuizItem } from './schema/quiz'
 import type { Simulator } from './schema/simulator'
 import type { Source } from './schema/source'
 import type { Track } from './schema/track'
+import type { FocusConfig, WorldBundle } from './schema/world'
 
 export type Lesson = LessonFrontmatter & { body: string; quiz: QuizItem[]; exercises: Exercise[]; examples: WorkedExample[]; diagrams: Diagram[] }
 
@@ -24,10 +25,12 @@ export interface ContentConfig {
   tutor: TutorConfig
   practice: PracticeConfig
   methods: { intro: string; methods: LearningMethod[] }
+  focus: FocusConfig
 }
 
 export interface ContentBundle {
   config: ContentConfig
+  world: WorldBundle
   tracks: Track[]
   concepts: Concept[]
   lessons: Lesson[]

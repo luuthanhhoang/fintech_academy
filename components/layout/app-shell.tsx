@@ -1,10 +1,13 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 import { ThemeProvider } from 'next-themes'
 import { useMemo, useState, type ReactNode } from 'react'
 import type { Shortcut, SiteConfig } from '@/lib/content/schema/config'
 import { CatalogProvider } from '@/components/data/catalog-provider'
+import { FocusPill } from '@/components/focus/focus-pill'
+import { FocusProvider } from '@/components/focus/focus-provider'
 import { HelpDialog } from './help-dialog'
 import { MenuSheet } from './menu-sheet'
 import { MobileHeader, MobileNav, Sidebar } from './nav'
@@ -20,6 +23,8 @@ function ShellInner({ site, shortcuts, children }: { site: SiteConfig; shortcuts
   const [menu, setMenu] = useState(false)
   const handlers = useMemo(() => ({ openSearch: () => setSearch(true), showHelp: () => setHelp(true) }), [])
   useShortcuts(shortcuts, handlers)
+  // Full-bleed pages (the 3D village) opt out of the reading column.
+  const fullBleed = usePathname().startsWith('/village')
   return (
     <div className="flex min-h-dvh">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-paper focus:p-2">
@@ -28,7 +33,7 @@ function ShellInner({ site, shortcuts, children }: { site: SiteConfig; shortcuts
       <Sidebar site={site} onSearch={() => setSearch(true)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileHeader site={site} onSearch={() => setSearch(true)} onMenu={() => setMenu(true)} />
-        <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-10">
+        <main id="main" className={fullBleed ? 'w-full flex-1 pb-16 lg:pb-0' : 'mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-10'}>
           {children}
         </main>
         <footer className="mx-auto mb-20 flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 border-t border-rule px-4 py-5 text-xs text-ink-3 sm:px-6 lg:mb-0 lg:px-10">
@@ -46,6 +51,7 @@ function ShellInner({ site, shortcuts, children }: { site: SiteConfig; shortcuts
       <HelpDialog shortcuts={shortcuts} open={help} onClose={() => setHelp(false)} />
       {search && <SearchDialog open={search} onClose={() => setSearch(false)} />}
       <StudyTimer />
+      <FocusPill />
     </div>
   )
 }
@@ -54,7 +60,9 @@ export function AppShell(props: { site: SiteConfig; shortcuts: Shortcut[]; child
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <CatalogProvider>
-        <ShellInner {...props} />
+        <FocusProvider>
+          <ShellInner {...props} />
+        </FocusProvider>
       </CatalogProvider>
     </ThemeProvider>
   )

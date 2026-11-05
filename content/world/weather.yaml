@@ -1,0 +1,14 @@
+# Thời tiết là lựa chọn không khí học (không phải dữ liệu thời tiết thật).
+defaultWeather: quang
+celebration: sau-mua
+scenario: giong-bao
+presets:
+  - { id: quang, label: "Trời quang", rain: 0, snow: 0, clouds: 0.15, fog: 0, wind: 0.2, lightning: 0, rainbow: false, ambience: [birds] }
+  - { id: nhieu-may, label: "Nhiều mây", rain: 0, snow: 0, clouds: 0.6, fog: 0.1, wind: 0.35, lightning: 0, rainbow: false, ambience: [wind] }
+  - { id: mua-nhe, label: "Mưa nhẹ", rain: 0.35, snow: 0, clouds: 0.75, fog: 0.2, wind: 0.25, lightning: 0, rainbow: false, ambience: [rain] }
+  - { id: mua-rao, label: "Mưa rào", rain: 0.85, snow: 0, clouds: 0.9, fog: 0.3, wind: 0.55, lightning: 0, rainbow: false, ambience: [rain, wind] }
+  - { id: giong-bao, label: "Giông sấm chớp", rain: 1, snow: 0, clouds: 1, fog: 0.35, wind: 0.85, lightning: 4, rainbow: false, ambience: [rain, wind] }
+  - { id: sau-mua, label: "Sau mưa, cầu vồng", rain: 0, snow: 0, clouds: 0.35, fog: 0.05, wind: 0.15, lightning: 0, rainbow: true, ambience: [birds] }
+  - { id: tuyet, label: "Tuyết rơi", rain: 0, snow: 0.8, clouds: 0.8, fog: 0.3, wind: 0.4, lightning: 0, rainbow: false, ambience: [wind] }
+  - { id: suong-mu, label: "Sương mù sớm", rain: 0, snow: 0, clouds: 0.4, fog: 0.75, wind: 0.05, lightning: 0, rainbow: false, ambience: [crickets] }
+  - { id: gio-lon, label: "Gió lớn", rain: 0, snow: 0, clouds: 0.5, fog: 0, wind: 1, lightning: 0, rainbow: false, ambience: [wind] }

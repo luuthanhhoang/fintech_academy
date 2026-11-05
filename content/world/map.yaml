@@ -1,0 +1,81 @@
+# Bản đồ làng học. Toạ độ tính bằng mét; tâm thế giới (0,0); +x là đông, +z là nam (hướng ra biển).
+# Đây là thiết kế không gian (không phải số liệu thực tế). Thêm chặng/khái niệm mới không cần sửa file này:
+# ga tàu và lô đất sinh tự động từ content/tracks và content/concepts.
+title: "Làng học"
+intro: >-
+  Lộ trình học được vẽ thành một vùng đất. Mỗi chặng là một ga tàu, mỗi khái niệm là một ngôi nhà và một thửa ruộng.
+  Ruộng xanh hay úa phản ánh đúng trí nhớ của bạn (theo lịch ôn FSRS); nhà sáng đèn khi khái niệm đã thành thạo.
+  Tàu chỉ chạy khi bạn tập trung.
+seed: 20261105
+size: 1200
+resolution: 224
+location: { latitude: 21.03, label: "vĩ độ Hà Nội (chỉ dùng để tính đường đi của Mặt Trời)" }
+coast: { z: 380, wobble: 28, depth: 14, beach: 26 }
+snowline: 118
+regions:
+  - id: cao-nguyen-ai
+    track: ai
+    title: "Cao nguyên AI"
+    description: "Vùng núi cao, đồi chè và đài thiên văn: nơi học về mô hình, ngữ cảnh và harness."
+    center: [-150, -280]
+    radius: 380
+    elevation: 34
+    roughness: 13
+    biome: highland
+    plot: tea
+    railSpan: [0.02, 0.46]
+    palette: { ground: "#6f8f4e", roof: ["#5b6b7a", "#7a5c48", "#4f6157"], wall: ["#d9d2c3", "#cbbfa8", "#e4ddd0"] }
+  - id: dong-bang-fintech
+    track: fintech
+    title: "Đồng bằng Fintech"
+    description: "Đồng bằng sông nước ven biển: tiền chảy như dòng sông, chợ phiên là sổ lệnh, bến cảng là thanh toán."
+    center: [140, 170]
+    radius: 430
+    elevation: 3
+    roughness: 2.2
+    biome: lowland
+    plot: paddy
+    railSpan: [0.54, 0.98]
+    palette: { ground: "#7fa257", roof: ["#a8543a", "#8f4a33", "#b9673f"], wall: ["#efe6d2", "#e6d9bd", "#f3ecdc"] }
+peaks:
+  - { id: dinh-transformer, name: "Đỉnh Transformer", at: [-300, -440], height: 150, radius: 150 }
+  - { id: dinh-harness, name: "Đỉnh Harness", at: [-10, -480], height: 112, radius: 125 }
+  - { id: doi-gradient, name: "Đồi Gradient", at: [-450, -170], height: 66, radius: 110 }
+rivers:
+  - id: song-dong-tien
+    name: "Sông Dòng Tiền"
+    width: 14
+    depth: 3.2
+    points: [[-190, -420], [-150, -260], [-70, -130], [10, 0], [70, 140], [40, 260], [70, 440]]
+lakes:
+  - { id: ho-vector, name: "Hồ Vector", kind: lake, center: [-270, -190], radius: 52, depth: 6 }
+  - { id: ao-ky-uc, name: "Ao Ký Ức", kind: pond, center: [235, 120], radius: 24, depth: 2.2 }
+rail:
+  name: "Tuyến tàu Lộ trình"
+  width: 3.2
+  points:
+    - [-500, -300]
+    - [-390, -235]
+    - [-270, -120]
+    - [-150, -60]
+    - [-50, 10]
+    - [80, 55]
+    - [200, 30]
+    - [330, 70]
+    - [430, 160]
+    - [420, 285]
+    - [290, 320]
+    - [150, 300]
+    - [20, 335]
+features:
+  - { id: hai-dang, kind: lighthouse, name: "Hải đăng Mũi Sao", at: [470, 392] }
+  - { id: hien-nha-mua, kind: porch, name: "Hiên nhà nghe mưa", at: [205, 92] }
+  - { id: cau-ca, kind: pier, name: "Cầu câu cá", at: [228, 97] }
+vegetation: { trees: 1400, shrubs: 900, maxSlope: 0.9 }
+village: { lotSpacing: 15, lotsPerRow: 4, offsetFromRail: 16 }
+people:
+  count: 36
+  walkSpeed: 1.2
+  skin: ["#f1c9a5", "#e0ac83", "#c68e64", "#a26e4b", "#7d5236"]
+  clothes: ["#2f4b7c", "#a14b3b", "#e3d6b4", "#3f6b4f", "#6b4f7c", "#c9a227", "#2b2b2b", "#f2f0ea"]
+  hair: ["#1d1a17", "#3a2a1e", "#6b4a2f", "#9a8a78"]

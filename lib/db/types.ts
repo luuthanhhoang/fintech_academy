@@ -96,3 +96,29 @@ export interface KeyValueRecord {
   key: string
   value: unknown
 }
+
+/** What a focus segment is about; links back into the site so studying and the timer go together. */
+export interface FocusTask {
+  block: 'reviews' | 'lesson' | 'practice' | 'interleave' | 'case' | 'explain'
+  label: string
+  href: string
+  conceptIds: string[]
+}
+
+export interface FocusSessionRecord {
+  id?: number
+  day: string
+  journeyId: string
+  viewId: string
+  segment: number
+  segments: number
+  startedAt: Date
+  endedAt: Date
+  plannedMs: number
+  focusedMs: number
+  /** completed: the segment ran to the end; abandoned: tab hidden past the grace period or "give up". */
+  status: 'completed' | 'abandoned'
+  reason: 'finished' | 'hidden' | 'gave-up'
+  regionId: string | null
+  task: FocusTask | null
+}

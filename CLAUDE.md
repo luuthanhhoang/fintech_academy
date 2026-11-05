@@ -24,9 +24,9 @@ Website học cá nhân (chỉ FE, static export, deploy Vercel) cho 2 lộ trì
 ## Kiến trúc
 ```
 content/     dữ liệu: config/, tracks/, concepts/, lessons/<track>/<id>/{lesson.mdx,quiz.yaml,exercises.yaml},
-             planned/, simulators/, labs/<id>/, cases/, sources/
+             planned/, simulators/, labs/<id>/, cases/, scenarios/, sources/, world/ (làng 3D)
 lib/         logic thuần: content (schema, load, validate, graph), finance, srs, mastery, today, quiz, search,
-             tutor, stats, db, registry
+             tutor, stats, db, registry, world (địa hình, bố cục, bầu trời), focus (máy trạng thái), audio (Web Audio)
 components/  UI theo miền
 app/         route App Router (chỉ ghép dữ liệu build-time + component)
 scripts/     validate-content, build-content, check-file-lines, copy-pyodide
@@ -35,6 +35,10 @@ tests/       Vitest cho lib/
 - Simulator/lab được map qua registry (`lib/registry/*`, key → lazy component). Không if/else theo tên.
 - Số liệu thật trong MDX dùng `<Fact id="..."/>` trỏ tới `facts` trong frontmatter (có `sourceId`, `asOf`, `status`).
 - Lộ trình + đồ thị khái niệm sinh tự động từ concept/prerequisites.
+- Làng học: ga/lô đất/công trình đặt tự động từ track/concept/lesson; công trình 3D map qua `components/world/models/registry.tsx`
+  theo `WORLD_MODEL_KEYS`. Trạng thái làng (ruộng, đèn, cá, cây) chỉ suy ra từ dữ liệu học thật trong IndexedDB.
+- Đồng hồ tập trung là `FocusProvider` trong AppShell (chạy mọi trang); logic thuần ở `lib/focus/machine.ts`.
+- `components/world/**` tắt rule `react-hooks/immutability` (three.js mutate object mỗi frame trong useFrame).
 
 ## Quyết định kỹ thuật đã chốt
 - TypeScript 6.0.x (không dùng TS 7: typescript-eslint chưa hỗ trợ TS 7 tại thời điểm dựng dự án).

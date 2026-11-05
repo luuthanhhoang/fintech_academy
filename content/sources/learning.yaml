@@ -42,3 +42,15 @@ sources:
     url: https://doi.org/10.1097/ACM.0000000000004522
     publisher: Lavoie et al. / Academic Medicine
     accessed: 2026-11-05
+  - id: dresler-2017
+    title: "Mnemonic Training Reshapes Brain Networks to Support Superior Memory — Neuron 93(5), 1227–1235"
+    url: https://pmc.ncbi.nlm.nih.gov/articles/PMC5439266/
+    publisher: Dresler et al. / Neuron (PMC)
+    accessed: 2026-11-05
+    note: Người chưa luyện tập được huấn luyện phương pháp loci 6 tuần nhớ được nhiều từ hơn rõ rệt; mẫu nhỏ, chỉ nam giới trẻ; không chứng minh lợi ích tổng quát ngoài nhiệm vụ ghi nhớ danh sách.
+  - id: biwer-2023
+    title: "Understanding effort regulation: Comparing 'Pomodoro' breaks and self-regulated breaks — British Journal of Educational Psychology 93(S2), 353–367"
+    url: https://pubmed.ncbi.nlm.nih.gov/36859717/
+    publisher: Biwer, Wiradhany, oude Egbrink & de Bruin / PubMed
+    accessed: 2026-11-05
+    note: So sánh nghỉ tự chọn với nghỉ cố định 24/6 và 12/3 trên 87 sinh viên; nghỉ cố định gắn với ít mệt mỏi hơn và hoàn thành tương đương trong thời gian ngắn hơn. Một nghiên cứu, mẫu nhỏ.

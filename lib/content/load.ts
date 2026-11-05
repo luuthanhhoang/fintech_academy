@@ -18,6 +18,7 @@ import { QuizFileSchema } from './schema/quiz'
 import { SimulatorSchema } from './schema/simulator'
 import { SourceFileSchema } from './schema/source'
 import { TrackSchema } from './schema/track'
+import { FocusConfigSchema, LandmarksFileSchema, MapSchema, MusicFileSchema, ViewsFileSchema, WeatherFileSchema, type WorldBundle } from './schema/world'
 import type { ContentBundle, Lesson } from './types'
 
 export class ContentLoadError extends Error {}
@@ -95,6 +96,22 @@ function loadConfig(dir: string, root: string): ContentBundle['config'] {
     tutor: yamlFile(TutorConfigSchema, at('tutor.yaml'), root),
     practice: yamlFile(PracticeConfigSchema, at('practice.yaml'), root),
     methods: yamlFile(MethodsConfigSchema, at('methods.yaml'), root),
+    focus: yamlFile(FocusConfigSchema, at('focus.yaml'), root),
+  }
+}
+
+function loadWorld(dir: string, root: string): WorldBundle {
+  const at = (name: string) => join(dir, name)
+  const marks = yamlFile(LandmarksFileSchema, at('landmarks.yaml'), root)
+  const views = yamlFile(ViewsFileSchema, at('views.yaml'), root)
+  return {
+    map: yamlFile(MapSchema, at('map.yaml'), root),
+    landmarks: marks.landmarks,
+    guides: marks.guides,
+    views: views.views,
+    defaultView: views.defaultView,
+    weather: yamlFile(WeatherFileSchema, at('weather.yaml'), root),
+    music: yamlFile(MusicFileSchema, at('music.yaml'), root),
   }
 }
 
@@ -127,5 +144,5 @@ export function loadContent(root: string = process.cwd(), contentDir = 'content'
   const sources = listFiles(join(base, 'sources'), '.yaml').flatMap(
     (f) => yamlFile(SourceFileSchema, f, root).sources,
   )
-  return { config: loadConfig(join(base, 'config'), root), tracks, concepts, lessons, planned, simulators, labs, cases, scenarios, sources }
+  return { config: loadConfig(join(base, 'config'), root), world: loadWorld(join(base, 'world'), root), tracks, concepts, lessons, planned, simulators, labs, cases, scenarios, sources }
 }
