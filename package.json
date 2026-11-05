@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run content && next dev",
+    "dev": "npm run content && npm run pyodide && next dev",
     "content": "tsx scripts/build-content.ts",
     "validate": "tsx scripts/validate-content.ts",
     "lines": "tsx scripts/check-file-lines.ts",

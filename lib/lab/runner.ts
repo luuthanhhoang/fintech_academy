@@ -1,5 +1,6 @@
 /** Main-thread client for the Pyodide worker with a hard timeout (terminates runaway code). */
 import type { TestResult, WorkerRequest, WorkerResponse } from './protocol'
+import { pyodideWorkerSource } from './worker-source'
 
 export interface RunOutcome {
   results: TestResult[]
@@ -13,7 +14,12 @@ export class LabRunner {
   constructor(private readonly onProgress: (msg: string) => void) {}
 
   private ensure(): Worker {
-    this.worker ??= new Worker(new URL('./pyodide.worker.ts', import.meta.url), { type: 'module' })
+    if (!this.worker) {
+      const blob = new Blob([pyodideWorkerSource(window.location.origin)], { type: 'text/javascript' })
+      const url = URL.createObjectURL(blob)
+      this.worker = new Worker(url, { type: 'module' })
+      URL.revokeObjectURL(url)
+    }
     return this.worker
   }
 

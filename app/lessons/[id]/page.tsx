@@ -58,6 +58,16 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
             {lesson.whyQuestion}
           </blockquote>
         </header>
+        <details className="mb-6 rounded-md border border-rule px-4 py-2 font-sans text-sm xl:hidden">
+          <summary className="cursor-pointer text-ink-2">Mục lục</summary>
+          <ol className="mt-2 space-y-1">
+            {toc.map((t) => (
+              <li key={t.slug} style={{ paddingLeft: `${(t.depth - 2) * 0.75}rem` }}>
+                <a href={`#${t.slug}`} className="text-accent">{t.heading}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
         <div id="lesson-body" className="prose-notebook max-w-[68ch]">
           <MdxContent source={lesson.body} components={lessonComponents(lesson, bundle)} />
         </div>

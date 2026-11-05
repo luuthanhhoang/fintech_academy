@@ -3,6 +3,9 @@ import type { ContentBundle } from '../content/types'
 import { lessonSections } from '../content/sections'
 import type { SearchDoc } from './options'
 
+/** Drop LaTeX from search text so excerpts read as prose. */
+const stripMath = (t: string) => t.replace(/\$\$[\s\S]*?\$\$/g, ' ').replace(/\$[^$\n]*\$/g, ' ').replace(/\s+/g, ' ').trim()
+
 export function buildSearchDocs(b: ContentBundle): SearchDoc[] {
   const conceptName = new Map(b.concepts.map((c) => [c.id, c.name.vi]))
   const docs: SearchDoc[] = []
@@ -24,7 +27,7 @@ export function buildSearchDocs(b: ContentBundle): SearchDoc[] {
         kind: 'section',
         title: s.heading,
         titleEn: l.title.vi,
-        text: s.text,
+        text: stripMath(s.text),
         tags,
         href: `/lessons/${l.id}/#${s.slug}`,
       })

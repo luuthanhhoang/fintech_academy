@@ -80,7 +80,7 @@ export function LineChartView({ data, x, xLabel, yLabel, series, refLines = [], 
               {series.length >= 2 && <Legend verticalAlign="top" height={28} iconType="plainline" wrapperStyle={{ fontSize: 12, color: 'var(--ink-2)' }} />}
               {refLines.map((r) =>
                 r.axis === 'x' ? (
-                  <ReferenceLine key={r.label} x={r.value} stroke="var(--ink-3)" strokeDasharray="4 4" label={{ value: r.label, fill: 'var(--ink-2)', fontSize: 11, position: 'top' }} />
+                  <ReferenceLine key={r.label} x={r.value} stroke="var(--ink-3)" strokeDasharray="4 4" label={{ value: r.label, fill: 'var(--ink-2)', fontSize: 11, position: 'insideTopRight' }} />
                 ) : (
                   <ReferenceLine key={r.label} y={r.value} stroke="var(--ink-3)" strokeDasharray="4 4" label={{ value: r.label, fill: 'var(--ink-2)', fontSize: 11, position: 'insideTopRight' }} />
                 ),

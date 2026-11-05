@@ -36,6 +36,13 @@ tests/       Vitest cho lib/
 - Số liệu thật trong MDX dùng `<Fact id="..."/>` trỏ tới `facts` trong frontmatter (có `sourceId`, `asOf`, `status`).
 - Lộ trình + đồ thị khái niệm sinh tự động từ concept/prerequisites.
 
+## Quyết định kỹ thuật đã chốt
+- TypeScript 6.0.x (không dùng TS 7: typescript-eslint chưa hỗ trợ TS 7 tại thời điểm dựng dự án).
+- Pyodide self-host tại `/pyodide/` (copy từ npm lúc build), chạy trong module worker tạo từ Blob (`lib/lab/worker-source.ts`).
+- Font self-host qua @fontsource (không phụ thuộc mạng lúc build).
+- Schema nội dung dùng `z.strictObject` — khoá lạ (vd lỗi YAML flow-mapping có dấu phẩy) làm build fail.
+- Nội dung MDX không được chứa biểu thức `{...}`; dùng `<Fact id/>` cho số liệu thật.
+
 ## Lệnh
 - `npm run check` — lines + validate + typecheck + lint + test (phải xanh trước khi commit).
 - `npm run build` — prebuild (lines, validate, content, pyodide) rồi `next build` → `out/`.
