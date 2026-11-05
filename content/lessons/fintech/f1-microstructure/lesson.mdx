@@ -21,6 +21,14 @@ devMapping:
 simulators: [orderbook]
 labs: [matching-engine]
 cases: [knight-capital-2012]
+scenarios: [oncall-order-spike]
+pretest: [q-ms-limit]
+applications:
+  - id: app-pretrade-check
+    title: "Lớp kiểm soát rủi ro trước giao dịch"
+    context: "Hệ thống gửi lệnh tự động của bạn chưa có hạn mức độc lập."
+    task: "Viết middleware chặn lệnh vượt hạn mức số lệnh/phút, khối lượng, giá lệch quá xa giá tham chiếu; có kill switch toàn cục và log lý do chặn."
+    deliverable: "Middleware + test + runbook kill switch."
 sources: [vn-hnx-trading-rules, sec-knight-2013]
 facts:
   - id: vn-priority-rule
@@ -63,6 +71,8 @@ Bộ máy khớp lệnh (matching engine) khớp lệnh mới với phía đối
 
 <Quiz id="q-ms-priority" />
 
+<Diagram id="dg-order-lifecycle" />
+
 ## Thanh khoản, spread và trượt giá
 
 Câu hỏi mở đầu có lời giải ở đây: lệnh nhỏ khớp ở giá tốt nhất; lệnh lớn **ăn qua nhiều mức giá**, nên giá bình quân xấu hơn. Chênh lệch so với giá tốt nhất ban đầu là **trượt giá (slippage)** — chi phí thực của thanh khoản mỏng.
@@ -73,7 +83,11 @@ $$
 \text{Trượt giá (mua)} = \frac{\bar p - p_{\text{ask tốt nhất}}}{p_{\text{ask tốt nhất}}}
 $$
 
+<WorkedExample id="we-walk-the-book" />
+
 <Simulator id="orderbook" />
+
+<Scenario id="oncall-order-spike" />
 
 ## Tự cài một matching engine
 

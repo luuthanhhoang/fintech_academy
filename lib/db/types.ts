@@ -29,7 +29,7 @@ export interface QuizAttemptRecord {
   correct: boolean
   score: number
   answeredAt: Date
-  context: 'lesson' | 'today' | 'review'
+  context: 'lesson' | 'today' | 'review' | 'pretest' | 'practice'
 }
 
 export interface LessonProgressRecord {
@@ -66,7 +66,7 @@ export interface StudySessionRecord {
 
 export interface PracticeLogRecord {
   id?: number
-  kind: 'exercise' | 'lab' | 'case'
+  kind: 'exercise' | 'lab' | 'case' | 'scenario' | 'application'
   refId: string
   conceptIds: string[]
   result: 'done' | 'passed' | 'failed'

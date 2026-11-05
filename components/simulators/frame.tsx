@@ -27,7 +27,7 @@ export function SimulatorFrame({ meta, syntheticLabel, initial, embedded = false
         <span className="text-xs uppercase tracking-wider text-ink-3">Mô phỏng</span>
         <span className="font-medium">{meta.title.vi}</span>
         <span className="text-sm text-ink-3">({meta.title.en})</span>
-        {meta.dataKind !== 'formula' && <SyntheticBadge label={syntheticLabel} note={meta.syntheticNote} />}
+        {meta.dataKind === 'synthetic' && <SyntheticBadge label={syntheticLabel} note={meta.syntheticNote} />}
         {embedded && (
           <Link href={`/simulators/${meta.id}/`} className="ml-auto text-xs text-accent underline">
             Mở toàn màn hình

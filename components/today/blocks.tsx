@@ -5,6 +5,7 @@ import type { Catalog } from '@/lib/content/catalog'
 import type { TodayBlockId } from '@/lib/content/schema/config'
 import { logPractice, saveTodayDraft } from '@/lib/db/repos/activity'
 import { LabEmbedById } from '@/components/lab/lab-by-id'
+import { PracticeSession } from '@/components/practice/practice-session'
 import { SelfExplainSection } from '@/components/reader/self-explain-section'
 import { ReviewSession } from '@/components/review/review-session'
 import { Button, LinkButton } from '@/components/ui/primitives'
@@ -91,11 +92,16 @@ function ExplainBlock({ today }: BlockProps) {
   )
 }
 
+function InterleaveBlock({ catalog }: BlockProps) {
+  return <PracticeSession catalog={catalog} limit={catalog.config.today.interleaveSize} />
+}
+
 /** Block id (from today.yaml) → component. */
 export const TODAY_BLOCKS: Record<TodayBlockId, ComponentType<BlockProps>> = {
   reviews: ReviewsBlock,
   lesson: LessonBlock,
   practice: PracticeBlock,
+  interleave: InterleaveBlock,
   case: CaseBlock,
   explain: ExplainBlock,
 }

@@ -1,0 +1,19 @@
+examples:
+  - id: we-bond-duration
+    title: "Giá và duration trái phiếu 3 năm"
+    conceptId: yield-duration
+    problem: "Trái phiếu mệnh giá 1.000, coupon 6%/năm trả hằng năm, còn 3 năm, lợi suất 8%. Tính giá, duration và ước lượng % thay đổi giá nếu lợi suất tăng 1 điểm %."
+    steps:
+      - text: "PV các dòng tiền: $60/1{,}08 \\approx 55{,}56$; $60/1{,}08^2 \\approx 51{,}44$; $1060/1{,}08^3 \\approx 841{,}46$."
+      - text: "Giá $= 55{,}56 + 51{,}44 + 841{,}46 \\approx 948{,}46$ — dưới mệnh giá vì lợi suất > coupon."
+        faded: true
+        prompt: "Giá trái phiếu (2 chữ số thập phân)"
+        answer: 948.46
+        tolerance: { kind: abs, value: 0.02 }
+      - text: "Macaulay duration $= (1 \\cdot 55{,}56 + 2 \\cdot 51{,}44 + 3 \\cdot 841{,}46)/948{,}46 \\approx 2{,}829$ năm; modified $\\approx 2{,}829/1{,}08 \\approx 2{,}619$."
+        faded: true
+        prompt: "Modified duration (3 chữ số thập phân)"
+        answer: 2.619
+        tolerance: { kind: abs, value: 0.002 }
+      - text: "Ước lượng: $-2{,}619 \\times 1\\% \\approx -2{,}62\\%$; định giá lại thật ở 9% cho khoảng $-2{,}57\\%$ — chênh do convexity."
+    takeaway: "Duration là 'đòn bẩy lãi suất' của trái phiếu: biết duration là ước lượng được ngay rủi ro khi lãi suất thay đổi."

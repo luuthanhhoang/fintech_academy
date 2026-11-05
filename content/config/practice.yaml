@@ -1,0 +1,4 @@
+# Luyện tập xen kẽ: số câu mỗi phiên, tỉ lệ câu dành cho khái niệm yếu nhất, số khái niệm tối thiểu để trộn.
+size: 8
+weakShare: 0.5
+minConcepts: 2

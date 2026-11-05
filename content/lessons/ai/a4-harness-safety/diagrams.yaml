@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-defense-layers
+    kind: flow
+    title: "Các lớp phòng thủ quanh một tool call"
+    caption: "Defense in depth: lớp sau phải đứng vững kể cả khi lớp trước bị vượt qua (ví dụ model bị prompt injection)."
+    direction: TB
+    nodes:
+      - { id: input, label: "Dữ liệu ngoài (web, email, file)", tone: warn }
+      - { id: model, label: "Model đề xuất hành động" }
+      - { id: policy, label: "Policy / hook tất định", tone: accent }
+      - { id: human, label: "Người duyệt (hành động rủi ro)", tone: accent }
+      - { id: sandbox, label: "Sandbox + egress allowlist", tone: good }
+      - { id: trace, label: "Trace & audit" }
+    edges:
+      - { from: input, to: model, label: "có thể chứa chỉ dẫn độc" }
+      - { from: model, to: policy }
+      - { from: policy, to: human, label: "ask" }
+      - { from: policy, to: sandbox, label: "allow" }
+      - { from: human, to: sandbox, label: "duyệt" }
+      - { from: sandbox, to: trace }

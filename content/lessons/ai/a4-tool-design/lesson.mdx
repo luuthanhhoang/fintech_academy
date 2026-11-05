@@ -18,6 +18,13 @@ devMapping:
   - finance: "Lỗi có hướng dẫn"
     dev: "Error message actionable (400 kèm field sai và định dạng đúng)"
     explanation: "Thông báo lỗi cụ thể giúp agent tự sửa tham số ở vòng sau thay vì lặp lại sai lầm."
+pretest: [q-tool-traits]
+applications:
+  - id: app-tool-review
+    title: "Review bộ công cụ của một agent"
+    context: "Agent nội bộ có nhiều công cụ trả về dữ liệu dài."
+    task: "Rà từng công cụ: tên, mô tả khi nào dùng, schema chặt, phân trang/lọc, lỗi actionable; viết lại 2 công cụ tệ nhất và đo lại trên bộ eval nhỏ."
+    deliverable: "Checklist + diff định nghĩa công cụ + kết quả eval trước/sau."
 sources: [anthropic-writing-tools, anthropic-context-engineering, agent-skills-spec]
 lastVerified: 2026-11-05
 status: verified

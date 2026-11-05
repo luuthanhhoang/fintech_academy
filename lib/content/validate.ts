@@ -4,6 +4,7 @@ import { findCycles } from './graph'
 import { extractExpressions, extractProse, extractRefs, parseMdx } from './mdx-ast'
 import { isMdxComponentName, MDX_COMPONENT_REFS } from './mdx-spec'
 import type { ContentBundle, Lesson } from './types'
+import { validateLearning } from './validate-learning'
 import { validateOrphans } from './validate-orphans'
 
 export interface Issue {
@@ -93,7 +94,7 @@ function checkParamKeys(push: Push, where: string, keys: string[], values: Recor
   for (const k of Object.keys(values)) if (!keys.includes(k)) push(where, `tham số "${k}" không tồn tại`)
 }
 
-function checkLessonSourcing(l: Lesson, push: Push) {
+function checkLessonSourcing(l: Lesson, conceptIds: Set<string>, push: Push) {
   const where = `lesson:${l.id}`
   const sources = new Set(l.sources)
   for (const f of l.facts) {
@@ -105,7 +106,11 @@ function checkLessonSourcing(l: Lesson, push: Push) {
   }
   if (l.status === 'verified' && l.sources.length === 0) push(where, 'bài verified phải có ít nhất 1 nguồn')
   const tree = parseMdx(l.body)
-  checkNoExpressions(push, where, [l.body, ...l.exercises.flatMap((e) => [e.prompt, e.hint ?? '', e.solution])])
+  checkNoExpressions(push, where, [
+    l.body,
+    ...l.exercises.flatMap((e) => [e.prompt, e.hint ?? '', e.solution]),
+    ...l.examples.flatMap((x) => [x.problem, x.takeaway, ...x.steps.map((st) => st.text)]),
+  ])
   const figures = findFigures(extractProse(tree))
   if (figures.length > 0 && l.sources.length === 0) {
     push(where, `bài chứa số liệu (${figures.join(', ')}) nhưng không có nguồn`)
@@ -113,6 +118,8 @@ function checkLessonSourcing(l: Lesson, push: Push) {
   const refTargets: Record<string, Set<string>> = {
     simulators: new Set(l.simulators), labs: new Set(l.labs), cases: new Set(l.cases),
     quiz: new Set(l.quiz.map((q) => q.id)), facts: new Set(l.facts.map((f) => f.id)),
+    examples: new Set(l.examples.map((e) => e.id)), diagrams: new Set(l.diagrams.map((d) => d.id)),
+    scenarios: new Set(l.scenarios), allConcepts: conceptIds,
   }
   for (const ref of extractRefs(tree)) {
     if (!isMdxComponentName(ref.component)) {
@@ -202,7 +209,7 @@ export function validateContent(b: ContentBundle, opts: ValidateOptions): Issue[
   checkConcepts(b, push)
   for (const l of b.lessons) {
     checkLessonRefs(b, l, push)
-    checkLessonSourcing(l, push)
+    checkLessonSourcing(l, new Set(b.concepts.map((c) => c.id)), push)
   }
   checkPlanned(b, push)
   for (const n of b.config.site.nav) if (!opts.iconKeys.includes(n.icon)) push(`nav:${n.href}`, `icon "${n.icon}" chưa có`)
@@ -213,6 +220,7 @@ export function validateContent(b: ContentBundle, opts: ValidateOptions): Issue[
   for (const p of b.config.tutor.providers) if (!opts.providerKinds.includes(p.kind)) push(`tutor:${p.id}`, `provider kind "${p.kind}" chưa có`)
   checkSimulators(b, opts, push)
   checkLabsAndCases(b, push)
+  validateLearning(b, push)
   validateOrphans(b, push)
   return issues
 }

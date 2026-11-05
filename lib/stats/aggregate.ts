@@ -1,5 +1,5 @@
 /** Aggregations for the stats page, from raw IndexedDB rows. Pure. */
-import type { ReviewLogRecord, StudySessionRecord, QuizAttemptRecord, PracticeLogRecord, SelfExplainRecord, LessonProgressRecord } from '../db/types'
+import type { LessonProgressRecord, PracticeLogRecord, QuizAttemptRecord, ReviewLogRecord, SelfExplainRecord, StudySessionRecord } from '../db/types'
 import { dayKey } from '../util/date'
 import { currentStreak, lastDays, longestStreak, sumByDay } from './streak'
 
@@ -42,4 +42,30 @@ export function summarizeStats(i: StatsInput, today: Date, windowDays: number) {
     lessonsCompleted: i.progress.filter((p) => p.status === 'completed').length,
     labsPassed: new Set(i.practice.filter((p) => p.kind === 'lab' && p.result === 'passed').map((p) => p.refId)).size,
   }
+}
+
+export interface PretestProgress {
+  items: number
+  wrongThenRight: number
+  rightThenRight: number
+  stillWrong: number
+  notRetested: number
+}
+
+/** Compares each item's first pretest guess with the latest later scored attempt (real learning gain). */
+export function pretestProgress(attempts: readonly QuizAttemptRecord[]): PretestProgress {
+  const out: PretestProgress = { items: 0, wrongThenRight: 0, rightThenRight: 0, stillWrong: 0, notRetested: 0 }
+  const byItem = new Map<string, QuizAttemptRecord[]>()
+  for (const a of attempts) byItem.set(a.itemId, [...(byItem.get(a.itemId) ?? []), a])
+  for (const rows of byItem.values()) {
+    const sorted = [...rows].sort((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime())
+    const pre = sorted.find((a) => a.context === 'pretest')
+    if (!pre) continue
+    out.items++
+    const post = sorted.filter((a) => a.context !== 'pretest' && a.answeredAt >= pre.answeredAt).at(-1)
+    if (!post) out.notRetested++
+    else if (post.correct) out[pre.correct ? 'rightThenRight' : 'wrongThenRight']++
+    else out.stillWrong++
+  }
+  return out
 }

@@ -6,10 +6,13 @@ nav:
   - { href: "/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
   - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", mobile: true }
   - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", mobile: true }
+  - { href: "/practice/", label: "Luyện tập", en: "Practice", icon: "shuffle" }
+  - { href: "/scenarios/", label: "Tình huống", en: "Scenarios", icon: "route" }
   - { href: "/simulators/", label: "Mô phỏng", en: "Simulators", icon: "chart" }
   - { href: "/labs/", label: "Code lab", en: "Labs", icon: "code" }
   - { href: "/cases/", label: "Case study", en: "Case studies", icon: "alert" }
   - { href: "/tutor/", label: "Gia sư AI", en: "AI tutor", icon: "spark", mobile: true }
   - { href: "/stats/", label: "Thống kê", en: "Stats", icon: "pulse", mobile: true }
   - { href: "/settings/", label: "Cài đặt", en: "Settings", icon: "gear" }
+  - { href: "/method/", label: "Phương pháp học", en: "Method", icon: "book" }
   - { href: "/about/", label: "Giới thiệu", en: "About", icon: "info" }

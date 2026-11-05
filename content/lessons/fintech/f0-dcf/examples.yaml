@@ -1,0 +1,19 @@
+examples:
+  - id: we-dcf-3y
+    title: "DCF 3 năm + giá trị cuối kỳ"
+    conceptId: cash-flow-dcf
+    problem: "FCF năm gốc 100, tăng 5%/năm trong 3 năm, sau đó 2%/năm mãi mãi; chi phí vốn 10% (số giả định). Tính EV."
+    steps:
+      - text: "FCF dự phóng: 105; 110,25; 115,7625. PV lần lượt: 95,45; 91,12; 86,97 → tổng PV giai đoạn dự phóng ≈ 273,54."
+      - text: "Giá trị cuối kỳ tại năm 3: $TV = 115{,}7625 \\times 1{,}02 / (0{,}10 - 0{,}02) \\approx 1475{,}97$."
+        faded: true
+        prompt: "Tính TV (2 chữ số thập phân)"
+        answer: 1475.97
+        tolerance: { kind: abs, value: 0.05 }
+      - text: "Chiết khấu về hiện tại: $1475{,}97 / 1{,}1^3 \\approx 1108{,}92$."
+      - text: "$EV = 273{,}54 + 1108{,}92 \\approx 1382{,}46$; giá trị cuối kỳ chiếm khoảng 80% EV."
+        faded: true
+        prompt: "Tính EV (2 chữ số thập phân)"
+        answer: 1382.46
+        tolerance: { kind: abs, value: 0.1 }
+    takeaway: "80% giá trị nằm ở giả định 'mãi mãi'. Trước khi tin con số, hãy xem bảng độ nhạy theo r và g."

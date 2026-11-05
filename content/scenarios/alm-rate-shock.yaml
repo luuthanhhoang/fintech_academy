@@ -1,0 +1,33 @@
+id: alm-rate-shock
+title: { vi: "Ngân hàng giả định trước cú sốc lãi suất", en: "A hypothetical bank facing a rate shock" }
+role: "Kỹ sư dữ liệu hỗ trợ bộ phận quản lý tài sản–nợ (ALM) của một ngân hàng giả định."
+summary: "Lãi suất thị trường tăng nhanh. Ngân hàng có nhiều trái phiếu dài hạn lãi cố định, nguồn vốn chủ yếu là tiền gửi không kỳ hạn của một nhóm khách hàng doanh nghiệp."
+concepts: [yield-duration, bond-pricing, asset-liability-management, liquidity-risk]
+hypotheticalNote: "Tình huống giả định, không có số liệu thật. Để đối chiếu sự cố có nguồn, xem case Silicon Valley Bank."
+relatedCase: svb-2023
+start: briefing
+nodes:
+  - id: briefing
+    text: "Trưởng bộ phận hỏi: 'Danh mục trái phiếu đang lỗ chưa thực hiện, nhưng ta giữ tới đáo hạn nên không sao, đúng không?' Bạn chuẩn bị báo cáo gì?"
+    choices:
+      - { id: duration-liquidity, label: "Báo cáo cả độ nhạy giá trị (duration) lẫn kịch bản rút tiền: nếu phải bán trước hạn thì lỗ bao nhiêu", next: scenario-run, feedback: "Đúng trọng tâm: 'giữ tới đáo hạn' chỉ đúng khi không bị buộc bán. Rủi ro lãi suất và rủi ro thanh khoản phải xét cùng nhau.", quality: good }
+      - { id: book-only, label: "Báo cáo theo giá sổ sách vì kế toán không ghi nhận lỗ", next: calm, feedback: "Giá sổ sách che rủi ro kinh tế thực; nó không trả lời câu hỏi 'nếu phải bán thì sao'.", quality: bad }
+  - id: scenario-run
+    text: "Báo cáo cho thấy nếu một phần lớn tiền gửi rút trong thời gian ngắn, ngân hàng phải bán trái phiếu với giá thấp. Dữ liệu cũng cho thấy tiền gửi tập trung vào một nhóm khách hàng có liên hệ chặt với nhau."
+    choices:
+      - { id: monitor, label: "Đề xuất giám sát dòng tiền ra theo giờ, chuẩn bị nguồn vay dự phòng đã thử nghiệm, cảnh báo tập trung tiền gửi", next: good-end, feedback: "Biến phân tích thành hành động: giám sát sớm và đệm thanh khoản đã kiểm chứng.", quality: good }
+      - { id: reassure, label: "Chuẩn bị thông cáo trấn an khách hàng là đủ", next: mixed-end, feedback: "Truyền thông quan trọng nhưng không thay thế được nguồn thanh khoản thật; nhóm khách hàng liên kết có thể rút đồng loạt rất nhanh.", quality: risky }
+  - id: calm
+    text: "Vài tuần sau, một số khách hàng lớn bắt đầu rút tiền; tin lan nhanh trong nhóm khách hàng có liên hệ với nhau."
+    choices:
+      - { id: sell-now, label: "Bán trái phiếu để có tiền mặt", next: bad-end, feedback: "Bán lúc lãi suất đã tăng biến lỗ chưa thực hiện thành lỗ thật, và tin bán lỗ có thể khiến rút tiền tăng tốc.", quality: bad }
+      - { id: borrow, label: "Vay có bảo đảm từ nguồn dự phòng (nếu đã chuẩn bị) để tránh bán tháo", next: mixed-end, feedback: "Tốt hơn bán tháo, nhưng nếu chưa chuẩn bị và thử nghiệm từ trước, thủ tục có thể không kịp.", quality: risky }
+  - id: good-end
+    text: "Ngân hàng giảm dần lệch kỳ hạn, chuẩn bị nguồn thanh khoản và giám sát hằng ngày; khi lãi suất tiếp tục tăng, không bị buộc bán tháo."
+    ending: { verdict: good, debrief: "Duration đo mức mất giá khi lãi suất tăng; cơ cấu nguồn vốn quyết định có buộc phải hiện thực hoá khoản lỗ đó hay không. Hai thứ phải được nhìn cùng nhau — đối chiếu với kết luận của Fed về việc quản trị rủi ro trong case SVB." }
+  - id: mixed-end
+    text: "Ngân hàng vượt qua đợt căng thẳng nhưng tốn kém và mất niềm tin của một phần khách hàng."
+    ending: { verdict: mixed, debrief: "Phản ứng đúng hướng nhưng muộn. Bài học: kế hoạch thanh khoản phải có trước khủng hoảng, được diễn tập như failover." }
+  - id: bad-end
+    text: "Tin ngân hàng bán lỗ lan nhanh; lượng rút tiền vượt khả năng đáp ứng."
+    ending: { verdict: bad, debrief: "Rủi ro lãi suất (tài sản dài hạn lãi cố định) cộng rủi ro thanh khoản (tiền gửi rút được ngay, tập trung) là tổ hợp nguy hiểm. Báo cáo theo giá sổ sách đã che mất điều đó." }

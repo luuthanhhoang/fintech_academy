@@ -1,0 +1,19 @@
+examples:
+  - id: we-npv-project
+    title: "NPV của một dự án 3 năm"
+    conceptId: npv-irr
+    problem: "Dự án tốn 1.000 hôm nay, thu về 400, 500, 300 ở cuối năm 1, 2, 3 (số giả định). Chi phí cơ hội 10%/năm. Có nên làm?"
+    steps:
+      - text: "PV năm 1: $400 / 1{,}1 \\approx 363{,}64$."
+      - text: "PV năm 2: $500 / 1{,}1^2 \\approx 413{,}22$."
+        faded: true
+        prompt: "Tính PV của dòng tiền năm 2 (2 chữ số thập phân)"
+        answer: 413.22
+        tolerance: { kind: abs, value: 0.02 }
+      - text: "PV năm 3: $300 / 1{,}1^3 \\approx 225{,}39$."
+      - text: "$NPV = -1000 + 363{,}64 + 413{,}22 + 225{,}39 \\approx 2{,}25 > 0$ — dự án vừa đủ tạo giá trị; IRR khoảng 10,13%, chỉ nhỉnh hơn 10%."
+        faded: true
+        prompt: "Tính NPV (2 chữ số thập phân)"
+        answer: 2.25
+        tolerance: { kind: abs, value: 0.02 }
+    takeaway: "NPV dương rất nhỏ nghĩa là kết luận cực nhạy với giả định: lệch chi phí cơ hội một chút là đổi dấu. Hãy thử lại với 11%."

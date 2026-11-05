@@ -1,0 +1,23 @@
+diagrams:
+  - id: dg-ledger-pipeline
+    kind: flow
+    title: "Từ nghiệp vụ tới báo cáo tài chính"
+    caption: "Mỗi nghiệp vụ thành một bút toán cân Nợ = Có, ghi nối tiếp (append-only) vào sổ; số dư và báo cáo đều là phép chiếu (projection) từ sổ."
+    direction: LR
+    nodes:
+      - { id: event, label: "Nghiệp vụ (bán hàng, vay, trả lương)" }
+      - { id: entry, label: "Bút toán: tổng Nợ = tổng Có", tone: accent }
+      - { id: ledger, label: "Sổ cái append-only" }
+      - { id: trial, label: "Bảng cân đối thử (checksum)", tone: good }
+      - { id: bs, label: "Bảng cân đối kế toán" }
+      - { id: is, label: "Báo cáo kết quả kinh doanh" }
+      - { id: cf, label: "Báo cáo lưu chuyển tiền tệ" }
+      - { id: reject, label: "Từ chối: không cân", tone: warn }
+    edges:
+      - { from: event, to: entry, label: "ghi nhận" }
+      - { from: entry, to: reject, label: "Nợ ≠ Có" }
+      - { from: entry, to: ledger, label: "Nợ = Có" }
+      - { from: ledger, to: trial }
+      - { from: ledger, to: bs }
+      - { from: ledger, to: is }
+      - { from: ledger, to: cf }

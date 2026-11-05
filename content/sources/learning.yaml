@@ -1,0 +1,44 @@
+# Nguồn khoa học học tập. Kiểm tra qua kết quả tìm kiếm (thông tin thư mục + tóm tắt); chưa đọc toàn văn từ môi trường soạn.
+sources:
+  - id: dunlosky-2013
+    title: "Which Study Strategies Make the Grade? (về Dunlosky et al., 2013, Improving Students' Learning With Effective Learning Techniques, Psychological Science in the Public Interest)"
+    url: https://www.psychologicalscience.org/news/releases/which-study-strategies-make-the-grade.html
+    publisher: Association for Psychological Science
+    accessed: 2026-11-05
+    note: Thông cáo về tổng quan 10 kỹ thuật học; practice testing và distributed practice được xếp 'high utility'; tóm tắt highlight/reread/summarize 'low utility'.
+  - id: roediger-karpicke-2006
+    title: "Test-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention — Psychological Science 17(3), 249–255"
+    url: https://doi.org/10.1111/j.1467-9280.2006.01693.x
+    publisher: Roediger & Karpicke / SAGE (Association for Psychological Science)
+    accessed: 2026-11-05
+  - id: rohrer-taylor-2007
+    title: "The Shuffling of Mathematics Practice Problems Boosts Learning — Instructional Science 35, 481–498"
+    url: https://digitalcommons.usf.edu/psy_facpub/1767/
+    publisher: Rohrer & Taylor / University of South Florida Digital Commons
+    accessed: 2026-11-05
+  - id: pan-sana-2021
+    title: "Pretesting versus posttesting: Comparing the pedagogical benefits of errorful generation and retrieval practice — J. Exp. Psychology: Applied"
+    url: https://pubmed.ncbi.nlm.nih.gov/33793291/
+    publisher: Pan & Sana / PubMed
+    accessed: 2026-11-05
+  - id: schwonke-worked-example
+    title: "The worked-example effect: Not an artefact of lousy control conditions"
+    url: https://researchportal.hw.ac.uk/en/publications/the-worked-example-effect-not-an-artefact-of-lousy-control-condit/
+    publisher: Heriot-Watt University Research Portal
+    accessed: 2026-11-05
+    note: So sánh Cognitive Tutor chuẩn với bản bổ sung faded worked examples. Hiệu ứng giảm khi người học đã có chuyên môn (expertise reversal) theo các tổng quan liên quan.
+  - id: mayer-multimedia
+    title: Introduction to Multimedia Learning — The Cambridge Handbook of Multimedia Learning
+    url: https://www.cambridge.org/core/books/cambridge-handbook-of-multimedia-learning/introduction-to-multimedia-learning/DCB47795DE7396B0CDF134B54F03F6A5
+    publisher: Richard E. Mayer (ed.) / Cambridge University Press
+    accessed: 2026-11-05
+  - id: ts-fsrs
+    title: ts-fsrs — TypeScript implementation of the Free Spaced Repetition Scheduler
+    url: https://github.com/open-spaced-repetition/ts-fsrs
+    publisher: open-spaced-repetition
+    accessed: 2026-11-05
+  - id: lavoie-2024
+    title: "Transfer of clinical decision-making-related learning outcomes following simulation-based education in nursing and medicine: a scoping review — Academic Medicine"
+    url: https://doi.org/10.1097/ACM.0000000000004522
+    publisher: Lavoie et al. / Academic Medicine
+    accessed: 2026-11-05

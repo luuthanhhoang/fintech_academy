@@ -19,6 +19,13 @@ devMapping:
     dev: Giá trị hiển thị vs giá trị thực tính toán
     explanation: APR là con số "trên nhãn"; EAR là kết quả sau khi chạy hết vòng lặp ghép lãi trong một năm. So sánh sản phẩm phải dùng cùng một đơn vị — giống so sánh latency phải cùng percentile.
 simulators: [tvm]
+pretest: [q-order-ear]
+applications:
+  - id: app-ear-compare
+    title: "Bảng so sánh lãi suất cho người dùng"
+    context: "App vay/tiết kiệm hiển thị lãi theo nhiều kỳ khác nhau (ngày, tháng, năm)."
+    task: "Viết hàm chuẩn hoá mọi lãi suất về EAR rồi dựng bảng so sánh; thêm test với ví dụ 12% ghép tháng ≈ 12,68%."
+    deliverable: "Hàm normalizeToEar + bảng hiển thị + test."
 sources: [openstax-finance, investor-gov-compound, cfpb-compound]
 lastVerified: 2026-11-05
 status: verified
@@ -83,6 +90,8 @@ Với $r = 12\%$ ghép hằng tháng, EAR ≈ 12,68%. Ghép càng dày thì EAR 
 <Callout kind="dev" title="Bẫy hay gặp khi code">
 Đừng cộng lãi bằng số thực dấu phẩy động trên tiền thật. Tính toán lãi ở độ chính xác cao rồi mới làm tròn theo quy tắc của sản phẩm, và lưu số tiền bằng số nguyên đơn vị nhỏ nhất (xem bài sổ kép).
 </Callout>
+
+<WorkedExample id="we-compound-monthly" />
 
 <Simulator id="tvm" />
 

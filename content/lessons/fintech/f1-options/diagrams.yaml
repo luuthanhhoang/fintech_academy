@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-leverage-spiral
+    kind: flow
+    title: "Vòng xoáy đòn bẩy – gọi ký quỹ – bán tháo"
+    caption: "Cơ chế khuếch đại khi đòn bẩy cao gặp tài sản kém thanh khoản (liên hệ case LTCM). Sơ đồ khái niệm, không gắn số liệu."
+    direction: TB
+    nodes:
+      - { id: shock, label: "Giá tài sản giảm", tone: warn }
+      - { id: equity, label: "Vốn chủ giảm mạnh (× đòn bẩy)" }
+      - { id: call, label: "Gọi ký quỹ / vượt hạn mức", tone: warn }
+      - { id: sell, label: "Buộc bán tài sản" }
+      - { id: illiquid, label: "Thanh khoản mỏng → bán giá xấu" }
+      - { id: limits, label: "Giới hạn đòn bẩy theo kịch bản căng thẳng", tone: good }
+    edges:
+      - { from: shock, to: equity }
+      - { from: equity, to: call }
+      - { from: call, to: sell }
+      - { from: sell, to: illiquid }
+      - { from: illiquid, to: shock, label: "giá giảm thêm" }
+      - { from: limits, to: equity, label: "cắt vòng xoáy" }

@@ -39,6 +39,8 @@ export async function applyReview(cfg: SrsConfig, card: CardRecord, grade: Grade
  */
 export async function recordQuizAttempt(cfg: SrsConfig, attempt: Omit<QuizAttemptRecord, 'id'>) {
   await db().quizAttempts.add(attempt)
+  // A pretest is a guess before studying: stored for progress stats, never scheduled or scored.
+  if (attempt.context === 'pretest') return
   const existing = await db().cards.get(cardId('quiz', attempt.itemId))
   if (existing) await applyReview(cfg, existing, gradeFromScore(attempt.score), 'quiz', attempt.answeredAt)
   else if (!attempt.correct) await ensureCard(cfg, 'quiz', attempt.itemId, attempt.conceptId, attempt.answeredAt)

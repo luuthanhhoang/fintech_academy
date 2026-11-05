@@ -1,0 +1,42 @@
+id: oncall-order-spike
+title: { vi: "On-call: hệ thống gửi lệnh tăng vọt sau giờ mở cửa", en: "On-call: order flow spikes after the open" }
+role: "Kỹ sư on-call của một công ty môi giới giả định, phụ trách hệ thống định tuyến lệnh tự động."
+summary: "Vài phút sau giờ mở cửa, số lệnh gửi ra sàn tăng bất thường. Bạn có ít thời gian và thông tin chưa đầy đủ."
+concepts: [matching-engine, operational-risk, deployment-safety-finance]
+hypotheticalNote: "Tình huống giả định để luyện phán đoán, không mô tả sự kiện thật. Để đối chiếu một sự cố thật có nguồn, xem case Knight Capital."
+relatedCase: knight-capital-2012
+start: alert
+nodes:
+  - id: alert
+    text: "Cảnh báo kêu: số lệnh/giây ra sàn cao gấp nhiều lần bình thường, phần lớn từ một chiến lược vừa được bật sau bản triển khai tối qua. Bạn làm gì trước?"
+    choices:
+      - { id: kill, label: "Kích hoạt kill switch cho chiến lược đó ngay, rồi điều tra", next: after-kill, feedback: "Ưu tiên chặn thiệt hại đang tăng theo từng giây. Kill switch tồn tại chính cho lúc này.", quality: good }
+      - { id: investigate, label: "Đọc log và code để hiểu nguyên nhân trước khi can thiệp", next: investigating, feedback: "Hiểu nguyên nhân là cần thiết, nhưng mỗi phút điều tra là thêm hàng loạt lệnh không mong muốn ra thị trường.", quality: risky }
+      - { id: restart, label: "Khởi động lại toàn bộ service định tuyến", next: restarted, feedback: "Khởi động lại có thể nạp lại đúng cấu hình lỗi và làm mất trạng thái lệnh đang chờ — hành động mạnh nhưng không có mục tiêu.", quality: bad }
+  - id: investigating
+    text: "Sau vài phút đọc log, bạn thấy một máy chủ chạy phiên bản code khác các máy còn lại. Lệnh vẫn đang chảy ra."
+    choices:
+      - { id: kill-late, label: "Bật kill switch ngay bây giờ", next: after-kill, feedback: "Đúng hướng nhưng muộn; thiệt hại đã tích luỹ trong lúc điều tra.", quality: risky }
+      - { id: hotfix, label: "Tự sửa và triển khai nóng lên máy đó", next: hotfix, feedback: "Triển khai vội trong sự cố, không review, trên chính hệ thống đang hỏng là cách tạo thêm sự cố.", quality: bad }
+  - id: restarted
+    text: "Service khởi động lại và đọc cấu hình — lệnh bất thường xuất hiện trở lại sau vài chục giây."
+    choices:
+      - { id: kill-after-restart, label: "Bật kill switch", next: after-kill, feedback: "Cuối cùng cũng chặn được, nhưng đã mất thời gian và có thể còn lệnh 'mồ côi' trên sàn.", quality: risky }
+      - { id: rollback-all, label: "Rollback toàn bộ về bản trước mà không chặn chiến lược", next: rollback-blind, feedback: "Rollback không kiểm chứng có thể không xử lý đúng máy lệch phiên bản — vấn đề vẫn có thể tiếp diễn.", quality: bad }
+  - id: after-kill
+    text: "Lệnh mới đã dừng. Trên sàn vẫn còn vị thế phát sinh ngoài ý muốn và một số lệnh chờ. Bước tiếp theo?"
+    choices:
+      - { id: escalate, label: "Báo cáo lên quản lý rủi ro & pháp chế, huỷ lệnh chờ, kiểm kê vị thế, giữ nguyên bằng chứng (log, phiên bản)", next: good-end, feedback: "Đúng quy trình sự cố: kiểm soát, minh bạch, bảo toàn bằng chứng để điều tra và báo cáo.", quality: good }
+      - { id: quiet-fix, label: "Âm thầm đóng vị thế và sửa code, không báo cáo vì 'đã ổn'", next: hidden-end, feedback: "Che giấu sự cố vi phạm nghĩa vụ báo cáo nội bộ và làm mất cơ hội sửa nguyên nhân gốc.", quality: bad }
+  - id: hotfix
+    text: "Bản sửa nóng làm service trên máy đó crash liên tục; một phần lệnh vẫn đi qua các tuyến khác."
+    ending: { verdict: bad, debrief: "Bài học: trong sự cố, chặn thiệt hại trước (kill switch), sửa sau trong điều kiện có review. Triển khai vội trên hệ thống đang hỏng nhân rủi ro." }
+  - id: rollback-blind
+    text: "Bản rollback chỉ áp dụng cho các máy được liệt kê trong script; máy lệch phiên bản không nằm trong danh sách."
+    ending: { verdict: bad, debrief: "Bài học: kiểm tra đồng nhất phiên bản trên mọi máy là một bước của triển khai và của rollback. Không có kill switch, mọi biện pháp khác đều chậm." }
+  - id: hidden-end
+    text: "Vài ngày sau, đối soát phát hiện chênh lệch không giải thích được."
+    ending: { verdict: bad, debrief: "Sự cố bị giấu trở thành sự cố lớn hơn. Quy trình tốt: báo cáo sớm, bảo toàn bằng chứng, postmortem không đổ lỗi, sửa nguyên nhân gốc (triển khai, kiểm soát trước giao dịch, cảnh báo)." }
+  - id: good-end
+    text: "Thiệt hại được khoanh vùng; postmortem tìm ra máy lệch phiên bản và cờ cấu hình cũ bị tái sử dụng."
+    ending: { verdict: good, debrief: "Thứ tự đúng: chặn (kill switch) → khoanh vùng (huỷ lệnh, kiểm kê) → báo cáo → điều tra → sửa gốc (đồng nhất phiên bản, dọn feature flag, hạn mức trước giao dịch độc lập, cảnh báo có người chịu trách nhiệm). So sánh với các phát hiện của SEC trong case Knight Capital." }

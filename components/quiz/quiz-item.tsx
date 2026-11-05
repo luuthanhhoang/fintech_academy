@@ -3,6 +3,7 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 import type { QuizItem } from '@/lib/content/schema/quiz'
 import { recordQuizAttempt } from '@/lib/db/repos/learning'
+import type { QuizAttemptRecord } from '@/lib/db/types'
 import { gradeQuiz, type GradeResult, type QuizAnswer } from '@/lib/quiz/grade'
 import { useCatalogState } from '@/components/data/catalog-provider'
 import { Button } from '@/components/ui/primitives'
@@ -26,7 +27,7 @@ const VIEWS: { [K in QuizItem['type']]: ComponentType<ViewProps<K>> } = {
 export interface QuizItemCardProps {
   item: QuizItem
   lessonId: string
-  context: 'lesson' | 'today' | 'review'
+  context: QuizAttemptRecord['context']
   index?: number
   onGraded?: (r: GradeResult) => void
   /** Extra UI for explain items (e.g. AI grading button when the tutor is enabled). */
@@ -81,7 +82,11 @@ export function QuizItemCard({ item, lessonId, context, index, onGraded, explain
           </p>
           <p className="mt-1 text-ink-2">{item.explanation}</p>
           {item.type === 'explain' && <p className="mt-2 text-ink-2"><strong>Đáp án mẫu:</strong> {item.modelAnswer}</p>}
-          {!result.correct && <p className="mt-1 text-xs text-ink-3">Câu này đã được đưa vào thẻ ôn.</p>}
+          {!result.correct && (
+            <p className="mt-1 text-xs text-ink-3">
+              {context === 'pretest' ? 'Đoán sai trước khi học là bình thường — đọc bài rồi gặp lại câu này ở cuối.' : 'Câu này đã được đưa vào thẻ ôn.'}
+            </p>
+          )}
           <button type="button" className="mt-2 text-xs underline" onClick={() => (setResult(null), setAnswer(initialAnswer(item)))}>
             Làm lại
           </button>

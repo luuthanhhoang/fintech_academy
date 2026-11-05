@@ -1,0 +1,19 @@
+examples:
+  - id: we-bull-spread
+    title: "Bull call spread: lãi/lỗ tại đáo hạn"
+    conceptId: options-payoff
+    problem: "Mua call K = 100 (phí 6), bán call K = 110 (phí 2) — số giả định. Tính chi phí ròng, hoà vốn, lãi tối đa và lãi/lỗ tại giá 107."
+    steps:
+      - text: "Chi phí ròng $= 6 - 2 = 4$ — đây cũng là lỗ tối đa (khi giá ≤ 100)."
+      - text: "Hoà vốn khi $S - 100 = 4$, tức $S = 104$."
+        faded: true
+        prompt: "Giá hoà vốn"
+        answer: 104
+        tolerance: { kind: abs, value: 0 }
+      - text: "Lãi tối đa khi $S \\ge 110$: $(110 - 100) - 4 = 6$."
+      - text: "Tại $S = 107$: call mua có giá trị 7, call bán 0 → lãi $7 - 4 = 3$."
+        faded: true
+        prompt: "Lãi/lỗ tại S = 107"
+        answer: 3
+        tolerance: { kind: abs, value: 0 }
+    takeaway: "Bán thêm một call giảm chi phí nhưng chặn lãi tối đa — đánh đổi giữa chi phí và tiềm năng."

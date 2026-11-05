@@ -28,7 +28,8 @@ function groupBy<T>(rows: readonly T[], key: (r: T) => string): Map<string, T[]>
 export function computeMastery(catalog: Catalog, snap: LearnerSnapshot, now: Date): MasteryView {
   const cfg = catalog.config.mastery
   const learnable = new Set(catalog.lessons.flatMap((l) => l.concepts))
-  const attemptsBy = groupBy(snap.attempts, (a) => a.conceptId)
+  const scored = snap.attempts.filter((a) => a.context !== 'pretest')
+  const attemptsBy = groupBy(scored, (a) => a.conceptId)
   const cardsBy = groupBy(snap.cards, (c) => c.conceptId)
   const scores = new Map<string, ConceptScore>()
   for (const c of catalog.concepts) {
@@ -37,7 +38,7 @@ export function computeMastery(catalog: Catalog, snap: LearnerSnapshot, now: Dat
   }
   const lessonConcepts = new Map(catalog.lessons.map((l) => [l.id, l.concepts]))
   const active = new Set<string>([
-    ...snap.attempts.map((a) => a.conceptId),
+    ...scored.map((a) => a.conceptId),
     ...snap.cards.map((c) => c.conceptId),
     ...snap.marks.map((m) => m.conceptId),
     ...snap.progress.flatMap((p) => lessonConcepts.get(p.lessonId) ?? []),

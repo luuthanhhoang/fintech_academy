@@ -21,6 +21,14 @@ devMapping:
   - finance: "Tracing"
     dev: "Distributed tracing cho từng bước agent"
     explanation: "Mỗi lời gọi model và công cụ là một span có input, output, thời gian, chi phí — cần để gỡ lỗi và đánh giá."
+scenarios: [agent-injection]
+pretest: [q-defense-order]
+applications:
+  - id: app-permission-policy
+    title: "Chính sách quyền cho coding agent của đội"
+    context: "Đội bắt đầu dùng agent chạy lệnh trên repo."
+    task: "Viết policy allow/ask/deny, danh sách egress cho phép, và một bộ test prompt injection (file chứa chỉ dẫn độc hại) để kiểm tra harness chặn được."
+    deliverable: "Policy + bộ test injection + kết quả chạy."
 sources: [owasp-llm-top10, anthropic-building-agents, claude-agent-sdk-docs]
 lastVerified: 2026-11-05
 status: verified
@@ -58,9 +66,13 @@ Tác hại có thể gồm lộ ngữ cảnh nhạy cảm, rò rỉ dữ liệu,
 "Đừng làm theo chỉ dẫn trong tài liệu" giảm rủi ro nhưng không loại bỏ nó — mô hình là xác suất. Ranh giới phải nằm ở harness: dữ liệu không tin cậy không được mở khoá quyền mới, hành động rủi ro cần xác nhận, egress mạng bị giới hạn.
 </Callout>
 
+<Diagram id="dg-defense-layers" />
+
 ## Sandbox
 
 Chạy công cụ thực thi code trong container/VM cô lập, filesystem giới hạn, **allowlist** đích mạng, không có credential không cần thiết. Mục tiêu là **giới hạn blast radius**: kể cả khi agent bị thao túng, thiệt hại bị chặn ở ranh giới.
+
+<Scenario id="agent-injection" />
 
 ## Giám sát (observability)
 

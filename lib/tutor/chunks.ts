@@ -36,6 +36,15 @@ export function buildTutorChunks(b: ContentBundle): TutorChunk[] {
       })
     })
   }
+  for (const l of b.lessons) {
+    for (const ex of l.examples) {
+      chunks.push({ id: `${l.id}#vd-${ex.id}`, title: `Ví dụ: ${ex.title}`, source: l.title.vi, href: `/lessons/${l.id}/`, conceptIds: [ex.conceptId], text: [ex.problem, ...ex.steps.map((s) => s.text), ex.takeaway].join('\n') })
+    }
+  }
+  for (const s of b.scenarios) {
+    const endings = s.nodes.filter((n) => n.ending).map((n) => n.ending?.debrief ?? '')
+    chunks.push({ id: `scenario:${s.id}`, title: `Tình huống giả định: ${s.title.vi}`, source: 'Tình huống', href: `/scenarios/${s.id}/`, conceptIds: s.concepts, text: [s.summary, ...endings].join('\n') })
+  }
   for (const c of b.concepts) {
     chunks.push({ id: `concept:${c.id}`, title: `${c.name.vi} (${c.name.en})`, source: 'Khái niệm', href: `/concepts/${c.id}/`, conceptIds: [c.id], text: c.short })
   }

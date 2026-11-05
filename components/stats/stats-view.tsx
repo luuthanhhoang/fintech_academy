@@ -5,7 +5,7 @@ import type { Catalog } from '@/lib/content/catalog'
 import { db } from '@/lib/db/dexie'
 import { stageMastery } from '@/lib/mastery/compute'
 import { GRADES } from '@/lib/srs/fsrs'
-import { summarizeStats } from '@/lib/stats/aggregate'
+import { pretestProgress, summarizeStats } from '@/lib/stats/aggregate'
 import { fmtDuration, fmtNum, fmtPct } from '@/lib/util/format'
 import { useMastery } from '@/components/data/use-learner'
 import { Card } from '@/components/ui/primitives'
@@ -37,6 +37,8 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
   const stages = stageMastery(catalog, mastery.scores)
   const empty = s.activeDayCount === 0
   const maxGrade = Math.max(1, ...s.gradeCounts)
+  const pre = pretestProgress(data.attempts)
+  const scenarioRuns = data.practice.filter((p) => p.kind === 'scenario')
   return (
     <div className="space-y-6 font-sans">
       {empty && <EmptyState title="Chưa có dữ liệu học tập">Mọi con số ở đây đều tính từ hoạt động thật của bạn (lưu trên trình duyệt). Học một bài hoặc ôn thẻ để bắt đầu.</EmptyState>}
@@ -47,6 +49,8 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
         <Tile label="Quiz đúng" value={s.quizAccuracy === null ? '—' : fmtPct(s.quizAccuracy, 0)} hint={`${s.quizTotal} lượt`} />
         <Tile label="Bài đã hoàn thành" value={fmtNum(s.lessonsCompleted, 0)} hint={`/ ${catalog.lessons.length} bài đã viết`} />
         <Tile label="Lab đã qua" value={fmtNum(s.labsPassed, 0)} hint={`/ ${catalog.labs.length} lab`} />
+        <Tile label="Đoán sai → học xong làm đúng" value={`${pre.wrongThenRight}/${pre.items}`} hint={`đúng cả trước & sau ${pre.rightThenRight} · vẫn sai ${pre.stillWrong} · chưa làm lại ${pre.notRetested}`} />
+        <Tile label="Tình huống đã chơi" value={fmtNum(new Set(scenarioRuns.map((p) => p.refId)).size, 0)} hint={`/ ${catalog.scenarios.length} · kết cục tốt ${scenarioRuns.filter((p) => p.result === 'passed').length} lần`} />
       </div>
       <Card>
         <h2 className="font-serif text-lg font-semibold">Hoạt động {WINDOW_DAYS} ngày gần nhất</h2>

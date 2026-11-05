@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-order-lifecycle
+    kind: sequence
+    title: "Vòng đời một lệnh mua"
+    caption: "Kiểm soát rủi ro trước giao dịch đứng TRƯỚC bộ máy khớp lệnh; khớp lệnh chỉ tạo nghĩa vụ, thanh toán diễn ra sau qua tổ chức bù trừ–lưu ký. Mô hình tổng quát, không mô tả quy chế của một sàn cụ thể."
+    actors:
+      - { id: investor, label: "Nhà đầu tư (app)" }
+      - { id: broker, label: "Công ty chứng khoán" }
+      - { id: risk, label: "Kiểm soát rủi ro" }
+      - { id: exchange, label: "Sở giao dịch (matching)" }
+      - { id: csd, label: "Bù trừ & lưu ký" }
+    steps:
+      - { from: investor, to: broker, label: "Đặt lệnh mua 500 cp" }
+      - { from: broker, to: risk, label: "Kiểm tra tiền, hạn mức, giá" }
+      - { from: risk, to: broker, label: "Cho phép (hoặc chặn)" }
+      - { from: broker, to: exchange, label: "Gửi lệnh" }
+      - { from: exchange, to: exchange, label: "Khớp theo giá → thời gian" }
+      - { from: exchange, to: broker, label: "Kết quả khớp" }
+      - { from: broker, to: investor, label: "Báo khớp" }
+      - { from: exchange, to: csd, label: "Dữ liệu giao dịch" }
+      - { from: csd, to: broker, label: "Bù trừ, thanh toán (DvP)" }

@@ -20,6 +20,13 @@ devMapping:
     explanation: "Mỗi điểm trên biên là một cấu hình không thể cải thiện lợi suất mà không tăng rủi ro — giống Pareto frontier giữa latency và cost."
 simulators: [portfolio]
 labs: [portfolio-math]
+pretest: [q-pf-rho1]
+applications:
+  - id: app-csv-analysis
+    title: "Phân tích danh mục từ CSV của chính bạn"
+    context: "Bạn có lịch sử giá tự tải từ nguồn công khai."
+    task: "Dán CSV vào mô phỏng danh mục, ghi lại danh mục rủi ro thấp nhất và độ nhạy khi đổi giai đoạn dữ liệu; viết nhận xét về giới hạn ước lượng."
+    deliverable: "Ghi chú phân tích (không phải khuyến nghị đầu tư)."
 sources: [markowitz-1952, openstax-finance]
 lastVerified: 2026-11-05
 status: verified
@@ -50,12 +57,14 @@ Câu hỏi mở đầu có lời giải trong số hạng cuối: khi $\rho < 1$
 Lấy đạo hàm theo $w$ và cho bằng 0:
 
 $$
-w^\* = \frac{\sigma_2^2 - \rho\sigma_1\sigma_2}{\sigma_1^2 + \sigma_2^2 - 2\rho\sigma_1\sigma_2}
+w^{*} = \frac{\sigma_2^2 - \rho\sigma_1\sigma_2}{\sigma_1^2 + \sigma_2^2 - 2\rho\sigma_1\sigma_2}
 $$
+
+<WorkedExample id="we-min-variance" />
 
 ## Đường biên hiệu quả (Markowitz)
 
-Bài báo "Portfolio Selection" (1952) của Harry Markowitz đặt nền cho việc chọn danh mục bằng cách cân bằng lợi suất kỳ vọng và phương sai. Tập danh mục cho lợi suất kỳ vọng cao nhất ở mỗi mức rủi ro gọi là **đường biên hiệu quả**. Khi cho phép bán khống, đường biên có nghiệm giải tích (đường hyperbol trong không gian σ–E[R]); khi chỉ mua, ta tìm bằng tối ưu có ràng buộc — mô phỏng dưới đây xấp xỉ bằng đám mây danh mục ngẫu nhiên.
+Bài báo "Portfolio Selection" (1952) của Harry Markowitz đặt nền cho việc chọn danh mục bằng cách cân bằng lợi suất kỳ vọng và <Term id="expected-value-variance">phương sai</Term>. Tập danh mục cho lợi suất kỳ vọng cao nhất ở mỗi mức rủi ro gọi là **đường biên hiệu quả**. Khi cho phép bán khống, đường biên có nghiệm giải tích (đường hyperbol trong không gian σ–E[R]); khi chỉ mua, ta tìm bằng tối ưu có ràng buộc — mô phỏng dưới đây xấp xỉ bằng đám mây danh mục ngẫu nhiên.
 
 <Simulator id="portfolio" />
 

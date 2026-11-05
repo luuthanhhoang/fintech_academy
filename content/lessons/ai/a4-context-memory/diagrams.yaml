@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-context-lifecycle
+    kind: flow
+    title: "Vòng đời context trong tác vụ dài"
+    caption: "Giữ context nhỏ và tín hiệu cao: nạp khi cần, tóm tắt khi gần đầy, ghi trạng thái bền vững ra ngoài, giao việc đọc nhiều cho sub-agent."
+    direction: TB
+    nodes:
+      - { id: task, label: "Tác vụ + chỉ dẫn" }
+      - { id: jit, label: "Nạp theo nhu cầu (tìm/đọc khi cần)" }
+      - { id: window, label: "Context window (ngân sách chú ý)", tone: accent }
+      - { id: compact, label: "Compaction: tóm tắt trạng thái" }
+      - { id: notes, label: "Ghi chú bền vững (file)", tone: good }
+      - { id: sub, label: "Sub-agent: đọc nhiều, trả tóm tắt" }
+    edges:
+      - { from: task, to: window }
+      - { from: jit, to: window, label: "đúng lúc" }
+      - { from: window, to: compact, label: "gần đầy" }
+      - { from: compact, to: window, label: "bản tóm tắt" }
+      - { from: window, to: notes, label: "quyết định, tiến độ" }
+      - { from: notes, to: window, label: "phiên sau đọc lại" }
+      - { from: sub, to: window, label: "kết quả cô đọng" }

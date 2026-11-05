@@ -1,0 +1,21 @@
+examples:
+  - id: we-compound-monthly
+    title: "Gửi 100 triệu, lãi 8%/năm ghép tháng, 3 năm"
+    conceptId: compound-interest
+    problem: "Bạn gửi 100 triệu đồng với lãi suất danh nghĩa 8%/năm, ghép lãi hằng tháng, trong 3 năm (số giả định). Số dư cuối kỳ và lãi suất hiệu dụng năm (EAR) là bao nhiêu?"
+    steps:
+      - text: "Lãi suất mỗi kỳ (tháng) là $r/m = 0{,}08/12 \\approx 0{,}0066667$; số kỳ là $m \\cdot t = 12 \\cdot 3 = 36$."
+      - text: "Hệ số tăng trưởng $(1 + 0{,}0066667)^{36} \\approx 1{,}270237$."
+      - text: "Số dư $FV = 100 \\times 1{,}270237 \\approx 127{,}02$ triệu."
+        faded: true
+        prompt: "Tính FV (triệu đồng, 2 chữ số thập phân)"
+        answer: 127.02
+        tolerance: { kind: abs, value: 0.02 }
+        unit: triệu
+      - text: "$EAR = (1 + 0{,}08/12)^{12} - 1 \\approx 8{,}30\\%$ — cao hơn 8% vì lãi các tháng trước tiếp tục sinh lãi."
+        faded: true
+        prompt: "Tính EAR (% , 2 chữ số thập phân)"
+        answer: 8.30
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+    takeaway: "Luôn quy về EAR khi so sánh; FV dùng lãi suất theo kỳ và số kỳ, không phải lãi năm × số năm."

@@ -19,6 +19,14 @@ devMapping:
     dev: "Parameter sweep / property-based testing"
     explanation: "Quét các giả định quan trọng để thấy kết quả thay đổi bao nhiêu — nếu đầu ra đổi gấp đôi khi một input lệch 1%, mô hình rất mong manh."
 simulators: [dcf]
+scenarios: [dcf-review]
+pretest: [q-dcf-condition]
+applications:
+  - id: app-dcf-sheet
+    title: "Mô hình DCF có kiểm thử"
+    context: "Mô hình định giá trong spreadsheet hay hỏng âm thầm khi đổi công thức."
+    task: "Chuyển mô hình DCF thành code thuần có test (r ≤ g phải báo lỗi; EV = PV dự phóng + PV cuối kỳ) và bảng độ nhạy."
+    deliverable: "Module DCF + test + bảng độ nhạy xuất CSV."
 sources: [openstax-finance]
 lastVerified: 2026-11-05
 status: verified
@@ -32,7 +40,7 @@ selfExplain:
 
 ## Từ NPV tới định giá doanh nghiệp
 
-Định giá chiết khấu dòng tiền (DCF) chỉ là NPV áp dụng cho cả doanh nghiệp:
+Định giá chiết khấu dòng tiền (DCF) chỉ là <Term id="npv-irr">NPV</Term> áp dụng cho cả doanh nghiệp:
 
 $$
 EV = \sum_{t=1}^{N} \frac{FCF_t}{(1 + r)^{t}} + \frac{TV_N}{(1 + r)^{N}}
@@ -56,6 +64,8 @@ $$
 
 <Quiz id="q-dcf-gordon" />
 
+<WorkedExample id="we-dcf-3y" />
+
 ## Từ EV tới giá trị cổ phần
 
 $$
@@ -65,6 +75,8 @@ $$
 Câu hỏi mở đầu có lời giải ở đây: công ty chưa có lãi vẫn có EV cao nếu thị trường kỳ vọng FCF lớn **trong tương lai** — nhưng khi đó phần lớn giá trị nằm ở giá trị cuối kỳ, tức ở những giả định xa nhất và bất định nhất.
 
 <Simulator id="dcf" />
+
+<Scenario id="dcf-review" />
 
 <Callout kind="warning">
 DCF là khung tính toán, không phải lời tiên tri. Mọi đầu vào (tăng trưởng, chi phí vốn, g dài hạn) là giả định của người lập mô hình; site không đưa ra khuyến nghị định giá cho doanh nghiệp thật nào.

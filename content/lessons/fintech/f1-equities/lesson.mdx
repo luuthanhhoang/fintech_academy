@@ -18,6 +18,13 @@ devMapping:
   - finance: "P/E"
     dev: "Tỷ lệ chi phí/hiệu suất kiểu 'giá trên mỗi đơn vị throughput'"
     explanation: "P/E cho biết thị trường trả bao nhiêu cho mỗi đồng lợi nhuận — tiện so sánh nhưng che giấu khác biệt về tăng trưởng và rủi ro."
+pretest: [q-eq-residual]
+applications:
+  - id: app-total-return
+    title: "Tính tổng lợi suất có cổ tức"
+    context: "Màn hình danh mục chỉ tính chênh lệch giá, bỏ qua cổ tức."
+    task: "Viết hàm tổng lợi suất gồm cổ tức và lãi vốn, xử lý sự kiện chia tách cổ phiếu bằng hệ số điều chỉnh."
+    deliverable: "Hàm + test với ví dụ có cổ tức và chia tách."
 sources: [openstax-finance]
 lastVerified: 2026-11-05
 status: verified

@@ -1,0 +1,19 @@
+examples:
+  - id: we-min-variance
+    title: "Danh mục rủi ro thấp nhất từ 2 tài sản"
+    conceptId: diversification
+    problem: "Tài sản 1: σ = 20%, E[R] = 10%; tài sản 2: σ = 10%, E[R] = 5%; tương quan ρ = 0,2 (số giả định). Tìm trọng số rủi ro thấp nhất."
+    steps:
+      - text: "Hiệp phương sai $= \\rho\\sigma_1\\sigma_2 = 0{,}2 \\cdot 0{,}2 \\cdot 0{,}1 = 0{,}004$."
+      - text: "$w_1^{*} = (\\sigma_2^2 - c)/(\\sigma_1^2 + \\sigma_2^2 - 2c) = (0{,}01 - 0{,}004)/(0{,}04 + 0{,}01 - 0{,}008) = 0{,}006/0{,}042 \\approx 0{,}1429$."
+        faded: true
+        prompt: "Trọng số tài sản 1 (4 chữ số thập phân)"
+        answer: 0.1429
+        tolerance: { kind: abs, value: 0.0005 }
+      - text: "σ danh mục ≈ 9,56% — thấp hơn cả tài sản ít rủi ro nhất (10%); lợi suất kỳ vọng ≈ 5,71%."
+        faded: true
+        prompt: "σ danh mục (%, 2 chữ số thập phân)"
+        answer: 9.56
+        tolerance: { kind: abs, value: 0.02 }
+        unit: "%"
+    takeaway: "Thêm một chút tài sản rủi ro hơn lại làm giảm rủi ro tổng — nhờ tương quan thấp. Đó là 'bữa trưa miễn phí' duy nhất của tài chính, nhưng chỉ khi tương quan giữ được."

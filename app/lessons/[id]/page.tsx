@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { lessonSections } from '@/lib/content/sections'
 import { getContent, getLesson, sourcesById } from '@/lib/content/server'
+import { ApplicationsList } from '@/components/learn/applications'
+import { PretestBlock } from '@/components/learn/pretest'
 import { DevMappingTable } from '@/components/reader/dev-mapping'
 import { LessonActions } from '@/components/reader/lesson-actions'
 import { LessonExtras } from '@/components/reader/lesson-extras'
@@ -68,11 +70,15 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
             ))}
           </ol>
         </details>
+        <div className="max-w-[68ch]">
+          <PretestBlock lessonId={lesson.id} items={lesson.quiz.filter((q) => lesson.pretest.includes(q.id))} />
+        </div>
         <div id="lesson-body" className="prose-notebook max-w-[68ch]">
           <MdxContent source={lesson.body} components={lessonComponents(lesson, bundle)} />
         </div>
         <div className="max-w-[68ch]">
           <DevMappingTable items={lesson.devMapping} />
+          <ApplicationsList conceptIds={lesson.concepts} items={lesson.applications} />
           <LessonExtras lesson={lesson} />
           <LessonActions lessonId={lesson.id} concepts={concepts.map((c) => ({ id: c.id, name: c.name }))} />
           <NotesPanel lessonId={lesson.id} anchors={toc.map((t) => ({ slug: t.slug, heading: t.heading }))} />

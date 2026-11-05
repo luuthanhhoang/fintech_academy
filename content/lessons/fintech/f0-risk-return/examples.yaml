@@ -1,0 +1,20 @@
+examples:
+  - id: we-ev-sharpe
+    title: "Kỳ vọng, độ lệch chuẩn và Sharpe từ kịch bản"
+    conceptId: risk-return
+    problem: "Kịch bản (giả định): 40% lãi 15%, 40% lãi 5%, 20% lỗ 10%. Lãi suất phi rủi ro 2%. Tính E[R], σ và Sharpe."
+    steps:
+      - text: "$E[R] = 0{,}4 \\cdot 15 + 0{,}4 \\cdot 5 + 0{,}2 \\cdot (-10) = 6\\%$."
+        faded: true
+        prompt: "E[R] bằng bao nhiêu %?"
+        answer: 6
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "%"
+      - text: "Độ lệch so với 6%: +9, −1, −16. $\\operatorname{Var} = 0{,}4 \\cdot 81 + 0{,}4 \\cdot 1 + 0{,}2 \\cdot 256 = 84$ (điểm %²)."
+      - text: "$\\sigma = \\sqrt{84} \\approx 9{,}165$ điểm %."
+        faded: true
+        prompt: "σ bằng bao nhiêu điểm %? (3 chữ số thập phân)"
+        answer: 9.165
+        tolerance: { kind: abs, value: 0.002 }
+      - text: "$\\text{Sharpe} = (6 - 2)/9{,}165 \\approx 0{,}436$."
+    takeaway: "Kịch bản xấu dù chỉ 20% xác suất đóng góp hơn một nửa phương sai — phần đuôi chi phối rủi ro."

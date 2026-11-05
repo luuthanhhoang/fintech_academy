@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-ccp-dvp
+    kind: sequence
+    title: "Bù trừ qua CCP và thanh toán DvP"
+    caption: "CCP thế chỗ làm đối tác của cả hai bên, bù trừ ròng nghĩa vụ; chứng khoán chỉ chuyển khi tiền chuyển (DvP). Mô hình khái niệm."
+    actors:
+      - { id: buyer, label: "Thành viên mua" }
+      - { id: ccp, label: "CCP" }
+      - { id: seller, label: "Thành viên bán" }
+      - { id: csd, label: "Lưu ký chứng khoán" }
+      - { id: cash, label: "Hệ thống thanh toán tiền" }
+    steps:
+      - { from: buyer, to: ccp, label: "Giao dịch đã khớp (novation)" }
+      - { from: seller, to: ccp, label: "Giao dịch đã khớp (novation)" }
+      - { from: ccp, to: ccp, label: "Bù trừ ròng nghĩa vụ" }
+      - { from: ccp, to: buyer, label: "Nghĩa vụ tiền ròng" }
+      - { from: ccp, to: seller, label: "Nghĩa vụ chứng khoán ròng" }
+      - { from: buyer, to: cash, label: "Chuyển tiền (chờ điều kiện)" }
+      - { from: seller, to: csd, label: "Chuyển CK (chờ điều kiện)" }
+      - { from: csd, to: cash, label: "Đối chiếu: cả hai chân sẵn sàng" }
+      - { from: csd, to: buyer, label: "Giao CK ⇔ giao tiền (DvP)" }

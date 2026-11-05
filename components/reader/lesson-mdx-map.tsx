@@ -4,6 +4,10 @@ import type { ContentBundle, Lesson } from '@/lib/content/types'
 import { QuizItemCard } from '@/components/quiz/quiz-item'
 import { SimulatorFrame } from '@/components/simulators/frame'
 import { LabEmbed } from '@/components/lab/lab-embed'
+import { DiagramView } from '@/components/learn/diagram'
+import { ScenarioPlayer } from '@/components/learn/scenario'
+import { Term } from '@/components/learn/term'
+import { WorkedExampleBlock } from '@/components/learn/worked-example'
 import { ErrorState } from '@/components/ui/states'
 import { Callout, Figure, Sidenote } from './blocks'
 import { FactInline } from './fact'
@@ -40,6 +44,22 @@ export function lessonComponents(lesson: Lesson, bundle: ContentBundle) {
           <span className="block text-sm text-ink-2">{cs.summary}</span>
         </Link>
       )
+    },
+    WorkedExample: ({ id }: { id: string }) => {
+      const ex = lesson.examples.find((e) => e.id === id)
+      return ex ? <WorkedExampleBlock example={ex} /> : missing('WorkedExample', id)
+    },
+    Diagram: ({ id }: { id: string }) => {
+      const d = lesson.diagrams.find((x) => x.id === id)
+      return d ? <DiagramView diagram={d} /> : missing('Diagram', id)
+    },
+    Scenario: ({ id }: { id: string }) => {
+      const sc = bundle.scenarios.find((x) => x.id === id)
+      return sc ? <ScenarioPlayer scenario={sc} embedded /> : missing('Scenario', id)
+    },
+    Term: ({ id, children }: { id: string; children?: ReactNode }) => {
+      const c = bundle.concepts.find((x) => x.id === id)
+      return c ? <Term concept={{ id: c.id, name: c.name, short: c.short }}>{children}</Term> : missing('Term', id)
     },
     Fact: ({ id }: { id: string }): ReactNode => {
       const fact = lesson.facts.find((f) => f.id === id)

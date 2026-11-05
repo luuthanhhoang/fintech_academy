@@ -46,12 +46,13 @@ export const SrsConfigSchema = z.strictObject({
 export type SrsConfig = z.infer<typeof SrsConfigSchema>
 
 export const TodayBlockSchema = z.strictObject({
-  id: z.enum(['reviews', 'lesson', 'practice', 'case', 'explain']),
+  id: z.enum(['reviews', 'lesson', 'practice', 'interleave', 'case', 'explain']),
   title: z.string().min(1),
   description: z.string().min(1),
 })
 export const TodayConfigSchema = z.strictObject({
   maxReviews: z.number().int().positive(),
+  interleaveSize: z.number().int().positive(),
   blocks: z.array(TodayBlockSchema).min(1),
   idleTimeoutSeconds: z.number().int().positive(),
 })

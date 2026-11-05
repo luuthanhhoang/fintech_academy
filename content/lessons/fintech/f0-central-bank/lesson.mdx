@@ -18,6 +18,13 @@ devMapping:
   - finance: "Uy tín và kỳ vọng"
     dev: "SLA đáng tin cậy"
     explanation: "Nếu người dùng tin SLA, họ thiết kế hệ thống dựa trên nó; nếu ngân hàng trung ương đáng tin, kỳ vọng lạm phát được 'neo' và chính sách hiệu quả hơn."
+pretest: [q-cb-tools]
+applications:
+  - id: app-rate-alert
+    title: "Theo dõi thay đổi lãi suất điều hành từ nguồn chính thức"
+    context: "Đội sản phẩm cần biết khi lãi suất điều hành thay đổi để cập nhật giả định."
+    task: "Thiết kế job đọc thông cáo từ trang chính thức của ngân hàng trung ương (không dùng nguồn không chính thức), lưu kèm URL nguồn và ngày, cảnh báo khi đổi."
+    deliverable: "Thiết kế job + định dạng bản ghi có nguồn + quy trình kiểm duyệt thủ công."
 sources: [vn-law-sbv-2010, imf-inflation, vn-sbv-law-amend-2026]
 facts:
   - id: sbv-legal-status
@@ -62,6 +69,8 @@ Phần khung pháp lý Việt Nam dưới đây dựa trên Luật NHNN 2010 qua
 3. Ngân hàng thương mại điều chỉnh lãi suất cho vay và tiền gửi.
 4. Hộ gia đình và doanh nghiệp thay đổi vay, chi tiêu, đầu tư; giá tài sản và tỷ giá phản ứng.
 5. Tổng cầu thay đổi, dần dần tác động tới lạm phát.
+
+<Diagram id="dg-transmission" />
 
 Mỗi bước có độ trễ, nên chính sách phải "nhìn trước". IMF nhấn mạnh **uy tín** của NHTW quyết định mức độ các thông báo của nó định hình kỳ vọng lạm phát.
 

@@ -20,6 +20,14 @@ devMapping:
     explanation: "Duration là xấp xỉ bậc nhất; convexity hiệu chỉnh độ cong, quan trọng khi lợi suất thay đổi lớn."
 simulators: [bond]
 cases: [svb-2023]
+scenarios: [alm-rate-shock]
+pretest: [q-bond-risk-order]
+applications:
+  - id: app-bond-risk
+    title: "Báo cáo độ nhạy lãi suất cho danh mục trái phiếu"
+    context: "Bộ phận quản lý rủi ro hỏi: lãi suất tăng 1 điểm % thì danh mục mất bao nhiêu?"
+    task: "Tính duration/convexity từng trái phiếu bằng lib/finance, tổng hợp theo trọng số giá trị, so sánh ước lượng với định giá lại."
+    deliverable: "Báo cáo bảng + biểu đồ giá–lợi suất cho danh mục mẫu tự tạo."
 sources: [sec-interest-rate-risk, openstax-finance]
 lastVerified: 2026-11-05
 status: verified
@@ -33,7 +41,7 @@ selfExplain:
 
 ## Trái phiếu là một chuỗi dòng tiền
 
-Trái phiếu coupon cố định trả coupon $C$ mỗi kỳ và mệnh giá $F$ khi đáo hạn. Với lợi suất đáo hạn $y$ (theo kỳ) và $n$ kỳ:
+Trái phiếu coupon cố định trả coupon $C$ mỗi kỳ và mệnh giá $F$ khi đáo hạn. Áp dụng <Term id="time-value-of-money">giá trị thời gian của tiền</Term>: với lợi suất đáo hạn $y$ (theo kỳ) và $n$ kỳ:
 
 $$
 P = \sum_{k=1}^{n} \frac{C}{(1 + y)^{k}} + \frac{F}{(1 + y)^{n}}
@@ -71,8 +79,12 @@ Trái phiếu **zero-coupon** có Macaulay duration đúng bằng kỳ hạn.
 
 <Quiz id="q-bond-duration" />
 
+<WorkedExample id="we-bond-duration" />
+
 ## Vì sao "an toàn" vẫn có thể nguy hiểm
 
 Trái phiếu chính phủ có rủi ro vỡ nợ thấp, nhưng **không miễn rủi ro lãi suất**. Một tổ chức nắm danh mục trái phiếu dài hạn bằng nguồn vốn có thể bị rút ngắn hạn (như tiền gửi) sẽ chịu lỗ nếu lãi suất tăng và buộc phải bán trước hạn. Đó là trọng tâm của case SVB.
+
+<Scenario id="alm-rate-shock" />
 
 <Case id="svb-2023" />

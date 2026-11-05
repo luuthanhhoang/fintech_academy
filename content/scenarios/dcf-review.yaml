@@ -1,0 +1,27 @@
+id: dcf-review
+title: { vi: "Review một mô hình DCF 'quá đẹp'", en: "Reviewing a DCF that looks too good" }
+role: "Bạn được nhờ review mô hình định giá do đồng nghiệp xây cho một dự án nội bộ giả định."
+summary: "Mô hình cho giá trị rất cao. Bạn cần tìm giả định nào đang chi phối kết quả và đặt câu hỏi đúng."
+concepts: [cash-flow-dcf, npv-irr]
+hypotheticalNote: "Tình huống giả định để luyện kỹ năng review mô hình; không định giá doanh nghiệp thật nào và không phải khuyến nghị đầu tư."
+start: first-look
+nodes:
+  - id: first-look
+    text: "Bảng tính có dự phóng 5 năm tăng trưởng mạnh, sau đó giá trị cuối kỳ dùng tăng trưởng dài hạn rất gần tỷ lệ chiết khấu. Bạn kiểm tra gì đầu tiên?"
+    choices:
+      - { id: tv-share, label: "Tỷ trọng giá trị cuối kỳ trong EV và khoảng cách r − g", next: sensitivity, feedback: "Đúng điểm yếu nhất: khi g sát r, công thức Gordon khuếch đại mọi sai số.", quality: good }
+      - { id: formatting, label: "Định dạng và chính tả của bảng tính", next: missed, feedback: "Trình bày quan trọng nhưng không thay đổi kết luận; bạn đang bỏ qua giả định chi phối.", quality: bad }
+  - id: sensitivity
+    text: "Giá trị cuối kỳ chiếm phần lớn EV. Bạn muốn trình bày cho đồng nghiệp thế nào?"
+    choices:
+      - { id: table, label: "Bảng độ nhạy theo r và g + kịch bản thận trọng, yêu cầu giải thích cơ sở của g", next: good-end, feedback: "Biến tranh luận cảm tính thành dữ liệu: cho thấy kết quả thay đổi bao nhiêu khi giả định lệch.", quality: good }
+      - { id: reject, label: "Kết luận mô hình sai và yêu cầu làm lại từ đầu", next: mixed-end, feedback: "Có thể đúng một phần, nhưng thiếu bằng chứng cụ thể và cách sửa; review tốt chỉ ra đúng chỗ và đề xuất kiểm tra.", quality: risky }
+  - id: missed
+    text: "Mô hình được trình lên với con số cao; sau đó ai đó chỉ ra giả định tăng trưởng dài hạn không hợp lý."
+    ending: { verdict: bad, debrief: "Review phải đi vào giả định chi phối kết quả. Với DCF: tỷ trọng terminal value, r − g, và tính nhất quán giữa tăng trưởng với đầu tư cần thiết." }
+  - id: mixed-end
+    text: "Đồng nghiệp phòng thủ; mô hình được chỉnh nhưng không ai rõ chỉnh vì sao."
+    ending: { verdict: mixed, debrief: "Phê bình đúng nhưng cách truyền đạt chưa tạo được hiểu biết chung. Bảng độ nhạy là ngôn ngữ chung tốt nhất." }
+  - id: good-end
+    text: "Đồng nghiệp bổ sung kịch bản, giảm g dài hạn có lý do; quyết định cuối cùng dựa trên khoảng giá trị thay vì một con số."
+    ending: { verdict: good, debrief: "DCF là công cụ cấu trúc giả định. Kết quả đáng tin nhất là một khoảng có điều kiện, kèm giả định chi phối được nêu rõ." }

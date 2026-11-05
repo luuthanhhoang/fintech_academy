@@ -18,6 +18,13 @@ devMapping:
   - finance: "Tiền gửi ngân hàng"
     dev: "Một dòng số dư trong database của ngân hàng"
     explanation: "Phần lớn tiền bạn dùng hằng ngày không phải giấy mà là số dư — một bản ghi trong sổ cái. Chuyển tiền là cập nhật sổ, không phải di chuyển vật thể."
+pretest: [q-money-fiat]
+applications:
+  - id: app-money-type
+    title: "Kiểu dữ liệu Money cho codebase của bạn"
+    context: "Nhiều hệ thống lưu tiền bằng number/float và cộng lẫn các loại tiền tệ."
+    task: "Viết kiểu Money {amountMinor: bigint, currency} với hàm cộng chỉ cho phép cùng currency, và test cho trường hợp cộng khác currency phải lỗi."
+    deliverable: "Một module nhỏ + 5 unit test."
 sources: [imf-money]
 lastVerified: 2026-11-05
 status: verified

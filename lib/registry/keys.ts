@@ -21,7 +21,7 @@ export function isSimulatorKey(key: string): key is SimulatorKey {
 }
 
 /** Icon names that content (e.g. nav in site.yaml) may reference. */
-export const ICON_KEYS = ['sun', 'map', 'cards', 'chart', 'code', 'alert', 'spark', 'pulse', 'gear', 'info'] as const
+export const ICON_KEYS = ['sun', 'map', 'cards', 'chart', 'code', 'alert', 'spark', 'pulse', 'gear', 'info', 'shuffle', 'route', 'book'] as const
 export type IconKey = (typeof ICON_KEYS)[number]
 
 /** Actions that shortcuts.yaml may bind. */
@@ -31,3 +31,7 @@ export type ShortcutAction = (typeof SHORTCUT_ACTIONS)[number]
 /** Tutor provider kinds that tutor.yaml may reference (implemented in lib/tutor/registry.ts). */
 export const PROVIDER_KINDS = ['anthropic', 'openai-compatible'] as const
 export type ProviderKind = (typeof PROVIDER_KINDS)[number]
+
+/** Learning-method ids that UI blocks link to ("vì sao cách này hiệu quả"); must exist in methods.yaml. */
+export const LEARNING_METHOD_KEYS = ['retrieval-practice', 'spaced-repetition', 'pretesting', 'interleaving', 'worked-examples', 'dual-coding', 'self-explanation', 'scenario-practice'] as const
+export type LearningMethodKey = (typeof LEARNING_METHOD_KEYS)[number]

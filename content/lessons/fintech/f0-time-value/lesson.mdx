@@ -19,6 +19,18 @@ devMapping:
     dev: "Bài toán tìm nghiệm (root finding)"
     explanation: "IRR là r sao cho NPV(r) = 0 — không có công thức đóng tổng quát, nên dùng Newton/bisection. Có thể không có nghiệm hoặc nhiều nghiệm, giống mọi bài root-finding."
 simulators: [tvm]
+pretest: [q-irr-meaning]
+applications:
+  - id: app-loan-schedule
+    title: "Lịch trả nợ (amortization) cho một màn hình khoản vay"
+    context: "Người dùng muốn thấy mỗi kỳ trả bao nhiêu gốc, bao nhiêu lãi."
+    task: "Sinh lịch trả đều theo công thức annuity; kiểm tra tổng gốc đã trả bằng đúng khoản vay (sai số làm tròn xử lý ở kỳ cuối)."
+    deliverable: "Hàm schedule(principal, rate, n) + test tổng gốc."
+  - id: app-npv-tool
+    title: "Đánh giá một dự án kỹ thuật bằng NPV"
+    context: "Bạn đề xuất thay hạ tầng: tốn chi phí trước, tiết kiệm dần sau."
+    task: "Ước lượng dòng tiền tiết kiệm theo năm (số của chính bạn), chọn chi phí cơ hội, tính NPV và IRR bằng công cụ của site."
+    deliverable: "Một trang đề xuất có bảng dòng tiền, NPV, IRR và giả định."
 sources: [openstax-finance]
 lastVerified: 2026-11-05
 status: verified
@@ -67,6 +79,8 @@ NPV(r) = \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^{t}}
 $$
 
 Quy tắc: **NPV > 0 thì dự án tạo giá trị** so với việc đầu tư ở lợi suất $r$.
+
+<WorkedExample id="we-npv-project" />
 
 ## IRR — lợi suất nội bộ
 

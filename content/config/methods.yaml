@@ -1,0 +1,72 @@
+intro: >-
+  Mỗi khối học trên site dựa vào một phương pháp có nghiên cứu hỗ trợ. Trang này nêu bằng chứng, giới hạn của nó và nơi bạn gặp nó trên site.
+  Không phương pháp nào là "thuốc tiên": nghiên cứu cho thấy hiệu quả trung bình trong điều kiện cụ thể, không đảm bảo cho mọi người, mọi chủ đề.
+methods:
+  - id: retrieval-practice
+    name: { vi: "Luyện truy xuất (tự kiểm tra)", en: "Retrieval practice" }
+    summary: "Tự trả lời câu hỏi thay vì đọc lại. Hành động nhớ lại chính là việc củng cố trí nhớ."
+    evidence: "Roediger & Karpicke (2006) cho thấy làm bài kiểm tra cải thiện ghi nhớ dài hạn so với đọc lại. Tổng quan Dunlosky et al. (2013) xếp practice testing vào nhóm hiệu quả cao (high utility)."
+    caveat: "Cần phản hồi đáp án đúng; câu hỏi phải bám kiến thức cốt lõi. Tổng quan nhấn mạnh hiệu quả phụ thuộc người học có động lực và biết cách dùng."
+    sourceIds: [roediger-karpicke-2006, dunlosky-2013]
+    features:
+      - { label: "Quiz trong bài", href: "/tracks/" }
+      - { label: "Ôn tập", href: "/review/" }
+  - id: spaced-repetition
+    name: { vi: "Ôn ngắt quãng", en: "Spaced repetition" }
+    summary: "Ôn lại đúng lúc sắp quên thay vì dồn vào một lần. Lịch ôn được thuật toán FSRS tính từ lịch sử của bạn."
+    evidence: "Dunlosky et al. (2013) xếp distributed practice (trải việc học theo thời gian) vào nhóm hiệu quả cao. Site dùng thư viện ts-fsrs để lập lịch."
+    caveat: "Lịch ôn chỉ tốt khi bạn tự chấm trung thực (Quên/Khó/Nhớ/Dễ)."
+    sourceIds: [dunlosky-2013, ts-fsrs]
+    features:
+      - { label: "Ôn tập (FSRS)", href: "/review/" }
+      - { label: "Hôm nay", href: "/" }
+  - id: pretesting
+    name: { vi: "Đoán trước khi học", en: "Pretesting" }
+    summary: "Mỗi bài mở đầu bằng 1–2 câu bạn trả lời khi chưa học. Câu đoán không tính điểm; cuối bài bạn gặp lại chúng."
+    evidence: "Pan & Sana (2021) so sánh pretesting với posttesting; các tổng quan về errorful generation cho thấy đoán trước có thể giúp học tốt hơn khi sau đó được học đáp án đúng."
+    caveat: "Lợi ích phụ thuộc việc sau đó được xem đáp án đúng; một số nghiên cứu thấy lợi ích chỉ giới hạn ở đúng nội dung được hỏi trước."
+    sourceIds: [pan-sana-2021]
+    features:
+      - { label: "Khởi động đầu mỗi bài", href: "/lessons/f0-money/" }
+      - { label: "Thống kê đoán trước → sau học", href: "/stats/" }
+  - id: interleaving
+    name: { vi: "Luyện tập xen kẽ", en: "Interleaving" }
+    summary: "Trộn câu hỏi từ nhiều khái niệm để bạn phải tự nhận ra dạng bài, thay vì làm liền một loại."
+    evidence: "Rohrer & Taylor (2007) cho thấy trộn bài tập toán nhiều dạng giúp kết quả kiểm tra sau một tuần tốt hơn làm theo khối. Dunlosky et al. (2013) xếp interleaved practice ở mức trung bình (moderate)."
+    caveat: "Cảm giác khó hơn khi luyện — đó là 'khó khăn có ích'; bằng chứng mạnh nhất ở các dạng bài dễ nhầm lẫn với nhau."
+    sourceIds: [rohrer-taylor-2007, dunlosky-2013]
+    features:
+      - { label: "Luyện tập xen kẽ", href: "/practice/" }
+  - id: worked-examples
+    name: { vi: "Ví dụ mẫu từng bước (mờ dần)", en: "Faded worked examples" }
+    summary: "Xem lời giải mẫu từng bước, trong đó một số bước bị 'làm mờ' để bạn tự tính — chuyển dần từ xem sang tự giải."
+    evidence: "Hiệu ứng worked example được dự đoán bởi lý thuyết tải nhận thức; nghiên cứu so sánh tutor chuẩn với tutor có faded worked examples (Schwonke et al.)."
+    caveat: "Hiệu quả giảm khi bạn đã thành thạo (expertise reversal) — lúc đó nên chuyển sang bài tập tự giải và luyện xen kẽ."
+    sourceIds: [schwonke-worked-example]
+    features:
+      - { label: "Ví dụ trong bài lãi kép", href: "/lessons/f0-interest-compounding/" }
+  - id: dual-coding
+    name: { vi: "Lời + hình", en: "Multimedia / dual coding" }
+    summary: "Mỗi quy trình quan trọng có sơ đồ phát từng bước bên cạnh lời giải thích, và luôn có bản văn bản thay thế."
+    evidence: "Cambridge Handbook of Multimedia Learning (Mayer, ed.) tổng hợp giả thuyết: người học hiểu sâu hơn từ lời kèm hình so với chỉ lời."
+    caveat: "Hình thừa hoặc lặp đúng nội dung lời có thể phản tác dụng (redundancy, expertise reversal)."
+    sourceIds: [mayer-multimedia]
+    features:
+      - { label: "Sơ đồ vòng đời lệnh", href: "/lessons/f1-microstructure/" }
+  - id: self-explanation
+    name: { vi: "Tự giải thích", en: "Self-explanation" }
+    summary: "Viết lại bằng lời của bạn rồi chấm theo rubric (và nhờ gia sư AI chấm thêm nếu bật)."
+    evidence: "Self-explanation là một trong mười kỹ thuật được tổng quan Dunlosky et al. (2013) đánh giá; các tóm tắt về worked examples nêu lời nhắc tự giải thích giúp xử lý sâu hơn."
+    caveat: "Mức xếp hạng cụ thể của kỹ thuật này trong tổng quan chưa được kiểm chứng trên site; tự chấm cần trung thực với rubric."
+    sourceIds: [dunlosky-2013, schwonke-worked-example]
+    features:
+      - { label: "Tự giải thích cuối bài", href: "/lessons/f0-time-value/" }
+      - { label: "Hôm nay", href: "/" }
+  - id: scenario-practice
+    name: { vi: "Tình huống nhập vai", en: "Scenario-based practice" }
+    summary: "Ra quyết định trong một tình huống kỹ thuật giả định, thấy hệ quả và phân tích — luyện phán đoán chứ không chỉ nhớ định nghĩa."
+    evidence: "Scoping review của Lavoie et al. (2024) về đào tạo bằng mô phỏng cho thấy nghiên cứu chủ yếu đo chuyển giao từ mô phỏng sang mô phỏng; bằng chứng chuyển giao ra thực tế còn ít."
+    caveat: "Vì bằng chứng chuyển giao ra thực tế còn mỏng, site dùng tình huống như bài luyện phán đoán kèm đối chiếu sự cố thật (case study có nguồn), không coi là thay thế kinh nghiệm thực tế."
+    sourceIds: [lavoie-2024]
+    features:
+      - { label: "Tình huống", href: "/scenarios/" }

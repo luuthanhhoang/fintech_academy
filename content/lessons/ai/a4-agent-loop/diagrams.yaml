@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-agent-loop
+    kind: sequence
+    title: "Một vòng agent: model quyết định, harness thực thi"
+    caption: "Model chỉ đề xuất lời gọi công cụ; harness kiểm tra quyền, thực thi, đưa kết quả trở lại context và quyết định khi nào dừng."
+    actors:
+      - { id: user, label: "Người dùng" }
+      - { id: harness, label: "Harness" }
+      - { id: model, label: "Model" }
+      - { id: tool, label: "Công cụ / MCP server" }
+    steps:
+      - { from: user, to: harness, label: "Giao tác vụ" }
+      - { from: harness, to: model, label: "Context + danh sách công cụ" }
+      - { from: model, to: harness, label: "tool_use: search(...)" }
+      - { from: harness, to: harness, label: "Validate + kiểm tra quyền" }
+      - { from: harness, to: tool, label: "Thực thi" }
+      - { from: tool, to: harness, label: "Kết quả (gọn)" }
+      - { from: harness, to: model, label: "tool_result" }
+      - { from: model, to: harness, label: "Trả lời cuối" }
+      - { from: harness, to: user, label: "Kết quả + trace" }

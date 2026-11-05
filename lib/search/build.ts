@@ -33,6 +33,17 @@ export function buildSearchDocs(b: ContentBundle): SearchDoc[] {
       })
     }
   }
+  for (const l of b.lessons) {
+    for (const ex of l.examples) {
+      docs.push({ id: `example:${ex.id}`, kind: 'example', title: ex.title, titleEn: l.title.vi, text: stripMath([ex.problem, ...ex.steps.map((s) => s.text), ex.takeaway].join(' ')), tags: '', href: `/lessons/${l.id}/` })
+    }
+  }
+  for (const s of b.scenarios) {
+    docs.push({ id: `scenario:${s.id}`, kind: 'scenario', title: s.title.vi, titleEn: s.title.en, text: `${s.summary} ${s.role}`, tags: '', href: `/scenarios/${s.id}/` })
+  }
+  for (const m of b.config.methods.methods) {
+    docs.push({ id: `method:${m.id}`, kind: 'method', title: m.name.vi, titleEn: m.name.en, text: `${m.summary} ${m.evidence}`, tags: '', href: `/method/#${m.id}` })
+  }
   for (const c of b.concepts) {
     docs.push({ id: `concept:${c.id}`, kind: 'concept', title: c.name.vi, titleEn: c.name.en, text: c.short, tags: c.tags.join(' '), href: `/concepts/${c.id}/` })
   }

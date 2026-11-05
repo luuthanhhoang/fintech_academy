@@ -1,0 +1,25 @@
+diagrams:
+  - id: dg-transmission
+    kind: flow
+    title: "Cơ chế truyền dẫn chính sách tiền tệ (kênh lãi suất)"
+    caption: "Mỗi mũi tên có độ trễ; kỳ vọng và uy tín của ngân hàng trung ương có thể rút ngắn hoặc kéo dài chuỗi này. Sơ đồ khái niệm, không phải mô hình định lượng."
+    direction: TB
+    nodes:
+      - { id: policy, label: "Lãi suất chính sách / thanh khoản", tone: accent }
+      - { id: interbank, label: "Lãi suất liên ngân hàng" }
+      - { id: bank, label: "Lãi suất cho vay & tiền gửi" }
+      - { id: assets, label: "Giá tài sản, tỷ giá" }
+      - { id: spend, label: "Vay, chi tiêu, đầu tư" }
+      - { id: demand, label: "Tổng cầu" }
+      - { id: inflation, label: "Lạm phát", tone: good }
+      - { id: expect, label: "Kỳ vọng lạm phát", tone: warn }
+    edges:
+      - { from: policy, to: interbank }
+      - { from: interbank, to: bank }
+      - { from: interbank, to: assets }
+      - { from: bank, to: spend }
+      - { from: assets, to: spend }
+      - { from: spend, to: demand }
+      - { from: demand, to: inflation }
+      - { from: policy, to: expect, label: "thông báo" }
+      - { from: expect, to: inflation }

@@ -21,6 +21,13 @@ devMapping:
   - finance: "Bù trừ ròng (netting)"
     dev: "Gộp nhiều write thành một (write coalescing)"
     explanation: "Thay vì thanh toán từng giao dịch, cộng gộp nghĩa vụ ròng của mỗi thành viên — giảm mạnh số lần chuyển tiền/chứng khoán."
+pretest: [q-cs-dvp]
+applications:
+  - id: app-netting
+    title: "Bù trừ ròng cuối ngày"
+    context: "Hệ thống thanh toán nội bộ chuyển tiền từng giao dịch, tốn phí và dễ lỗi."
+    task: "Viết hàm tính nghĩa vụ ròng đa phương từ danh sách giao dịch, kiểm tra tổng ròng bằng 0, và mô phỏng DvP (chỉ ghi nhận khi cả hai chân thành công)."
+    deliverable: "Hàm netting + test bảo toàn + mô phỏng DvP."
 sources: [bis-pfmi-summary, sec-t1-2023]
 facts:
   - id: pfmi-count
@@ -58,6 +65,8 @@ Khớp lệnh chỉ tạo ra **nghĩa vụ**: người mua nợ tiền, người
 ## Đối tác bù trừ trung tâm và bù trừ ròng
 
 CCP thế chỗ (novation) để trở thành người mua của mọi người bán và người bán của mọi người mua. Lợi ích: thành viên chỉ đối mặt rủi ro với CCP, và nghĩa vụ được **bù trừ ròng** — nếu bạn mua 1.000 và bán 800 cùng một mã trong ngày, bạn chỉ cần nhận ròng 200.
+
+<Diagram id="dg-ccp-dvp" />
 
 ## DvP — giao đi khi tiền về
 

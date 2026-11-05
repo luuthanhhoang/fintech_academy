@@ -38,7 +38,7 @@ export function PageTitle({ eyebrow, title, en, lead }: { eyebrow?: string; titl
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h1 className="mt-1 font-serif text-3xl font-semibold leading-tight sm:text-4xl">
         {title}
-        {en && <span className="ml-2 align-middle font-sans text-base font-normal text-ink-3">({en})</span>}
+        {en && <span className="mt-1 block font-sans text-base font-normal text-ink-3">{en}</span>}
       </h1>
       {lead && <div className="mt-3 max-w-2xl text-ink-2">{lead}</div>}
     </header>

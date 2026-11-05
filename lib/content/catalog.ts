@@ -4,7 +4,7 @@
  */
 import type { ContentBundle, Lesson } from './types'
 
-export type CatalogLesson = Omit<Lesson, 'body' | 'devMapping' | 'facts' | 'sources'>
+export type CatalogLesson = Omit<Lesson, 'body' | 'devMapping' | 'facts' | 'sources' | 'scenarios' | 'applications' | 'examples' | 'diagrams'>
 
 export interface Catalog {
   config: ContentBundle['config']
@@ -15,6 +15,7 @@ export interface Catalog {
   simulators: Pick<ContentBundle['simulators'][number], 'id' | 'title' | 'summary' | 'concepts' | 'dataKind'>[]
   labs: Pick<ContentBundle['labs'][number], 'id' | 'title' | 'summary' | 'concepts'>[]
   cases: Pick<ContentBundle['cases'][number], 'id' | 'title' | 'period' | 'summary' | 'concepts' | 'questions'>[]
+  scenarios: Pick<ContentBundle['scenarios'][number], 'id' | 'title' | 'role' | 'summary' | 'concepts'>[]
 }
 
 export function buildCatalog(b: ContentBundle): Catalog {
@@ -26,10 +27,12 @@ export function buildCatalog(b: ContentBundle): Catalog {
       id: l.id, track: l.track, stage: l.stage, order: l.order, title: l.title, summary: l.summary, concepts: l.concepts,
       estMinutes: l.estMinutes, whyQuestion: l.whyQuestion, simulators: l.simulators, labs: l.labs, cases: l.cases,
       lastVerified: l.lastVerified, status: l.status, selfExplain: l.selfExplain, quiz: l.quiz, exercises: l.exercises,
+      pretest: l.pretest,
     })),
     planned: b.planned,
     simulators: b.simulators.map(({ id, title, summary, concepts, dataKind }) => ({ id, title, summary, concepts, dataKind })),
     labs: b.labs.map(({ id, title, summary, concepts }) => ({ id, title, summary, concepts })),
+    scenarios: b.scenarios.map(({ id, title, role, summary, concepts }) => ({ id, title, role, summary, concepts })),
     cases: b.cases.map(({ id, title, period, summary, concepts, questions }) => ({ id, title, period, summary, concepts, questions })),
   }
 }

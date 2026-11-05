@@ -1,0 +1,21 @@
+examples:
+  - id: we-real-return
+    title: "Lãi 7% khi lạm phát 4,5%"
+    conceptId: real-return
+    problem: "Khoản đầu tư 50 triệu có lợi suất danh nghĩa 7%/năm, lạm phát giả định 4,5%/năm, trong 10 năm. Bạn giàu thêm bao nhiêu theo sức mua?"
+    steps:
+      - text: "Lợi suất thực chính xác: $r = 1{,}07/1{,}045 - 1 \\approx 2{,}392\\%$ (xấp xỉ $7 - 4{,}5 = 2{,}5\\%$)."
+        faded: true
+        prompt: "Tính lợi suất thực chính xác (%, 3 chữ số thập phân)"
+        answer: 2.392
+        tolerance: { kind: abs, value: 0.002 }
+        unit: "%"
+      - text: "Giá trị danh nghĩa sau 10 năm: $50 \\times 1{,}07^{10} \\approx 98{,}36$ triệu."
+      - text: "Mức giá tăng $1{,}045^{10} \\approx 1{,}553$ lần."
+      - text: "Theo sức mua năm 0: $50 \\times (1{,}07/1{,}045)^{10} \\approx 63{,}34$ triệu."
+        faded: true
+        prompt: "Giá trị theo sức mua năm 0 (triệu, 2 chữ số thập phân)"
+        answer: 63.34
+        tolerance: { kind: abs, value: 0.05 }
+        unit: triệu
+    takeaway: "Số dư gần gấp đôi trên giấy nhưng sức mua chỉ tăng khoảng 27%. Luôn hỏi: con số này là danh nghĩa hay thực?"

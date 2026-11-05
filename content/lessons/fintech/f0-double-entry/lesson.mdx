@@ -19,6 +19,13 @@ devMapping:
     dev: "Checksum toàn hệ thống"
     explanation: "Tổng Nợ phải bằng tổng Có trên toàn sổ — một phép kiểm tra rẻ phát hiện sai lệch, giống so checksum sau khi replicate dữ liệu."
 labs: [ledger-double-entry]
+pretest: [q-de-normal-side]
+applications:
+  - id: app-ledger-schema
+    title: "Thiết kế schema sổ cái cho ví nội bộ"
+    context: "Startup muốn thêm ví điểm thưởng; hiện cập nhật số dư trực tiếp trên bảng users."
+    task: "Thiết kế bảng accounts, journal_entries, entry_lines với ràng buộc tổng Nợ = tổng Có trong mỗi transaction; số dư là view tổng hợp."
+    deliverable: "Sơ đồ ERD + migration + một test kiểm tra invariant."
 sources: [openstax-accounting]
 lastVerified: 2026-11-05
 status: verified
@@ -60,6 +67,8 @@ Kế toán kép ghi mỗi nghiệp vụ ít nhất vào hai tài khoản, với 
 Sau ba nghiệp vụ: Tài sản = Tiền 1.150 + Hàng 0 = 1.150. Vốn chủ = 1.000 + (450 − 300) = 1.150. Phương trình cân.
 
 <Quiz id="q-de-entry" />
+
+<Diagram id="dg-ledger-pipeline" />
 
 ## Ba báo cáo tài chính
 

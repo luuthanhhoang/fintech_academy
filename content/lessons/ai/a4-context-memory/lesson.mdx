@@ -21,6 +21,13 @@ devMapping:
   - finance: "Sub-agent"
     dev: "Worker process với bộ nhớ riêng, trả về kết quả tóm tắt"
     explanation: "Giao việc tìm kiếm/đọc nhiều cho worker có context sạch; chỉ kết quả cô đọng quay về agent chính."
+pretest: [q-ctx-all]
+applications:
+  - id: app-notes-file
+    title: "File ghi chú bền vững cho agent làm việc dài"
+    context: "Agent mất mạch khi phiên dài hoặc khởi động lại."
+    task: "Định nghĩa định dạng NOTES.md (mục tiêu, quyết định, việc tiếp theo) và quy tắc cập nhật; thử compaction thủ công và so sánh chất lượng."
+    deliverable: "Template + quy tắc + ghi chép thí nghiệm."
 sources: [anthropic-context-engineering, agent-skills-spec]
 lastVerified: 2026-11-05
 status: verified
@@ -51,6 +58,8 @@ Câu hỏi mở đầu có lời giải: thêm thông tin không liên quan làm
 <Callout kind="note">
 Các kỹ thuật phù hợp với các loại việc khác nhau: compaction cho hội thoại dài liên tục, ghi chú cho dự án lặp nhiều bước, sub-agent cho nghiên cứu song song. Agent Skills với progressive disclosure là cùng tinh thần: chỉ nạp chỉ dẫn chi tiết khi tác vụ thực sự cần.
 </Callout>
+
+<Diagram id="dg-context-lifecycle" />
 
 ## Bộ nhớ: trong và ngoài context
 

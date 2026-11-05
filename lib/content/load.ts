@@ -12,6 +12,7 @@ import {
 } from './schema/config'
 import { ExerciseFileSchema } from './schema/exercise'
 import { LabMetaSchema } from './schema/lab'
+import { DiagramFileSchema, ExampleFileSchema, MethodsConfigSchema, PracticeConfigSchema, ScenarioSchema } from './schema/learning'
 import { LessonFrontmatterSchema, PlannedFileSchema } from './schema/lesson'
 import { QuizFileSchema } from './schema/quiz'
 import { SimulatorSchema } from './schema/simulator'
@@ -76,7 +77,10 @@ function loadLesson(dir: string, root: string): Lesson {
   const exFile = join(dir, 'exercises.yaml')
   const quiz = existsSync(quizFile) ? yamlFile(QuizFileSchema, quizFile, root).items : []
   const exercises = existsSync(exFile) ? yamlFile(ExerciseFileSchema, exFile, root).exercises : []
-  return { ...meta, body, quiz, exercises }
+  const optional = <T>(name: string, read: (f: string) => T[]): T[] => (existsSync(join(dir, name)) ? read(join(dir, name)) : [])
+  const examples = optional('examples.yaml', (f) => yamlFile(ExampleFileSchema, f, root).examples)
+  const diagrams = optional('diagrams.yaml', (f) => yamlFile(DiagramFileSchema, f, root).diagrams)
+  return { ...meta, body, quiz, exercises, examples, diagrams }
 }
 
 function loadConfig(dir: string, root: string): ContentBundle['config'] {
@@ -89,6 +93,8 @@ function loadConfig(dir: string, root: string): ContentBundle['config'] {
     today: yamlFile(TodayConfigSchema, at('today.yaml'), root),
     search: yamlFile(SearchConfigSchema, at('search.yaml'), root),
     tutor: yamlFile(TutorConfigSchema, at('tutor.yaml'), root),
+    practice: yamlFile(PracticeConfigSchema, at('practice.yaml'), root),
+    methods: yamlFile(MethodsConfigSchema, at('methods.yaml'), root),
   }
 }
 
@@ -117,8 +123,9 @@ export function loadContent(root: string = process.cwd(), contentDir = 'content'
     solution: readText(join(dir, 'solution.py')),
   }))
   const cases = listFiles(join(base, 'cases'), '.yaml').map((f) => yamlFile(CaseSchema, f, root))
+  const scenarios = listFiles(join(base, 'scenarios'), '.yaml').map((f) => yamlFile(ScenarioSchema, f, root))
   const sources = listFiles(join(base, 'sources'), '.yaml').flatMap(
     (f) => yamlFile(SourceFileSchema, f, root).sources,
   )
-  return { config: loadConfig(join(base, 'config'), root), tracks, concepts, lessons, planned, simulators, labs, cases, sources }
+  return { config: loadConfig(join(base, 'config'), root), tracks, concepts, lessons, planned, simulators, labs, cases, scenarios, sources }
 }

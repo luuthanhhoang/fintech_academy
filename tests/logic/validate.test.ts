@@ -47,3 +47,32 @@ describe('content validation', () => {
     expect(m.some((x) => x.includes('không bài nào tham chiếu'))).toBe(true)
   })
 })
+
+describe('learning-block validation', () => {
+  it('fails on pretest id not in quiz', () => {
+    const b = clone()
+    b.lessons[0]!.pretest = ['nope']
+    expect(messages(b).some((m) => m.includes('pretest "nope"'))).toBe(true)
+  })
+  it('fails on unreachable scenario node, dangling choice and cycles', () => {
+    const b = clone()
+    const s = b.scenarios[0]!
+    s.nodes.push({ id: 'island', text: 'x', ending: { verdict: 'good', debrief: 'd' } })
+    s.nodes[0]!.choices![0]!.next = 'ghost'
+    const m = messages(b)
+    expect(m.some((x) => x.includes('không thể tới được'))).toBe(true)
+    expect(m.some((x) => x.includes('"ghost" không tồn tại'))).toBe(true)
+  })
+  it('fails when a faded step lacks an answer or a diagram edge is dangling', () => {
+    const b = clone()
+    const l = b.lessons.find((x) => x.examples.length > 0)!
+    const st = l.examples[0]!.steps.find((s) => s.faded)!
+    delete st.answer
+    const dl = b.lessons.find((x) => x.diagrams.some((d) => d.kind === 'flow'))!
+    const fd = dl.diagrams.find((d) => d.kind === 'flow')!
+    if (fd.kind === 'flow') fd.edges.push({ from: 'nowhere', to: 'nada' })
+    const m = messages(b)
+    expect(m.some((x) => x.includes('faded cần'))).toBe(true)
+    expect(m.some((x) => x.includes('node không tồn tại'))).toBe(true)
+  })
+})

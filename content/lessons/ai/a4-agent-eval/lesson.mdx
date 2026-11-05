@@ -18,6 +18,13 @@ devMapping:
   - finance: "pass@k và độ tin cậy"
     dev: "Flakiness rate"
     explanation: "Một lần pass chưa nói gì về độ ổn định; chạy nhiều lần để đo tỷ lệ thành công — như đo test flaky."
+pretest: [q-eval-graders]
+applications:
+  - id: app-eval-suite
+    title: "Bộ eval nhỏ cho agent của bạn"
+    context: "Mỗi lần đổi prompt/model bạn không biết tốt lên hay tệ đi."
+    task: "Thu 10–20 tác vụ thật có tiêu chí kiểm tra tự động, chạy mỗi tác vụ nhiều lần, báo cáo tỷ lệ thành công theo tác vụ và đọc transcript các tác vụ đổi trạng thái."
+    deliverable: "Script eval + báo cáo theo tác vụ."
 sources: [swe-bench-2023, anthropic-agent-evals, anthropic-building-agents]
 lastVerified: 2026-11-05
 status: verified

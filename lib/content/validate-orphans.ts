@@ -15,6 +15,8 @@ export function validateOrphans(b: ContentBundle, push: (where: string, message:
   const sourceUse = new Set([
     ...b.lessons.flatMap((l) => l.sources),
     ...b.cases.flatMap((c) => [...c.timeline.flatMap((e) => e.sourceIds), ...c.rootCauses.flatMap((r) => r.sourceIds)]),
+    ...b.scenarios.flatMap((s) => s.sourceIds),
+    ...b.config.methods.methods.flatMap((m) => m.sourceIds),
   ])
   for (const s of b.sources) if (!sourceUse.has(s.id)) push(`source:${s.id}`, 'nguồn không được dùng ở đâu')
 

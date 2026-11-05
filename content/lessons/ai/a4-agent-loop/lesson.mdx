@@ -18,6 +18,13 @@ devMapping:
   - finance: "Workflow vs agent"
     dev: "Pipeline cố định vs planner động"
     explanation: "Workflow là DAG do code định sẵn (dễ dự đoán); agent để mô hình tự chọn đường đi (linh hoạt, khó kiểm soát hơn)."
+pretest: [q-workflow-vs-agent]
+applications:
+  - id: app-mini-agent
+    title: "Agent loop tối thiểu cho tác vụ nội bộ"
+    context: "Đội của bạn muốn tự động hoá một việc lặp lại có nhiều bước."
+    task: "Trước tiên thử viết workflow cố định; chỉ khi các bước phụ thuộc kết quả trung gian mới chuyển sang agent loop có giới hạn vòng, xử lý lỗi công cụ và log từng bước."
+    deliverable: "Bản so sánh workflow vs agent + prototype có trace."
 sources: [anthropic-building-agents, react-2022, claude-agent-sdk-docs, mcp-spec]
 lastVerified: 2026-11-05
 status: verified
@@ -34,7 +41,7 @@ selfExplain:
 
 Một lần gọi LLM: đưa vào messages, nhận lại văn bản. Một **agent** lặp lại:
 
-1. Mô hình đọc context và quyết định: trả lời, hay gọi công cụ nào với tham số gì.
+1. Mô hình đọc <Term id="context-window">context</Term> và quyết định: trả lời, hay gọi công cụ nào với tham số gì.
 2. Harness thực thi công cụ (đọc file, chạy lệnh, gọi API…).
 3. Kết quả được thêm vào context.
 4. Quay lại bước 1 cho tới khi mô hình kết luận đã xong (hoặc harness dừng nó).
@@ -42,6 +49,8 @@ Một lần gọi LLM: đưa vào messages, nhận lại văn bản. Một **age
 Bài báo **ReAct** (Yao và cộng sự, ICLR 2023) cho thấy việc xen kẽ **suy luận** và **hành động** (ví dụ tra Wikipedia) giúp mô hình điều chỉnh kế hoạch trong lúc làm, tốt hơn chỉ hành động hoặc chỉ suy luận trên một số tác vụ được thử nghiệm.
 
 <Quiz id="q-loop-order" />
+
+<Diagram id="dg-agent-loop" />
 
 ## Workflow hay agent?
 

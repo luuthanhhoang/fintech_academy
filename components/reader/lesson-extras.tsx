@@ -1,5 +1,6 @@
 import type { Lesson } from '@/lib/content/types'
 import { simulatorHref } from '@/lib/util/href'
+import { WhyLink } from '@/components/learn/why-link'
 import { QuizItemCard } from '@/components/quiz/quiz-item'
 import { ExerciseCard } from './exercise-card'
 import { MdxContent } from './mdx-content'
@@ -27,6 +28,7 @@ export async function LessonExtras({ lesson }: { lesson: Lesson }) {
           <h2 id="quiz" className="font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
             Kiểm tra nhanh (Quiz)
           </h2>
+          <WhyLink method="retrieval-practice" />
           <div className="mt-4 space-y-4">
             {remaining.map((q, i) => (
               <QuizItemCard key={q.id} item={q} lessonId={lesson.id} context="lesson" index={i} />
@@ -50,6 +52,7 @@ export async function LessonExtras({ lesson }: { lesson: Lesson }) {
         <h2 id="tu-giai-thich" className="mb-3 font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
           Tự giải thích lại
         </h2>
+        <div className="-mt-2 mb-3 font-sans"><WhyLink method="self-explanation" /></div>
         <SelfExplainSection targetId={lesson.id} conceptIds={lesson.concepts} prompt={lesson.selfExplain.prompt} rubric={lesson.selfExplain.rubric} />
       </section>
     </>

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { ApplicationSchema } from './learning'
 import { IdSchema, IsoDateSchema, LocalizedSchema, RubricItemSchema, VerificationStatusSchema } from './common'
 
 export const DevMappingSchema = z.strictObject({
@@ -33,6 +34,10 @@ export const LessonFrontmatterSchema = z.strictObject({
   simulators: z.array(IdSchema).default([]),
   labs: z.array(IdSchema).default([]),
   cases: z.array(IdSchema).default([]),
+  scenarios: z.array(IdSchema).default([]),
+  /** Quiz ids asked before reading (pretesting). Not counted toward mastery. */
+  pretest: z.array(IdSchema).min(1),
+  applications: z.array(ApplicationSchema).min(1),
   sources: z.array(IdSchema).default([]),
   facts: z.array(FactSchema).default([]),
   lastVerified: IsoDateSchema,

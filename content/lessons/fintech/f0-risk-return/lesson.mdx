@@ -18,6 +18,13 @@ devMapping:
   - finance: "Tỷ lệ Sharpe"
     dev: "Hiệu suất trên mỗi đơn vị chi phí (throughput per dollar)"
     explanation: "Sharpe = phần lợi suất vượt lãi suất phi rủi ro chia cho rủi ro — 'bao nhiêu phần thưởng cho mỗi đơn vị biến động'."
+pretest: [q-risk-premium]
+applications:
+  - id: app-risk-metrics
+    title: "Thư viện chỉ số rủi ro nhỏ"
+    context: "Nhóm của bạn cần tính trung bình, độ lệch chuẩn, Sharpe từ chuỗi lợi suất."
+    task: "Cài các hàm thống kê với phương sai mẫu (n−1), xử lý dữ liệu rỗng/ít điểm, và test bằng ví dụ tính tay."
+    deliverable: "Module + test + README nêu rõ giả định."
 sources: [openstax-finance]
 lastVerified: 2026-11-05
 status: verified
@@ -48,6 +55,8 @@ E[R] = 0{,}3 \cdot 20\% + 0{,}5 \cdot 8\% + 0{,}2 \cdot (-10\%) = 8\%
 $$
 
 <Quiz id="q-ev-calc" />
+
+<WorkedExample id="we-ev-sharpe" />
 
 ## Đánh đổi rủi ro – lợi suất
 

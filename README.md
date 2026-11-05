@@ -36,7 +36,11 @@ Yêu cầu Node ≥ 22.
 | Case study | `content/cases/<id>.yaml` — mỗi sự kiện timeline phải có `sourceIds` và `status` |
 | Cấu hình | `content/config/*.yaml`: nav, phím tắt, ngưỡng thành thạo, FSRS, khối "Hôm nay", tìm kiếm, gia sư AI |
 
-Thành phần MDX được phép: `Simulator`, `Lab`, `Case`, `Quiz`, `Fact`, `Callout`, `Sidenote`, `Figure`.
+Thành phần MDX được phép: `Simulator`, `Lab`, `Case`, `Quiz`, `Fact`, `Callout`, `Sidenote`, `Figure`,
+`WorkedExample` (`examples.yaml` trong thư mục bài), `Diagram` (`diagrams.yaml`), `Scenario` (`content/scenarios/*.yaml`), `Term` (khái niệm có sẵn).
+
+Mỗi bài bắt buộc có `pretest` (id quiz để đoán trước khi đọc, không tính điểm) và `applications` (bài tập áp dụng vào công việc dev).
+Phương pháp học và bằng chứng nằm ở `content/config/methods.yaml`; luyện tập xen kẽ cấu hình ở `content/config/practice.yaml`.
 
 ## Kiến trúc
 

@@ -1,0 +1,19 @@
+examples:
+  - id: we-walk-the-book
+    title: "Lệnh thị trường 'đi bộ' qua sổ lệnh"
+    conceptId: liquidity-spread
+    problem: "Sổ bán (giả định): 200 cp @ 10,0; 200 cp @ 10,1; 300 cp @ 10,2. Bạn gửi lệnh mua thị trường 500 cp. Giá khớp bình quân và trượt giá?"
+    steps:
+      - text: "Khớp lần lượt theo giá tốt nhất: 200 @ 10,0; 200 @ 10,1; 100 @ 10,2 (còn lại 200 @ 10,2 trong sổ)."
+      - text: "Giá bình quân $= (2000 + 2020 + 1020)/500 = 10{,}08$."
+        faded: true
+        prompt: "Giá khớp bình quân"
+        answer: 10.08
+        tolerance: { kind: abs, value: 0.001 }
+      - text: "Trượt giá so với ask tốt nhất: $(10{,}08 - 10{,}0)/10{,}0 = 0{,}8\\%$."
+        faded: true
+        prompt: "Trượt giá (%)"
+        answer: 0.8
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "%"
+    takeaway: "Chi phí thật của lệnh lớn nằm ở độ sâu sổ lệnh, không ở phí giao dịch. Chia nhỏ lệnh hoặc dùng lệnh giới hạn để kiểm soát."
