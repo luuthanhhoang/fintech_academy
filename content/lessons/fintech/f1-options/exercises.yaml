@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-opt-straddle
+    conceptId: options-payoff
+    prompt: "Long straddle: mua call và put cùng K = 100, phí lần lượt 5 và 4. Hai điểm hoà vốn là bao nhiêu? Kiểm tra bằng mô phỏng."
+    hint: "Tổng phí là 9."
+    solution: "Hoà vốn tại $100 - 9 = 91$ và $100 + 9 = 109$. Lỗ tối đa 9 khi giá đáo hạn đúng bằng 100."
+    simulator: { id: options, params: { strike1: 100, premium1: 5, premium2: 4 } }

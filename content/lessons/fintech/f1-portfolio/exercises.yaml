@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-pf-csv
+    conceptId: efficient-frontier
+    prompt: "Dán vào mô phỏng một CSV giá cuối tháng của 2–3 tài sản bạn tự thu thập (hoặc tự tạo). So sánh danh mục rủi ro thấp nhất với từng tài sản đơn lẻ."
+    hint: "Dòng đầu là tên tài sản; có thể có cột ngày. Cần ít nhất 4 dòng giá để có 3 kỳ lợi suất."
+    solution: "Danh mục rủi ro thấp nhất có σ nhỏ hơn (hoặc bằng) σ của từng tài sản khi tương quan < 1. Kết quả là thống kê của dữ liệu bạn đưa vào — không phải dự báo."
+    simulator: { id: portfolio, params: { periods: 120 } }

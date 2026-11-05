@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-bond-shock
+    conceptId: yield-duration
+    prompt: "Trong mô phỏng trái phiếu (mệnh giá 100.000, coupon 6%, 10 năm, trả 2 lần/năm), tăng YTM từ 7% lên 9%. Giá giảm bao nhiêu %? So với ước lượng chỉ dùng duration."
+    hint: "Đọc ô 'định giá lại' và so với −D_mod × 2%."
+    solution: "Giá giảm từ khoảng 92.894 xuống 80.488, tức khoảng −13,35% khi định giá lại. Ước lượng chỉ dùng duration (−D_mod × 2%) cho khoảng −14,6% — lớn hơn mức giảm thật vì bỏ qua convexity (đường giá cong nằm trên đường tiếp tuyến)."
+    simulator: { id: bond, params: { ytmPct: 9 } }

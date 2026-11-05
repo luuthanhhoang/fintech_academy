@@ -1,0 +1,68 @@
+---
+id: f0-risk-return
+track: fintech
+stage: f0
+order: 4
+title: { vi: "Rủi ro và lợi suất", en: "Risk and return" }
+summary: "Lợi suất kỳ vọng, độ lệch chuẩn và tỷ lệ Sharpe — ngôn ngữ xác suất để nói về đánh đổi giữa phần thưởng và sự bất định."
+concepts: [expected-value-variance, risk-return]
+estMinutes: 30
+whyQuestion: "Vì sao không ai chấp nhận rủi ro cao hơn nếu không được kỳ vọng trả công nhiều hơn?"
+devMapping:
+  - finance: "Lợi suất kỳ vọng"
+    dev: "Giá trị trung bình của một biến ngẫu nhiên (E[X])"
+    explanation: "Giống latency trung bình: hữu ích nhưng che mất phần đuôi. Không ai sống được bằng trung bình nếu đuôi xấu làm 'sập hệ thống'."
+  - finance: "Độ lệch chuẩn (volatility)"
+    dev: "Jitter / độ dao động của metric"
+    explanation: "Hai service cùng latency trung bình nhưng jitter khác nhau có trải nghiệm rất khác. Độ lệch chuẩn đo độ dao động quanh trung bình."
+  - finance: "Tỷ lệ Sharpe"
+    dev: "Hiệu suất trên mỗi đơn vị chi phí (throughput per dollar)"
+    explanation: "Sharpe = phần lợi suất vượt lãi suất phi rủi ro chia cho rủi ro — 'bao nhiêu phần thưởng cho mỗi đơn vị biến động'."
+sources: [openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích bằng ví dụ hai khoản đầu tư cùng lợi suất kỳ vọng nhưng khác rủi ro; bạn chọn khoản nào và vì sao?"
+  rubric:
+    - { id: same-mean, criterion: "Dựng được ví dụ cùng E[R] nhưng khác độ lệch chuẩn" }
+    - { id: aversion, criterion: "Giải thích ác cảm rủi ro (risk aversion)" }
+    - { id: sharpe, criterion: "Dùng Sharpe hoặc lập luận tương đương để so sánh" }
+---
+
+## Ngôn ngữ của sự bất định
+
+Lợi suất tương lai không biết trước, nên ta mô tả nó như một **biến ngẫu nhiên** $R$ với các kịch bản $i$ có xác suất $p_i$:
+
+$$
+E[R] = \sum_i p_i R_i
+\qquad
+\operatorname{Var}(R) = \sum_i p_i \big(R_i - E[R]\big)^2
+\qquad
+\sigma = \sqrt{\operatorname{Var}(R)}
+$$
+
+Ví dụ (số giả định): kịch bản tốt 30% xác suất lãi 20%, bình thường 50% lãi 8%, xấu 20% lỗ 10%.
+
+$$
+E[R] = 0{,}3 \cdot 20\% + 0{,}5 \cdot 8\% + 0{,}2 \cdot (-10\%) = 8\%
+$$
+
+<Quiz id="q-ev-calc" />
+
+## Đánh đổi rủi ro – lợi suất
+
+Người đầu tư nói chung **ác cảm rủi ro (risk averse)**: với cùng lợi suất kỳ vọng, họ thích khoản ít dao động hơn. Vì vậy tài sản rủi ro hơn phải mang lại **phần bù rủi ro (risk premium)** — lợi suất kỳ vọng cao hơn lãi suất phi rủi ro — mới có người nắm giữ.
+
+$$
+\text{Sharpe} = \frac{E[R] - R_f}{\sigma}
+$$
+
+<Callout kind="warning" title="Độ lệch chuẩn không phải toàn bộ rủi ro">
+σ coi dao động lên và xuống như nhau và ẩn các sự kiện đuôi hiếm nhưng tàn khốc. Các case LTCM và SVB cho thấy rủi ro đuôi, thanh khoản và đòn bẩy quan trọng thế nào — σ "bình thường" có thể rất nhỏ ngay trước khủng hoảng.
+</Callout>
+
+## Từ một tài sản tới danh mục
+
+Khi kết hợp nhiều tài sản, rủi ro danh mục **không** bằng trung bình rủi ro từng tài sản — nó phụ thuộc vào tương quan giữa chúng. Đó là chủ đề của bài đa dạng hoá ở Chặng 1.
+
+<Quiz id="q-sharpe-compare" />

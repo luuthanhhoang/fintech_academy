@@ -1,0 +1,12 @@
+id: matching-engine
+title: { vi: "Bộ máy khớp lệnh đơn giản", en: "Simple matching engine" }
+summary: Cài đặt sổ lệnh khớp theo ưu tiên giá rồi thời gian, hỗ trợ lệnh giới hạn, lệnh thị trường, khớp một phần và huỷ lệnh.
+concepts: [matching-engine, order-book]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện lớp OrderBook:
+  1. submit(order_id, side, qty, price=None): side là "buy"/"sell"; price=None nghĩa là lệnh thị trường. Trả về danh sách giao dịch dạng (taker_id, maker_id, price, qty).
+  2. Khớp với phía đối diện theo giá tốt nhất trước (mua: ask thấp nhất; bán: bid cao nhất), cùng giá thì lệnh đến trước khớp trước. Giá khớp là giá của lệnh đang nằm trong sổ (maker).
+  3. Lệnh giới hạn chỉ khớp khi giá chấp nhận được; phần còn lại nằm chờ trong sổ. Phần còn lại của lệnh thị trường bị huỷ.
+  4. cancel(order_id) trả về True nếu huỷ được. best_bid()/best_ask() trả về giá hoặc None.
+  5. Kiểm tra đầu vào: qty phải là int > 0, lệnh giới hạn cần price > 0 — sai thì raise ValueError.

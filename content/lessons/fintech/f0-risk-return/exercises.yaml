@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-ev-scenarios
+    conceptId: expected-value-variance
+    prompt: "Tính E[R] và σ cho ví dụ trong bài (30%: +20%, 50%: +8%, 20%: −10%)."
+    hint: "Tính E[R] trước, rồi trung bình có trọng số của bình phương độ lệch."
+    solution: "E[R] = 8%. Var = 0,3·12² + 0,5·0² + 0,2·18² = 43,2 + 0 + 64,8 = 108 (điểm %²), nên σ ≈ 10,39 điểm %."

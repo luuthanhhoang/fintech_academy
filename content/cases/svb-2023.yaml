@@ -1,0 +1,41 @@
+id: svb-2023
+title: { vi: "Silicon Valley Bank — rủi ro lãi suất gặp rút tiền ồ ạt", en: "Silicon Valley Bank: interest-rate risk meets a bank run" }
+period: "2023"
+summary: SVB bị cơ quan quản lý bang California đóng cửa ngày 10/3/2023 và FDIC được chỉ định làm bên tiếp nhận. Fed công bố rà soát về giám sát ngân hàng này ngày 28/4/2023.
+concepts: [yield-duration, bond-pricing, asset-liability-management, liquidity-risk]
+lastVerified: 2026-11-05
+status: verified
+timeline:
+  - date: "10/03/2023"
+    event: Sở Bảo vệ Tài chính và Đổi mới California (DFPI) tiếp quản Silicon Valley Bank và chỉ định FDIC làm bên tiếp nhận (receiver).
+    sourceIds: [dfpi-svb-2023]
+    status: verified
+  - date: "Trước 10/03/2023"
+    event: Khách hàng rút tiền với tốc độ rất nhanh trong thời gian ngắn trước khi ngân hàng bị đóng cửa.
+    sourceIds: [frb-svb-review-2023]
+    status: needs_verification
+  - date: "28/04/2023"
+    event: Fed công bố kết quả rà soát việc giám sát và quản lý SVB, do Phó Chủ tịch phụ trách giám sát Michael Barr chủ trì; kết luận đầu tiên là hội đồng quản trị và ban điều hành SVB đã không quản trị được rủi ro của mình.
+    sourceIds: [frb-svb-review-2023]
+    status: verified
+rootCauses:
+  - text: Hội đồng quản trị và ban điều hành SVB không quản trị được rủi ro của ngân hàng (kết luận của Fed).
+    sourceIds: [frb-svb-review-2023]
+  - text: "Cơ chế rủi ro lãi suất: khi lãi suất thị trường tăng, giá trái phiếu lãi suất cố định giảm; nếu phải bán trước hạn để đáp ứng rút tiền, khoản lỗ chưa thực hiện thành lỗ thực."
+    sourceIds: [sec-interest-rate-risk]
+questions:
+  - id: alm
+    prompt: Ngân hàng nhận tiền gửi rút được ngay nhưng đầu tư vào trái phiếu dài hạn. Hãy mô tả rủi ro bằng khái niệm duration, và bạn sẽ đặt chỉ số giám sát nào?
+    rubric:
+      - { id: "duration", criterion: "Dùng duration để ước lượng % mất giá danh mục khi lãi suất tăng" }
+      - { id: "mismatch", criterion: "Chỉ ra lệch kỳ hạn giữa nợ ngắn hạn và tài sản dài hạn" }
+      - { id: "metric", criterion: "Đề xuất chỉ số như độ nhạy giá trị kinh tế vốn chủ (EVE) theo kịch bản lãi suất" }
+  - id: run
+    prompt: Vì sao tiền gửi không được bảo hiểm và tập trung vào một nhóm khách hàng làm rủi ro rút tiền ồ ạt lớn hơn? Bạn sẽ theo dõi dữ liệu gì hằng ngày?
+    rubric:
+      - { id: "concentration", criterion: "Nêu rủi ro tập trung và hành vi bầy đàn của nhóm khách hàng liên kết" }
+      - { id: "monitoring", criterion: "Đề xuất theo dõi dòng tiền ra theo giờ/ngày, tỷ lệ tiền gửi không bảo hiểm, nguồn thanh khoản dự phòng" }
+controls:
+  - { control: "Giám sát độ nhạy lãi suất (duration gap, EVE)", devAnalogy: "SLO cảnh báo sớm theo xu hướng, không đợi sự cố" }
+  - { control: "Đệm thanh khoản & nguồn vay dự phòng đã thử nghiệm", devAnalogy: "Failover đã diễn tập thật chứ không chỉ trên giấy" }
+  - { control: "Leo thang cảnh báo của giám sát viên thành hành động bắt buộc", devAnalogy: "Ticket nghiêm trọng có SLA xử lý và người chịu trách nhiệm" }

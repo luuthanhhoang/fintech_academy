@@ -1,0 +1,52 @@
+items:
+  - id: q-injection
+    type: mcq
+    conceptId: harness-permissions-sandbox
+    prompt: "Agent tóm tắt một trang web; trang đó chứa chỉ dẫn ẩn yêu cầu gửi lịch sử chat ra một URL. Đây là gì?"
+    options:
+      - { id: a, text: "Prompt injection gián tiếp" }
+      - { id: b, text: "Hallucination" }
+      - { id: c, text: "Overfitting" }
+    correct: [a]
+    explanation: "Chỉ dẫn độc hại đến từ nội dung bên ngoài mà agent xử lý (OWASP LLM01, dạng gián tiếp)."
+  - id: q-perm-classify
+    type: mcq
+    conceptId: harness-permissions-sandbox
+    prompt: "Chọn TẤT CẢ hành động nên yêu cầu xác nhận của con người (hoặc bị chặn) theo mặc định."
+    options:
+      - { id: a, text: "Chuyển tiền tới tài khoản mới" }
+      - { id: b, text: "Xoá thư mục dự án" }
+      - { id: c, text: "Đọc một file trong thư mục làm việc" }
+      - { id: d, text: "Gửi dữ liệu tới một domain chưa được allowlist" }
+    correct: [a, b, d]
+    explanation: "Hành động không đảo ngược hoặc đưa dữ liệu ra ngoài cần xác nhận; đọc trong phạm vi được cấp có thể tự động."
+  - id: q-defense-order
+    type: ordering
+    conceptId: harness-permissions-sandbox
+    prompt: "Sắp xếp các lớp phòng thủ từ 'gần model nhất' tới 'xa model nhất' (lớp cuối cùng)."
+    items:
+      - { id: prompt, text: "Chỉ dẫn hệ thống về dữ liệu không tin cậy" }
+      - { id: policy, text: "Kiểm tra chính sách/hook tất định trước khi thực thi công cụ" }
+      - { id: human, text: "Xác nhận của con người cho hành động rủi ro" }
+      - { id: sandbox, text: "Sandbox + giới hạn mạng giới hạn thiệt hại nếu mọi lớp trên thất bại" }
+    explanation: "Defense in depth: lớp ngoài cùng phải đứng vững kể cả khi model bị thao túng."
+  - id: q-observe
+    type: mcq
+    conceptId: agent-observability
+    prompt: "Trace của một bước agent tối thiểu nên chứa gì?"
+    options:
+      - { id: a, text: "Công cụ được gọi, tham số, kết quả (hoặc tóm tắt), thời gian, token/chi phí, quyết định cho phép/từ chối" }
+      - { id: b, text: "Chỉ câu trả lời cuối cùng" }
+      - { id: c, text: "Không cần, model tự giải thích được" }
+    correct: [a]
+    explanation: "Không có trace từng bước thì không gỡ lỗi, không đánh giá, không kiểm toán được."
+  - id: q-harness-explain
+    type: explain
+    conceptId: agent-observability
+    prompt: "Agent của bạn thỉnh thoảng 'kẹt' lặp lại cùng một lời gọi công cụ. Bạn dùng dữ liệu giám sát nào để chẩn đoán và harness nên phản ứng thế nào?"
+    rubric:
+      - { id: trace, criterion: "Xem trace: chuỗi tool call, tham số giống nhau, kết quả/lỗi trả về" }
+      - { id: cause, criterion: "Giả thuyết: lỗi công cụ không actionable, kết quả không đổi, context thiếu thông tin" }
+      - { id: guard, criterion: "Harness phát hiện vòng lặp (cùng call N lần) và dừng/yêu cầu hướng khác" }
+    modelAnswer: "Đọc trace để thấy chuỗi lời gọi lặp lại và kết quả trả về; thường do lỗi không hướng dẫn cách sửa hoặc công cụ trả về cùng dữ liệu. Harness nên phát hiện lời gọi trùng lặp, chèn thông báo hoặc dừng sau N lần, đồng thời sửa thông báo lỗi của công cụ."
+    explanation: "Observability phục vụ cả gỡ lỗi lẫn cải thiện công cụ."

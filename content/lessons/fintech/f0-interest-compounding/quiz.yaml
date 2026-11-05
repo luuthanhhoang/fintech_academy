@@ -1,0 +1,56 @@
+items:
+  - id: q-simple-vs-compound
+    type: mcq
+    conceptId: compound-interest
+    prompt: Cùng gốc, cùng lãi suất dương, sau nhiều năm khoản nào lớn hơn?
+    options:
+      - { id: "a", text: "Lãi đơn" }
+      - { id: "b", text: "Lãi kép" }
+      - { id: "c", text: "Bằng nhau vì cùng lãi suất" }
+    correct: [b]
+    explanation: Lãi kép tính lãi trên cả phần lãi đã nhập gốc nên tăng theo cấp số nhân; lãi đơn tăng tuyến tính. Sau kỳ đầu tiên chúng bằng nhau, từ kỳ thứ hai lãi kép vượt lên.
+  - id: q-ear-monthly
+    type: numeric
+    conceptId: compound-interest
+    prompt: Lãi suất danh nghĩa 12%/năm, ghép lãi hằng tháng. EAR là bao nhiêu phần trăm? (làm tròn 2 chữ số thập phân)
+    answer: 12.68
+    tolerance: { kind: "abs", value: 0.02 }
+    unit: "%"
+    explanation: EAR = (1 + 0,12/12)^12 − 1 = 1,01^12 − 1 ≈ 0,126825 → 12,68%.
+  - id: q-fv-annual
+    type: numeric
+    conceptId: compound-interest
+    prompt: Gửi 1.000 (đơn vị tiền) với lãi kép 5%/năm, ghép mỗi năm một lần, trong 10 năm. Số dư cuối kỳ? (2 chữ số thập phân)
+    answer: 1628.89
+    tolerance: { kind: "abs", value: 0.01 }
+    explanation: FV = 1000 × 1,05^10 ≈ 1628,89.
+  - id: q-rate-definition
+    type: mcq
+    conceptId: interest-rate
+    prompt: Phát biểu nào mô tả đúng lãi suất?
+    options:
+      - { id: "a", text: "Phí cố định thu một lần khi vay" }
+      - { id: "b", text: "Giá của việc sử dụng tiền trong một khoảng thời gian, tính theo tỷ lệ trên một kỳ" }
+      - { id: "c", text: "Tỷ lệ lạm phát kỳ vọng" }
+    correct: [b]
+    explanation: Lãi suất là giá của tiền theo thời gian, luôn đi kèm một kỳ (năm, tháng…). Lạm phát là một thành phần ảnh hưởng tới lãi suất danh nghĩa nhưng không phải định nghĩa của nó.
+  - id: q-order-ear
+    type: ordering
+    conceptId: compound-interest
+    prompt: Cùng APR 10%, sắp xếp EAR từ thấp đến cao.
+    items:
+      - { id: "annual", text: "Ghép 1 lần/năm" }
+      - { id: "quarterly", text: "Ghép hằng quý" }
+      - { id: "monthly", text: "Ghép hằng tháng" }
+      - { id: "continuous", text: "Ghép liên tục" }
+    explanation: Với lãi suất dương, ghép càng dày thì EAR càng cao, tiến tới e^{0,1} − 1 ≈ 10,52% khi ghép liên tục.
+  - id: q-explain-apr
+    type: explain
+    conceptId: interest-rate
+    prompt: Một app cho vay quảng cáo "chỉ 1%/tháng". Giải thích vì sao bạn cần quy đổi sang EAR trước khi so sánh với khoản vay ngân hàng "12%/năm".
+    rubric:
+      - { id: "unit", criterion: "Chỉ ra hai con số khác kỳ (tháng vs năm) và cách ghép lãi" }
+      - { id: "calc", criterion: "Quy đổi được 1%/tháng ghép tháng thành EAR ≈ 12,68%" }
+      - { id: "compare", criterion: "Kết luận phải so sánh cùng đơn vị (EAR) và lưu ý các phí khác ngoài lãi" }
+    modelAnswer: 1%/tháng ghép hằng tháng tương đương EAR = 1,01^12 − 1 ≈ 12,68%/năm, cao hơn 12%/năm nếu khoản vay ngân hàng ghép năm. Muốn so sánh phải đưa cả hai về EAR, và cộng thêm các loại phí (nếu có) vào chi phí vay.
+    explanation: So sánh sản phẩm tài chính luôn cần cùng đơn vị thời gian và cùng cách ghép lãi.

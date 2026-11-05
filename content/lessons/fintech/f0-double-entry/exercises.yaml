@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-de-journal
+    conceptId: double-entry-accounting
+    prompt: "Ghi bút toán: (1) trả lương nhân viên 200 bằng tiền; (2) khách trả trước 300 cho dịch vụ tháng sau."
+    hint: "Khoản (2) chưa phải doanh thu — doanh nghiệp đang 'nợ' khách một dịch vụ."
+    solution: "(1) Nợ Chi phí lương 200 / Có Tiền 200. (2) Nợ Tiền 300 / Có Doanh thu chưa thực hiện (nợ phải trả) 300; sang tháng sau khi cung cấp dịch vụ mới chuyển sang Doanh thu."

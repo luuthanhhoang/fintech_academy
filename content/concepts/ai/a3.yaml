@@ -1,0 +1,9 @@
+track: ai
+stage: a3
+concepts:
+  - { id: "embeddings", name: { vi: "Embedding", en: "Embeddings" }, short: "Biểu diễn văn bản thành vector sao cho văn bản gần nghĩa có vector gần nhau.", prerequisites: [linear-algebra-ml], difficulty: 3, tags: [embedding, vector] }
+  - { id: "vector-search", name: { vi: "Tìm kiếm vector", en: "Vector search" }, short: "Tìm láng giềng gần nhất theo cosine/dot product, chỉ mục ANN.", prerequisites: [embeddings], difficulty: 3, tags: [ANN, cosine] }
+  - { id: "chunking", name: { vi: "Chia đoạn tài liệu", en: "Chunking" }, short: "Cắt tài liệu thành đoạn có nghĩa, kèm metadata để truy xuất và trích dẫn.", prerequisites: [context-window], difficulty: 2, tags: [chunk] }
+  - { id: "hybrid-retrieval", name: { vi: "Truy xuất lai", en: "Hybrid retrieval" }, short: "Kết hợp tìm kiếm từ khoá (BM25) và vector để tăng độ phủ.", prerequisites: [vector-search], difficulty: 3, tags: [BM25, hybrid] }
+  - { id: "reranking", name: { vi: "Xếp hạng lại", en: "Reranking" }, short: "Dùng mô hình chấm lại mức liên quan của ứng viên truy xuất.", prerequisites: [hybrid-retrieval], difficulty: 3, tags: [rerank] }
+  - { id: "rag-grounding", name: { vi: "Grounding và trích dẫn", en: "Grounding and citations" }, short: "Buộc câu trả lời dựa trên đoạn truy xuất, trích dẫn nguồn và từ chối khi thiếu căn cứ.", prerequisites: [chunking, hallucination, prompt-engineering], difficulty: 3, tags: [RAG, citation] }

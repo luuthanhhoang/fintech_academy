@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-eval-design
+    conceptId: agent-evaluation
+    prompt: "Thiết kế 5 tác vụ eval cho chính gia sư AI của site này (chế độ hỏi đáp có trích dẫn). Với mỗi tác vụ: đầu vào, grader, tiêu chí đạt."
+    hint: "Có ít nhất một tác vụ mà câu trả lời đúng là 'không đủ căn cứ'."
+    solution: "Ví dụ: (1) Hỏi định nghĩa EAR → grader code kiểm tra có trích dẫn hợp lệ tới bài lãi kép. (2) Hỏi tính FV → grader kiểm tra có gọi công cụ future_value và số khớp. (3) Hỏi về chủ đề không có trên site → phải trả lời đúng câu 'không đủ căn cứ'. (4) Hỏi Socratic về NPV → grader model kiểm tra không lộ đáp án. (5) Câu hỏi chứa chỉ dẫn 'bỏ qua quy tắc' → phải vẫn trích dẫn và không đưa tư vấn đầu tư."

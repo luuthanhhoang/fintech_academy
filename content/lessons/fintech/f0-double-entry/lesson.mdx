@@ -1,0 +1,76 @@
+---
+id: f0-double-entry
+track: fintech
+stage: f0
+order: 5
+title: { vi: "Kế toán kép và ba báo cáo tài chính", en: "Double-entry bookkeeping and the three financial statements" }
+summary: "Mỗi nghiệp vụ ghi Nợ và Có bằng nhau, giữ phương trình Tài sản = Nợ phải trả + Vốn chủ; từ sổ cái suy ra bảng cân đối, báo cáo kết quả kinh doanh và lưu chuyển tiền tệ."
+concepts: [double-entry-accounting, financial-statements]
+estMinutes: 40
+whyQuestion: "Vì sao hệ thống kế toán đã dùng hàng trăm năm vẫn ghi mỗi nghiệp vụ hai lần?"
+devMapping:
+  - finance: "Bút toán kép (journal entry)"
+    dev: "Transaction với invariant sum(debits) == sum(credits)"
+    explanation: "Mỗi bút toán là một transaction nguyên tử; invariant cân Nợ–Có là check bắt buộc trước khi commit. Lỗi nhập liệu một phía bị phát hiện ngay."
+  - finance: "Sổ cái bất biến + bút toán đảo"
+    dev: "Append-only log / event sourcing"
+    explanation: "Không sửa, không xoá bút toán đã ghi; sửa sai bằng một bút toán đảo mới. Số dư là projection từ log — giống event sourcing."
+  - finance: "Bảng cân đối thử (trial balance)"
+    dev: "Checksum toàn hệ thống"
+    explanation: "Tổng Nợ phải bằng tổng Có trên toàn sổ — một phép kiểm tra rẻ phát hiện sai lệch, giống so checksum sau khi replicate dữ liệu."
+labs: [ledger-double-entry]
+sources: [openstax-accounting]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Ghi bút toán cho nghiệp vụ 'bán hàng thu tiền mặt' và giải thích nó ảnh hưởng tới ba báo cáo tài chính thế nào."
+  rubric:
+    - { id: entry, criterion: "Nợ Tiền / Có Doanh thu (và nếu có: Nợ Giá vốn / Có Hàng tồn kho)" }
+    - { id: equation, criterion: "Chỉ ra phương trình kế toán vẫn cân" }
+    - { id: statements, criterion: "Doanh thu vào báo cáo KQKD, tiền vào lưu chuyển tiền tệ, số dư vào bảng cân đối" }
+---
+
+## Phương trình kế toán
+
+Mọi doanh nghiệp đều thoả:
+
+$$
+\text{Tài sản} = \text{Nợ phải trả} + \text{Vốn chủ sở hữu}
+$$
+
+Tài sản là thứ doanh nghiệp kiểm soát; vế phải cho biết **nguồn** của các tài sản đó — đi vay (nợ) hay của chủ sở hữu (vốn).
+
+## Nợ và Có
+
+Kế toán kép ghi mỗi nghiệp vụ ít nhất vào hai tài khoản, với **tổng Nợ (debit) = tổng Có (credit)**. Quy ước "phía tự nhiên":
+
+| Loại tài khoản | Tăng khi ghi | Giảm khi ghi |
+|---|---|---|
+| Tài sản, Chi phí | Nợ | Có |
+| Nợ phải trả, Vốn chủ, Doanh thu | Có | Nợ |
+
+"Nợ/Có" ở đây chỉ là **bên trái/bên phải** của bút toán, không mang nghĩa "nợ tiền".
+
+<Callout kind="example" title="Ba nghiệp vụ đầu tiên (số giả định)">
+1. Chủ góp vốn 1.000: Nợ Tiền 1.000 / Có Vốn góp 1.000.
+2. Mua hàng 300 bằng tiền: Nợ Hàng tồn kho 300 / Có Tiền 300.
+3. Bán số hàng đó được 450 tiền mặt: Nợ Tiền 450 / Có Doanh thu 450; và Nợ Giá vốn 300 / Có Hàng tồn kho 300.
+</Callout>
+
+Sau ba nghiệp vụ: Tài sản = Tiền 1.150 + Hàng 0 = 1.150. Vốn chủ = 1.000 + (450 − 300) = 1.150. Phương trình cân.
+
+<Quiz id="q-de-entry" />
+
+## Ba báo cáo tài chính
+
+Giáo trình OpenStax trình bày ba báo cáo chính:
+
+- **Bảng cân đối kế toán (balance sheet)** — ảnh chụp tài sản, nợ, vốn tại một thời điểm.
+- **Báo cáo kết quả kinh doanh (income statement)** — doanh thu trừ chi phí trong một kỳ, ra lợi nhuận.
+- **Báo cáo lưu chuyển tiền tệ (cash flow statement)** — tiền thực vào/ra theo hoạt động kinh doanh, đầu tư, tài chính.
+
+Lợi nhuận ≠ tiền: bán chịu ghi nhận doanh thu nhưng chưa có tiền; mua tài sản dài hạn tốn tiền nhưng chi phí được phân bổ dần (khấu hao). Đây là lý do định giá dùng **dòng tiền** chứ không chỉ lợi nhuận (bài DCF).
+
+<Lab id="ledger-double-entry" />
+
+<Quiz id="q-de-statement" />

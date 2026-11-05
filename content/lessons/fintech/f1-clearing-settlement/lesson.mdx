@@ -1,0 +1,72 @@
+---
+id: f1-clearing-settlement
+track: fintech
+stage: f1
+order: 4
+title: { vi: "Bù trừ và thanh toán sau giao dịch", en: "Clearing and settlement" }
+summary: "Điều gì xảy ra sau khi lệnh khớp: xác nhận, bù trừ, đối tác trung tâm (CCP), chuyển giao đồng thời chứng khoán và tiền (DvP), chu kỳ thanh toán T+n."
+concepts: [clearing-settlement]
+estMinutes: 30
+whyQuestion: "Lệnh của bạn đã khớp — vì sao cổ phiếu và tiền chưa 'thật sự' đổi chủ ngay lúc đó?"
+devMapping:
+  - finance: "Khớp lệnh vs thanh toán"
+    dev: "Ghi nhận trong bộ nhớ vs commit bền vững"
+    explanation: "Khớp lệnh tạo nghĩa vụ; thanh toán mới hoàn tất chuyển giao. Khoảng giữa là cửa sổ rủi ro — giống dữ liệu đã ack nhưng chưa durable."
+  - finance: "Chu kỳ T+n"
+    dev: "Eventual consistency với SLA hội tụ"
+    explanation: "Trạng thái sở hữu hội tụ sau n ngày làm việc; rút ngắn n giảm rủi ro nhưng đòi hệ thống xử lý nhanh và tự động hơn."
+  - finance: "DvP (delivery versus payment)"
+    dev: "Two-phase commit / atomic swap"
+    explanation: "Chứng khoán chỉ chuyển khi tiền chuyển và ngược lại — loại bỏ rủi ro một bên giao mà bên kia không trả."
+  - finance: "Bù trừ ròng (netting)"
+    dev: "Gộp nhiều write thành một (write coalescing)"
+    explanation: "Thay vì thanh toán từng giao dịch, cộng gộp nghĩa vụ ròng của mỗi thành viên — giảm mạnh số lần chuyển tiền/chứng khoán."
+sources: [bis-pfmi-summary, sec-t1-2023]
+facts:
+  - id: pfmi-count
+    text: "Bộ Nguyên tắc cho hạ tầng thị trường tài chính (PFMI, 2012) gồm"
+    value: "24 nguyên tắc"
+    sourceId: bis-pfmi-summary
+    asOf: 2026-11-05
+    status: verified
+  - id: us-t1
+    text: "Tại Mỹ, SEC rút ngắn chu kỳ thanh toán chuẩn của đa số giao dịch qua môi giới từ T+2 xuống T+1, ngày tuân thủ"
+    value: "28/05/2024"
+    sourceId: sec-t1-2023
+    asOf: 2026-11-05
+    status: verified
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích vai trò của đối tác bù trừ trung tâm (CCP) và DvP trong việc giảm rủi ro sau giao dịch."
+  rubric:
+    - { id: ccp, criterion: "CCP đứng giữa làm người mua của mọi người bán và người bán của mọi người mua" }
+    - { id: netting, criterion: "Bù trừ ròng giảm khối lượng phải thanh toán" }
+    - { id: dvp, criterion: "DvP loại bỏ rủi ro gốc (principal risk) khi một bên giao mà không nhận" }
+---
+
+## Từ khớp lệnh tới thanh toán
+
+Khớp lệnh chỉ tạo ra **nghĩa vụ**: người mua nợ tiền, người bán nợ chứng khoán. Chuỗi xử lý sau giao dịch (post-trade):
+
+1. **Xác nhận (confirmation/affirmation)** — hai bên và các trung gian thống nhất chi tiết.
+2. **Bù trừ (clearing)** — tính toán nghĩa vụ ròng của mỗi thành viên, thường qua **đối tác bù trừ trung tâm (CCP)**.
+3. **Thanh toán (settlement)** — chuyển giao chứng khoán (qua tổ chức lưu ký) và tiền.
+
+<Quiz id="q-cs-order" />
+
+## Đối tác bù trừ trung tâm và bù trừ ròng
+
+CCP thế chỗ (novation) để trở thành người mua của mọi người bán và người bán của mọi người mua. Lợi ích: thành viên chỉ đối mặt rủi ro với CCP, và nghĩa vụ được **bù trừ ròng** — nếu bạn mua 1.000 và bán 800 cùng một mã trong ngày, bạn chỉ cần nhận ròng 200.
+
+## DvP — giao đi khi tiền về
+
+Rủi ro lớn nhất khi thanh toán là **rủi ro gốc (principal risk)**: bạn giao chứng khoán mà không nhận được tiền. Nguyên tắc 12 trong bộ <Fact id="pfmi-count" /> của CPMI–IOSCO yêu cầu hệ thống thanh toán xử lý rủi ro này bằng cơ chế **DvP** (hoặc PvP/DvD).
+
+## Chu kỳ thanh toán T+n
+
+$T+n$ nghĩa là thanh toán sau $n$ ngày làm việc kể từ ngày giao dịch. Rút ngắn chu kỳ giảm thời gian các bên phơi nhiễm rủi ro đối tác và nhu cầu ký quỹ, đổi lại đòi hỏi xử lý tự động, nhanh hơn. Ví dụ: <Fact id="us-t1" />.
+
+Câu hỏi mở đầu: cổ phiếu và tiền chưa đổi chủ lúc khớp vì phải đi qua xác nhận, bù trừ và thanh toán — đó là thiết kế có chủ đích để giảm rủi ro và chi phí, không phải sự chậm trễ vô cớ.
+
+<Quiz id="q-cs-netting" />

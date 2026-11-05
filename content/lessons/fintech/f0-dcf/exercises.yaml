@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-dcf-sensitivity
+    conceptId: cash-flow-dcf
+    prompt: "Trong mô phỏng DCF với tham số mặc định, giữ nguyên mọi thứ và tăng tỷ lệ chiết khấu từ 10% lên 11%. EV giảm khoảng bao nhiêu phần trăm? Phần giảm đến chủ yếu từ đâu?"
+    hint: "So sánh 'PV giá trị cuối kỳ' trước và sau."
+    solution: "EV giảm từ khoảng 18.158 xuống 15.836, tức khoảng 12,8%. PV giá trị cuối kỳ giảm từ khoảng 13.424 xuống 11.227 — chiếm phần lớn mức giảm, vì mẫu số r − g tăng từ 7% lên 8% và TV còn bị chiết khấu ở lãi suất cao hơn. Với tham số mặc định, terminal value chiếm khoảng 74% EV."
+    simulator: { id: dcf, params: { discountPct: 11 } }

@@ -1,0 +1,3 @@
+requestRetention: 0.9
+maximumIntervalDays: 365
+enableFuzz: true

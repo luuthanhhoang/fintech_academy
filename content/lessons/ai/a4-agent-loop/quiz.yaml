@@ -1,0 +1,62 @@
+items:
+  - id: q-loop-order
+    type: ordering
+    conceptId: agent-loop
+    prompt: "Sắp xếp một vòng lặp agent."
+    items:
+      - { id: decide, text: "Model đọc context và quyết định gọi công cụ" }
+      - { id: exec, text: "Harness thực thi công cụ" }
+      - { id: append, text: "Kết quả công cụ được thêm vào context" }
+      - { id: next, text: "Model quyết định bước tiếp theo hoặc kết thúc" }
+    explanation: "Đây là chu trình cơ bản của mọi agent dùng tool calling."
+  - id: q-harness-parts
+    type: mcq
+    conceptId: model-vs-harness
+    prompt: "Chọn TẤT CẢ trách nhiệm thuộc về harness (không phải mô hình)."
+    options:
+      - { id: a, text: "Thực thi lệnh shell mà agent yêu cầu trong sandbox" }
+      - { id: b, text: "Hỏi người dùng xác nhận trước khi xoá file" }
+      - { id: c, text: "Tóm tắt lịch sử khi gần đầy cửa sổ ngữ cảnh" }
+      - { id: d, text: "Chọn công cụ nào phù hợp nhất cho bước tiếp theo" }
+    correct: [a, b, c]
+    explanation: "Chọn công cụ là quyết định của mô hình; thực thi, xin quyền và quản lý context là việc của harness."
+  - id: q-workflow-vs-agent
+    type: mcq
+    conceptId: agent-loop
+    prompt: "Tác vụ: mỗi đêm trích xuất số liệu từ 100 hoá đơn PDF theo cùng một mẫu và ghi vào bảng. Nên dùng gì?"
+    options:
+      - { id: a, text: "Workflow định sẵn (mỗi hoá đơn: trích xuất → kiểm tra → ghi)" }
+      - { id: b, text: "Agent tự do khám phá" }
+      - { id: c, text: "Không dùng LLM" }
+    correct: [a]
+    explanation: "Các bước đã biết trước → workflow dễ dự đoán, rẻ và dễ kiểm thử hơn. Theo Anthropic: chọn giải pháp đơn giản nhất."
+  - id: q-react
+    type: mcq
+    conceptId: agent-loop
+    prompt: "Ý tưởng chính của ReAct là gì?"
+    options:
+      - { id: a, text: "Xen kẽ các bước suy luận và hành động (gọi công cụ) để điều chỉnh kế hoạch trong lúc làm" }
+      - { id: b, text: "Huấn luyện mô hình lớn hơn" }
+      - { id: c, text: "Chỉ sinh câu trả lời cuối cùng, không suy luận" }
+    correct: [a]
+    explanation: "Reason + Act — nền móng tư duy của vòng lặp agent hiện đại."
+  - id: q-mcp
+    type: mcq
+    conceptId: model-vs-harness
+    prompt: "Model Context Protocol (MCP) định nghĩa những primitive nào phía server?"
+    options:
+      - { id: a, text: "Tools, resources, prompts" }
+      - { id: b, text: "Weights, gradients, optimizers" }
+      - { id: c, text: "Chỉ REST endpoints" }
+    correct: [a]
+    explanation: "Tools (hành động do model gọi), resources (dữ liệu ngữ cảnh), prompts (mẫu do người dùng chọn) — trên JSON-RPC 2.0."
+  - id: q-loop-explain
+    type: explain
+    conceptId: model-vs-harness
+    prompt: "Một đồng nghiệp nói: 'Agent dở là do model dở, cứ đổi model mới là xong.' Phản biện bằng ví dụ cụ thể về harness."
+    rubric:
+      - { id: harness, criterion: "Chỉ ra ít nhất hai yếu tố harness ảnh hưởng chất lượng (công cụ, context, bộ nhớ, xử lý lỗi)" }
+      - { id: example, criterion: "Có ví dụ cụ thể (vd công cụ trả về quá dài làm đầy context)" }
+      - { id: measure, criterion: "Đề xuất đo bằng eval trước/sau khi đổi harness hoặc model" }
+    modelAnswer: "Model chỉ thấy những gì harness đưa vào context và chỉ làm được những gì công cụ cho phép. Công cụ trả về hàng nghìn dòng log sẽ làm đầy context và đánh lạc hướng; thiếu bộ nhớ ngoài thì tác vụ dài bị mất trạng thái khi cửa sổ đầy. Hãy cố định bộ eval rồi thử đổi model và đổi harness để thấy đóng góp của từng phần."
+    explanation: "Agent = Model + Harness — cả hai đều cần đo."

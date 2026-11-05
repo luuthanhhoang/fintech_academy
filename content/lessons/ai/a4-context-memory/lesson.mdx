@@ -1,0 +1,65 @@
+---
+id: a4-context-memory
+track: ai
+stage: a4
+order: 2
+title: { vi: "Context engineering và bộ nhớ của agent", en: "Context engineering and agent memory" }
+summary: "Context là ngân sách có hạn: chọn tập token nhỏ nhất mà tín hiệu cao nhất ở mỗi bước. Các kỹ thuật cho tác vụ dài: nạp theo nhu cầu, compaction, ghi chú có cấu trúc ra ngoài, và sub-agent với context riêng."
+concepts: [context-engineering, agent-memory]
+estMinutes: 35
+whyQuestion: "Cửa sổ ngữ cảnh ngày càng lớn — vậy vì sao nhồi thêm thông tin vào prompt lại thường làm agent kém đi?"
+devMapping:
+  - finance: "Context window"
+    dev: "RAM có hạn (working set)"
+    explanation: "Không phải mọi dữ liệu đều nên nằm trong RAM; giữ working set nhỏ, phần còn lại để ở disk và nạp khi cần."
+  - finance: "Compaction"
+    dev: "Log compaction / snapshot"
+    explanation: "Thay lịch sử dài bằng một bản tóm tắt trạng thái quan trọng — như snapshot thay cho replay toàn bộ log."
+  - finance: "Bộ nhớ ngoài (notes, file)"
+    dev: "Persistent storage + checkpoint"
+    explanation: "Agent ghi tiến độ, quyết định, việc còn lại ra file; phiên sau đọc lại — giống checkpoint để tiếp tục job dài sau khi restart."
+  - finance: "Sub-agent"
+    dev: "Worker process với bộ nhớ riêng, trả về kết quả tóm tắt"
+    explanation: "Giao việc tìm kiếm/đọc nhiều cho worker có context sạch; chỉ kết quả cô đọng quay về agent chính."
+sources: [anthropic-context-engineering, agent-skills-spec]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Một agent cần refactor một codebase lớn qua nhiều giờ. Thiết kế chiến lược context và bộ nhớ cho nó."
+  rubric:
+    - { id: jit, criterion: "Nạp file theo nhu cầu (tìm kiếm/đọc khi cần) thay vì nạp trước cả codebase" }
+    - { id: notes, criterion: "Ghi chú tiến độ/quyết định ra file bền vững" }
+    - { id: compaction, criterion: "Tóm tắt lịch sử khi gần đầy context, giữ quyết định và trạng thái mở" }
+    - { id: subagent, criterion: "Dùng sub-agent cho tác vụ khám phá tốn nhiều token" }
+---
+
+## Context là ngân sách
+
+Bài "Effective context engineering for AI agents" của Anthropic định nghĩa **context engineering** là tập chiến lược chọn lọc và duy trì tập token tối ưu trong lúc suy luận. Vì mô hình có **ngân sách chú ý (attention budget)** hữu hạn, mục tiêu là tìm **tập token nhỏ nhất nhưng tín hiệu cao nhất** để đạt kết quả mong muốn.
+
+Câu hỏi mở đầu có lời giải: thêm thông tin không liên quan làm loãng sự chú ý; công cụ trả về dữ liệu thừa, lịch sử dài với kết quả cũ, chỉ dẫn mâu thuẫn — đều kéo chất lượng xuống dù vẫn "vừa" cửa sổ.
+
+<Quiz id="q-ctx-budget" />
+
+## Bốn kỹ thuật cho tác vụ dài
+
+1. **Nạp theo nhu cầu (just-in-time)**: thay vì nạp trước, agent giữ "con trỏ" (đường dẫn file, truy vấn) và dùng công cụ để đọc khi cần.
+2. **Compaction**: khi gần đầy, tóm tắt lịch sử — giữ quyết định, lỗi chưa giải quyết, trạng thái hiện tại — rồi tiếp tục với bản tóm tắt.
+3. **Ghi chú có cấu trúc (structured note-taking)**: agent ghi tiến độ, việc cần làm ra file bên ngoài context và đọc lại sau.
+4. **Sub-agent**: agent chính giao việc tập trung cho sub-agent có context riêng; sub-agent có thể tiêu tốn nhiều token khám phá nhưng chỉ trả về bản tóm tắt cô đọng.
+
+<Callout kind="note">
+Các kỹ thuật phù hợp với các loại việc khác nhau: compaction cho hội thoại dài liên tục, ghi chú cho dự án lặp nhiều bước, sub-agent cho nghiên cứu song song. Agent Skills với progressive disclosure là cùng tinh thần: chỉ nạp chỉ dẫn chi tiết khi tác vụ thực sự cần.
+</Callout>
+
+## Bộ nhớ: trong và ngoài context
+
+| Loại | Nằm ở đâu | Tồn tại bao lâu | Ví dụ |
+|---|---|---|---|
+| Làm việc | Context hiện tại | Một lượt / một phiên | Kết quả công cụ vừa gọi |
+| Tóm tắt | Context (sau compaction) | Phần còn lại của phiên | Bản tóm tắt tiến độ |
+| Bền vững | File / DB ngoài | Nhiều phiên | Ghi chú dự án, quyết định kiến trúc |
+
+Bộ nhớ bền vững cần **quy tắc ghi**: ghi gì, khi nào cập nhật, khi nào xoá thông tin lỗi thời — nếu không, bộ nhớ tự nó trở thành nguồn nhiễu.
+
+<Quiz id="q-ctx-technique" />

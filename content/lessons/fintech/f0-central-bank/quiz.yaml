@@ -1,0 +1,52 @@
+items:
+  - id: q-cb-goal
+    type: mcq
+    conceptId: central-bank-policy
+    prompt: "Mục tiêu cốt lõi phổ biến của chính sách tiền tệ là gì?"
+    options:
+      - { id: a, text: "Ổn định giá trị đồng tiền (kiểm soát lạm phát)" }
+      - { id: b, text: "Tối đa hoá lợi nhuận của ngân hàng trung ương" }
+      - { id: c, text: "Cố định giá cổ phiếu" }
+    correct: [a]
+    explanation: "Ổn định giá cả là mục tiêu trung tâm; NHTW không hoạt động vì lợi nhuận và không nhằm cố định giá tài sản."
+  - id: q-cb-transmission
+    type: ordering
+    conceptId: central-bank-policy
+    prompt: "Sắp xếp chuỗi truyền dẫn khi NHTW tăng lãi suất chính sách."
+    items:
+      - { id: policy, text: "Lãi suất chính sách tăng" }
+      - { id: interbank, text: "Lãi suất liên ngân hàng tăng" }
+      - { id: lending, text: "Lãi suất cho vay của ngân hàng thương mại tăng" }
+      - { id: demand, text: "Vay và chi tiêu giảm, tổng cầu giảm" }
+      - { id: inflation, text: "Áp lực lạm phát giảm dần" }
+    explanation: "Tác động lan qua từng tầng với độ trễ."
+  - id: q-cb-tools
+    type: mcq
+    conceptId: central-bank-policy
+    prompt: "Chọn TẤT CẢ các công cụ thường thấy của chính sách tiền tệ."
+    options:
+      - { id: a, text: "Lãi suất điều hành" }
+      - { id: b, text: "Nghiệp vụ thị trường mở" }
+      - { id: c, text: "Dự trữ bắt buộc" }
+      - { id: d, text: "Thuế thu nhập cá nhân" }
+    correct: [a, b, c]
+    explanation: "Thuế là công cụ của chính sách tài khoá (chính phủ), không phải chính sách tiền tệ."
+  - id: q-cb-expectations
+    type: mcq
+    conceptId: central-bank-policy
+    prompt: "Vì sao uy tín của ngân hàng trung ương quan trọng?"
+    options:
+      - { id: a, text: "Vì nó quyết định mức độ thông báo chính sách định hình được kỳ vọng lạm phát" }
+      - { id: b, text: "Vì nó quyết định giá vàng" }
+      - { id: c, text: "Không quan trọng, chỉ hành động mới quan trọng" }
+    correct: [a]
+    explanation: "Kỳ vọng được neo giúp chính sách hiệu quả hơn với chi phí thấp hơn."
+  - id: q-cb-explain
+    type: explain
+    conceptId: central-bank-policy
+    prompt: "Giải thích vì sao lãi suất vay mua nhà thay đổi khi NHTW thay đổi lãi suất chính sách, dù bạn không vay NHTW."
+    rubric:
+      - { id: funding, criterion: "Ngân hàng thương mại huy động/vay vốn ở mức lãi suất chịu ảnh hưởng của lãi suất chính sách" }
+      - { id: pass, criterion: "Chi phí vốn thay đổi được chuyển sang lãi suất cho vay" }
+    modelAnswer: "Lãi suất chính sách ảnh hưởng chi phí vốn của ngân hàng thương mại (qua thị trường liên ngân hàng và lãi suất huy động). Khi chi phí vốn đổi, ngân hàng điều chỉnh lãi suất cho vay, kể cả vay mua nhà — thường với độ trễ."
+    explanation: "Đây là kênh lãi suất của cơ chế truyền dẫn."

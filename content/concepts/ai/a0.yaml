@@ -1,0 +1,8 @@
+track: ai
+stage: a0
+concepts:
+  - { id: "python-for-ai", name: { vi: "Python cho AI", en: "Python for AI" }, short: "Python, môi trường, numpy/pandas và thói quen viết code thí nghiệm có thể tái lập.", difficulty: 1, tags: [python, numpy] }
+  - { id: "linear-algebra-ml", name: { vi: "Đại số tuyến tính cho ML", en: "Linear algebra for ML" }, short: "Vector, ma trận, tích vô hướng, phép chiếu — ngôn ngữ của embedding và attention.", difficulty: 2, tags: [vector, matrix] }
+  - { id: "probability-ml", name: { vi: "Xác suất cho ML", en: "Probability for ML" }, short: "Phân phối, kỳ vọng, entropy, cross-entropy — nền của huấn luyện và giải mã.", prerequisites: [expected-value-variance], difficulty: 2, tags: [entropy, likelihood] }
+  - { id: "ml-basics", name: { vi: "Học máy cơ bản", en: "Machine learning basics" }, short: "Huấn luyện, tập kiểm thử, overfitting, hàm mất mát, gradient descent.", prerequisites: [python-for-ai, linear-algebra-ml, probability-ml], difficulty: 2, tags: [ML, loss, gradient] }
+  - { id: "neural-networks", name: { vi: "Mạng nơ-ron", en: "Neural networks" }, short: "Lớp tuyến tính, hàm kích hoạt, lan truyền ngược.", prerequisites: [ml-basics], difficulty: 3, tags: [backprop, MLP] }

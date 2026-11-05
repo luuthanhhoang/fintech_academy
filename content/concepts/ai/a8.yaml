@@ -1,0 +1,8 @@
+track: ai
+stage: a8
+concepts:
+  - { id: "prompt-injection", name: { vi: "Prompt injection", en: "Prompt injection" }, short: "Chỉ dẫn độc hại ẩn trong dữ liệu (web, file, email) khiến agent làm việc ngoài ý muốn.", prerequisites: [agent-loop], difficulty: 3, tags: [injection, security] }
+  - { id: "jailbreaks", name: { vi: "Jailbreak", en: "Jailbreaks" }, short: "Kỹ thuật vượt qua chính sách an toàn của mô hình và cách phòng thủ.", prerequisites: [prompt-engineering], difficulty: 3, tags: [jailbreak] }
+  - { id: "data-privacy-llm", name: { vi: "Quyền riêng tư dữ liệu", en: "Data privacy with LLMs" }, short: "Dữ liệu nhạy cảm trong prompt, lưu giữ, che dữ liệu và tuân thủ.", prerequisites: [messages-api], difficulty: 2, tags: [privacy, PII] }
+  - { id: "guardrails", name: { vi: "Guardrail", en: "Guardrails" }, short: "Lớp kiểm tra đầu vào/đầu ra và chính sách hành động quanh mô hình.", prerequisites: [prompt-injection, harness-permissions-sandbox], difficulty: 3, tags: [guardrail] }
+  - { id: "red-teaming", name: { vi: "Red teaming", en: "Red teaming" }, short: "Chủ động tấn công thử hệ thống để tìm điểm yếu trước khi phát hành.", prerequisites: [guardrails, eval-datasets], difficulty: 4, tags: [red team] }

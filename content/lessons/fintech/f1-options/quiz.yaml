@@ -1,0 +1,52 @@
+items:
+  - id: q-opt-payoff
+    type: numeric
+    conceptId: options-payoff
+    prompt: "Mua call K = 100, phí 5. Tại đáo hạn giá là 112. Lãi/lỗ của người mua (trên 1 đơn vị)?"
+    answer: 7
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Payoff = max(112 − 100, 0) = 12; trừ phí 5 → lãi 7."
+  - id: q-opt-breakeven
+    type: numeric
+    conceptId: options-payoff
+    prompt: "Mua put K = 50, phí 3. Điểm hoà vốn tại đáo hạn là bao nhiêu?"
+    answer: 47
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Put hoà vốn khi K − S = phí → S = 50 − 3 = 47."
+  - id: q-opt-leverage
+    type: numeric
+    conceptId: leverage
+    prompt: "Vốn chủ 100, vay thêm 400 để mua tài sản 500. Tài sản giảm 8%. Vốn chủ còn bao nhiêu? (bỏ qua lãi vay)"
+    answer: 60
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Tài sản còn 460, nợ vẫn 400 → vốn chủ 60, tức mất 40% dù tài sản chỉ giảm 8% (đòn bẩy 5 lần)."
+  - id: q-opt-unbounded
+    type: mcq
+    conceptId: options-payoff
+    prompt: "Chọn TẤT CẢ vị thế có lỗ tiềm năng không giới hạn (về lý thuyết)."
+    options:
+      - { id: a, text: "Bán call không phòng hộ" }
+      - { id: b, text: "Mua call" }
+      - { id: c, text: "Mua put" }
+      - { id: d, text: "Bán khống cổ phiếu" }
+    correct: [a, d]
+    explanation: "Giá có thể tăng không giới hạn nên bán call trần trụi và bán khống có lỗ không giới hạn. Người mua quyền chọn chỉ mất tối đa phí."
+  - id: q-opt-rights
+    type: mcq
+    conceptId: derivatives-basics
+    prompt: "Điểm khác biệt cốt lõi giữa hợp đồng tương lai và quyền chọn đối với người mua là gì?"
+    options:
+      - { id: a, text: "Tương lai là nghĩa vụ; quyền chọn là quyền, không phải nghĩa vụ" }
+      - { id: b, text: "Quyền chọn không có ngày đáo hạn" }
+      - { id: c, text: "Không có khác biệt" }
+    correct: [a]
+    explanation: "Người mua quyền chọn trả phí để có quyền lựa chọn; bên tương lai phải thực hiện."
+  - id: q-opt-explain
+    type: explain
+    conceptId: leverage
+    prompt: "Giải thích vì sao đòn bẩy cao kết hợp với tài sản kém thanh khoản đặc biệt nguy hiểm."
+    rubric:
+      - { id: margin, criterion: "Lỗ nhỏ trên tài sản làm thâm hụt vốn/ký quỹ lớn, buộc giảm vị thế" }
+      - { id: fire-sale, criterion: "Bán tài sản kém thanh khoản đẩy giá xuống thêm (vòng xoáy)" }
+    modelAnswer: "Đòn bẩy khiến biến động nhỏ của tài sản thành thâm hụt lớn trên vốn chủ và gọi ký quỹ; khi phải bán tài sản kém thanh khoản để đáp ứng, giá bị đẩy xuống thêm, gây lỗ thêm — vòng xoáy bán tháo."
+    explanation: "Bài học trung tâm của case LTCM."

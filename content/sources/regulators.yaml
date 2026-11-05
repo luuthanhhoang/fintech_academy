@@ -1,0 +1,45 @@
+sources:
+  - id: imf-money
+    title: "Money: At the Center of Transactions (Back to Basics, Finance & Development)"
+    url: https://www.imf.org/external/pubs/ft/fandd/basics/pdf/asmundson_money.pdf
+    publisher: International Monetary Fund (Asmundson & Oner)
+    accessed: 2026-11-05
+    note: Bài phổ cập của IMF; kiểm tra qua kết quả tìm kiếm.
+  - id: imf-inflation
+    title: "Inflation: Prices on the Rise (Back to Basics, Finance & Development)"
+    url: https://www.imf.org/en/publications/fandd/issues/series/back-to-basics/inflation
+    publisher: International Monetary Fund (Ceyda Oner)
+    accessed: 2026-11-05
+    note: Kiểm tra trang giới thiệu qua kết quả tìm kiếm (định nghĩa CPI, lạm phát cơ bản, lạm phát chi phí đẩy, vai trò kỳ vọng).
+  - id: investor-gov-compound
+    title: Compound Interest Calculator
+    url: https://www.investor.gov/introduction-investing/investing-basics/glossary/compound-interest-calculator
+    publisher: U.S. SEC — Investor.gov
+    accessed: 2026-11-05
+  - id: cfpb-compound
+    title: What is compound interest?
+    url: https://www.consumerfinance.gov/ask-cfpb/what-is-compound-interest-en-1683/
+    publisher: U.S. Consumer Financial Protection Bureau
+    accessed: 2026-11-05
+  - id: sec-interest-rate-risk
+    title: "Investor Bulletin: Interest Rate Risk — When Interest Rates Go Up, Prices of Fixed-Rate Bonds Fall"
+    url: https://www.sec.gov/files/ib_interestraterisk.pdf
+    publisher: U.S. SEC Office of Investor Education and Advocacy
+    accessed: 2026-11-05
+  - id: sec-options-bulletin
+    title: "Investor Bulletin: An Introduction to Options"
+    url: https://www.investor.gov/news-alerts/investor-bulletins/investor-bulletin-introduction-options
+    publisher: U.S. SEC — Investor.gov
+    accessed: 2026-11-05
+  - id: sec-t1-2023
+    title: SEC Finalizes Rules to Reduce Risks in Clearance and Settlement (Press Release 2023-29)
+    url: https://www.sec.gov/news/press-release/2023-29
+    publisher: U.S. Securities and Exchange Commission
+    accessed: 2026-11-05
+    note: Nội dung chính (T+2 → T+1, ngày tuân thủ) xác nhận qua trích đoạn của thông cáo trong kết quả tìm kiếm.
+  - id: bis-pfmi-summary
+    title: Principles for financial market infrastructures (PFMI) — FSI summary
+    url: https://www.bis.org/fsi/fsisummaries/pfmi.pdf
+    publisher: Bank for International Settlements (CPMI–IOSCO)
+    accessed: 2026-11-05
+    note: Bộ nguyên tắc 2012 gồm 24 nguyên tắc; Nguyên tắc 12 về DvP. Kiểm tra qua trích đoạn kết quả tìm kiếm.

@@ -1,0 +1,8 @@
+track: fintech
+stage: f6
+concepts:
+  - { id: "credit-scoring-ml", name: { vi: "Chấm điểm tín dụng bằng ML", en: "ML credit scoring" }, short: "Mô hình dự báo xác suất vỡ nợ từ dữ liệu khách hàng; hiệu chuẩn và giám sát.", prerequisites: [credit-risk, ml-basics], difficulty: 4, tags: [scoring, PD] }
+  - { id: "fraud-detection-ml", name: { vi: "Phát hiện gian lận bằng ML", en: "ML fraud detection" }, short: "Phát hiện giao dịch bất thường với dữ liệu mất cân bằng và phản hồi trễ.", prerequisites: [card-payments, ml-basics], difficulty: 4, tags: [fraud, anomaly] }
+  - { id: "llm-in-finance", name: { vi: "LLM trong tài chính", en: "LLMs in finance" }, short: "Ứng dụng LLM cho tài liệu, hỗ trợ khách hàng, tuân thủ; rủi ro ảo giác và dữ liệu nhạy cảm.", prerequisites: [rag-grounding, kyc-aml], difficulty: 4, tags: [LLM, RAG] }
+  - { id: "model-risk-management", name: { vi: "Quản trị rủi ro mô hình", en: "Model risk management" }, short: "Kiểm định, giám sát và quản trị vòng đời mô hình trong tổ chức tài chính.", prerequisites: [credit-scoring-ml, operational-risk], difficulty: 4, tags: [model validation] }
+  - { id: "explainability-fairness", name: { vi: "Giải thích và công bằng của mô hình", en: "Explainability and fairness" }, short: "Giải thích quyết định mô hình và kiểm tra thiên lệch đối với nhóm khách hàng.", prerequisites: [credit-scoring-ml], difficulty: 4, tags: [XAI, fairness] }

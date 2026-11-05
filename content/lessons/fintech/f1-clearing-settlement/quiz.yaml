@@ -1,0 +1,48 @@
+items:
+  - id: q-cs-order
+    type: ordering
+    conceptId: clearing-settlement
+    prompt: "Sắp xếp chuỗi xử lý sau giao dịch."
+    items:
+      - { id: match, text: "Khớp lệnh" }
+      - { id: confirm, text: "Xác nhận chi tiết giao dịch" }
+      - { id: clear, text: "Bù trừ, tính nghĩa vụ ròng" }
+      - { id: settle, text: "Thanh toán: chuyển chứng khoán và tiền (DvP)" }
+    explanation: "Khớp → xác nhận → bù trừ → thanh toán."
+  - id: q-cs-netting
+    type: numeric
+    conceptId: clearing-settlement
+    prompt: "Trong ngày, thành viên A mua 1.500 cp mã X và bán 1.200 cp mã X. Sau bù trừ ròng, A cần nhận bao nhiêu cp?"
+    answer: 300
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Ròng = 1.500 − 1.200 = 300 cp."
+  - id: q-cs-dvp
+    type: mcq
+    conceptId: clearing-settlement
+    prompt: "DvP giải quyết rủi ro nào?"
+    options:
+      - { id: a, text: "Rủi ro gốc: một bên giao tài sản mà không nhận được phần đối ứng" }
+      - { id: b, text: "Rủi ro giá cổ phiếu giảm" }
+      - { id: c, text: "Rủi ro lạm phát" }
+    correct: [a]
+    explanation: "DvP gắn hai chân chuyển giao thành một thao tác nguyên tử."
+  - id: q-cs-ccp
+    type: mcq
+    conceptId: clearing-settlement
+    prompt: "Chọn TẤT CẢ lợi ích của đối tác bù trừ trung tâm (CCP)."
+    options:
+      - { id: a, text: "Bù trừ ròng giảm số lượng thanh toán" }
+      - { id: b, text: "Thành viên chỉ đối mặt rủi ro với một đối tác chuẩn hoá" }
+      - { id: c, text: "Loại bỏ hoàn toàn mọi rủi ro" }
+    correct: [a, b]
+    explanation: "CCP tập trung và quản lý rủi ro (ký quỹ, quỹ bù trừ) nhưng không loại bỏ hoàn toàn — chính CCP trở thành hạ tầng trọng yếu."
+  - id: q-cs-explain
+    type: explain
+    conceptId: clearing-settlement
+    prompt: "Từ góc nhìn kỹ sư, rút ngắn chu kỳ thanh toán từ T+2 xuống T+1 đòi hỏi thay đổi gì trong hệ thống?"
+    rubric:
+      - { id: automation, criterion: "Tự động hoá xác nhận/phân bổ trong ngày giao dịch (straight-through processing)" }
+      - { id: cutoff, criterion: "Rút ngắn cửa sổ batch, xử lý ngoại lệ nhanh hơn" }
+      - { id: funding, criterion: "Quản lý thanh khoản/tiền và ngoại tệ nhanh hơn" }
+    modelAnswer: "Phải xác nhận và phân bổ ngay trong ngày (theo SEC, quy định mới yêu cầu hoàn tất affirmation trong ngày giao dịch), giảm xử lý thủ công, rút ngắn batch, xử lý lỗi nhanh và chuẩn bị tiền sớm hơn."
+    explanation: "Rút ngắn chu kỳ là bài toán throughput và tự động hoá."

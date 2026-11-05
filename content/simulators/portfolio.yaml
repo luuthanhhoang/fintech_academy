@@ -1,0 +1,37 @@
+id: portfolio
+componentKey: portfolio
+title: { vi: "Rủi ro, đa dạng hoá & đường biên hiệu quả", en: "Risk, diversification & efficient frontier" }
+summary: Đám mây danh mục ngẫu nhiên, đường biên Markowitz và danh mục rủi ro thấp nhất — với dữ liệu tổng hợp hoặc CSV giá của chính bạn.
+concepts: [diversification, efficient-frontier, risk-return]
+dataKind: user-or-synthetic
+syntheticNote: Lợi suất tháng của 3 tài sản giả định được sinh từ phân phối chuẩn nhiều chiều với trung bình/độ lệch chuẩn trong cấu hình và một hệ số tương quan chung ρ (tham số), seed cố định. Không đại diện cho tài sản thật nào.
+params:
+  - { key: "rho", label: "Tương quan chung ρ", min: -0.45, max: 1, step: 0.05, default: 0.2 }
+  - { key: "periods", label: "Số tháng dữ liệu tổng hợp", min: 12, max: 600, step: 12, default: 120, unit: "tháng" }
+  - { key: "seed", label: "Seed", min: 1, max: 999, step: 1, default: 42 }
+  - { key: "riskFreePct", label: "Lãi suất phi rủi ro (cho Sharpe)", min: 0, max: 15, step: 0.25, default: 3, unit: "%/năm" }
+config:
+  periodsPerYear: 12
+  randomPortfolios: 600
+  csvPlaceholder: "date,A,B,C\n2024-01-31,100,50,20\n2024-02-29,102,49,21\n2024-03-31,101,51,22"
+  assets:
+    - { name: "Tài sản giả định A (biến động cao)", muPct: 1.0, sigmaPct: 6.0 }
+    - { name: "Tài sản giả định B (trung bình)", muPct: 0.7, sigmaPct: 4.0 }
+    - { name: "Tài sản giả định C (ổn định)", muPct: 0.35, sigmaPct: 1.5 }
+howToRead: |-
+  Mỗi chấm là một danh mục chỉ mua (trọng số dương, tổng 100%). Đường biên phía trên-trái là tập danh mục tốt nhất cho mỗi mức rủi ro.
+  Đường "cho phép bán khống" là nghiệm giải tích của Markowitz (trọng số có thể âm). Các chỉ số đã quy đổi theo năm giả định lợi suất độc lập giữa các kỳ.
+  Ước lượng từ dữ liệu quá khứ (kể cả CSV của bạn) không phải dự báo — đường biên rất nhạy với sai số ước lượng lợi suất trung bình.
+breakIt:
+  - id: perfect-correlation
+    label: Tương quan ρ = 1
+    params: { rho: 1 }
+    explanation: Khi mọi tài sản tương quan hoàn hảo, đa dạng hoá gần như mất tác dụng — đám mây co về một đường thẳng nối các tài sản. Lợi ích đa dạng hoá đến từ tương quan < 1. (Ma trận suy biến nên đường biên giải tích có thể không tính được.)
+  - id: negative-correlation
+    label: Tương quan âm ρ = −0.45
+    params: { rho: -0.45 }
+    explanation: Tương quan âm giúp danh mục rủi ro thấp hơn hẳn từng tài sản. Với 3 tài sản, ρ chung không thể nhỏ hơn −0.5 (ma trận không còn xác định dương) — thử thay đổi để thấy giới hạn toán học của "tương quan âm với mọi thứ".
+  - id: short-history
+    label: Chỉ 12 tháng dữ liệu
+    params: { periods: 12 }
+    explanation: Với ít dữ liệu, ước lượng trung bình và hiệp phương sai dao động mạnh khi đổi seed — đường biên "tối ưu" thay đổi hẳn. Đây là lý do tối ưu hoá Markowitz ngây thơ hay cho kết quả cực đoan trong thực tế.

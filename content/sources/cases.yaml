@@ -1,0 +1,33 @@
+sources:
+  - id: sec-knight-2013
+    title: SEC Charges Knight Capital With Violations of Market Access Rule (Press Release 2013-222)
+    url: https://www.sec.gov/news/press-release/2013-222
+    publisher: U.S. Securities and Exchange Commission
+    accessed: 2026-11-05
+    note: Các dữ kiện (ngày, số lệnh, khoản lỗ, mức phạt) xác nhận qua trích đoạn thông cáo trong kết quả tìm kiếm.
+  - id: frb-history-ltcm
+    title: Near Failure of Long-Term Capital Management
+    url: https://www.federalreservehistory.org/essay/ltcm-near-failure
+    publisher: Federal Reserve History (Federal Reserve System)
+    accessed: 2026-11-05
+  - id: pwg-ltcm-1999
+    title: Hedge Funds, Leverage, and the Lessons of Long-Term Capital Management (Report of the President's Working Group on Financial Markets)
+    url: https://www.cftc.gov/tm/tmhedgefundreport.htm
+    publisher: U.S. Treasury, Federal Reserve Board, SEC, CFTC
+    accessed: 2026-11-05
+  - id: gao-ltcm-2000
+    title: "Long-Term Capital Management: Regulators Need to Focus Greater Attention on Systemic Risk (GAO/GGD-00-67R)"
+    url: https://www.gao.gov/assets/ggd-00-67r.pdf
+    publisher: U.S. Government Accountability Office
+    accessed: 2026-11-05
+    note: Tiêu đề lấy theo mã báo cáo; nội dung về việc không dùng tiền liên bang kiểm tra qua trích đoạn kết quả tìm kiếm.
+  - id: frb-svb-review-2023
+    title: Federal Reserve Board announces the results from the review of the supervision and regulation of Silicon Valley Bank
+    url: https://www.federalreserve.gov/newsevents/pressreleases/bcreg20230428a.htm
+    publisher: Board of Governors of the Federal Reserve System
+    accessed: 2026-11-05
+  - id: dfpi-svb-2023
+    title: California Financial Regulator Takes Possession of Silicon Valley Bank
+    url: https://dfpi.ca.gov/2023/03/10/california-financial-regulator-takes-possession-of-silicon-valley-bank/
+    publisher: California Department of Financial Protection and Innovation
+    accessed: 2026-11-05

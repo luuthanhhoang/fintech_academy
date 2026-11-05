@@ -1,0 +1,15 @@
+name: FinAI Academy
+tagline: Sổ tay học hằng ngày — Fintech từ con số 0 và AI/LLM engineer
+disclaimer: Nội dung mang tính giáo dục, không phải tư vấn đầu tư/pháp lý.
+syntheticLabel: Dữ liệu tổng hợp (mô phỏng)
+nav:
+  - { href: "/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
+  - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", mobile: true }
+  - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", mobile: true }
+  - { href: "/simulators/", label: "Mô phỏng", en: "Simulators", icon: "chart" }
+  - { href: "/labs/", label: "Code lab", en: "Labs", icon: "code" }
+  - { href: "/cases/", label: "Case study", en: "Case studies", icon: "alert" }
+  - { href: "/tutor/", label: "Gia sư AI", en: "AI tutor", icon: "spark", mobile: true }
+  - { href: "/stats/", label: "Thống kê", en: "Stats", icon: "pulse", mobile: true }
+  - { href: "/settings/", label: "Cài đặt", en: "Settings", icon: "gear" }
+  - { href: "/about/", label: "Giới thiệu", en: "About", icon: "info" }

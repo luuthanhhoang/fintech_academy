@@ -1,0 +1,53 @@
+items:
+  - id: q-dcf-gordon
+    type: numeric
+    conceptId: cash-flow-dcf
+    prompt: "FCF năm tới là 100, r = 10%, g = 3%. Giá trị theo Gordon (tại thời điểm hiện tại) là bao nhiêu? (2 chữ số thập phân)"
+    answer: 1428.57
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "100 / (0,10 − 0,03) = 1428,57."
+  - id: q-dcf-equity
+    type: numeric
+    conceptId: cash-flow-dcf
+    prompt: "EV = 5.000, nợ vay 1.500, tiền mặt 300, có 100 cổ phần. Giá trị mỗi cổ phần?"
+    answer: 38
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "Nợ ròng = 1.500 − 300 = 1.200; vốn chủ = 3.800; mỗi cổ phần 38."
+  - id: q-dcf-condition
+    type: mcq
+    conceptId: cash-flow-dcf
+    prompt: "Điều gì xảy ra với công thức Gordon khi g ≥ r?"
+    options:
+      - { id: a, text: "Giá trị cuối kỳ không xác định (vô hạn hoặc âm) — giả định vô nghĩa" }
+      - { id: b, text: "Giá trị cuối kỳ bằng 0" }
+      - { id: c, text: "Không ảnh hưởng" }
+    correct: [a]
+    explanation: "Mẫu số r − g ≤ 0. Mô phỏng DCF trả về 'không xác định' trong trường hợp này."
+  - id: q-dcf-wacc
+    type: numeric
+    conceptId: cash-flow-dcf
+    prompt: "E = 60, D = 40, r_E = 12%, r_D = 6%, thuế 20%. WACC là bao nhiêu %? (2 chữ số thập phân)"
+    answer: 9.12
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "0,6 × 12% + 0,4 × 6% × 0,8 = 7,2% + 1,92% = 9,12%."
+  - id: q-dcf-order
+    type: ordering
+    conceptId: cash-flow-dcf
+    prompt: "Sắp xếp các bước của một mô hình DCF."
+    items:
+      - { id: fcf, text: "Dự phóng FCF từng năm" }
+      - { id: rate, text: "Xác định tỷ lệ chiết khấu (WACC)" }
+      - { id: tv, text: "Tính giá trị cuối kỳ" }
+      - { id: ev, text: "Chiết khấu và cộng ra EV" }
+      - { id: equity, text: "Trừ nợ ròng, chia số cổ phần" }
+    explanation: "Thứ tự logic của mô hình; bước dự phóng FCF và WACC có thể làm song song nhưng phải có trước khi chiết khấu."
+  - id: q-dcf-explain
+    type: explain
+    conceptId: cash-flow-dcf
+    prompt: "Một mô hình DCF có 85% giá trị đến từ giá trị cuối kỳ. Bạn rút ra điều gì?"
+    rubric:
+      - { id: fragile, criterion: "Kết quả chủ yếu phụ thuộc giả định dài hạn r và g" }
+      - { id: action, criterion: "Đề xuất bảng độ nhạy / kịch bản, kéo dài giai đoạn dự phóng hoặc kiểm tra tính hợp lý của g" }
+    modelAnswer: "Khi phần lớn giá trị nằm ở terminal value, mô hình chủ yếu phản ánh giả định 'mãi mãi' về r và g; chỉ cần lệch nhỏ là giá trị đổi lớn. Cần bảng độ nhạy, nhiều kịch bản và kiểm tra g có hợp lý so với tăng trưởng dài hạn của nền kinh tế không."
+    explanation: "Dùng mô phỏng DCF, bấm 'g gần r' để thấy hiện tượng này."

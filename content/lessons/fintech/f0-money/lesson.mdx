@@ -1,0 +1,58 @@
+---
+id: f0-money
+track: fintech
+stage: f0
+order: 0
+title: { vi: "Tiền là gì và để làm gì", en: "What money is and what it does" }
+summary: "Ba chức năng của tiền (phương tiện trao đổi, đơn vị đo giá trị, phương tiện lưu giữ giá trị), vì sao niềm tin quyết định giá trị của tiền, và vì sao với kỹ sư, tiền trước hết là một bản ghi trong sổ."
+concepts: [money-functions]
+estMinutes: 20
+whyQuestion: "Một tờ tiền giấy gần như không có giá trị vật chất — vì sao mọi người vẫn đổi hàng hoá thật lấy nó?"
+devMapping:
+  - finance: "Phương tiện trao đổi (medium of exchange)"
+    dev: "Giao thức chung (shared protocol)"
+    explanation: "Đổi hàng trực tiếp cần 'trùng khớp nhu cầu' giữa hai bên — giống mỗi cặp hệ thống phải có adapter riêng (N² tích hợp). Tiền là giao thức chung: mọi bên chỉ cần nói một ngôn ngữ."
+  - finance: "Đơn vị đo giá trị (unit of account)"
+    dev: "Kiểu dữ liệu chuẩn (canonical type)"
+    explanation: "Khi mọi giá đều quy về cùng một đơn vị, so sánh và tổng hợp trở nên khả thi — như chuẩn hoá mọi timestamp về UTC trước khi so sánh."
+  - finance: "Tiền gửi ngân hàng"
+    dev: "Một dòng số dư trong database của ngân hàng"
+    explanation: "Phần lớn tiền bạn dùng hằng ngày không phải giấy mà là số dư — một bản ghi trong sổ cái. Chuyển tiền là cập nhật sổ, không phải di chuyển vật thể."
+sources: [imf-money]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích ba chức năng của tiền và cho mỗi chức năng một ví dụ khi nó 'hỏng' (ví dụ lạm phát rất cao)."
+  rubric:
+    - { id: three, criterion: "Nêu đủ ba chức năng: trao đổi, đơn vị đo, lưu giữ giá trị" }
+    - { id: failure, criterion: "Chỉ ra lạm phát cao phá chức năng lưu giữ giá trị trước, rồi tới đơn vị đo" }
+    - { id: trust, criterion: "Nhắc tới vai trò của niềm tin / chấp nhận chung" }
+---
+
+## Thế giới không có tiền
+
+Hãy tưởng tượng bạn viết phần mềm và muốn đổi lấy bữa trưa. Người bán cơm không cần phần mềm; người cần phần mềm lại không bán cơm. Đổi hàng trực tiếp (barter) đòi hỏi **trùng khớp nhu cầu kép** — rất hiếm.
+
+Tiền giải quyết vấn đề này bằng cách trở thành thứ **ai cũng chấp nhận**, nên bạn bán phần mềm lấy tiền rồi dùng tiền mua cơm.
+
+## Ba chức năng của tiền
+
+Tài liệu phổ cập của IMF mô tả tiền qua các chức năng cốt lõi:
+
+1. **Phương tiện trao đổi (medium of exchange)** — dùng để thanh toán.
+2. **Đơn vị đo giá trị (unit of account)** — mọi giá được niêm yết bằng nó, nên ta so sánh được.
+3. **Phương tiện lưu giữ giá trị (store of value)** — để dành hôm nay, dùng sau này.
+
+<Callout kind="note">
+Ba chức năng không bền như nhau. Khi giá cả tăng rất nhanh, người ta vội tiêu tiền (mất chức năng lưu giữ), rồi bắt đầu niêm yết giá bằng thứ khác (mất chức năng đơn vị đo). Bài lạm phát sẽ đo hiện tượng này.
+</Callout>
+
+## Vì sao tờ giấy có giá trị?
+
+Tiền pháp định (fiat money) không được bảo chứng bằng hàng hoá; giá trị của nó dựa trên **niềm tin chung** rằng người khác sẽ chấp nhận nó, cùng với khung pháp lý và chính sách của ngân hàng trung ương. IMF cũng lưu ý cám dỗ của chính phủ: in tiền để chi tiêu sẽ đe doạ giá trị đồng tiền thông qua lạm phát.
+
+<Quiz id="q-money-barter" />
+
+## Tiền là một bản ghi trong sổ
+
+Với kỹ sư, góc nhìn hữu ích nhất: phần lớn tiền tồn tại dưới dạng **số dư trong sổ cái** của ngân hàng. Khi bạn chuyển khoản, không có gì "di chuyển" — hai bản ghi được cập nhật đồng thời: bên này giảm, bên kia tăng. Toàn bộ chặng sau (kế toán kép, thanh toán, đối soát) xoay quanh việc giữ cho các bản ghi đó **đúng, nhất quán và không thể giả mạo**.

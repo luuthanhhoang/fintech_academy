@@ -1,0 +1,93 @@
+---
+id: f0-interest-compounding
+track: fintech
+stage: f0
+order: 1
+title: { vi: "Lãi suất và lãi kép", en: "Interest rates and compounding" }
+summary: Lãi suất là giá của tiền theo thời gian; lãi kép là lãi sinh lãi. Phân biệt lãi suất danh nghĩa (APR) và lãi suất hiệu dụng (EAR).
+concepts: [interest-rate, compound-interest]
+estMinutes: 30
+whyQuestion: Vì sao hai khoản vay cùng ghi "12%/năm" lại có thể khiến bạn trả số tiền khác nhau?
+devMapping:
+  - finance: Lãi kép (compound interest)
+    dev: "reduce((balance, _) => balance * (1 + r/m), P)"
+    explanation: Lãi kép chỉ là một vòng lặp cập nhật trạng thái — mỗi kỳ, trạng thái mới phụ thuộc trạng thái cũ. Lãi đơn thì giống cộng dồn một hằng số.
+  - finance: Tần suất ghép lãi (m)
+    dev: Độ phân giải của tick (sampling rate)
+    explanation: Ghép lãi dày hơn giống tăng tần số lấy mẫu; khi m → ∞ ta có giới hạn liên tục e^{rt}, giống tích phân thay cho tổng rời rạc.
+  - finance: APR vs EAR
+    dev: Giá trị hiển thị vs giá trị thực tính toán
+    explanation: APR là con số "trên nhãn"; EAR là kết quả sau khi chạy hết vòng lặp ghép lãi trong một năm. So sánh sản phẩm phải dùng cùng một đơn vị — giống so sánh latency phải cùng percentile.
+simulators: [tvm]
+sources: [openstax-finance, investor-gov-compound, cfpb-compound]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: Giải thích cho một đồng nghiệp dev vì sao EAR luôn ≥ APR khi lãi suất dương, và khi nào sự khác biệt này đáng kể.
+  rubric:
+    - { id: "compounding", criterion: "Nêu được lãi của các kỳ trước tiếp tục sinh lãi trong năm" }
+    - { id: "formula", criterion: "Viết đúng EAR = (1 + APR/m)^m − 1" }
+    - { id: "magnitude", criterion: "Nhận xét chênh lệch tăng theo lãi suất và tần suất ghép nhưng có giới hạn (e^r − 1)" }
+---
+
+## Lãi suất là gì
+
+Khi bạn cho ai đó dùng tiền của mình trong một khoảng thời gian, bạn từ bỏ quyền dùng số tiền đó cho việc khác. **Lãi suất (interest rate)** là khoản bù cho sự từ bỏ ấy, biểu diễn theo tỷ lệ trên một kỳ — thường là năm.
+
+Với lãi suất $r$ mỗi kỳ, sau một kỳ khoản tiền $P$ trở thành $P(1+r)$. Câu hỏi thú vị bắt đầu từ kỳ thứ hai: lãi của kỳ đầu có được tính lãi tiếp không?
+
+## Lãi đơn và lãi kép
+
+**Lãi đơn (simple interest)** chỉ tính trên gốc:
+
+$$
+FV_{\text{đơn}} = P\,(1 + r\,t)
+$$
+
+**Lãi kép (compound interest)** nhập lãi vào gốc sau mỗi kỳ, nên lãi của kỳ trước cũng sinh lãi:
+
+$$
+FV_{\text{kép}} = P\,(1 + r)^{t}
+$$
+
+<Sidenote>Investor.gov và CFPB mô tả lãi kép đúng như vậy: bạn nhận lãi trên số tiền tiết kiệm **và** trên phần lãi số tiền đó đã tạo ra.</Sidenote>
+
+Ví dụ minh hoạ (số giả định): 100 triệu đồng, lãi 8%/năm trong 20 năm. Lãi đơn cho $100(1 + 0{,}08 \times 20) = 260$ triệu; lãi kép cho $100 \times 1{,}08^{20} \approx 466$ triệu. Khoảng cách đến từ "lãi sinh lãi", và nó tăng theo cấp số nhân theo thời gian.
+
+<Quiz id="q-simple-vs-compound" />
+
+## Ghép lãi nhiều lần trong năm
+
+Nếu lãi suất danh nghĩa năm là $r$ nhưng được ghép $m$ lần mỗi năm, mỗi kỳ dùng lãi suất $r/m$:
+
+$$
+FV = P\left(1 + \frac{r}{m}\right)^{m t}
+$$
+
+Khi $m \to \infty$ ta được **ghép lãi liên tục**:
+
+$$
+FV = P\,e^{r t}
+$$
+
+## APR và EAR
+
+Con số "12%/năm" thường là **lãi suất danh nghĩa** (nominal rate, hay APR). Thứ quyết định số tiền thực trả là **lãi suất hiệu dụng năm (EAR)**:
+
+$$
+\text{EAR} = \left(1 + \frac{r}{m}\right)^{m} - 1
+$$
+
+Với $r = 12\%$ ghép hằng tháng, EAR ≈ 12,68%. Ghép càng dày thì EAR càng cao, nhưng tiến tới giới hạn $e^{r} - 1$ — đây là lý do câu hỏi mở đầu có đáp án: hai khoản vay cùng APR nhưng khác tần suất ghép lãi có EAR khác nhau.
+
+<Callout kind="dev" title="Bẫy hay gặp khi code">
+Đừng cộng lãi bằng số thực dấu phẩy động trên tiền thật. Tính toán lãi ở độ chính xác cao rồi mới làm tròn theo quy tắc của sản phẩm, và lưu số tiền bằng số nguyên đơn vị nhỏ nhất (xem bài sổ kép).
+</Callout>
+
+<Simulator id="tvm" />
+
+## Thời gian nhân đôi
+
+Số năm để tiền nhân đôi ở lãi suất hiệu dụng $i$ là $t = \ln 2 / \ln(1 + i)$. "Quy tắc 72" ($t \approx 72 / (100\,i)$) là xấp xỉ nhẩm nhanh khi lãi suất nhỏ — hãy dùng mô phỏng để thấy nó lệch bao nhiêu khi lãi suất lớn.
+
+<Quiz id="q-ear-monthly" />

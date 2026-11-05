@@ -1,0 +1,11 @@
+track: fintech
+stage: f2
+concepts:
+  - { id: "bank-balance-sheet", name: { vi: "Bảng cân đối ngân hàng", en: "Bank balance sheet" }, short: "Tiền gửi là nợ phải trả, cho vay là tài sản; vốn chủ là tấm đệm hấp thụ lỗ.", prerequisites: [financial-statements, interest-rate], difficulty: 2, tags: [ngân hàng, deposit, loan] }
+  - { id: "money-creation", name: { vi: "Tạo tiền qua tín dụng", en: "Money creation by banks" }, short: "Ngân hàng thương mại tạo tiền gửi mới khi cấp tín dụng; giới hạn bởi quy định và nhu cầu vay.", prerequisites: [bank-balance-sheet, central-bank-policy], difficulty: 3, tags: [tín dụng, cung tiền] }
+  - { id: "asset-liability-management", name: { vi: "Quản lý tài sản–nợ", en: "Asset-liability management" }, short: "Quản lý chênh lệch kỳ hạn và lãi suất giữa tài sản và nợ của ngân hàng.", prerequisites: [bank-balance-sheet, yield-duration], difficulty: 4, tags: [ALM, rủi ro lãi suất] }
+  - { id: "payment-systems", name: { vi: "Hệ thống thanh toán", en: "Payment systems" }, short: "Hạ tầng chuyển tiền giữa các bên: RTGS, bù trừ ròng, hệ thống liên ngân hàng.", prerequisites: [clearing-settlement, bank-balance-sheet], difficulty: 3, tags: [RTGS, liên ngân hàng] }
+  - { id: "card-payments", name: { vi: "Thanh toán thẻ", en: "Card payments" }, short: "Luồng uỷ quyền, bù trừ, quyết toán giữa chủ thẻ, đơn vị chấp nhận, ngân hàng phát hành và thanh toán.", prerequisites: [payment-systems], difficulty: 3, tags: [thẻ, issuer, acquirer] }
+  - { id: "instant-payments", name: { vi: "Thanh toán tức thời", en: "Instant payments" }, short: "Chuyển tiền thời gian thực 24/7 và mã QR thanh toán.", prerequisites: [payment-systems], difficulty: 2, tags: [QR, real-time] }
+  - { id: "digital-wallets", name: { vi: "Ví điện tử", en: "Digital wallets" }, short: "Mô hình ví, tài khoản đảm bảo và quan hệ với ngân hàng liên kết.", prerequisites: [payment-systems], difficulty: 2, tags: [e-wallet] }
+  - { id: "open-banking", name: { vi: "Open banking", en: "Open banking" }, short: "Chia sẻ dữ liệu và khởi tạo thanh toán qua API theo sự đồng ý của khách hàng.", prerequisites: [payment-systems], difficulty: 3, tags: [API, consent] }

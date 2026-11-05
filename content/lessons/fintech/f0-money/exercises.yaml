@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-money-n2
+    conceptId: money-functions
+    prompt: "Có 10 loại hàng hoá trong một nền kinh tế đổi hàng. Cần bao nhiêu 'tỷ giá trao đổi' giữa từng cặp? Nếu có tiền làm đơn vị đo thì cần bao nhiêu giá?"
+    hint: "Số cặp không thứ tự từ n phần tử là n(n−1)/2."
+    solution: "Không có tiền: $10 \\cdot 9 / 2 = 45$ tỷ giá. Có tiền: chỉ cần 10 giá (mỗi hàng một giá bằng tiền). Đây là lợi ích 'canonical type' của đơn vị đo giá trị."

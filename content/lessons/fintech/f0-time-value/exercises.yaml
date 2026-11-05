@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-loan-payment
+    conceptId: time-value-of-money
+    prompt: "Vay 500 triệu, trả đều cuối mỗi tháng trong 5 năm, lãi 12%/năm (1%/tháng). Khoản trả hằng tháng là bao nhiêu?"
+    hint: "Giải $PV = C \\cdot \\frac{1-(1+r)^{-n}}{r}$ cho $C$ với $r = 0{,}01$, $n = 60$."
+    solution: "$C = 500 \\cdot 0{,}01 / (1 - 1{,}01^{-60}) \\approx 11{,}12$ triệu/tháng."
+  - id: ex-irr-sign
+    conceptId: npv-irr
+    prompt: "Dòng tiền −100, +230, −132. Hãy thử tính NPV tại r = 10% và r = 20%. Có gì lạ?"
+    hint: "Tính NPV tại vài mức r và để ý dấu."
+    solution: "NPV(10%) ≈ −100 + 209,09 − 109,09 = 0; NPV(20%) ≈ −100 + 191,67 − 91,67 = 0. Dòng tiền đổi dấu hai lần nên có hai IRR (10% và 20%) — IRR không còn là một con số duy nhất."

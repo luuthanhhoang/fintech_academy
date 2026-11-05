@@ -1,0 +1,78 @@
+---
+id: f1-bonds
+track: fintech
+stage: f1
+order: 2
+title: { vi: "Trái phiếu, lợi suất và duration", en: "Bonds, yields and duration" }
+summary: "Định giá trái phiếu bằng chiết khấu dòng tiền; quan hệ nghịch giá–lợi suất; duration, convexity và rủi ro lãi suất."
+concepts: [bond-pricing, yield-duration]
+estMinutes: 40
+whyQuestion: "Trái phiếu chính phủ được coi là 'an toàn' — vậy vì sao một ngân hàng nắm nhiều trái phiếu vẫn có thể gặp khó khăn lớn khi lãi suất tăng?"
+devMapping:
+  - finance: "Giá trái phiếu"
+    dev: "Hàm thuần price(cashflows, ytm)"
+    explanation: "Giá = tổng PV của coupon và mệnh giá. Cho dòng tiền cố định, giá chỉ là hàm của lợi suất."
+  - finance: "Duration"
+    dev: "Đạo hàm bậc nhất / độ nhạy (sensitivity)"
+    explanation: "Modified duration ≈ −(1/P)·dP/dy: % thay đổi giá cho mỗi đơn vị thay đổi lợi suất. Giống gradient của một hàm chi phí."
+  - finance: "Convexity"
+    dev: "Đạo hàm bậc hai — sai số của xấp xỉ tuyến tính"
+    explanation: "Duration là xấp xỉ bậc nhất; convexity hiệu chỉnh độ cong, quan trọng khi lợi suất thay đổi lớn."
+simulators: [bond]
+cases: [svb-2023]
+sources: [sec-interest-rate-risk, openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao giá trái phiếu lãi suất cố định giảm khi lợi suất thị trường tăng, và vì sao trái phiếu dài hạn bị ảnh hưởng nhiều hơn."
+  rubric:
+    - { id: fixed, criterion: "Coupon cố định trở nên kém hấp dẫn so với trái phiếu mới lãi cao hơn" }
+    - { id: pv, criterion: "Dòng tiền được chiết khấu ở lãi suất cao hơn → PV thấp hơn" }
+    - { id: duration, criterion: "Dòng tiền xa hơn chịu chiết khấu nhiều kỳ hơn → duration cao hơn" }
+---
+
+## Trái phiếu là một chuỗi dòng tiền
+
+Trái phiếu coupon cố định trả coupon $C$ mỗi kỳ và mệnh giá $F$ khi đáo hạn. Với lợi suất đáo hạn $y$ (theo kỳ) và $n$ kỳ:
+
+$$
+P = \sum_{k=1}^{n} \frac{C}{(1 + y)^{k}} + \frac{F}{(1 + y)^{n}}
+$$
+
+- Nếu lãi suất coupon = lợi suất → giá bằng mệnh giá (**par**).
+- Lợi suất > coupon → giá dưới mệnh giá (**discount**).
+- Lợi suất < coupon → giá trên mệnh giá (**premium**).
+
+<Quiz id="q-bond-par" />
+
+## Giá và lợi suất đi ngược chiều
+
+Bản tin nhà đầu tư của SEC nêu nguyên tắc nền tảng: **lãi suất thị trường và giá trái phiếu lãi suất cố định thường đi ngược chiều** — gọi là **rủi ro lãi suất**. Cũng theo SEC, trái phiếu kỳ hạn dài hơn và coupon thấp hơn thường chịu rủi ro lãi suất lớn hơn, và rủi ro này áp dụng cả với trái phiếu được bảo lãnh hoặc của chính phủ.
+
+<Simulator id="bond" />
+
+## Duration và convexity
+
+**Macaulay duration** là thời gian trung bình (có trọng số PV) để nhận dòng tiền:
+
+$$
+D_{Mac} = \frac{1}{P}\sum_{k=1}^{n} t_k \cdot \frac{CF_k}{(1 + y)^{k}}
+\qquad
+D_{mod} = \frac{D_{Mac}}{1 + y}
+$$
+
+Xấp xỉ thay đổi giá khi lợi suất thay đổi $\Delta y$:
+
+$$
+\frac{\Delta P}{P} \approx -D_{mod}\,\Delta y + \tfrac{1}{2}\,\text{Convexity}\,(\Delta y)^2
+$$
+
+Trái phiếu **zero-coupon** có Macaulay duration đúng bằng kỳ hạn.
+
+<Quiz id="q-bond-duration" />
+
+## Vì sao "an toàn" vẫn có thể nguy hiểm
+
+Trái phiếu chính phủ có rủi ro vỡ nợ thấp, nhưng **không miễn rủi ro lãi suất**. Một tổ chức nắm danh mục trái phiếu dài hạn bằng nguồn vốn có thể bị rút ngắn hạn (như tiền gửi) sẽ chịu lỗ nếu lãi suất tăng và buộc phải bán trước hạn. Đó là trọng tâm của case SVB.
+
+<Case id="svb-2023" />

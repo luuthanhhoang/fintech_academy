@@ -1,0 +1,9 @@
+track: ai
+stage: a1
+concepts:
+  - { id: "tokenization", name: { vi: "Token hoá", en: "Tokenization" }, short: "Văn bản được tách thành token; số token quyết định chi phí và giới hạn context.", prerequisites: [python-for-ai], difficulty: 2, tags: [token, BPE] }
+  - { id: "transformer-attention", name: { vi: "Transformer và attention", en: "Transformers and attention" }, short: "Self-attention cho phép mỗi token tổng hợp thông tin từ các token khác.", prerequisites: [neural-networks, linear-algebra-ml], difficulty: 4, tags: [attention, transformer] }
+  - { id: "pretraining-objective", name: { vi: "Mục tiêu tiền huấn luyện", en: "Pretraining objective" }, short: "Dự đoán token tiếp theo trên kho văn bản lớn; hậu huấn luyện để làm theo chỉ dẫn.", prerequisites: [transformer-attention, probability-ml], difficulty: 3, tags: [next-token, pretraining] }
+  - { id: "sampling-decoding", name: { vi: "Giải mã và lấy mẫu", en: "Decoding and sampling" }, short: "Chọn token từ phân phối xác suất; tính ngẫu nhiên và tính lặp lại của đầu ra.", prerequisites: [pretraining-objective], difficulty: 3, tags: [sampling, decoding] }
+  - { id: "context-window", name: { vi: "Cửa sổ ngữ cảnh", en: "Context window" }, short: "Giới hạn số token mô hình xử lý trong một lần gọi; mọi thứ mô hình 'biết' trong lượt đó.", prerequisites: [tokenization], difficulty: 2, tags: [context, tokens] }
+  - { id: "hallucination", name: { vi: "Ảo giác", en: "Hallucination" }, short: "Mô hình tạo nội dung trôi chảy nhưng sai hoặc không có căn cứ.", prerequisites: [pretraining-objective], difficulty: 2, tags: [hallucination, grounding] }

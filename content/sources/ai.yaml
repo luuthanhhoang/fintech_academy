@@ -1,0 +1,57 @@
+sources:
+  - id: anthropic-building-agents
+    title: Building effective agents
+    url: https://www.anthropic.com/research/building-effective-agents
+    publisher: Anthropic
+    accessed: 2026-11-05
+    note: Bài 12/2024; trang hiện có ghi chú rằng hệ sinh thái công cụ đã thay đổi từ đó.
+  - id: anthropic-context-engineering
+    title: Effective context engineering for AI agents
+    url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    publisher: Anthropic
+    accessed: 2026-11-05
+    note: Kiểm tra qua trích đoạn kết quả tìm kiếm (định nghĩa context engineering, "attention budget"). Các kỹ thuật cụ thể (compaction, ghi chú, sub-agent) đối chiếu qua bản tóm tắt thứ cấp.
+  - id: anthropic-writing-tools
+    title: Writing effective tools for agents — with agents
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+    publisher: Anthropic
+    accessed: 2026-11-05
+  - id: react-2022
+    title: "ReAct: Synergizing Reasoning and Acting in Language Models (Yao et al., ICLR 2023)"
+    url: https://arxiv.org/abs/2210.03629
+    publisher: arXiv
+    accessed: 2026-11-05
+  - id: swe-bench-2023
+    title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues? (Jimenez et al., ICLR 2024)"
+    url: https://arxiv.org/abs/2310.06770
+    publisher: arXiv
+    accessed: 2026-11-05
+  - id: owasp-llm-top10
+    title: OWASP Top 10 for Large Language Model Applications (2023, v0.9 PDF)
+    url: https://owasp.org/www-project-top-10-for-large-language-model-applications/assets/PDF/OWASP-Top-10-for-LLMs-2023-v09.pdf
+    publisher: OWASP Foundation
+    accessed: 2026-11-05
+    note: Bản 2023; theo kết quả tìm kiếm, bản 2025 vẫn xếp prompt injection đứng đầu (chưa kiểm tra trực tiếp bản 2025).
+  - id: mcp-spec
+    title: Model Context Protocol — Specification
+    url: https://modelcontextprotocol.io/specification
+    publisher: Model Context Protocol project
+    accessed: 2026-11-05
+    note: Ba primitive phía server (tools, resources, prompts) trên JSON-RPC 2.0 — kiểm tra qua bản sao tài liệu và tóm tắt trong kết quả tìm kiếm; phiên bản spec thay đổi theo thời gian.
+  - id: agent-skills-spec
+    title: Agent Skills — open format (SKILL.md, progressive disclosure)
+    url: https://agentskills.io/
+    publisher: Agent Skills (khởi xướng bởi Anthropic)
+    accessed: 2026-11-05
+  - id: claude-agent-sdk-docs
+    title: Agent SDK overview
+    url: https://code.claude.com/docs/en/agent-sdk/overview
+    publisher: Anthropic — Claude Code Docs
+    accessed: 2026-11-05
+    note: Tài liệu chính thức mô tả SDK cung cấp vòng lặp agent, công cụ, quản lý context (dùng trong Claude Code), subagent, permission, hook, MCP.
+  - id: anthropic-agent-evals
+    title: Demystifying evals for AI agents
+    url: https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+    publisher: Anthropic
+    accessed: 2026-11-05
+    note: Bài 01/2026; chi tiết về các loại grader và việc đọc transcript đối chiếu qua bản tóm tắt thứ cấp.

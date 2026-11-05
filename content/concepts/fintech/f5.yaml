@@ -1,0 +1,8 @@
+track: fintech
+stage: f5
+concepts:
+  - { id: "returns-statistics", name: { vi: "Thống kê lợi suất", en: "Return statistics" }, short: "Lợi suất đơn và log, trung bình, độ biến động, phân phối đuôi dày.", prerequisites: [risk-return], difficulty: 3, tags: [log return, fat tails] }
+  - { id: "time-series-basics", name: { vi: "Chuỗi thời gian tài chính", en: "Financial time series" }, short: "Tính dừng, tự tương quan, biến động theo cụm.", prerequisites: [returns-statistics], difficulty: 4, tags: [stationarity, autocorrelation] }
+  - { id: "backtesting", name: { vi: "Backtest", en: "Backtesting" }, short: "Kiểm thử chiến lược trên dữ liệu quá khứ; thiên lệch nhìn trước, overfitting, chi phí giao dịch.", prerequisites: [returns-statistics, liquidity-spread], difficulty: 4, tags: [backtest, overfitting] }
+  - { id: "factor-models", name: { vi: "Mô hình nhân tố", en: "Factor models" }, short: "Giải thích lợi suất bằng các nhân tố chung như thị trường, quy mô, giá trị.", prerequisites: [efficient-frontier, returns-statistics], difficulty: 4, tags: [CAPM, factor] }
+  - { id: "monte-carlo", name: { vi: "Mô phỏng Monte Carlo", en: "Monte Carlo simulation" }, short: "Mô phỏng ngẫu nhiên để ước lượng phân phối kết quả và rủi ro.", prerequisites: [expected-value-variance], difficulty: 3, tags: [simulation, random] }

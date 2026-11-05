@@ -1,0 +1,50 @@
+items:
+  - id: q-ctx-budget
+    type: mcq
+    conceptId: context-engineering
+    prompt: "Theo cách nhìn context engineering, mục tiêu khi xây context cho mỗi bước là gì?"
+    options:
+      - { id: a, text: "Tập token nhỏ nhất nhưng tín hiệu cao nhất để đạt kết quả mong muốn" }
+      - { id: b, text: "Lấp đầy cửa sổ ngữ cảnh để model có nhiều thông tin nhất" }
+      - { id: c, text: "Chỉ giữ system prompt" }
+    correct: [a]
+    explanation: "Context là ngân sách chú ý hữu hạn; thừa thông tin làm loãng tín hiệu."
+  - id: q-ctx-technique
+    type: mcq
+    conceptId: agent-memory
+    prompt: "Agent cần tổng hợp thông tin từ 30 tài liệu dài để viết một báo cáo. Kỹ thuật nào phù hợp nhất để giữ context của agent chính gọn?"
+    options:
+      - { id: a, text: "Giao từng nhóm tài liệu cho sub-agent đọc và trả về tóm tắt cô đọng" }
+      - { id: b, text: "Dán cả 30 tài liệu vào prompt" }
+      - { id: c, text: "Bỏ qua tài liệu dài" }
+    correct: [a]
+    explanation: "Sub-agent tiêu tốn token khám phá trong context riêng; agent chính chỉ nhận kết quả cô đọng."
+  - id: q-ctx-all
+    type: mcq
+    conceptId: context-engineering
+    prompt: "Chọn TẤT CẢ thứ thường làm 'ô nhiễm' context của agent."
+    options:
+      - { id: a, text: "Kết quả công cụ rất dài, phần lớn không liên quan" }
+      - { id: b, text: "Kết quả cũ đã không còn đúng sau các thay đổi" }
+      - { id: c, text: "Chỉ dẫn mâu thuẫn nhau trong system prompt" }
+      - { id: d, text: "Một ví dụ ngắn đúng trọng tâm" }
+    correct: [a, b, c]
+    explanation: "Ví dụ ngắn, đúng trọng tâm thường là tín hiệu tốt."
+  - id: q-ctx-order
+    type: ordering
+    conceptId: agent-memory
+    prompt: "Sắp xếp theo thời gian tồn tại từ NGẮN đến DÀI."
+    items:
+      - { id: tool, text: "Kết quả công cụ trong lượt hiện tại" }
+      - { id: summary, text: "Bản tóm tắt sau compaction" }
+      - { id: file, text: "File ghi chú dự án bền vững" }
+    explanation: "Làm việc → tóm tắt trong phiên → bền vững qua nhiều phiên."
+  - id: q-ctx-explain
+    type: explain
+    conceptId: context-engineering
+    prompt: "Bạn viết bản tóm tắt (compaction) cho một agent đang sửa bug. Những gì bắt buộc giữ lại và những gì nên bỏ?"
+    rubric:
+      - { id: keep, criterion: "Giữ: mục tiêu, quyết định đã chốt, giả thuyết đã loại, trạng thái file/branch, việc còn lại" }
+      - { id: drop, criterion: "Bỏ: output công cụ thô đã xử lý xong, các lần thử trùng lặp" }
+    modelAnswer: "Giữ mục tiêu, nguyên nhân đã xác định/đã loại trừ, các thay đổi đã làm và chưa commit, test nào đang fail, bước tiếp theo. Bỏ log thô, nội dung file đã đọc có thể đọc lại, các lần thử lặp lại."
+    explanation: "Compaction tốt = snapshot trạng thái, không phải bản chép lại lịch sử."

@@ -1,0 +1,13 @@
+fields: [title, titleEn, text, tags]
+boost: { title: 3, titleEn: 2, tags: 1.5 }
+fuzzy: 0.2
+prefix: true
+resultLimit: 12
+kindLabels:
+  lesson: Bài học
+  section: Đoạn trong bài
+  concept: Khái niệm
+  simulator: Mô phỏng
+  lab: Code lab
+  case: Case study
+  planned: Bài dự kiến

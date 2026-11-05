@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-eq-required-return
+    conceptId: equities
+    prompt: "Một cổ phiếu giá 40, cổ tức năm tới 2, tăng trưởng cổ tức kỳ vọng 5%/năm. Lợi suất kỳ vọng ngầm định theo Gordon là bao nhiêu?"
+    hint: "Đảo công thức: $r = D_1/P_0 + g$."
+    solution: "$r = 2/40 + 5\\% = 5\\% + 5\\% = 10\\%$."

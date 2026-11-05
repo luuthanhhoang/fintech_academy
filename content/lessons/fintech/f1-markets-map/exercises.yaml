@@ -1,0 +1,5 @@
+exercises:
+  - id: ex-map-classify
+    conceptId: financial-markets-map
+    prompt: "Phân loại (tiền tệ/vốn, sơ cấp/thứ cấp): (a) Chính phủ đấu thầu trái phiếu 10 năm mới; (b) hai ngân hàng vay nhau qua đêm; (c) bạn bán lại cổ phiếu đang nắm giữ."
+    solution: "(a) Thị trường vốn, sơ cấp. (b) Thị trường tiền tệ (liên ngân hàng). (c) Thị trường vốn, thứ cấp."

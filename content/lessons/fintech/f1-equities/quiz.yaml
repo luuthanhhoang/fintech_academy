@@ -1,0 +1,51 @@
+items:
+  - id: q-eq-return
+    type: numeric
+    conceptId: equities
+    prompt: "Mua cổ phiếu giá 50, nhận cổ tức 2, cuối năm giá 54. Tổng lợi suất là bao nhiêu %?"
+    answer: 12
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "(2 + 54 − 50)/50 = 0,12 = 12% (4% cổ tức + 8% lãi vốn)."
+  - id: q-eq-gordon
+    type: numeric
+    conceptId: equities
+    prompt: "Cổ tức năm tới 3, tăng đều 4%/năm, lợi suất yêu cầu 10%. Giá trị cổ phiếu theo Gordon?"
+    answer: 50
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "3 / (0,10 − 0,04) = 50."
+  - id: q-eq-residual
+    type: mcq
+    conceptId: equities
+    prompt: "Khi doanh nghiệp phá sản và thanh lý, cổ đông phổ thông được nhận tiền khi nào?"
+    options:
+      - { id: a, text: "Trước chủ nợ" }
+      - { id: b, text: "Sau khi đã trả các chủ nợ và nghĩa vụ ưu tiên — có thể không còn gì" }
+      - { id: c, text: "Cùng lúc với chủ nợ theo tỷ lệ" }
+    correct: [b]
+    explanation: "Cổ đông là người nhận phần dư (residual claimant)."
+  - id: q-eq-pe
+    type: numeric
+    conceptId: equities
+    prompt: "Lợi nhuận ròng 200 tỷ, 100 triệu cổ phiếu, giá 30.000 đồng/cp. P/E bằng bao nhiêu?"
+    answer: 15
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "EPS = 200 tỷ / 100 triệu = 2.000 đồng; P/E = 30.000/2.000 = 15."
+  - id: q-eq-order
+    type: ordering
+    conceptId: equities
+    prompt: "Sắp xếp thứ tự ưu tiên nhận tiền khi thanh lý (trước nhất ở trên)."
+    items:
+      - { id: secured, text: "Chủ nợ có bảo đảm" }
+      - { id: unsecured, text: "Chủ nợ không có bảo đảm" }
+      - { id: common, text: "Cổ đông phổ thông" }
+    explanation: "Có bảo đảm → không bảo đảm → cổ đông nhận phần dư."
+  - id: q-eq-explain
+    type: explain
+    conceptId: equities
+    prompt: "Vì sao không nên so sánh P/E của một ngân hàng với P/E của một công ty phần mềm tăng trưởng nhanh?"
+    rubric:
+      - { id: growth, criterion: "Khác biệt về tăng trưởng kỳ vọng làm P/E 'hợp lý' khác nhau" }
+      - { id: risk, criterion: "Khác biệt về rủi ro / cấu trúc vốn / cách ghi nhận lợi nhuận" }
+    modelAnswer: "P/E phản ánh kỳ vọng tăng trưởng và rủi ro; doanh nghiệp tăng trưởng nhanh thường có P/E cao hơn, ngân hàng có cấu trúc vốn và lợi nhuận rất khác. So sánh chỉ có ý nghĩa giữa các doanh nghiệp tương đồng."
+    explanation: "Chỉ số tương đối luôn cần nhóm so sánh phù hợp."

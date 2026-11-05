@@ -1,0 +1,54 @@
+items:
+  - id: q-tvm-pv
+    type: numeric
+    conceptId: time-value-of-money
+    prompt: "Giá trị hiện tại của 110 nhận sau 1 năm, với chi phí cơ hội 10%/năm?"
+    answer: 100
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "PV = 110 / 1,10 = 100."
+  - id: q-npv-calc
+    type: numeric
+    conceptId: npv-irr
+    prompt: "Dự án: đầu tư 1.000 hôm nay, nhận 600 cuối năm 1 và 600 cuối năm 2. NPV ở r = 10%? (2 chữ số thập phân)"
+    answer: 41.32
+    tolerance: { kind: abs, value: 0.02 }
+    explanation: "NPV = −1000 + 600/1,1 + 600/1,21 = −1000 + 545,45 + 495,87 ≈ 41,32."
+  - id: q-irr-meaning
+    type: mcq
+    conceptId: npv-irr
+    prompt: "IRR của một dự án là gì?"
+    options:
+      - { id: a, text: "Lãi suất làm NPV của dự án bằng 0" }
+      - { id: b, text: "Lợi nhuận kế toán chia cho vốn" }
+      - { id: c, text: "Lãi suất ngân hàng trung ương" }
+    correct: [a]
+    explanation: "IRR là nghiệm của NPV(r) = 0. Nếu IRR > chi phí vốn (và dòng tiền 'bình thường') thì NPV ở chi phí vốn dương."
+  - id: q-irr-traps
+    type: mcq
+    conceptId: npv-irr
+    prompt: "Chọn TẤT CẢ trường hợp IRR có thể gây hiểu nhầm."
+    options:
+      - { id: a, text: "So sánh hai dự án khác quy mô" }
+      - { id: b, text: "Dòng tiền đổi dấu nhiều lần" }
+      - { id: c, text: "Dòng tiền chỉ toàn dương" }
+      - { id: d, text: "Dự án một kỳ: −100 rồi +110" }
+    correct: [a, b, c]
+    explanation: "Quy mô khác nhau, nhiều lần đổi dấu (nhiều nghiệm) và không đổi dấu (không có nghiệm) đều là bẫy. Dự án −100/+110 có IRR = 10% rõ ràng."
+  - id: q-tvm-order
+    type: ordering
+    conceptId: time-value-of-money
+    prompt: "Với r = 10%/năm, sắp xếp các khoản từ giá trị hiện tại THẤP đến CAO."
+    items:
+      - { id: c, text: "130 nhận sau 3 năm" }
+      - { id: a, text: "100 nhận hôm nay" }
+      - { id: b, text: "112 nhận sau 1 năm" }
+    explanation: "PV: 130/1,331 ≈ 97,7 < 100 < 112/1,1 ≈ 101,8."
+  - id: q-tvm-explain
+    type: explain
+    conceptId: time-value-of-money
+    prompt: "Vì sao không được cộng trực tiếp các dòng tiền ở các năm khác nhau để đánh giá một dự án?"
+    rubric:
+      - { id: opp, criterion: "Nêu chi phí cơ hội: tiền sớm có thể đầu tư sinh lãi" }
+      - { id: pv, criterion: "Phải quy về cùng thời điểm (PV) trước khi cộng" }
+    modelAnswer: "Mỗi dòng tiền ở một thời điểm khác nhau có 'đơn vị' khác nhau vì tiền sớm có thể đầu tư sinh lãi. Phải chiết khấu tất cả về hiện tại bằng chi phí cơ hội rồi mới cộng (NPV)."
+    explanation: "Đây là nguyên lý nền của mọi phép định giá."

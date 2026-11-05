@@ -1,0 +1,7 @@
+track: ai
+stage: a6
+concepts:
+  - { id: "supervised-finetuning", name: { vi: "Fine-tuning có giám sát", en: "Supervised fine-tuning" }, short: "Huấn luyện tiếp trên cặp đầu vào–đầu ra mẫu để điều chỉnh hành vi.", prerequisites: [pretraining-objective], difficulty: 3, tags: [SFT] }
+  - { id: "preference-tuning", name: { vi: "Tinh chỉnh theo sở thích", en: "Preference tuning" }, short: "RLHF, DPO — học từ so sánh cặp câu trả lời tốt/xấu.", prerequisites: [supervised-finetuning], difficulty: 4, tags: [RLHF, DPO] }
+  - { id: "lora-peft", name: { vi: "LoRA và PEFT", en: "LoRA and PEFT" }, short: "Chỉ huấn luyện một phần nhỏ tham số để giảm chi phí fine-tuning.", prerequisites: [supervised-finetuning, linear-algebra-ml], difficulty: 4, tags: [LoRA] }
+  - { id: "distillation", name: { vi: "Chưng cất mô hình", en: "Distillation" }, short: "Huấn luyện mô hình nhỏ bắt chước mô hình lớn.", prerequisites: [supervised-finetuning], difficulty: 3, tags: [distillation] }

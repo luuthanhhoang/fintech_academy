@@ -1,0 +1,5 @@
+exercises:
+  - id: ex-cs-netting
+    conceptId: clearing-settlement
+    prompt: "Ba thành viên giao dịch một mã trong ngày: A mua 100 của B; B mua 70 của C; C mua 50 của A. Không có CCP thì cần bao nhiêu lần chuyển giao? Bù trừ ròng qua CCP thì sao?"
+    solution: "Không bù trừ: 3 lần chuyển chứng khoán (và 3 lần chuyển tiền). Ròng: A +100 −50 = +50; B −100 +70 = −30; C −70 +50 = −20. Qua CCP chỉ còn B giao 30, C giao 20, A nhận 50 — các nghĩa vụ ròng nhỏ hơn và chỉ đối ứng với CCP."

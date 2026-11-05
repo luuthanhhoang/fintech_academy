@@ -1,0 +1,51 @@
+items:
+  - id: q-money-barter
+    type: mcq
+    conceptId: money-functions
+    prompt: "Vấn đề chính của đổi hàng trực tiếp (barter) mà tiền giải quyết là gì?"
+    options:
+      - { id: a, text: "Hàng hoá không có giá" }
+      - { id: b, text: "Cần trùng khớp nhu cầu kép giữa hai bên" }
+      - { id: c, text: "Không thể vay mượn" }
+    correct: [b]
+    explanation: "Đổi hàng chỉ xảy ra khi mỗi bên có đúng thứ bên kia cần. Tiền tách giao dịch thành hai bước bán–mua với một vật trung gian ai cũng nhận."
+  - id: q-money-functions-all
+    type: mcq
+    conceptId: money-functions
+    prompt: "Chọn TẤT CẢ các chức năng của tiền."
+    options:
+      - { id: a, text: "Phương tiện trao đổi" }
+      - { id: b, text: "Đơn vị đo giá trị" }
+      - { id: c, text: "Phương tiện lưu giữ giá trị" }
+      - { id: d, text: "Đảm bảo lợi nhuận" }
+    correct: [a, b, c]
+    explanation: "Ba chức năng kinh điển là trao đổi, đơn vị đo và lưu giữ giá trị. Tiền không đảm bảo lợi nhuận — giữ tiền còn có thể mất sức mua vì lạm phát."
+  - id: q-money-fail-order
+    type: ordering
+    conceptId: money-functions
+    prompt: "Khi lạm phát tăng rất cao, các chức năng của tiền thường mất theo thứ tự nào (sớm nhất trước)?"
+    items:
+      - { id: store, text: "Lưu giữ giá trị" }
+      - { id: unit, text: "Đơn vị đo giá trị" }
+      - { id: exchange, text: "Phương tiện trao đổi" }
+    explanation: "Người ta thôi để dành bằng đồng tiền đó trước, sau đó chuyển sang niêm yết giá bằng thứ khác, cuối cùng ngừng cả dùng nó để thanh toán."
+  - id: q-money-fiat
+    type: mcq
+    conceptId: money-functions
+    prompt: "Giá trị của tiền pháp định (fiat) chủ yếu dựa vào đâu?"
+    options:
+      - { id: a, text: "Lượng vàng tương ứng trong kho" }
+      - { id: b, text: "Niềm tin chung rằng người khác sẽ chấp nhận nó, cùng khung pháp lý và chính sách tiền tệ" }
+      - { id: c, text: "Chi phí in ấn" }
+    correct: [b]
+    explanation: "Fiat không được bảo chứng hàng hoá. Niềm tin và việc bảo vệ giá trị đồng tiền (kiểm soát lạm phát) là nền tảng."
+  - id: q-money-ledger
+    type: explain
+    conceptId: money-functions
+    prompt: "Giải thích bằng ngôn ngữ dev: khi bạn chuyển khoản 1 triệu đồng cho bạn bè cùng ngân hàng, điều gì thực sự xảy ra?"
+    rubric:
+      - { id: records, criterion: "Mô tả là cập nhật hai bản ghi số dư, không có vật thể di chuyển" }
+      - { id: atomic, criterion: "Nêu yêu cầu hai cập nhật phải cùng thành công hoặc cùng thất bại (atomic)" }
+      - { id: total, criterion: "Tổng số dư trước và sau không đổi" }
+    modelAnswer: "Ngân hàng ghi giảm số dư tài khoản của bạn và ghi tăng số dư tài khoản người nhận trong cùng một giao dịch nguyên tử; tổng không đổi. Không có tờ tiền nào di chuyển — chỉ là sổ cái được cập nhật."
+    explanation: "Đây là hạt giống của kế toán kép và thiết kế sổ cái mà ta sẽ học ở các bài sau."

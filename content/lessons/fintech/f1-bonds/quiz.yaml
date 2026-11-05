@@ -1,0 +1,52 @@
+items:
+  - id: q-bond-par
+    type: mcq
+    conceptId: bond-pricing
+    prompt: "Trái phiếu coupon 6%/năm, lợi suất thị trường hiện là 8%/năm. Giá trái phiếu so với mệnh giá?"
+    options:
+      - { id: a, text: "Thấp hơn mệnh giá (discount)" }
+      - { id: b, text: "Bằng mệnh giá" }
+      - { id: c, text: "Cao hơn mệnh giá (premium)" }
+    correct: [a]
+    explanation: "Lợi suất > coupon → dòng tiền cố định được chiết khấu nhiều hơn → giá dưới mệnh giá."
+  - id: q-bond-price-calc
+    type: numeric
+    conceptId: bond-pricing
+    prompt: "Trái phiếu mệnh giá 1.000, coupon 5%/năm trả hằng năm, còn 2 năm, lợi suất 6%. Giá? (2 chữ số thập phân)"
+    answer: 981.67
+    tolerance: { kind: abs, value: 0.02 }
+    explanation: "P = 50/1,06 + 1050/1,06² = 47,17 + 934,50 ≈ 981,67."
+  - id: q-bond-duration
+    type: numeric
+    conceptId: yield-duration
+    prompt: "Trái phiếu zero-coupon còn 7 năm. Macaulay duration là bao nhiêu năm?"
+    answer: 7
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Chỉ có một dòng tiền ở năm 7, nên trung bình có trọng số là 7."
+  - id: q-bond-estimate
+    type: numeric
+    conceptId: yield-duration
+    prompt: "Modified duration 8, lợi suất tăng 0,5 điểm % (0,005). Ước lượng bậc nhất % thay đổi giá?"
+    answer: -4
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "ΔP/P ≈ −8 × 0,005 = −0,04 = −4%."
+  - id: q-bond-risk-order
+    type: ordering
+    conceptId: yield-duration
+    prompt: "Cùng lợi suất, sắp xếp theo rủi ro lãi suất từ THẤP đến CAO."
+    items:
+      - { id: short, text: "Trái phiếu 2 năm, coupon 8%" }
+      - { id: long-high, text: "Trái phiếu 10 năm, coupon 8%" }
+      - { id: long-zero, text: "Trái phiếu zero-coupon 10 năm" }
+    explanation: "Kỳ hạn dài hơn và coupon thấp hơn → duration cao hơn → rủi ro lãi suất lớn hơn (khớp với bản tin của SEC)."
+  - id: q-bond-explain
+    type: explain
+    conceptId: yield-duration
+    prompt: "Giải thích cho một người nghĩ 'trái phiếu chính phủ thì không thể lỗ' vì sao họ có thể lỗ khi bán trước hạn."
+    rubric:
+      - { id: rate-risk, criterion: "Phân biệt rủi ro vỡ nợ với rủi ro lãi suất" }
+      - { id: sell, criterion: "Bán trước hạn khi lợi suất đã tăng → bán dưới giá mua" }
+      - { id: hold, criterion: "Giữ tới đáo hạn thì nhận đủ dòng tiền danh nghĩa (nếu không vỡ nợ)" }
+    modelAnswer: "Trái phiếu chính phủ có rủi ro vỡ nợ thấp nhưng giá vẫn thay đổi theo lãi suất. Nếu lợi suất thị trường tăng sau khi bạn mua, giá trái phiếu giảm; bán trước hạn lúc đó là chịu lỗ. Giữ tới đáo hạn thì nhận đủ coupon và mệnh giá như cam kết."
+    explanation: "Đây là cơ chế cốt lõi trong case SVB."

@@ -1,0 +1,75 @@
+---
+id: f0-inflation-real
+track: fintech
+stage: f0
+order: 3
+title: { vi: "Lạm phát và lợi suất thực", en: "Inflation and real returns" }
+summary: "Lạm phát đo bằng chỉ số giá; lợi suất thực tách phần bù lạm phát khỏi phần tăng sức mua thật (phương trình Fisher)."
+concepts: [inflation, real-return]
+estMinutes: 25
+whyQuestion: "Tài khoản tiết kiệm của bạn tăng 6% một năm — bạn có thực sự giàu lên 6% không?"
+devMapping:
+  - finance: "Danh nghĩa vs thực (nominal vs real)"
+    dev: "Giá trị chưa chuẩn hoá vs đã chuẩn hoá theo baseline"
+    explanation: "Số danh nghĩa giống metric thô; số thực là metric đã chia cho baseline thay đổi theo thời gian (mức giá). So sánh qua nhiều năm phải dùng số đã chuẩn hoá."
+  - finance: "Chỉ số giá CPI"
+    dev: "Weighted average của một 'giỏ' mẫu cố định"
+    explanation: "CPI theo dõi chi phí của một giỏ hàng hoá–dịch vụ đại diện với trọng số; giống benchmark trên một workload chuẩn — đổi workload (trọng số) là đổi ý nghĩa con số."
+  - finance: "Ảo giác tiền tệ (money illusion)"
+    dev: "Đọc nhầm đơn vị"
+    explanation: "Thấy số dư tăng và nghĩ mình giàu lên, trong khi sức mua giảm — giống thấy throughput tăng nhưng quên rằng request size đã giảm."
+simulators: [inflation]
+sources: [imf-inflation, openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích phương trình Fisher và khi nào xấp xỉ r ≈ n − π trở nên kém chính xác."
+  rubric:
+    - { id: exact, criterion: "Viết đúng 1 + r = (1 + n)/(1 + π)" }
+    - { id: approx, criterion: "Nêu xấp xỉ r ≈ n − π bỏ qua tích r·π" }
+    - { id: when, criterion: "Chỉ ra sai lệch lớn khi lạm phát hoặc lãi suất cao" }
+---
+
+## Lạm phát là gì
+
+**Lạm phát (inflation)** là sự tăng lên của mức giá chung theo thời gian, làm mỗi đơn vị tiền mua được ít hơn. Cách đo phổ biến là **chỉ số giá tiêu dùng (CPI)**: chi phí của một giỏ hàng hoá và dịch vụ đại diện, so với một năm gốc.
+
+$$
+\pi_t = \frac{CPI_t}{CPI_{t-1}} - 1
+$$
+
+Bài phổ cập của IMF còn phân biệt **lạm phát cơ bản (core inflation)** — loại bỏ các giá biến động mạnh như lương thực, năng lượng và giá do nhà nước định — và nhắc tới **lạm phát chi phí đẩy** khi cú sốc cung (thiên tai, giá dầu tăng) đẩy chi phí sản xuất lên.
+
+<Sidenote>IMF cũng nhấn mạnh vai trò của **kỳ vọng**: mức độ tin cậy của ngân hàng trung ương ảnh hưởng tới việc công bố của họ có định hình kỳ vọng lạm phát của công chúng hay không.</Sidenote>
+
+<Quiz id="q-cpi-calc" />
+
+## Danh nghĩa và thực
+
+Nếu khoản đầu tư có lợi suất danh nghĩa $n$ và lạm phát là $\pi$, sức mua của bạn tăng theo **lợi suất thực** $r$:
+
+$$
+1 + r = \frac{1 + n}{1 + \pi}
+\qquad\Rightarrow\qquad
+r = \frac{1 + n}{1 + \pi} - 1
+$$
+
+Đây là **phương trình Fisher**. Khi $n$ và $\pi$ nhỏ, có xấp xỉ quen thuộc $r \approx n - \pi$.
+
+Quay lại câu hỏi mở đầu: lãi 6% với lạm phát 4% cho lợi suất thực $1{,}06/1{,}04 - 1 \approx 1{,}92\%$ — không phải 6%, và cũng không đúng bằng 2%.
+
+<Simulator id="inflation" />
+
+## Sức mua theo thời gian
+
+Giữ tiền mặt không sinh lãi trong $t$ năm với lạm phát $\pi$ không đổi:
+
+$$
+\text{Sức mua} = \frac{\text{Số tiền}}{(1 + \pi)^{t}}
+$$
+
+<Callout kind="warning">
+Mô phỏng dùng lạm phát **giả định không đổi** do bạn nhập. Số liệu lạm phát thực tế của từng quốc gia thay đổi theo thời gian và phải lấy từ cơ quan thống kê chính thức — site này không cung cấp dữ liệu thị trường realtime.
+</Callout>
+
+<Quiz id="q-fisher-calc" />

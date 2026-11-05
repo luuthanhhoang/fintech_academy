@@ -1,0 +1,11 @@
+id: ledger-double-entry
+title: { vi: "Sổ cái kế toán kép", en: "Double-entry ledger" }
+summary: Viết một sổ cái nhỏ bắt buộc mỗi bút toán cân Nợ = Có, lưu tiền bằng số nguyên đơn vị nhỏ nhất và lập bảng cân đối thử.
+concepts: [double-entry-accounting, financial-statements]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện lớp Ledger trong code khởi đầu:
+  1. post(description, lines): lines là danh sách (tài khoản, nợ, có) với số tiền là số nguyên ≥ 0 (đơn vị nhỏ nhất, ví dụ đồng). Từ chối (raise ValueError) nếu tài khoản chưa mở, số tiền âm/không phải int, một dòng vừa nợ vừa có, ít hơn 2 dòng, hoặc tổng Nợ ≠ tổng Có.
+  2. balance(account): số dư theo "phía tự nhiên" — tài sản và chi phí tăng bên Nợ; nợ phải trả, vốn chủ và doanh thu tăng bên Có.
+  3. trial_balance(): trả về (tổng nợ, tổng có) của mọi bút toán — luôn bằng nhau nếu post đúng.
+  4. Bút toán đã ghi là bất biến: sửa sai bằng bút toán đảo (reverse), không xoá.

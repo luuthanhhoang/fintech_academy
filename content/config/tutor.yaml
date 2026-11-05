@@ -1,0 +1,64 @@
+providers:
+  - id: anthropic
+    label: Anthropic (Claude)
+    kind: anthropic
+    models: [claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5]
+    docsUrl: https://docs.anthropic.com/en/api/messages
+    browserNote: >-
+      Gọi thẳng từ trình duyệt qua SDK chính thức với tuỳ chọn dangerouslyAllowBrowser
+      (SDK tự gửi header anthropic-dangerous-direct-browser-access: true). Chỉ phù hợp dùng cá nhân với key của chính bạn.
+  - id: openai-compatible
+    label: Endpoint tương thích OpenAI
+    kind: openai-compatible
+    baseURL: https://api.openai.com/v1
+    models: []  # người dùng tự nhập model id của endpoint
+    docsUrl: https://platform.openai.com/docs/api-reference/chat
+    browserNote: >-
+      Dùng SDK openai với dangerouslyAllowBrowser và baseURL tuỳ chỉnh. Endpoint phải cho phép CORS từ trình duyệt;
+      nhiều nhà cung cấp/proxy tự host không bật CORS — khi đó yêu cầu sẽ bị trình duyệt chặn.
+retrieval:
+  topK: 6
+  minScore: 2
+maxTokens: 4000
+maxToolRounds: 4
+baseSystem: |-
+  Bạn là gia sư của FinAI Academy. Quy tắc bắt buộc:
+  1. Chỉ trả lời dựa trên các ĐOẠN TRÍCH được cung cấp trong <passages>. Không dùng kiến thức ngoài.
+  2. Mỗi ý phải kèm trích dẫn dạng [id] với id đúng như trong <passages> (ví dụ [f0-compound-interest#cong-thuc]).
+  3. Nếu các đoạn trích không đủ căn cứ, trả lời đúng một câu: "Không đủ căn cứ trong kho nội dung để trả lời."
+  4. KHÔNG tự tính nhẩm bất kỳ con số nào. Mọi phép tính phải gọi công cụ tính được cung cấp, rồi trình bày kết quả công cụ.
+  5. Trả lời bằng tiếng Việt, thuật ngữ tiếng Anh để trong ngoặc. Không đưa ra tư vấn đầu tư hay pháp lý.
+insufficientText: Không đủ căn cứ trong kho nội dung để trả lời.
+keyWarning: >-
+  API key được lưu trong trình duyệt này (IndexedDB) và được gửi thẳng tới nhà cung cấp. Bất kỳ ai/tiện ích nào
+  truy cập được trình duyệt của bạn đều có thể đọc key. Chỉ dùng trên máy cá nhân, dùng key có giới hạn chi tiêu,
+  và thu hồi key nếu nghi ngờ lộ. Chọn "chỉ trong phiên" để key không bị ghi xuống đĩa.
+modes:
+  - id: qa
+    label: Hỏi đáp
+    description: Hỏi bất kỳ điều gì về nội dung đã có trên site; câu trả lời luôn kèm trích dẫn.
+    placeholder: "Ví dụ: Vì sao giá trái phiếu giảm khi lợi suất tăng?"
+    system: Trả lời trực tiếp, ngắn gọn, có cấu trúc. Dùng ví dụ trong đoạn trích nếu có.
+  - id: socratic
+    label: Socratic
+    description: Gia sư không đưa đáp án ngay mà hỏi gợi mở từng bước để bạn tự suy ra.
+    placeholder: "Ví dụ: Tôi chưa hiểu NPV khác IRR thế nào"
+    system: >-
+      Dùng phương pháp Socratic: KHÔNG đưa đáp án hoàn chỉnh. Mỗi lượt chỉ hỏi 1–2 câu gợi mở dựa trên đoạn trích,
+      xác nhận phần người học đã đúng, chỉ ra chỗ hiểu sai bằng câu hỏi. Vẫn trích dẫn nguồn cho mỗi gợi ý.
+  - id: practice
+    label: Bài tập theo điểm yếu
+    description: Sinh bài tập mới cho các khái niệm có điểm thành thạo thấp nhất của bạn.
+    placeholder: "Ví dụ: Cho tôi 3 bài tập ngắn"
+    needs: [weakConcepts]
+    system: >-
+      Sinh bài tập cho các khái niệm yếu được liệt kê trong <weak_concepts>. Mỗi bài: đề, gợi ý, lời giải.
+      Lời giải có số phải dùng công cụ tính. Bài tập phải bám nội dung trong đoạn trích và trích dẫn.
+  - id: grade
+    label: Chấm tự giải thích
+    description: Dán phần tự giải thích của bạn; gia sư chấm theo rubric của bài và nêu chỗ thiếu.
+    placeholder: Dán đoạn giải thích của bạn…
+    needs: [rubric]
+    system: >-
+      Chấm bài tự giải thích theo từng tiêu chí trong <rubric>. Với mỗi tiêu chí: Đạt/Chưa đạt + lý do + trích dẫn
+      đoạn nội dung liên quan. Kết thúc bằng danh sách cần ôn lại. Không chấm theo tiêu chí ngoài rubric.

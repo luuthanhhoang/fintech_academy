@@ -1,0 +1,89 @@
+---
+id: f0-time-value
+track: fintech
+stage: f0
+order: 2
+title: { vi: "Giá trị thời gian của tiền: PV, FV, NPV, IRR", en: "Time value of money: PV, FV, NPV, IRR" }
+summary: "Quy mọi dòng tiền về cùng một thời điểm bằng chiết khấu và tích luỹ; đánh giá dự án bằng NPV và IRR, cùng các bẫy khi dùng IRR."
+concepts: [time-value-of-money, npv-irr]
+estMinutes: 35
+whyQuestion: "Nhận 100 triệu hôm nay hay 110 triệu sau một năm — câu trả lời phụ thuộc vào điều gì?"
+devMapping:
+  - finance: "Chiết khấu (discounting)"
+    dev: "Chuẩn hoá về một mốc thời gian chung"
+    explanation: "Không thể cộng tiền ở các thời điểm khác nhau, giống không thể cộng hai số đo ở hai đơn vị khác nhau. PV đưa mọi dòng tiền về 'đơn vị hôm nay'."
+  - finance: "NPV"
+    dev: "Hàm fold trên mảng dòng tiền"
+    explanation: "NPV = cashflows.reduce((acc, cf, t) => acc + cf / (1+r)**t, 0). Một hàm thuần, dễ test bằng ví dụ biết trước."
+  - finance: "IRR"
+    dev: "Bài toán tìm nghiệm (root finding)"
+    explanation: "IRR là r sao cho NPV(r) = 0 — không có công thức đóng tổng quát, nên dùng Newton/bisection. Có thể không có nghiệm hoặc nhiều nghiệm, giống mọi bài root-finding."
+simulators: [tvm]
+sources: [openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao NPV > 0 nghĩa là dự án 'tạo giá trị', và vì sao không nên chỉ dựa vào IRR để so sánh hai dự án."
+  rubric:
+    - { id: npv, criterion: "NPV > 0 nghĩa là dự án hoàn vốn và sinh dư so với chi phí cơ hội r" }
+    - { id: scale, criterion: "IRR bỏ qua quy mô — dự án nhỏ có IRR cao vẫn có thể tạo ít giá trị hơn" }
+    - { id: multiple, criterion: "Nhắc khả năng nhiều IRR hoặc không có IRR khi dòng tiền đổi dấu nhiều lần" }
+---
+
+## Một đồng hôm nay ≠ một đồng ngày mai
+
+Tiền hôm nay có thể đầu tư để sinh lãi, nên nó đáng giá hơn cùng số tiền trong tương lai. Với lãi suất $r$ mỗi kỳ:
+
+$$
+FV = PV\,(1 + r)^{n} \qquad\Longleftrightarrow\qquad PV = \frac{FV}{(1 + r)^{n}}
+$$
+
+$r$ ở đây là **chi phí cơ hội** — lợi suất bạn có thể đạt được ở lựa chọn tốt nhất khác với rủi ro tương đương.
+
+Quay lại câu hỏi mở đầu: 110 triệu sau một năm có PV $= 110/(1+r)$. Nếu $r = 8\%$ thì PV ≈ 101,9 triệu > 100 triệu — chọn chờ. Nếu $r = 12\%$ thì PV ≈ 98,2 triệu — chọn nhận ngay.
+
+<Quiz id="q-tvm-pv" />
+
+## Chuỗi tiền đều (annuity)
+
+Nhận cùng một khoản $C$ cuối mỗi kỳ trong $n$ kỳ:
+
+$$
+PV = C \cdot \frac{1 - (1 + r)^{-n}}{r}
+\qquad
+FV = C \cdot \frac{(1 + r)^{n} - 1}{r}
+$$
+
+Đây là công thức phía sau lịch trả góp khoản vay và kế hoạch tiết kiệm định kỳ.
+
+<Simulator id="tvm" />
+
+## NPV — giá trị hiện tại ròng
+
+Một dự án có dòng tiền $CF_0, CF_1, \dots, CF_n$ (thường $CF_0 < 0$ là vốn đầu tư):
+
+$$
+NPV(r) = \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^{t}}
+$$
+
+Quy tắc: **NPV > 0 thì dự án tạo giá trị** so với việc đầu tư ở lợi suất $r$.
+
+## IRR — lợi suất nội bộ
+
+IRR là lãi suất làm NPV bằng 0:
+
+$$
+NPV(\text{IRR}) = 0
+$$
+
+IRR tiện vì là một con số phần trăm, nhưng có bẫy:
+
+- **Quy mô**: dự án nhỏ có IRR 50% có thể tạo ít giá trị tuyệt đối hơn dự án lớn IRR 20%.
+- **Nhiều nghiệm**: dòng tiền đổi dấu nhiều lần (âm–dương–âm) có thể cho nhiều IRR.
+- **Không có nghiệm**: dòng tiền toàn dương hoặc toàn âm thì không có IRR.
+
+<Callout kind="dev" title="Cài đặt IRR">
+Thư viện của site dùng Newton để hội tụ nhanh, và rơi về bisection khi Newton không ổn định; trả về `null` khi dòng tiền không đổi dấu. Xem `lib/finance/tvm.ts` và các unit test đối chiếu.
+</Callout>
+
+<Quiz id="q-npv-calc" />

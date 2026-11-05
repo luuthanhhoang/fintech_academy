@@ -1,0 +1,14 @@
+id: ai
+order: 1
+title: { vi: "AI/LLM engineer", en: "AI/LLM engineer" }
+summary: Từ nền tảng ML, hiểu LLM, làm việc với API, RAG, agent và harness đến đánh giá, fine-tuning, inference và an toàn.
+stages:
+  - { id: "a0", order: 0, title: { vi: "Nền tảng", en: "Foundations" }, summary: "Python cho AI, đại số tuyến tính, xác suất, ML và mạng nơ-ron cơ bản." }
+  - { id: "a1", order: 1, title: { vi: "Hiểu LLM", en: "Understanding LLMs" }, summary: "Token, transformer/attention, tiền huấn luyện, giải mã, context window, ảo giác." }
+  - { id: "a2", order: 2, title: { vi: "Làm việc với API", en: "Working with APIs" }, summary: "Messages API, prompt, structured output, streaming, tool calling, caching, chi phí." }
+  - { id: "a3", order: 3, title: { vi: "RAG", en: "Retrieval-augmented generation" }, summary: "Embedding, tìm kiếm vector, chunking, hybrid retrieval, rerank, grounding và trích dẫn." }
+  - { id: "a4", order: 4, title: { vi: "Agent = Model + Harness", en: "Agent = Model + Harness" }, summary: "Vòng lặp agent, thiết kế công cụ, quản lý context/bộ nhớ, harness (quyền, sandbox, giám sát), đánh giá agent." }
+  - { id: "a5", order: 5, title: { vi: "Đánh giá (Eval)", en: "Evaluation" }, summary: "Bộ dữ liệu eval, LLM-as-judge, eval offline/online, kiểm thử hồi quy prompt." }
+  - { id: "a6", order: 6, title: { vi: "Fine-tuning", en: "Fine-tuning" }, summary: "SFT, preference tuning, LoRA/PEFT, distillation." }
+  - { id: "a7", order: 7, title: { vi: "Inference & triển khai", en: "Inference & serving" }, summary: "Lượng tử hoá, KV cache, batching, hạ tầng phục vụ, speculative decoding." }
+  - { id: "a8", order: 8, title: { vi: "An toàn & bảo mật", en: "Safety & security" }, summary: "Prompt injection, jailbreak, quyền riêng tư dữ liệu, guardrail, red teaming." }

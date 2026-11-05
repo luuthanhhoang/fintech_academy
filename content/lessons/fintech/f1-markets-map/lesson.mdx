@@ -1,0 +1,64 @@
+---
+id: f1-markets-map
+track: fintech
+stage: f1
+order: 0
+title: { vi: "Bản đồ thị trường tài chính", en: "Map of financial markets" }
+summary: "Thị trường tiền tệ và thị trường vốn, sơ cấp và thứ cấp, các chủ thể tham gia và dòng chảy của vốn từ người tiết kiệm tới người cần vốn."
+concepts: [financial-markets-map]
+estMinutes: 25
+whyQuestion: "Khi bạn mua một cổ phiếu trên app, tiền của bạn có đến tay công ty phát hành không?"
+devMapping:
+  - finance: "Thị trường sơ cấp vs thứ cấp"
+    dev: "Mint/issue vs transfer"
+    explanation: "Sơ cấp là lúc tài sản được tạo ra và bán lần đầu (công ty nhận tiền). Thứ cấp chỉ là chuyển quyền sở hữu giữa nhà đầu tư — công ty không nhận thêm tiền."
+  - finance: "Trung gian tài chính"
+    dev: "Middleware / message broker"
+    explanation: "Ngân hàng, quỹ, công ty chứng khoán đứng giữa người có vốn và người cần vốn, xử lý kỳ hạn, rủi ro, thanh khoản — giống broker tách producer và consumer."
+  - finance: "Thị trường tiền tệ vs thị trường vốn"
+    dev: "Cache ngắn hạn vs storage dài hạn"
+    explanation: "Thị trường tiền tệ là vốn ngắn hạn (dưới một năm), tối ưu cho thanh khoản; thị trường vốn là vốn dài hạn (cổ phiếu, trái phiếu dài hạn)."
+sources: [openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Vẽ (bằng lời) đường đi của tiền từ một người gửi tiết kiệm tới một doanh nghiệp cần vốn, qua cả kênh ngân hàng và kênh thị trường."
+  rubric:
+    - { id: indirect, criterion: "Kênh gián tiếp: tiền gửi → ngân hàng → cho vay doanh nghiệp" }
+    - { id: direct, criterion: "Kênh trực tiếp: mua cổ phiếu/trái phiếu phát hành trên thị trường sơ cấp" }
+    - { id: secondary, criterion: "Phân biệt giao dịch thứ cấp không đem vốn mới cho doanh nghiệp" }
+---
+
+## Thị trường tài chính để làm gì
+
+Thị trường tài chính kết nối **người có vốn dư** (hộ gia đình tiết kiệm, quỹ) với **người cần vốn** (doanh nghiệp, chính phủ). Có hai kênh:
+
+- **Gián tiếp** qua trung gian: bạn gửi tiền vào ngân hàng, ngân hàng cho doanh nghiệp vay.
+- **Trực tiếp** qua thị trường: doanh nghiệp phát hành cổ phiếu/trái phiếu, nhà đầu tư mua.
+
+## Theo kỳ hạn: tiền tệ và vốn
+
+| | Thị trường tiền tệ | Thị trường vốn |
+|---|---|---|
+| Kỳ hạn | Ngắn hạn (thường dưới một năm) | Dài hạn |
+| Ví dụ công cụ | Tín phiếu, vay liên ngân hàng, chứng chỉ tiền gửi ngắn hạn | Cổ phiếu, trái phiếu dài hạn |
+| Mục đích | Quản lý thanh khoản | Tài trợ đầu tư dài hạn |
+
+## Theo vòng đời: sơ cấp và thứ cấp
+
+- **Sơ cấp (primary)**: chứng khoán được phát hành lần đầu; tổ chức phát hành nhận tiền.
+- **Thứ cấp (secondary)**: nhà đầu tư mua bán với nhau trên sàn hoặc thị trường phi tập trung (OTC).
+
+Câu hỏi mở đầu: khi mua cổ phiếu trên app, bạn thường mua trên **thị trường thứ cấp** — tiền đi tới người bán, không phải công ty. Thị trường thứ cấp vẫn quan trọng với công ty vì nó tạo **thanh khoản** và **giá tham chiếu**, giúp lần phát hành sau dễ hơn.
+
+<Quiz id="q-map-secondary" />
+
+## Các chủ thể
+
+- **Tổ chức phát hành** (doanh nghiệp, chính phủ).
+- **Nhà đầu tư** (cá nhân, tổ chức).
+- **Trung gian** (ngân hàng, công ty chứng khoán, quỹ).
+- **Hạ tầng thị trường** (sở giao dịch, tổ chức bù trừ, lưu ký) — sẽ học ở bài khớp lệnh và bù trừ–thanh toán.
+- **Cơ quan quản lý**.
+
+<Quiz id="q-map-money-market" />

@@ -1,0 +1,13 @@
+exercises:
+  - id: ex-doubling
+    conceptId: compound-interest
+    prompt: Ở lãi kép 6%/năm (ghép năm), mất bao lâu để tiền nhân đôi? So với "quy tắc 72".
+    hint: Giải $(1{,}06)^t = 2$ bằng logarit.
+    solution: $t = \ln 2 / \ln 1{,}06 \approx 11{,}9$ năm. Quy tắc 72 cho $72/6 = 12$ năm — rất sát ở lãi suất nhỏ.
+    simulator: { id: "tvm", params: { ratePct: 6, compoundsPerYear: 1, years: 15 } }
+  - id: ex-contribution
+    conceptId: compound-interest
+    prompt: Bắt đầu với 0, góp 12 triệu cuối mỗi năm, lãi 8%/năm trong 20 năm. Mở mô phỏng và cho biết bao nhiêu phần trăm số dư cuối là lãi.
+    hint: Đặt vốn ban đầu = 0, "Góp thêm cuối mỗi năm" = 12000 (đơn vị nghìn).
+    solution: "Số dư = 12 × ((1,08^20 − 1)/0,08) ≈ 549,1 triệu; tổng góp 240 triệu, nên phần lãi ≈ 309 triệu, tức khoảng 56% số dư."
+    simulator: { id: "tvm", params: { principal: 0, contribution: 12000, ratePct: 8, years: 20, compoundsPerYear: 1 } }

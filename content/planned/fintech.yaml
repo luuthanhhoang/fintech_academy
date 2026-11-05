@@ -1,0 +1,22 @@
+track: fintech
+lessons:
+  - { id: "f2-bank-balance-sheet", stage: "f2", order: 0, title: { vi: "Ngân hàng kiếm tiền thế nào", en: "How banks make money" }, concepts: [bank-balance-sheet, money-creation] }
+  - { id: "f2-alm", stage: "f2", order: 1, title: { vi: "Lệch kỳ hạn và quản lý tài sản–nợ", en: "Maturity mismatch and ALM" }, concepts: [asset-liability-management] }
+  - { id: "f2-payment-rails", stage: "f2", order: 2, title: { vi: "Đường ray thanh toán", en: "Payment rails" }, concepts: [payment-systems, instant-payments] }
+  - { id: "f2-cards", stage: "f2", order: 3, title: { vi: "Một giao dịch thẻ đi qua những đâu", en: "Anatomy of a card transaction" }, concepts: [card-payments] }
+  - { id: "f2-wallets-open-banking", stage: "f2", order: 4, title: { vi: "Ví điện tử và open banking", en: "Wallets and open banking" }, concepts: [digital-wallets, open-banking] }
+  - { id: "f3-credit-risk", stage: "f3", order: 0, title: { vi: "Rủi ro tín dụng và tổn thất kỳ vọng", en: "Credit risk and expected loss" }, concepts: [credit-risk] }
+  - { id: "f3-market-liquidity-risk", stage: "f3", order: 1, title: { vi: "Rủi ro thị trường và thanh khoản", en: "Market and liquidity risk" }, concepts: [market-risk-var, liquidity-risk] }
+  - { id: "f3-operational-risk", stage: "f3", order: 2, title: { vi: "Rủi ro vận hành", en: "Operational risk" }, concepts: [operational-risk] }
+  - { id: "f3-kyc-aml", stage: "f3", order: 3, title: { vi: "KYC/AML cho kỹ sư", en: "KYC/AML for engineers" }, concepts: [kyc-aml] }
+  - { id: "f3-basel", stage: "f3", order: 4, title: { vi: "Vốn và thanh khoản theo Basel", en: "Basel capital and liquidity" }, concepts: [capital-regulation] }
+  - { id: "f4-money-ledger", stage: "f4", order: 0, title: { vi: "Biểu diễn tiền và thiết kế sổ cái", en: "Money types and ledger design" }, concepts: [money-representation, ledger-design] }
+  - { id: "f4-idempotency-recon", stage: "f4", order: 1, title: { vi: "Idempotency và đối soát", en: "Idempotency and reconciliation" }, concepts: [idempotency, reconciliation] }
+  - { id: "f4-event-sourcing", stage: "f4", order: 2, title: { vi: "Event sourcing và audit trail", en: "Event sourcing and audit trails" }, concepts: [event-sourcing-audit] }
+  - { id: "f4-trading-systems", stage: "f4", order: 3, title: { vi: "Hệ thống giao dịch và triển khai an toàn", en: "Trading systems and safe deployment" }, concepts: [trading-systems-latency, deployment-safety-finance] }
+  - { id: "f5-returns", stage: "f5", order: 0, title: { vi: "Thống kê lợi suất và chuỗi thời gian", en: "Return statistics and time series" }, concepts: [returns-statistics, time-series-basics] }
+  - { id: "f5-backtesting", stage: "f5", order: 1, title: { vi: "Backtest không tự lừa mình", en: "Backtesting without fooling yourself" }, concepts: [backtesting] }
+  - { id: "f5-factors-mc", stage: "f5", order: 2, title: { vi: "Mô hình nhân tố và Monte Carlo", en: "Factor models and Monte Carlo" }, concepts: [factor-models, monte-carlo] }
+  - { id: "f6-credit-fraud-ml", stage: "f6", order: 0, title: { vi: "ML cho tín dụng và gian lận", en: "ML for credit and fraud" }, concepts: [credit-scoring-ml, fraud-detection-ml] }
+  - { id: "f6-llm-finance", stage: "f6", order: 1, title: { vi: "LLM trong tài chính", en: "LLMs in finance" }, concepts: [llm-in-finance] }
+  - { id: "f6-model-risk", stage: "f6", order: 2, title: { vi: "Quản trị rủi ro mô hình, giải thích và công bằng", en: "Model risk, explainability and fairness" }, concepts: [model-risk-management, explainability-fairness] }

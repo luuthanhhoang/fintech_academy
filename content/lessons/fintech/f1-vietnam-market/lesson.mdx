@@ -1,0 +1,93 @@
+---
+id: f1-vietnam-market
+track: fintech
+stage: f1
+order: 7
+title: { vi: "Thị trường chứng khoán Việt Nam (cập nhật 11/2026)", en: "Vietnam's securities market (as of Nov 2026)" }
+summary: "Ai làm gì trong thị trường chứng khoán Việt Nam: cơ quan quản lý, sở giao dịch và công ty con, tổng công ty lưu ký và bù trừ, khung luật hiện hành, hệ thống giao dịch mới và tiến trình nâng hạng."
+concepts: [vn-securities-market]
+estMinutes: 30
+whyQuestion: "Khi bạn đặt một lệnh mua cổ phiếu ở Việt Nam, lệnh và tiền của bạn đi qua những tổ chức nào?"
+devMapping:
+  - finance: "Sở giao dịch + tổ chức lưu ký–bù trừ"
+    dev: "Order-matching service + settlement/ledger service tách biệt"
+    explanation: "Khớp lệnh và quyết toán sở hữu là hai hệ thống khác nhau với trách nhiệm khác nhau — giống tách write path giao dịch khỏi hệ thống ghi sổ."
+  - finance: "Thay hệ thống giao dịch lõi"
+    dev: "Migration hệ thống core có downtime gần bằng 0"
+    explanation: "Đổi matching engine của cả thị trường đòi chạy thử toàn thị trường, kiểm thử với mọi công ty chứng khoán (client) và kế hoạch rollback — một bài toán migration kinh điển."
+  - finance: "Nâng hạng thị trường"
+    dev: "Đạt chứng nhận tuân thủ của một nền tảng lớn"
+    explanation: "Giống đạt chứng chỉ tuân thủ để được tích hợp vào một marketplace: phải đáp ứng bộ tiêu chí kỹ thuật–vận hành do bên thứ ba đặt ra."
+sources: [vn-law-securities-2019, vn-law-56-2024, vn-vnx-2020, vn-ssc-686-2025, vn-krx-2025, vn-tt68-2024, ftse-vietnam-2025, vn-hnx-trading-rules]
+facts:
+  - id: vn-law-amend
+    text: "Luật Chứng khoán gốc được sửa đổi, bổ sung bởi Luật số 56/2024/QH15; các nhóm quy định có mốc hiệu lực khác nhau"
+    sourceId: vn-law-56-2024
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: vn-ssc-status
+    text: "Theo quyết định của Bộ trưởng Bộ Tài chính về chức năng, nhiệm vụ của UBCKNN, UBCKNN là đơn vị thuộc Bộ Tài chính, tham mưu giúp Bộ trưởng quản lý nhà nước về chứng khoán"
+    sourceId: vn-ssc-686-2025
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: vn-vnx
+    text: "Sở Giao dịch Chứng khoán Việt Nam (VNX) là công ty mẹ, sở hữu toàn bộ vốn của HOSE và HNX"
+    sourceId: vn-vnx-2020
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: vn-krx
+    text: "HOSE đã đưa hệ thống giao dịch mới (KRX) vào vận hành chính thức sau khi chạy thử toàn thị trường"
+    sourceId: vn-krx-2025
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: vn-prefunding
+    text: "Thông tư sửa đổi quy định giao dịch cho phép nhà đầu tư tổ chức nước ngoài đặt lệnh mua cổ phiếu không yêu cầu có đủ tiền (trong hạn mức, với trách nhiệm thanh toán của ngân hàng lưu ký)"
+    sourceId: vn-tt68-2024
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: vn-ftse
+    text: "FTSE Russell công bố nâng Việt Nam từ thị trường cận biên lên thị trường mới nổi thứ cấp (Secondary Emerging), hiệu lực từ"
+    value: "21/09/2026"
+    sourceId: ftse-vietnam-2025
+    asOf: 2026-11-05
+    status: verified
+lastVerified: 2026-11-05
+status: needs_verification
+selfExplain:
+  prompt: "Mô tả đường đi của một lệnh mua cổ phiếu niêm yết ở Việt Nam từ app tới khi bạn sở hữu cổ phiếu, gọi tên vai trò từng tổ chức."
+  rubric:
+    - { id: broker, criterion: "Công ty chứng khoán nhận lệnh, kiểm tra tài khoản/tiền" }
+    - { id: exchange, criterion: "Sở giao dịch khớp lệnh" }
+    - { id: vsdc, criterion: "Tổng công ty lưu ký và bù trừ thực hiện bù trừ, thanh toán, ghi nhận sở hữu" }
+    - { id: regulator, criterion: "UBCKNN/Bộ Tài chính quản lý, giám sát" }
+---
+
+<Callout kind="warning" title="Bài cần kiểm chứng — cập nhật đến 05/11/2026">
+Phần lớn dữ kiện pháp lý và sự kiện trong bài này lấy từ báo chí hoặc trang tổng hợp văn bản, nên được đánh dấu "chưa kiểm chứng" và không nêu ngày tháng cụ thể. Ngoại lệ là thông báo nâng hạng có nguồn chính thức từ FTSE Russell. Quy định thị trường thay đổi thường xuyên — luôn đối chiếu Cổng thông tin của UBCKNN, các sở giao dịch, VSDC và Công báo.
+</Callout>
+
+## Các tổ chức chính
+
+- **Cơ quan quản lý**: <Fact id="vn-ssc-status" />.
+- **Sở giao dịch**: <Fact id="vn-vnx" />. HOSE tập trung vào thị trường cổ phiếu niêm yết; HNX vận hành các mảng như trái phiếu, phái sinh và thị trường UPCoM (phân công cụ thể cần đối chiếu điều lệ hiện hành).
+- **Hạ tầng sau giao dịch**: Tổng công ty Lưu ký và Bù trừ chứng khoán Việt Nam (VSDC) — lưu ký, đăng ký sở hữu, bù trừ và thanh toán.
+- **Thành viên**: công ty chứng khoán (nhận lệnh, quản lý tài khoản), ngân hàng lưu ký và ngân hàng thanh toán.
+
+## Khung pháp lý hiện hành
+
+Luật nền tảng là Luật Chứng khoán (số 54/2019/QH14). <Fact id="vn-law-amend" />. Theo các bản tóm tắt, sửa đổi bổ sung định nghĩa hành vi thao túng thị trường, điều chỉnh tiêu chí nhà đầu tư chứng khoán chuyên nghiệp và điều kiện công ty đại chúng.
+
+## Hạ tầng giao dịch mới và thay đổi vận hành
+
+- <Fact id="vn-krx" />. Theo báo chí, một số thay đổi đi kèm gồm cách xử lý lệnh ATO/ATC trong thứ tự ưu tiên và lịch giao dịch thoả thuận.
+- <Fact id="vn-prefunding" />. Đây là một trong các cải cách nhằm đáp ứng tiêu chí của các tổ chức xếp hạng thị trường.
+
+## Nâng hạng thị trường
+
+<Fact id="vn-ftse" />. Thông cáo cho biết việc đưa cổ phiếu Việt Nam vào các chỉ số được triển khai theo giai đoạn. Tại thời điểm soạn bài, site **chưa kiểm chứng được** diễn biến thực tế sau ngày hiệu lực.
+
+## Nguyên tắc khớp lệnh
+
+Khớp lệnh liên tục ở Việt Nam theo **ưu tiên giá rồi ưu tiên thời gian** — đúng mô hình bạn đã cài ở lab matching engine. Các phiên khớp lệnh định kỳ mở/đóng cửa xác định một mức giá duy nhất tối đa hoá khối lượng khớp; chi tiết khung giờ và loại lệnh thay đổi theo quy chế từng thời kỳ.
+
+<Quiz id="q-vn-roles" />

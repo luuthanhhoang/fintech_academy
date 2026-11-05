@@ -1,0 +1,5 @@
+exercises:
+  - id: ex-harness-policy
+    conceptId: harness-permissions-sandbox
+    prompt: "Viết bảng chính sách quyền (allow / ask / deny) cho một coding agent chạy trên máy dev, gồm ít nhất 6 loại hành động."
+    solution: "Allow: đọc file trong repo, chạy test, tìm kiếm code. Ask: ghi file ngoài repo, cài package, push lên remote, gọi mạng tới domain mới. Deny: đọc ~/.ssh hoặc file .env ngoài phạm vi, xoá thư mục ngoài repo, gửi dữ liệu tới domain không allowlist."

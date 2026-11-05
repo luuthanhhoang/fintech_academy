@@ -1,0 +1,62 @@
+---
+id: f1-equities
+track: fintech
+stage: f1
+order: 1
+title: { vi: "Cổ phiếu: sở hữu một phần doanh nghiệp", en: "Equities: owning part of a business" }
+summary: "Cổ phiếu là quyền sở hữu và quyền hưởng phần dư; lợi suất từ cổ tức và chênh lệch giá; mô hình chiết khấu cổ tức và các chỉ số định giá cơ bản."
+concepts: [equities]
+estMinutes: 30
+whyQuestion: "Nếu một công ty không bao giờ trả cổ tức, cổ phiếu của nó có giá trị từ đâu?"
+devMapping:
+  - finance: "Quyền hưởng phần dư (residual claim)"
+    dev: "Process chạy sau cùng trong hàng đợi ưu tiên"
+    explanation: "Chủ nợ, nhân viên, thuế được trả trước; cổ đông nhận phần còn lại. Nếu hết tiền, cổ đông nhận ít nhất — nên rủi ro cao hơn và đòi lợi suất kỳ vọng cao hơn."
+  - finance: "Tổng lợi suất (total return)"
+    dev: "Tổng của hai stream: payout + thay đổi giá trị trạng thái"
+    explanation: "Lợi suất = (cổ tức + giá cuối − giá đầu)/giá đầu. Bỏ một thành phần là đo sai."
+  - finance: "P/E"
+    dev: "Tỷ lệ chi phí/hiệu suất kiểu 'giá trên mỗi đơn vị throughput'"
+    explanation: "P/E cho biết thị trường trả bao nhiêu cho mỗi đồng lợi nhuận — tiện so sánh nhưng che giấu khác biệt về tăng trưởng và rủi ro."
+sources: [openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao cổ phiếu rủi ro hơn trái phiếu của cùng công ty, và điều đó liên quan gì tới lợi suất kỳ vọng."
+  rubric:
+    - { id: residual, criterion: "Cổ đông là người nhận phần dư sau chủ nợ" }
+    - { id: variability, criterion: "Dòng tiền cho cổ đông biến động hơn" }
+    - { id: premium, criterion: "Rủi ro cao hơn đòi phần bù rủi ro / lợi suất kỳ vọng cao hơn" }
+---
+
+## Cổ phiếu là gì
+
+Một cổ phiếu phổ thông là **một phần quyền sở hữu** doanh nghiệp: quyền biểu quyết (thường), quyền nhận cổ tức khi được công bố, và quyền với **phần tài sản còn lại** sau khi đã trả mọi nghĩa vụ.
+
+## Lợi suất từ cổ phiếu
+
+$$
+R = \frac{D_1 + P_1 - P_0}{P_0} = \underbrace{\frac{D_1}{P_0}}_{\text{lợi suất cổ tức}} + \underbrace{\frac{P_1 - P_0}{P_0}}_{\text{lãi vốn}}
+$$
+
+<Quiz id="q-eq-return" />
+
+## Định giá: chiết khấu cổ tức
+
+Giá trị cổ phiếu là PV của dòng tiền cho cổ đông. Nếu cổ tức tăng đều $g$ mãi mãi và lợi suất yêu cầu là $r > g$ (mô hình Gordon):
+
+$$
+P_0 = \frac{D_1}{r - g}
+$$
+
+Câu hỏi mở đầu: công ty không trả cổ tức vẫn có giá trị vì cổ đông sở hữu **dòng tiền tương lai** của doanh nghiệp — có thể được trả sau này, hoặc giữ lại tái đầu tư làm doanh nghiệp lớn lên. Khi đó người ta định giá theo dòng tiền tự do của doanh nghiệp (bài DCF) thay vì cổ tức.
+
+## Chỉ số nhanh
+
+- **EPS** = lợi nhuận ròng / số cổ phiếu.
+- **P/E** = giá / EPS.
+- **P/B** = giá / giá trị sổ sách mỗi cổ phiếu.
+
+Các chỉ số này chỉ có nghĩa khi so sánh các doanh nghiệp tương đồng; chúng không thay thế việc hiểu dòng tiền.
+
+<Quiz id="q-eq-gordon" />

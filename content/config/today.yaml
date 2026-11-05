@@ -1,0 +1,8 @@
+maxReviews: 30
+idleTimeoutSeconds: 120
+blocks:
+  - { id: "reviews", title: "Thẻ ôn đến hạn", description: "Ôn lại theo lịch FSRS trước khi học mới." }
+  - { id: "lesson", title: "Bài mới kế tiếp", description: "Bài tiếp theo trong lộ trình mà bạn đã đủ tiền đề." }
+  - { id: "practice", title: "Bài tập / Code lab", description: "Thực hành trên khái niệm đang học." }
+  - { id: "case", title: "Mini case thực tế", description: "Một sự cố thật và câu hỏi \"bạn sẽ chặn thế nào?\"." }
+  - { id: "explain", title: "Tự giải thích lại", description: "Viết lại bằng lời của bạn rồi chấm theo rubric." }

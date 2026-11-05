@@ -1,0 +1,10 @@
+track: fintech
+stage: f4
+concepts:
+  - { id: "money-representation", name: { vi: "Biểu diễn tiền trong phần mềm", en: "Representing money in software" }, short: "Số nguyên đơn vị nhỏ nhất hoặc decimal, làm tròn, đa tiền tệ; tránh số thực dấu phẩy động.", prerequisites: [money-functions], difficulty: 2, tags: [decimal, rounding] }
+  - { id: "ledger-design", name: { vi: "Thiết kế sổ cái", en: "Ledger design" }, short: "Sổ cái bất biến, bút toán kép, số dư suy ra từ bút toán, tài khoản và kỳ.", prerequisites: [double-entry-accounting, money-representation], difficulty: 3, tags: [ledger, immutable] }
+  - { id: "idempotency", name: { vi: "Idempotency trong thanh toán", en: "Idempotency in payments" }, short: "Khoá idempotency để thử lại an toàn mà không trừ tiền hai lần.", prerequisites: [ledger-design, payment-systems], difficulty: 3, tags: [idempotency key, retry] }
+  - { id: "reconciliation", name: { vi: "Đối soát", en: "Reconciliation" }, short: "So khớp sổ nội bộ với sao kê bên ngoài, phát hiện và xử lý chênh lệch.", prerequisites: [ledger-design], difficulty: 3, tags: [đối soát, recon] }
+  - { id: "event-sourcing-audit", name: { vi: "Event sourcing và audit trail", en: "Event sourcing and audit trail" }, short: "Lưu chuỗi sự kiện bất biến để tái dựng trạng thái và phục vụ kiểm toán.", prerequisites: [ledger-design], difficulty: 3, tags: [event sourcing, audit] }
+  - { id: "trading-systems-latency", name: { vi: "Hệ thống giao dịch độ trễ thấp", en: "Low-latency trading systems" }, short: "Kiến trúc gateway, matching, market data; kiểm soát rủi ro trước giao dịch và kill switch.", prerequisites: [matching-engine, operational-risk], difficulty: 4, tags: [latency, kill switch] }
+  - { id: "deployment-safety-finance", name: { vi: "Triển khai an toàn trong hệ thống tài chính", en: "Safe deployment in financial systems" }, short: "Feature flag, triển khai từng phần, kiểm tra cấu hình và quy trình rollback.", prerequisites: [operational-risk], difficulty: 3, tags: [deployment, rollback] }

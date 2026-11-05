@@ -1,0 +1,55 @@
+items:
+  - id: q-pf-two-asset
+    type: numeric
+    conceptId: diversification
+    prompt: "Hai tài sản σ₁ = σ₂ = 20%, tương quan ρ = 0, chia đều 50/50. Độ lệch chuẩn danh mục là bao nhiêu %? (2 chữ số thập phân)"
+    answer: 14.14
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "σ_p² = 0,25·0,04 + 0,25·0,04 = 0,02 → σ_p ≈ 14,14%, thấp hơn 20% của từng tài sản."
+  - id: q-pf-minvar
+    type: numeric
+    conceptId: efficient-frontier
+    prompt: "σ₁ = 20%, σ₂ = 10%, ρ = 0. Trọng số tài sản 1 trong danh mục rủi ro thấp nhất là bao nhiêu % ?"
+    answer: 20
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "w* = σ₂²/(σ₁² + σ₂²) = 0,01/0,05 = 0,2."
+  - id: q-pf-rho1
+    type: mcq
+    conceptId: diversification
+    prompt: "Khi ρ = 1 giữa hai tài sản, σ của danh mục bằng?"
+    options:
+      - { id: a, text: "Trung bình có trọng số của σ₁ và σ₂ — không có lợi ích đa dạng hoá" }
+      - { id: b, text: "0" }
+      - { id: c, text: "Luôn nhỏ hơn σ nhỏ nhất" }
+    correct: [a]
+    explanation: "Với ρ = 1, σ_p = wσ₁ + (1 − w)σ₂."
+  - id: q-pf-frontier
+    type: mcq
+    conceptId: efficient-frontier
+    prompt: "Một danh mục nằm DƯỚI đường biên hiệu quả nghĩa là?"
+    options:
+      - { id: a, text: "Có danh mục khác cùng rủi ro nhưng lợi suất kỳ vọng cao hơn" }
+      - { id: b, text: "Danh mục đó tốt nhất" }
+      - { id: c, text: "Danh mục đó không có rủi ro" }
+    correct: [a]
+    explanation: "Điểm dưới biên bị 'trội' (dominated) — kém hiệu quả."
+  - id: q-pf-order
+    type: ordering
+    conceptId: diversification
+    prompt: "Danh mục 50/50, σ₁ = σ₂ = 20%. Sắp xếp σ danh mục từ thấp đến cao theo ρ."
+    items:
+      - { id: neg, text: "ρ = −0,5" }
+      - { id: zero, text: "ρ = 0" }
+      - { id: pos, text: "ρ = 0,8" }
+    explanation: "σ_p² = 0,02(1 + ρ) → ρ càng thấp càng ít rủi ro."
+  - id: q-pf-explain
+    type: explain
+    conceptId: diversification
+    prompt: "Vì sao 'đa dạng hoá' có thể thất bại đúng lúc bạn cần nó nhất?"
+    rubric:
+      - { id: crisis, criterion: "Tương quan giữa nhiều tài sản tăng mạnh trong khủng hoảng" }
+      - { id: liquidity, criterion: "Thanh khoản cạn kiệt khiến các vị thế cùng bị bán tháo" }
+    modelAnswer: "Trong khủng hoảng, nhà đầu tư bán tháo đồng loạt, tương quan giữa các tài sản rủi ro tăng vọt và thanh khoản biến mất, nên các vị thế tưởng độc lập cùng lỗ. Ước lượng tương quan từ giai đoạn bình thường đánh giá thấp rủi ro lúc này."
+    explanation: "Liên hệ case LTCM."

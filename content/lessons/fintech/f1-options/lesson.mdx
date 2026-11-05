@@ -1,0 +1,70 @@
+---
+id: f1-options
+track: fintech
+stage: f1
+order: 5
+title: { vi: "Phái sinh, đòn bẩy và payoff quyền chọn", en: "Derivatives, leverage and option payoffs" }
+summary: "Hợp đồng kỳ hạn, tương lai, quyền chọn; payoff của call và put tại đáo hạn; chiến lược kết hợp; vì sao đòn bẩy khuếch đại cả lãi lẫn lỗ."
+concepts: [derivatives-basics, options-payoff, leverage]
+estMinutes: 45
+whyQuestion: "Vì sao một hợp đồng chỉ tốn vài phần trăm giá trị tài sản lại có thể làm bạn mất nhiều hơn số tiền bỏ ra?"
+devMapping:
+  - finance: "Payoff tại đáo hạn"
+    dev: "Hàm thuần payoff(spot) với max(·, 0)"
+    explanation: "Call: max(S − K, 0); put: max(K − S, 0). Chiến lược nhiều chân là tổng các hàm — dễ unit test bằng các điểm biết trước."
+  - finance: "Quyền chọn = quyền, không phải nghĩa vụ"
+    dev: "Optional callback"
+    explanation: "Người mua chỉ 'gọi' khi có lợi; người bán phải đáp ứng nếu bị gọi. Bất đối xứng này tạo ra hình dạng payoff gãy khúc."
+  - finance: "Đòn bẩy"
+    dev: "Khuếch đại tín hiệu (gain)"
+    explanation: "Đòn bẩy nhân biên độ lãi/lỗ trên vốn tự có. Gain cao làm hệ thống nhạy và dễ mất ổn định — một nhiễu nhỏ thành dao động lớn."
+simulators: [options]
+cases: [ltcm-1998]
+sources: [sec-options-bulletin, pwg-ltcm-1999]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "So sánh rủi ro của người mua call và người bán call không phòng hộ; dùng hình dạng payoff để giải thích."
+  rubric:
+    - { id: buyer, criterion: "Người mua: lỗ tối đa bằng phí, lãi không giới hạn" }
+    - { id: seller, criterion: "Người bán: lãi tối đa bằng phí, lỗ không giới hạn" }
+    - { id: asym, criterion: "Giải thích bất đối xứng quyền/nghĩa vụ" }
+---
+
+## Phái sinh là gì
+
+Phái sinh là hợp đồng có giá trị **phụ thuộc** vào một tài sản cơ sở (cổ phiếu, chỉ số, lãi suất, hàng hoá…):
+
+- **Kỳ hạn / tương lai (forward/futures)**: nghĩa vụ mua/bán ở giá thoả thuận vào ngày tương lai.
+- **Quyền chọn (option)**: **quyền nhưng không phải nghĩa vụ** mua (call) hoặc bán (put) ở giá thực hiện $K$ trước/tại ngày đáo hạn; người mua trả **phí quyền chọn (premium)**.
+- **Hoán đổi (swap)**: trao đổi chuỗi dòng tiền (ví dụ lãi cố định lấy lãi thả nổi).
+
+## Payoff tại đáo hạn
+
+$$
+\text{Call} = \max(S_T - K,\ 0)
+\qquad
+\text{Put} = \max(K - S_T,\ 0)
+$$
+
+Lãi/lỗ của người mua = payoff − phí. Bản tin của SEC giải thích call **có lãi nội tại (in the money)** khi giá thực hiện thấp hơn giá cổ phiếu, còn put thì ngược lại.
+
+<Quiz id="q-opt-payoff" />
+
+<Simulator id="options" />
+
+## Đòn bẩy
+
+Đòn bẩy là dùng vốn vay hoặc phái sinh để nắm vị thế lớn hơn vốn tự có. Với tỷ lệ đòn bẩy $L$ = tổng vị thế / vốn chủ:
+
+$$
+\text{Lợi suất trên vốn chủ} \approx L \times \text{lợi suất tài sản}
+$$
+
+Ví dụ (giả định): $L = 10$, tài sản giảm 10% → vốn chủ mất ~100%. Câu hỏi mở đầu có lời giải: phái sinh và vay ký quỹ cho phép vị thế lớn với ít vốn, nên một biến động vừa phải đã có thể vượt quá số tiền ký quỹ, và với vị thế bán quyền chọn không phòng hộ, lỗ không có giới hạn trên.
+
+Báo cáo năm 1999 của Nhóm Công tác của Tổng thống Mỹ về LTCM kết luận: **đòn bẩy quá mức có thể khuếch đại rất lớn tác động tiêu cực** của một biến cố thị trường.
+
+<Case id="ltcm-1998" />
+
+<Quiz id="q-opt-leverage" />

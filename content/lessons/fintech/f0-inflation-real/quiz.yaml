@@ -1,0 +1,55 @@
+items:
+  - id: q-cpi-calc
+    type: numeric
+    conceptId: inflation
+    prompt: "CPI năm trước là 200, năm nay là 210. Lạm phát năm nay là bao nhiêu %?"
+    answer: 5
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "π = 210/200 − 1 = 0,05 = 5%."
+  - id: q-fisher-calc
+    type: numeric
+    conceptId: real-return
+    prompt: "Lợi suất danh nghĩa 8%, lạm phát 3%. Lợi suất thực theo Fisher chính xác là bao nhiêu %? (2 chữ số thập phân)"
+    answer: 4.85
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "r = 1,08/1,03 − 1 ≈ 0,04854 → 4,85% (xấp xỉ n − π cho 5%)."
+  - id: q-real-negative
+    type: mcq
+    conceptId: real-return
+    prompt: "Khi lạm phát cao hơn lợi suất danh nghĩa thì?"
+    options:
+      - { id: a, text: "Lợi suất thực âm — sức mua giảm dù số dư tăng" }
+      - { id: b, text: "Lợi suất thực bằng 0" }
+      - { id: c, text: "Không ảnh hưởng gì vì số dư vẫn tăng" }
+    correct: [a]
+    explanation: "(1+n)/(1+π) < 1 khi π > n, nên r < 0."
+  - id: q-core-inflation
+    type: mcq
+    conceptId: inflation
+    prompt: "Lạm phát cơ bản (core inflation) thường loại bỏ nhóm nào?"
+    options:
+      - { id: a, text: "Giá lương thực, năng lượng biến động mạnh và giá do nhà nước định" }
+      - { id: b, text: "Giá nhà ở" }
+      - { id: c, text: "Tất cả dịch vụ" }
+    correct: [a]
+    explanation: "Theo bài phổ cập của IMF, core inflation loại các thành phần biến động mạnh để nhìn xu hướng nền."
+  - id: q-real-order
+    type: ordering
+    conceptId: real-return
+    prompt: "Sắp xếp lợi suất thực từ thấp đến cao."
+    items:
+      - { id: a, text: "n = 5%, π = 9%" }
+      - { id: b, text: "n = 2%, π = 2%" }
+      - { id: c, text: "n = 7%, π = 3%" }
+    explanation: "Thực ≈ −3,7%, 0%, +3,9%."
+  - id: q-real-explain
+    type: explain
+    conceptId: real-return
+    prompt: "Vì sao khi so sánh lợi suất đầu tư giữa hai giai đoạn có lạm phát rất khác nhau, ta phải dùng lợi suất thực?"
+    rubric:
+      - { id: purchasing, criterion: "Lợi suất thực đo thay đổi sức mua — mục tiêu thật của người tiết kiệm" }
+      - { id: baseline, criterion: "Lợi suất danh nghĩa chứa phần bù lạm phát khác nhau giữa hai giai đoạn" }
+    modelAnswer: "Lợi suất danh nghĩa gộp cả phần bù lạm phát; khi lạm phát hai giai đoạn khác nhau, cùng một con số danh nghĩa có thể tương ứng với mức tăng sức mua rất khác nhau. Lợi suất thực đưa về cùng thước đo sức mua."
+    explanation: "Luôn so sánh trên cùng 'đơn vị' — ở đây là sức mua."

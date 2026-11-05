@@ -1,0 +1,55 @@
+items:
+  - id: q-ms-priority
+    type: mcq
+    conceptId: matching-engine
+    prompt: "Sổ bán có: A bán 100 cp @ 10,2 (đến lúc 9:01), B bán 100 cp @ 10,1 (9:05), C bán 100 cp @ 10,1 (9:03). Lệnh mua thị trường 150 cp khớp với ai trước?"
+    options:
+      - { id: a, text: "A trước vì đến sớm nhất" }
+      - { id: b, text: "C (giá 10,1, đến trước B), rồi B" }
+      - { id: c, text: "B rồi C" }
+    correct: [b]
+    explanation: "Giá tốt hơn trước (10,1 < 10,2); cùng giá 10,1 thì C đến trước B. Khớp 100 với C, 50 với B."
+  - id: q-ms-slippage
+    type: numeric
+    conceptId: liquidity-spread
+    prompt: "Sổ bán: 100 cp @ 10,0; 200 cp @ 10,5. Lệnh mua thị trường 300 cp. Giá khớp bình quân? (3 chữ số thập phân)"
+    answer: 10.333
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "(100×10 + 200×10,5)/300 = 3100/300 ≈ 10,333."
+  - id: q-ms-spread
+    type: numeric
+    conceptId: order-book
+    prompt: "Bid tốt nhất 24,90; ask tốt nhất 25,10. Spread là bao nhiêu?"
+    answer: 0.2
+    tolerance: { kind: abs, value: 0.0001 }
+    explanation: "Spread = 25,10 − 24,90 = 0,20."
+  - id: q-ms-limit
+    type: mcq
+    conceptId: order-book
+    prompt: "Bạn đặt lệnh mua giới hạn 100 cp @ 9,8 trong khi ask tốt nhất là 10,0. Điều gì xảy ra?"
+    options:
+      - { id: a, text: "Khớp ngay ở 10,0" }
+      - { id: b, text: "Lệnh nằm chờ trong sổ bên mua ở giá 9,8" }
+      - { id: c, text: "Lệnh bị từ chối" }
+    correct: [b]
+    explanation: "Giá giới hạn 9,8 thấp hơn ask nên không khớp; lệnh trở thành bid mới và chờ."
+  - id: q-ms-order
+    type: ordering
+    conceptId: matching-engine
+    prompt: "Sắp xếp các bước xử lý một lệnh trên hệ thống giao dịch an toàn."
+    items:
+      - { id: risk, text: "Kiểm tra rủi ro trước giao dịch (hạn mức, giá, khối lượng)" }
+      - { id: seq, text: "Gán sequence number" }
+      - { id: match, text: "Khớp với phía đối diện theo ưu tiên giá – thời gian" }
+      - { id: rest, text: "Đưa phần còn lại (nếu là lệnh giới hạn) vào sổ" }
+      - { id: publish, text: "Phát hành kết quả khớp / dữ liệu thị trường" }
+    explanation: "Kiểm soát rủi ro phải đứng trước engine; sequence number đảm bảo tất định."
+  - id: q-ms-explain
+    type: explain
+    conceptId: liquidity-spread
+    prompt: "Giải thích vì sao spread rộng và độ sâu mỏng làm tăng chi phí giao dịch dù 'phí giao dịch' không đổi."
+    rubric:
+      - { id: spread, criterion: "Mua ở ask bán ở bid: mất spread ngay cả khi giá không đổi" }
+      - { id: depth, criterion: "Độ sâu mỏng → lệnh lớn trượt qua nhiều mức giá" }
+    modelAnswer: "Chi phí giao dịch gồm cả chi phí ẩn: mua ở ask rồi bán ở bid mất đúng spread; nếu mỗi mức giá có ít khối lượng, lệnh lớn phải khớp ở giá xấu dần (trượt giá). Phí niêm yết chỉ là một phần."
+    explanation: "Thanh khoản là chi phí thật, chỉ không hiện trên hoá đơn."

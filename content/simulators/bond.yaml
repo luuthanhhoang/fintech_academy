@@ -1,0 +1,29 @@
+id: bond
+componentKey: bond
+title: { vi: "Giá trái phiếu theo lợi suất", en: "Bond price vs yield" }
+summary: Giá là giá trị hiện tại của coupon và mệnh giá; thấy quan hệ nghịch giá–lợi suất, duration và convexity.
+concepts: [bond-pricing, yield-duration]
+dataKind: formula
+params:
+  - { key: "face", label: "Mệnh giá (F)", min: 100, max: 1000000, step: 100, default: 100000, unit: "đơn vị tiền" }
+  - { key: "couponPct", label: "Lãi suất coupon", min: 0, max: 20, step: 0.25, default: 6, unit: "%/năm" }
+  - { key: "ytmPct", label: "Lợi suất đáo hạn (YTM)", min: -1, max: 30, step: 0.05, default: 7, unit: "%/năm" }
+  - { key: "years", label: "Kỳ hạn còn lại", min: 1, max: 50, step: 1, default: 10, unit: "năm" }
+  - { key: "freq", label: "Số lần trả coupon mỗi năm", min: 1, max: 12, step: 1, default: 2, unit: "lần" }
+howToRead: |-
+  Đường cong là giá theo lợi suất: lợi suất tăng thì giá giảm và ngược lại; đường cong lồi (convex).
+  Modified duration ≈ % thay đổi giá khi lợi suất thay đổi 1 điểm phần trăm. "Ước lượng" dùng duration + convexity; "định giá lại" tính lại giá thật — hai số gần nhau với thay đổi nhỏ.
+breakIt:
+  - id: zero-coupon
+    label: Trái phiếu zero-coupon 30 năm
+    params: { couponPct: 0, years: 30 }
+    explanation: Không có coupon nên toàn bộ dòng tiền ở cuối kỳ — Macaulay duration bằng đúng kỳ hạn (30 năm). Giá cực kỳ nhạy với lợi suất; đây là loại rủi ro lãi suất cao nhất cho cùng kỳ hạn.
+  - id: rate-shock
+    label: Lợi suất vọt lên 15%
+    params: { ytmPct: 15 }
+    explanation: Giá rơi mạnh dưới mệnh giá. Nếu người giữ trái phiếu buộc phải bán trước hạn (ví dụ để đáp ứng rút tiền), khoản lỗ "trên giấy" thành lỗ thật — đúng cơ chế trong case SVB.
+  - id: negative-yield
+    label: Lợi suất âm
+    params: { ytmPct: -0.5, couponPct: 0 }
+    explanation: >-
+      Với lợi suất âm, giá zero-coupon cao hơn mệnh giá: người mua chấp nhận nhận lại ít hơn số đã trả. Công thức vẫn chạy được, nhưng hãy tự hỏi khi nào ai đó lại làm vậy.

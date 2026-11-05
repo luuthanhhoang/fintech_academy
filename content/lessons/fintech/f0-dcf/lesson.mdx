@@ -1,0 +1,73 @@
+---
+id: f0-dcf
+track: fintech
+stage: f0
+order: 6
+title: { vi: "Dòng tiền và định giá DCF", en: "Cash flows and DCF valuation" }
+summary: "Giá trị doanh nghiệp là giá trị hiện tại của dòng tiền tự do tương lai, chiết khấu bằng chi phí vốn; giá trị cuối kỳ Gordon và vì sao DCF nhạy với giả định."
+concepts: [cash-flow-dcf]
+estMinutes: 40
+whyQuestion: "Nếu một công ty chưa có lãi, làm sao người ta vẫn định giá nó ở mức rất cao?"
+devMapping:
+  - finance: "Dòng tiền tự do (FCF)"
+    dev: "Net throughput sau khi trừ chi phí vận hành và đầu tư hạ tầng"
+    explanation: "FCF là tiền doanh nghiệp tạo ra sau khi đã chi cho vận hành và đầu tư cần thiết để duy trì/tăng trưởng — phần thực sự 'rút ra được'."
+  - finance: "Giá trị cuối kỳ (terminal value)"
+    dev: "Giả định steady state vô hạn"
+    explanation: "Sau giai đoạn dự phóng, giả định doanh nghiệp tăng trưởng đều mãi mãi. Giống ngoại suy từ một benchmark — sai giả định nền là sai toàn bộ."
+  - finance: "Bảng độ nhạy"
+    dev: "Parameter sweep / property-based testing"
+    explanation: "Quét các giả định quan trọng để thấy kết quả thay đổi bao nhiêu — nếu đầu ra đổi gấp đôi khi một input lệch 1%, mô hình rất mong manh."
+simulators: [dcf]
+sources: [openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích các bước định giá DCF và chỉ ra giả định nào làm kết quả nhạy nhất."
+  rubric:
+    - { id: steps, criterion: "FCF dự phóng → chiết khấu bằng WACC → giá trị cuối kỳ → EV → trừ nợ ròng" }
+    - { id: gordon, criterion: "Viết đúng TV = FCF_{N+1}/(r − g) và điều kiện r > g" }
+    - { id: sensitivity, criterion: "Chỉ ra r và g (đặc biệt khi g gần r) chi phối kết quả" }
+---
+
+## Từ NPV tới định giá doanh nghiệp
+
+Định giá chiết khấu dòng tiền (DCF) chỉ là NPV áp dụng cho cả doanh nghiệp:
+
+$$
+EV = \sum_{t=1}^{N} \frac{FCF_t}{(1 + r)^{t}} + \frac{TV_N}{(1 + r)^{N}}
+$$
+
+trong đó $r$ thường là **chi phí vốn bình quân gia quyền (WACC)**:
+
+$$
+\text{WACC} = \frac{E}{E + D}\,r_E + \frac{D}{E + D}\,r_D\,(1 - T)
+$$
+
+## Giá trị cuối kỳ (Gordon)
+
+Sau năm $N$, giả định FCF tăng đều với tốc độ $g$ mãi mãi:
+
+$$
+TV_N = \frac{FCF_{N+1}}{r - g}, \qquad r > g
+$$
+
+Điều kiện $r > g$ không chỉ là toán học: không doanh nghiệp nào tăng trưởng mãi nhanh hơn chi phí vốn (và nền kinh tế).
+
+<Quiz id="q-dcf-gordon" />
+
+## Từ EV tới giá trị cổ phần
+
+$$
+\text{Giá trị vốn chủ} = EV - \text{Nợ ròng}, \qquad \text{Giá trị/cổ phần} = \frac{\text{Giá trị vốn chủ}}{\text{Số cổ phần}}
+$$
+
+Câu hỏi mở đầu có lời giải ở đây: công ty chưa có lãi vẫn có EV cao nếu thị trường kỳ vọng FCF lớn **trong tương lai** — nhưng khi đó phần lớn giá trị nằm ở giá trị cuối kỳ, tức ở những giả định xa nhất và bất định nhất.
+
+<Simulator id="dcf" />
+
+<Callout kind="warning">
+DCF là khung tính toán, không phải lời tiên tri. Mọi đầu vào (tăng trưởng, chi phí vốn, g dài hạn) là giả định của người lập mô hình; site không đưa ra khuyến nghị định giá cho doanh nghiệp thật nào.
+</Callout>
+
+<Quiz id="q-dcf-equity" />

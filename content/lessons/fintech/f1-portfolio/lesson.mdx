@@ -1,0 +1,70 @@
+---
+id: f1-portfolio
+track: fintech
+stage: f1
+order: 6
+title: { vi: "Danh mục, đa dạng hoá và đường biên hiệu quả", en: "Portfolios, diversification and the efficient frontier" }
+summary: "Rủi ro danh mục phụ thuộc tương quan; vì sao đa dạng hoá giảm rủi ro; đường biên Markowitz, danh mục rủi ro thấp nhất và giới hạn của tối ưu hoá dựa trên dữ liệu quá khứ."
+concepts: [diversification, efficient-frontier]
+estMinutes: 45
+whyQuestion: "Làm sao gộp hai khoản đầu tư rủi ro lại có thể cho ra một danh mục ít rủi ro hơn cả hai?"
+devMapping:
+  - finance: "Đa dạng hoá"
+    dev: "Redundancy với failure domain độc lập"
+    explanation: "Hai replica ở hai failure domain độc lập hiếm khi cùng hỏng; hai replica cùng rack thì gần như cùng số phận. Tương quan thấp giữa tài sản giống failure domain độc lập."
+  - finance: "Ma trận hiệp phương sai"
+    dev: "Ma trận phụ thuộc giữa các thành phần"
+    explanation: "Rủi ro tổng không chỉ là tổng rủi ro từng phần mà còn do các phần 'cùng chuyển động'. σ²_p = wᵀΣw."
+  - finance: "Đường biên hiệu quả"
+    dev: "Pareto frontier của bài toán tối ưu hai mục tiêu"
+    explanation: "Mỗi điểm trên biên là một cấu hình không thể cải thiện lợi suất mà không tăng rủi ro — giống Pareto frontier giữa latency và cost."
+simulators: [portfolio]
+labs: [portfolio-math]
+sources: [markowitz-1952, openstax-finance]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao đa dạng hoá có tác dụng, khi nào nó thất bại, và vì sao đường biên tính từ dữ liệu quá khứ không phải là dự báo."
+  rubric:
+    - { id: corr, criterion: "Tương quan < 1 làm σ danh mục nhỏ hơn trung bình có trọng số các σ" }
+    - { id: fail, criterion: "Trong khủng hoảng tương quan có thể tăng mạnh, lợi ích đa dạng hoá giảm" }
+    - { id: estimate, criterion: "Ước lượng lợi suất trung bình và hiệp phương sai có sai số lớn, tối ưu hoá khuếch đại sai số" }
+---
+
+## Rủi ro của một danh mục
+
+Với hai tài sản có trọng số $w$ và $1 - w$:
+
+$$
+\sigma_p^2 = w^2\sigma_1^2 + (1-w)^2\sigma_2^2 + 2w(1-w)\,\rho\,\sigma_1\sigma_2
+$$
+
+Tổng quát cho $n$ tài sản: $\sigma_p^2 = w^\top \Sigma\, w$, còn lợi suất kỳ vọng $E[R_p] = w^\top \mu$.
+
+Câu hỏi mở đầu có lời giải trong số hạng cuối: khi $\rho < 1$, $\sigma_p$ **nhỏ hơn** trung bình có trọng số của $\sigma_1, \sigma_2$; khi $\rho$ đủ âm, danh mục có thể ít rủi ro hơn cả hai tài sản.
+
+<Quiz id="q-pf-two-asset" />
+
+## Danh mục rủi ro thấp nhất
+
+Lấy đạo hàm theo $w$ và cho bằng 0:
+
+$$
+w^\* = \frac{\sigma_2^2 - \rho\sigma_1\sigma_2}{\sigma_1^2 + \sigma_2^2 - 2\rho\sigma_1\sigma_2}
+$$
+
+## Đường biên hiệu quả (Markowitz)
+
+Bài báo "Portfolio Selection" (1952) của Harry Markowitz đặt nền cho việc chọn danh mục bằng cách cân bằng lợi suất kỳ vọng và phương sai. Tập danh mục cho lợi suất kỳ vọng cao nhất ở mỗi mức rủi ro gọi là **đường biên hiệu quả**. Khi cho phép bán khống, đường biên có nghiệm giải tích (đường hyperbol trong không gian σ–E[R]); khi chỉ mua, ta tìm bằng tối ưu có ràng buộc — mô phỏng dưới đây xấp xỉ bằng đám mây danh mục ngẫu nhiên.
+
+<Simulator id="portfolio" />
+
+<Callout kind="warning" title="Giới hạn">
+Tối ưu hoá mean–variance rất nhạy với ước lượng lợi suất trung bình. Dùng dữ liệu quá khứ (kể cả CSV của bạn) để ước lượng rồi "tối ưu" thường cho trọng số cực đoan. Đây là công cụ học khái niệm, không phải khuyến nghị phân bổ tài sản.
+</Callout>
+
+## Tự cài các phép tính
+
+<Lab id="portfolio-math" />
+
+<Quiz id="q-pf-minvar" />

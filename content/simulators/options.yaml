@@ -1,0 +1,59 @@
+id: options
+componentKey: options
+title: { vi: "Payoff quyền chọn", en: "Option payoffs" }
+summary: Vẽ lãi/lỗ tại đáo hạn của call, put và các chiến lược kết hợp; tìm điểm hoà vốn, lãi/lỗ tối đa.
+concepts: [options-payoff, derivatives-basics, leverage]
+dataKind: formula
+params:
+  - { key: "strike1", label: "Giá thực hiện K1", min: 1, max: 500, step: 1, default: 100, unit: "đơn vị giá" }
+  - { key: "premium1", label: "Phí quyền chọn chân 1", min: 0, max: 200, step: 0.5, default: 5, unit: "đơn vị giá" }
+  - { key: "strike2", label: "Giá thực hiện K2", min: 1, max: 500, step: 1, default: 110, unit: "đơn vị giá" }
+  - { key: "premium2", label: "Phí quyền chọn chân 2", min: 0, max: 200, step: 0.5, default: 2, unit: "đơn vị giá" }
+  - { key: "qty", label: "Số lượng mỗi chân", min: 1, max: 1000, step: 1, default: 1, unit: "hợp đồng" }
+config:
+  strategies:
+    - id: long-call
+      label: Mua call
+      description: Quyền (không phải nghĩa vụ) mua ở K1. Lỗ tối đa = phí; lãi không giới hạn khi giá tăng.
+      legs: [{ kind: "call", position: 1, strike: "strike1", premium: "premium1" }]
+    - id: long-put
+      label: Mua put
+      description: Quyền bán ở K1 — như mua bảo hiểm giảm giá. Lỗ tối đa = phí.
+      legs: [{ kind: "put", position: 1, strike: "strike1", premium: "premium1" }]
+    - id: short-call
+      label: Bán call (không phòng hộ)
+      description: Nhận phí ngay, nhưng phải giao tài sản ở K1 nếu bị thực hiện — lỗ không giới hạn khi giá tăng.
+      legs: [{ kind: "call", position: -1, strike: "strike1", premium: "premium1" }]
+    - id: covered-call
+      label: Covered call
+      description: >-
+        Nắm tài sản mua ở giá K1 và bán call ở K2: đổi phần tăng giá trên K2 lấy phí thu ngay.
+      legs: [{ kind: "stock", position: 1, strike: "strike1", premium: null }, { kind: call, position: -1, strike: strike2, premium: premium2 }]
+    - id: bull-call-spread
+      label: Bull call spread
+      description: >-
+        Mua call K1, bán call K2 (K2 > K1): giảm chi phí đổi lấy lãi tối đa bị chặn.
+      legs: [{ kind: "call", position: 1, strike: "strike1", premium: "premium1" }, { kind: call, position: -1, strike: strike2, premium: premium2 }]
+    - id: straddle
+      label: Long straddle
+      description: >-
+        Mua cả call và put cùng K1: lãi khi giá biến động mạnh theo bất kỳ hướng nào.
+      legs: [{ kind: "call", position: 1, strike: "strike1", premium: "premium1" }, { kind: put, position: 1, strike: strike1, premium: premium2 }]
+howToRead: |-
+  Trục ngang là giá tài sản cơ sở lúc đáo hạn; trục dọc là lãi/lỗ. Đường nét đứt là payoff chưa trừ phí; đường liền đã trừ phí.
+  Đây là giá trị tại đáo hạn — trước đáo hạn, giá quyền chọn còn phụ thuộc thời gian và biến động (không mô phỏng ở đây). Phí là tham số bạn nhập, không phải giá thị trường.
+breakIt:
+  - id: naked-short
+    label: Bán call với phí rất nhỏ
+    params: { premium1: 0.5 }
+    explanation: >-
+      Chọn chiến lược "Bán call" để thấy: thu được rất ít nhưng lỗ tiềm năng không giới hạn. Đây là dạng rủi ro "nhặt tiền lẻ trước đầu xe lu" — lãi nhỏ đều đặn, thỉnh thoảng lỗ cực lớn.
+  - id: expensive-premium
+    label: Phí bằng 50% giá thực hiện
+    params: { premium1: 50 }
+    explanation: Với phí quá cao, mua call cần giá tăng rất mạnh mới hoà vốn (K + phí). Payoff (nét đứt) và lãi/lỗ (liền) cách nhau đúng bằng phí.
+  - id: inverted-spread
+    label: K2 thấp hơn K1
+    params: { strike2: 80 }
+    explanation: >-
+      Với bull call spread, đặt K2 < K1 làm chiến lược "lộn ngược": bạn bán quyền rẻ hơn quyền mua. Mô phỏng vẫn tính đúng, nhưng thứ bạn tạo ra là một vị thế giảm giá — luôn kiểm tra giả định đầu vào.

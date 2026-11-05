@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-tool-redesign
+    conceptId: tool-design
+    prompt: "Viết tool definition (tên, mô tả, JSON schema) cho công cụ 'tính khoản trả góp hằng tháng' dùng trong một agent tư vấn học tập (không phải tư vấn tài chính)."
+    hint: "Nghĩ về đơn vị (tháng/năm, %/thập phân) và lỗi actionable."
+    solution: "Tên: loan_monthly_payment. Mô tả: 'Tính khoản trả đều cuối mỗi tháng cho khoản vay lãi cố định. Dùng khi người học hỏi về lịch trả góp; không dùng cho lãi thả nổi.' Schema: principal (number > 0, đơn vị tiền), annual_rate (number, thập phân, 0.12 = 12%), months (integer > 0). Trả về `{ payment, total_paid, total_interest }`. Lỗi: nêu trường sai và ví dụ giá trị hợp lệ."

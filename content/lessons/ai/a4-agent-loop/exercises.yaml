@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-loop-minimal
+    conceptId: agent-loop
+    prompt: "Viết pseudo-code một agent loop tối thiểu với: giới hạn số vòng, xử lý lỗi công cụ, và điều kiện dừng. Mỗi tool call phải được trả lời bằng đúng một tool result."
+    hint: "Lỗi công cụ cũng là một tool result (đánh dấu is_error) — đừng bỏ qua nó."
+    solution: "for round in 0..MAX: res = model(messages, tools); messages.push(res); if no tool calls: return res.text; for call in res.toolCalls: try out = run(call) catch e: out = error(e); messages.push(toolResult(call.id, out)). Sau MAX vòng: dừng và báo đã đạt giới hạn. Gia sư AI của site này dùng đúng cấu trúc đó (lib/tutor/session.ts)."

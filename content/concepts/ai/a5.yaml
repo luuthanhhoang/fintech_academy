@@ -1,0 +1,7 @@
+track: ai
+stage: a5
+concepts:
+  - { id: "eval-datasets", name: { vi: "Bộ dữ liệu eval", en: "Eval datasets" }, short: "Tập ví dụ đại diện có đáp án/tiêu chí để đo chất lượng hệ thống.", prerequisites: [prompt-engineering], difficulty: 3, tags: [eval, dataset] }
+  - { id: "llm-as-judge", name: { vi: "LLM làm giám khảo", en: "LLM-as-judge" }, short: "Dùng mô hình chấm theo rubric; cần hiệu chuẩn với chấm của người.", prerequisites: [eval-datasets], difficulty: 3, tags: [judge, rubric] }
+  - { id: "online-offline-eval", name: { vi: "Eval offline và online", en: "Offline and online eval" }, short: "Đo trước khi phát hành và giám sát trên lưu lượng thật.", prerequisites: [eval-datasets], difficulty: 3, tags: [A/B, monitoring] }
+  - { id: "prompt-regression", name: { vi: "Kiểm thử hồi quy prompt", en: "Prompt regression testing" }, short: "Chạy lại eval mỗi khi đổi prompt/mô hình để phát hiện suy giảm.", prerequisites: [eval-datasets], difficulty: 2, tags: [regression, CI] }

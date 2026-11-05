@@ -1,0 +1,11 @@
+track: ai
+stage: a4
+concepts:
+  - { id: "agent-loop", name: { vi: "Vòng lặp agent", en: "Agent loop" }, short: "Mô hình lặp: suy nghĩ → gọi công cụ → nhận kết quả → quyết định bước tiếp, đến khi xong việc.", prerequisites: [tool-calling, messages-api], difficulty: 3, tags: [agent, loop, ReAct] }
+  - { id: "model-vs-harness", name: { vi: "Model và harness", en: "Model vs harness" }, short: "Agent = mô hình (ra quyết định) + harness (vòng lặp, công cụ, context, quyền, giám sát) do kỹ sư xây.", prerequisites: [agent-loop], difficulty: 3, tags: [harness, agent] }
+  - { id: "tool-design", name: { vi: "Thiết kế công cụ cho agent", en: "Tool design for agents" }, short: "Tên, mô tả, schema và kết quả của công cụ quyết định agent dùng chúng tốt đến đâu.", prerequisites: [agent-loop], difficulty: 3, tags: [tool, schema] }
+  - { id: "context-engineering", name: { vi: "Quản lý context", en: "Context engineering" }, short: "Chọn đúng thông tin đưa vào context ở mỗi bước: tóm tắt, cắt bớt, truy xuất khi cần.", prerequisites: [agent-loop, context-window], difficulty: 4, tags: [context, compaction] }
+  - { id: "agent-memory", name: { vi: "Bộ nhớ của agent", en: "Agent memory" }, short: "Lưu trữ ngoài context (file, ghi chú, DB) để agent làm việc dài hạn qua nhiều phiên.", prerequisites: [context-engineering], difficulty: 3, tags: [memory] }
+  - { id: "harness-permissions-sandbox", name: { vi: "Quyền và sandbox", en: "Permissions and sandboxing" }, short: "Giới hạn công cụ, xác nhận của con người cho hành động rủi ro, cô lập môi trường thực thi.", prerequisites: [model-vs-harness], difficulty: 3, tags: [permission, sandbox] }
+  - { id: "agent-observability", name: { vi: "Giám sát agent", en: "Agent observability" }, short: "Ghi log/trace từng bước, chi phí, lỗi công cụ để gỡ lỗi và cải tiến.", prerequisites: [model-vs-harness], difficulty: 3, tags: [tracing, logging] }
+  - { id: "agent-evaluation", name: { vi: "Đánh giá agent", en: "Agent evaluation" }, short: "Đo tỷ lệ hoàn thành tác vụ trên bộ tác vụ có bộ chấm, theo dõi hồi quy khi đổi mô hình/harness.", prerequisites: [agent-loop], difficulty: 4, tags: [eval, benchmark] }

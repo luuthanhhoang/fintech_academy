@@ -1,0 +1,62 @@
+items:
+  - id: q-tool-choose
+    type: mcq
+    conceptId: tool-design
+    prompt: "Agent cần tìm một khách hàng theo tên trong CRM 50.000 bản ghi. Công cụ nào tốt hơn?"
+    options:
+      - { id: a, text: "list_contacts() trả về toàn bộ danh sách" }
+      - { id: b, text: "search_contacts(query, limit) trả về các bản ghi khớp nhất với trường cần thiết" }
+      - { id: c, text: "Cả hai như nhau" }
+    correct: [b]
+    explanation: "Trả toàn bộ danh sách tốn context khổng lồ và buộc model tự lọc. Công cụ tìm kiếm có giới hạn là token-efficient."
+  - id: q-tool-error
+    type: mcq
+    conceptId: tool-design
+    prompt: "Thông báo lỗi nào giúp agent tự sửa tốt nhất?"
+    options:
+      - { id: a, text: "Error 500" }
+      - { id: b, text: "Invalid input" }
+      - { id: c, text: "amount phải là số nguyên đơn vị đồng (ví dụ 150000), nhận được '150k'" }
+    correct: [c]
+    explanation: "Lỗi actionable nêu trường sai, định dạng đúng và giá trị nhận được."
+  - id: q-tool-traits
+    type: mcq
+    conceptId: tool-design
+    prompt: "Chọn TẤT CẢ đặc điểm của một công cụ tốt cho agent."
+    options:
+      - { id: a, text: "Mô tả nói rõ khi nào dùng và khi nào không" }
+      - { id: b, text: "Hỗ trợ lọc/phân trang kết quả" }
+      - { id: c, text: "Trả về UUID nội bộ thay vì tên dễ đọc" }
+      - { id: d, text: "Schema đầu vào chặt chẽ (kiểu, enum, bắt buộc)" }
+    correct: [a, b, d]
+    explanation: "Định danh dễ đọc (hoặc cả hai) giúp model suy luận tốt hơn so với chỉ UUID."
+  - id: q-tool-skills
+    type: mcq
+    conceptId: tool-design
+    prompt: "Progressive disclosure trong Agent Skills nghĩa là gì?"
+    options:
+      - { id: a, text: "Ban đầu chỉ nạp tên + mô tả skill; nội dung đầy đủ chỉ nạp khi tác vụ cần" }
+      - { id: b, text: "Hiển thị dần kết quả cho người dùng" }
+      - { id: c, text: "Mã hoá skill" }
+    correct: [a]
+    explanation: "Giữ context nhỏ khi có nhiều skill — nguyên tắc context engineering."
+  - id: q-tool-order
+    type: ordering
+    conceptId: tool-design
+    prompt: "Sắp xếp quy trình xử lý một tool call an toàn trong harness."
+    items:
+      - { id: parse, text: "Parse tham số (JSON) từ model" }
+      - { id: validate, text: "Validate theo schema" }
+      - { id: permission, text: "Kiểm tra quyền / xin xác nhận nếu là hành động rủi ro" }
+      - { id: execute, text: "Thực thi" }
+      - { id: result, text: "Trả kết quả gọn (hoặc lỗi actionable) về context" }
+    explanation: "Không bao giờ thực thi trước khi validate và kiểm tra quyền."
+  - id: q-tool-explain
+    type: explain
+    conceptId: tool-design
+    prompt: "Vì sao một gia sư AI về tài chính nên bắt buộc gọi công cụ tính toán thay vì để model tự tính?"
+    rubric:
+      - { id: accuracy, criterion: "Model có thể tính sai, đặc biệt với luỹ thừa/chiết khấu nhiều kỳ" }
+      - { id: audit, criterion: "Lời gọi công cụ kiểm tra lại được (input/output hiển thị, có unit test)" }
+    modelAnswer: "Mô hình ngôn ngữ dự đoán token, không đảm bảo tính đúng các phép toán nhiều bước như (1+r)^n. Công cụ dùng thư viện đã unit test cho kết quả chính xác, và log input/output giúp người học kiểm tra lại."
+    explanation: "Nguyên tắc tách 'suy luận' (model) khỏi 'tính toán' (công cụ)."

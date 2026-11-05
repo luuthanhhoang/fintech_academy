@@ -1,0 +1,61 @@
+sources:
+  - id: vn-law-sbv-2010
+    title: Luật Ngân hàng Nhà nước Việt Nam số 46/2010/QH12
+    url: https://vietlaw.quochoi.vn/vanban/Lists/VBPQConvert/Attachments/23495/46_2010_QH12.doc
+    publisher: Quốc hội nước CHXHCN Việt Nam (Cơ sở dữ liệu luật Việt Nam)
+    accessed: 2026-11-05
+    note: Bản trên cổng của Quốc hội. Nội dung về vị trí pháp lý và chính sách tiền tệ quốc gia kiểm tra qua trích đoạn kết quả tìm kiếm; chưa mở được toàn văn từ môi trường soạn.
+  - id: vn-law-securities-2019
+    title: Luật Chứng khoán số 54/2019/QH14
+    url: https://thuvienphapluat.vn/van-ban/chung-khoan/Luat-Chung-khoan-2019-399763.aspx
+    publisher: Thư Viện Pháp Luật (bản đăng lại; cần đối chiếu Công báo/Cổng thông tin Chính phủ)
+    accessed: 2026-11-05
+    note: Nguồn không phải cổng chính thức — các dữ kiện dựa vào đây để trạng thái needs_verification.
+  - id: vn-vnx-2020
+    title: Thành lập Sở Giao dịch Chứng khoán Việt Nam (tin về Quyết định 37/2020/QĐ-TTg)
+    url: https://thitruongtaichinhtiente.vn/thanh-lap-so-giao-dich-chung-khoan-viet-nam-32968.html
+    publisher: Tạp chí Thị trường Tài chính Tiền tệ
+    accessed: 2026-11-05
+    note: Báo chí, không phải văn bản gốc — needs_verification.
+  - id: vn-hnx-trading-rules
+    title: Quy chế giao dịch chứng khoán (bản 2016, đăng lại)
+    url: https://static1.vietstock.vn/vietstock/2016/Quychegiaodich2016_final.pdf
+    publisher: Sở Giao dịch Chứng khoán Hà Nội (bản đăng lại trên Vietstock)
+    accessed: 2026-11-05
+    note: Bản đăng lại và có thể đã được thay thế — nguyên tắc ưu tiên giá/thời gian dùng như mô tả, các chi tiết khác needs_verification.
+  - id: vn-law-56-2024
+    title: Luật số 56/2024/QH15 sửa đổi, bổ sung một số điều của Luật Chứng khoán và các luật khác
+    url: https://congbao.chinhphu.vn/van-ban/luat-so-56-2024-qh15-43561.htm
+    publisher: Công báo — Chính phủ nước CHXHCN Việt Nam
+    accessed: 2026-11-05
+    note: Văn bản trên Công báo; các mốc hiệu lực (phần lớn 01/01/2025, một số 2026) xác nhận qua bản tóm tắt của hãng luật trong kết quả tìm kiếm — needs_verification.
+  - id: vn-krx-2025
+    title: HoSE chính thức vận hành hệ thống KRX
+    url: https://nhandan.vn/hose-chinh-thuc-van-hanh-he-thong-krx-tu-ngay-55-post874999.html
+    publisher: Báo Nhân Dân (đưa tin thông báo của HOSE)
+    accessed: 2026-11-05
+    note: Báo chí, nhiều nguồn thống nhất; chưa đối chiếu thông báo gốc trên hsx.vn — needs_verification.
+  - id: ftse-vietnam-2025
+    title: FTSE Russell Country Classification — September 2025 announcement
+    url: https://www.lseg.com/en/media-centre/press-releases/ftse-russell/2025/ftse-russell-country-classification-september-2025
+    publisher: LSEG / FTSE Russell
+    accessed: 2026-11-05
+    note: Thông cáo 07/10/2025 nâng Việt Nam lên Secondary Emerging, hiệu lực từ 21/09/2026 (có rà soát giữa kỳ 3/2026). Chưa xác nhận được việc triển khai thực tế sau 21/09/2026.
+  - id: vn-ssc-686-2025
+    title: Quy định mới về chức năng, nhiệm vụ, quyền hạn của Ủy ban Chứng khoán Nhà nước (Quyết định 686/QĐ-BTC)
+    url: https://thoibaotaichinhvietnam.vn/quy-dinh-moi-ve-chuc-nang-nhiem-vu-quyen-han-cua-uy-ban-chung-khoan-nha-nuoc-171700.html
+    publisher: Thời báo Tài chính Việt Nam (Bộ Tài chính)
+    accessed: 2026-11-05
+    note: Tin của cơ quan báo chí thuộc Bộ Tài chính, chưa đối chiếu văn bản gốc — needs_verification.
+  - id: vn-tt68-2024
+    title: Tổng hợp điểm mới Thông tư 68/2024/TT-BTC về giao dịch chứng khoán
+    url: https://luatvietnam.vn/linh-vuc-khac/diem-moi-thong-tu-68-2024-tt-btc-ve-giao-dich-chung-khoan-883-99515-article.html
+    publisher: LuatVietnam (tóm tắt văn bản)
+    accessed: 2026-11-05
+    note: Nguồn tóm tắt; theo kết quả tìm kiếm thông tư đã được sửa đổi bởi Thông tư 08/2026/TT-BTC — needs_verification.
+  - id: vn-sbv-law-amend-2026
+    title: Thông qua Luật sửa đổi, bổ sung một số điều của Luật NHNN Việt Nam, Luật Phòng, chống rửa tiền và Luật Các tổ chức tín dụng
+    url: https://vneconomy.vn/thong-qua-luat-ngan-hang-nha-nuoc-viet-nam-sua-doi.htm
+    publisher: VnEconomy (đưa tin kỳ họp Quốc hội)
+    accessed: 2026-11-05
+    note: Báo chí đưa tin thông qua ngày 24/08/2026, hiệu lực 01/12/2026; chưa có số hiệu và toàn văn chính thức — needs_verification.

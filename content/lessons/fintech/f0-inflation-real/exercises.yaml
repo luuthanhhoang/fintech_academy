@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-purchasing-power
+    conceptId: inflation
+    prompt: "Với lạm phát giả định 4%/năm, 100 triệu tiền mặt giữ nguyên trong 15 năm còn sức mua tương đương bao nhiêu triệu hôm nay?"
+    hint: "Chia cho $(1{,}04)^{15}$."
+    solution: "$100 / 1{,}04^{15} \\approx 55{,}5$ triệu — mất gần một nửa sức mua."
+    simulator: { id: inflation, params: { amount: 100000, nominalPct: 0, inflationPct: 4, years: 15 } }

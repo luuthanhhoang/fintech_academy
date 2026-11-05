@@ -1,0 +1,5 @@
+exercises:
+  - id: ex-ctx-notes
+    conceptId: agent-memory
+    prompt: "Thiết kế định dạng file ghi chú (NOTES.md) cho một agent làm việc nhiều phiên trên một dự án. Liệt kê các mục và quy tắc cập nhật."
+    solution: "Mục gợi ý: Mục tiêu; Trạng thái hiện tại; Quyết định đã chốt (kèm lý do); Việc đang làm; Việc tiếp theo; Câu hỏi mở; Cạm bẫy đã gặp. Quy tắc: cập nhật sau mỗi mốc, xoá mục đã lỗi thời, không chép output dài vào file, ngày giờ cho mỗi quyết định."

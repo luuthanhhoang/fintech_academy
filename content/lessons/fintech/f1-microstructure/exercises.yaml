@@ -1,0 +1,7 @@
+exercises:
+  - id: ex-ms-depth
+    conceptId: liquidity-spread
+    prompt: "Trong mô phỏng sổ lệnh (mặc định), gửi một lệnh mua thị trường 800 cp rồi 3.000 cp (đặt lại sổ giữa hai lần). Giá khớp bình quân và trượt giá thay đổi thế nào?"
+    hint: "Bấm 'Đặt lại mặc định' để sinh lại sổ trước lần thứ hai."
+    solution: "Lệnh lớn hơn ăn qua nhiều mức ask hơn nên giá bình quân và trượt giá tăng. Dữ liệu sổ là tổng hợp (mô phỏng), nên chỉ quan sát xu hướng chứ không phải con số thị trường thật."
+    simulator: { id: orderbook, params: { orderQty: 3000 } }

@@ -1,0 +1,9 @@
+shortcuts:
+  - { action: "open-search", keys: "mod+k", description: "Mở tìm kiếm toàn site" }
+  - { action: "show-help", keys: "?", description: "Hiện bảng phím tắt" }
+  - { action: "toggle-theme", keys: "t", description: "Đổi sáng/tối" }
+  - { action: "go", keys: "g h", description: "Về trang Hôm nay", href: "/" }
+  - { action: "go", keys: "g l", description: "Mở lộ trình", href: "/tracks/" }
+  - { action: "go", keys: "g r", description: "Mở ôn tập", href: "/review/" }
+  - { action: "go", keys: "g s", description: "Mở thống kê", href: "/stats/" }
+  - { action: "go", keys: "g a", description: "Mở gia sư AI", href: "/tutor/" }

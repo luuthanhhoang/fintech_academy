@@ -1,0 +1,79 @@
+---
+id: a4-agent-loop
+track: ai
+stage: a4
+order: 0
+title: { vi: "Vòng lặp agent: Agent = Model + Harness", en: "The agent loop: Agent = Model + Harness" }
+summary: "Agent là mô hình lặp lại việc quyết định → gọi công cụ → đọc kết quả cho tới khi xong; phần còn lại — vòng lặp, công cụ, context, quyền, giám sát — là harness do kỹ sư xây. Phân biệt workflow và agent, và bức tranh harness năm 2026."
+concepts: [agent-loop, model-vs-harness]
+estMinutes: 35
+whyQuestion: "Cùng một mô hình, vì sao có sản phẩm agent làm được việc dài nhiều giờ, còn sản phẩm khác bỏ cuộc sau vài bước?"
+devMapping:
+  - finance: "Agent loop"
+    dev: "while (stop_reason === 'tool_use') { execute tools; append results; call model }"
+    explanation: "Về bản chất là một event loop: mô hình là hàm quyết định bước tiếp theo, harness là runtime thực thi side effect và đưa kết quả trở lại."
+  - finance: "Model vs harness"
+    dev: "Business logic vs runtime/platform"
+    explanation: "Model quyết định 'làm gì'; harness quyết định 'được làm gì, thấy gì, nhớ gì, ai giám sát'. Đổi harness có thể thay đổi chất lượng agent nhiều như đổi model."
+  - finance: "Workflow vs agent"
+    dev: "Pipeline cố định vs planner động"
+    explanation: "Workflow là DAG do code định sẵn (dễ dự đoán); agent để mô hình tự chọn đường đi (linh hoạt, khó kiểm soát hơn)."
+sources: [anthropic-building-agents, react-2022, claude-agent-sdk-docs, mcp-spec]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Giải thích công thức 'Agent = Model + Harness' và liệt kê ít nhất bốn trách nhiệm của harness."
+  rubric:
+    - { id: loop, criterion: "Harness chạy vòng lặp gọi model ↔ thực thi công cụ" }
+    - { id: tools, criterion: "Cung cấp và thực thi công cụ (kể cả qua MCP)" }
+    - { id: context, criterion: "Quản lý context/bộ nhớ" }
+    - { id: control, criterion: "Quyền, sandbox, giám sát, dừng an toàn" }
+---
+
+## Từ một lần gọi tới một vòng lặp
+
+Một lần gọi LLM: đưa vào messages, nhận lại văn bản. Một **agent** lặp lại:
+
+1. Mô hình đọc context và quyết định: trả lời, hay gọi công cụ nào với tham số gì.
+2. Harness thực thi công cụ (đọc file, chạy lệnh, gọi API…).
+3. Kết quả được thêm vào context.
+4. Quay lại bước 1 cho tới khi mô hình kết luận đã xong (hoặc harness dừng nó).
+
+Bài báo **ReAct** (Yao và cộng sự, ICLR 2023) cho thấy việc xen kẽ **suy luận** và **hành động** (ví dụ tra Wikipedia) giúp mô hình điều chỉnh kế hoạch trong lúc làm, tốt hơn chỉ hành động hoặc chỉ suy luận trên một số tác vụ được thử nghiệm.
+
+<Quiz id="q-loop-order" />
+
+## Workflow hay agent?
+
+Bài "Building effective agents" của Anthropic phân biệt:
+
+- **Workflow**: LLM và công cụ được điều phối qua **đường đi định sẵn trong code** — dễ dự đoán, nhất quán.
+- **Agent**: LLM **tự điều hướng quy trình và cách dùng công cụ**.
+
+Nền tảng chung là **augmented LLM** — mô hình được bổ sung truy xuất, công cụ và bộ nhớ. Lời khuyên cốt lõi: **chọn giải pháp đơn giản nhất có thể**, chỉ tăng độ phức tạp khi cần.
+
+<Callout kind="dev" title="Quy tắc chọn">
+Nếu bạn vẽ được trước flowchart các bước thì đó là workflow — viết code điều phối. Chỉ dùng agent khi số bước và thứ tự phụ thuộc vào thứ chỉ biết được trong lúc làm.
+</Callout>
+
+## Harness gồm những gì (bức tranh 2026)
+
+"Agent = Model + Harness" nhấn mạnh rằng phần lớn kỹ thuật nằm ngoài mô hình:
+
+| Trách nhiệm | Câu hỏi harness phải trả lời |
+|---|---|
+| Vòng lặp | Khi nào gọi model, khi nào dừng, xử lý lỗi/timeout thế nào? |
+| Công cụ | Agent được dùng công cụ gì, định nghĩa ra sao? |
+| Context | Đưa gì vào cửa sổ ngữ cảnh ở mỗi bước, tóm tắt/cắt bớt khi nào? |
+| Bộ nhớ | Lưu gì ra ngoài context để dùng ở phiên sau? |
+| Quyền & sandbox | Hành động nào cần con người duyệt, chạy ở đâu? |
+| Giám sát | Ghi lại gì để gỡ lỗi, đo chi phí, đánh giá? |
+
+Đến năm 2026 hệ sinh thái đã chuẩn hoá nhiều mảnh:
+
+- **Model Context Protocol (MCP)** — giao thức mở trên JSON-RPC 2.0 để harness kết nối với server cung cấp **tools**, **resources** và **prompts**.
+- **SDK harness**: tài liệu chính thức của **Claude Agent SDK** mô tả nó cung cấp vòng lặp agent, công cụ và quản lý context giống như dùng trong Claude Code, cùng subagent, permission, hook và hỗ trợ MCP — tức là "harness đóng gói sẵn".
+
+Câu hỏi mở đầu có lời giải: với cùng mô hình, chất lượng harness (công cụ tốt, context gọn, bộ nhớ ngoài, kiểm soát lỗi) quyết định agent có làm được việc dài hay không.
+
+<Quiz id="q-harness-parts" />

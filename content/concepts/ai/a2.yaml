@@ -1,0 +1,10 @@
+track: ai
+stage: a2
+concepts:
+  - { id: "messages-api", name: { vi: "Messages API", en: "Messages API" }, short: "Gọi mô hình qua danh sách message có vai trò user/assistant và system prompt.", prerequisites: [context-window], difficulty: 2, tags: [API, messages] }
+  - { id: "prompt-engineering", name: { vi: "Viết prompt", en: "Prompt engineering" }, short: "Chỉ dẫn rõ ràng, ví dụ, cấu trúc và ngữ cảnh để mô hình làm đúng việc.", prerequisites: [messages-api], difficulty: 2, tags: [prompt] }
+  - { id: "structured-output", name: { vi: "Đầu ra có cấu trúc", en: "Structured output" }, short: "Buộc đầu ra theo JSON schema để code xử lý tin cậy.", prerequisites: [messages-api], difficulty: 2, tags: [JSON, schema] }
+  - { id: "streaming", name: { vi: "Streaming", en: "Streaming" }, short: "Nhận token dần dần qua sự kiện để giảm độ trễ cảm nhận.", prerequisites: [messages-api], difficulty: 2, tags: [SSE, stream] }
+  - { id: "tool-calling", name: { vi: "Gọi công cụ", en: "Tool calling" }, short: "Mô hình yêu cầu gọi hàm với tham số theo schema; ứng dụng thực thi và trả kết quả.", prerequisites: [structured-output], difficulty: 3, tags: [tool use, function calling] }
+  - { id: "prompt-caching", name: { vi: "Prompt caching", en: "Prompt caching" }, short: "Tái sử dụng tiền tố prompt giống hệt giữa các lần gọi để giảm chi phí và độ trễ.", prerequisites: [messages-api], difficulty: 3, tags: [cache] }
+  - { id: "cost-latency", name: { vi: "Chi phí và độ trễ", en: "Cost and latency" }, short: "Ước lượng token, chọn mô hình, đo độ trễ và tối ưu chi phí theo tác vụ.", prerequisites: [tokenization, messages-api], difficulty: 2, tags: [cost, latency] }

@@ -1,0 +1,12 @@
+id: fintech
+order: 0
+title: { vi: "Fintech từ con số 0", en: "Fintech from zero" }
+summary: Từ khái niệm tiền, lãi suất đến thị trường, ngân hàng, thanh toán, rủi ro và kỹ thuật hệ thống tài chính.
+stages:
+  - { id: "f0", order: 0, title: { vi: "Nền tảng tài chính", en: "Finance foundations" }, summary: "Tiền, lãi suất, giá trị thời gian của tiền, lạm phát, rủi ro–lợi suất, kế toán và định giá." }
+  - { id: "f1", order: 1, title: { vi: "Thị trường tài chính", en: "Financial markets" }, summary: "Cổ phiếu, trái phiếu, cấu trúc thị trường, khớp lệnh, bù trừ–thanh toán, phái sinh và danh mục." }
+  - { id: "f2", order: 2, title: { vi: "Ngân hàng & thanh toán", en: "Banking & payments" }, summary: "Bảng cân đối ngân hàng, hệ thống thanh toán, thẻ, thanh toán tức thời, open banking." }
+  - { id: "f3", order: 3, title: { vi: "Rủi ro & tuân thủ", en: "Risk & compliance" }, summary: "Rủi ro tín dụng, thị trường, thanh khoản, vận hành; KYC/AML; vốn theo Basel." }
+  - { id: "f4", order: 4, title: { vi: "Kỹ thuật hệ thống tài chính", en: "Financial systems engineering" }, summary: "Thiết kế sổ cái, idempotency, đối soát, biểu diễn tiền, kiến trúc giao dịch độ trễ thấp." }
+  - { id: "f5", order: 5, title: { vi: "Quant & dữ liệu", en: "Quant & data" }, summary: "Thống kê lợi suất, chuỗi thời gian, backtest, mô hình nhân tố, Monte Carlo." }
+  - { id: "f6", order: 6, title: { vi: "AI trong fintech", en: "AI in fintech" }, summary: "Chấm điểm tín dụng, phát hiện gian lận, LLM trong tài chính, quản trị rủi ro mô hình." }

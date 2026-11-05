@@ -1,0 +1,12 @@
+id: portfolio-math
+title: { vi: "Tính toán danh mục", en: "Portfolio math" }
+summary: Tự viết trung bình, phương sai mẫu, hiệp phương sai, lợi suất và độ lệch chuẩn danh mục, và trọng số rủi ro tối thiểu cho 2 tài sản — không dùng thư viện.
+concepts: [diversification, risk-return, expected-value-variance]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện các hàm (không dùng numpy — chỉ Python thuần):
+  1. mean(xs), variance(xs) — phương sai MẪU (chia n − 1), covariance(xs, ys).
+  2. portfolio_return(weights, mus) = Σ wᵢ μᵢ.
+  3. portfolio_variance(weights, cov) = wᵀ Σ w với cov là ma trận (list of lists).
+  4. min_variance_weight(s1, s2, rho): trọng số tài sản 1 trong danh mục 2 tài sản có phương sai nhỏ nhất (cho phép bán khống).
+  5. Các hàm phải raise ValueError khi độ dài không khớp hoặc dữ liệu < 2 điểm (cho variance/covariance).

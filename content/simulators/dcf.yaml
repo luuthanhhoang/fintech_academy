@@ -1,0 +1,30 @@
+id: dcf
+componentKey: dcf
+title: { vi: "Định giá DCF", en: "Discounted cash flow valuation" }
+summary: Dự phóng dòng tiền tự do, chiết khấu về hiện tại, cộng giá trị cuối kỳ (Gordon) và xem bảng độ nhạy.
+concepts: [cash-flow-dcf, npv-irr]
+dataKind: formula
+params:
+  - { key: "baseFcf", label: "FCF năm gốc", min: -1000, max: 100000, step: 100, default: 1000, unit: "đơn vị tiền" }
+  - { key: "growthPct", label: "Tăng trưởng FCF giai đoạn dự phóng", min: -20, max: 50, step: 0.5, default: 8, unit: "%/năm" }
+  - { key: "years", label: "Số năm dự phóng", min: 1, max: 20, step: 1, default: 5, unit: "năm" }
+  - { key: "discountPct", label: "Tỷ lệ chiết khấu (WACC)", min: 0, max: 30, step: 0.25, default: 10, unit: "%/năm" }
+  - { key: "terminalGrowthPct", label: "Tăng trưởng dài hạn (g)", min: -5, max: 15, step: 0.25, default: 3, unit: "%/năm" }
+  - { key: "netDebt", label: "Nợ ròng", min: -100000, max: 100000, step: 100, default: 2000, unit: "đơn vị tiền" }
+  - { key: "shares", label: "Số cổ phần", min: 0, max: 100000, step: 10, default: 1000, unit: "cp" }
+howToRead: |-
+  EV = tổng PV của FCF dự phóng + PV của giá trị cuối kỳ TV = FCF_{N+1} / (r − g). Giá trị vốn chủ = EV − nợ ròng.
+  Bảng độ nhạy cho thấy chỉ cần r hoặc g lệch 1 điểm % là giá trị thay đổi bao nhiêu. Đây là công cụ học công thức; các giả định là của bạn, không phải khuyến nghị.
+breakIt:
+  - id: r-equals-g
+    label: r = g
+    params: { discountPct: 5, terminalGrowthPct: 5 }
+    explanation: Công thức Gordon chia cho (r − g) = 0 nên giá trị cuối kỳ không xác định. Ý nghĩa kinh tế — không công ty nào tăng trưởng mãi nhanh bằng chi phí vốn; nếu giả định vậy, mô hình vô nghĩa.
+  - id: terminal-dominates
+    label: g gần r
+    params: { discountPct: 8, terminalGrowthPct: 7 }
+    explanation: Khi g tiến sát r, giá trị cuối kỳ chiếm phần lớn EV — kết quả chủ yếu phản ánh một con số giả định cho "mãi mãi". Hãy xem bảng độ nhạy để thấy độ mong manh.
+  - id: negative-fcf
+    label: FCF âm
+    params: { baseFcf: -500 }
+    explanation: Doanh nghiệp đang "đốt tiền" có FCF âm; tăng trưởng FCF âm 8%/năm lại làm khoản âm lớn hơn. DCF với FCF âm cho EV âm — cần mô hình hoá giai đoạn chuyển sang dương thay vì tăng trưởng đều.

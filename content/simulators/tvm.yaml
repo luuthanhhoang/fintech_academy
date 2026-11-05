@@ -1,0 +1,29 @@
+id: tvm
+componentKey: tvm
+title: { vi: "Lãi kép & giá trị thời gian của tiền", en: "Compound interest & time value of money" }
+summary: So sánh lãi đơn, lãi kép theo tần suất ghép và ghép liên tục; thấy phần lãi sinh lãi lớn dần theo thời gian.
+concepts: [compound-interest, time-value-of-money]
+dataKind: formula
+params:
+  - { key: "principal", label: "Vốn ban đầu (PV)", min: 0, max: 1000000, step: 1000, default: 100000, unit: "đơn vị tiền" }
+  - { key: "ratePct", label: "Lãi suất danh nghĩa năm", min: -10, max: 50, step: 0.5, default: 8, unit: "%/năm" }
+  - { key: "years", label: "Số năm", min: 1, max: 60, step: 1, default: 20, unit: "năm" }
+  - { key: "compoundsPerYear", label: "Số lần ghép lãi mỗi năm (m)", min: 1, max: 365, step: 1, default: 12, unit: "lần" }
+  - { key: "contribution", label: "Góp thêm cuối mỗi năm", min: 0, max: 100000, step: 1000, default: 0, unit: "đơn vị tiền" }
+howToRead: |-
+  Đường "Lãi đơn" tăng tuyến tính vì lãi chỉ tính trên gốc. Đường "Lãi kép" cong lên vì lãi được nhập vào gốc.
+  EAR cho biết lãi suất danh nghĩa tương đương bao nhiêu nếu ghép đúng 1 lần/năm. Đường nét đứt là giới hạn khi m → ∞ (ghép liên tục, e^{rt}).
+  Mọi con số là kết quả công thức thuần trên tham số bạn chọn — không phải dữ liệu thị trường.
+breakIt:
+  - id: negative-rate
+    label: Lãi suất âm −5%
+    params: { ratePct: -5 }
+    explanation: Với r < 0, mỗi kỳ gốc nhân với (1 + r/m) < 1 nên số dư co lại theo cấp số nhân. "Thời gian nhân đôi" không tồn tại (hiển thị —). Lãi suất danh nghĩa âm từng xuất hiện ở một số nền kinh tế, nhưng mô phỏng này chỉ minh hoạ toán học.
+  - id: daily-vs-monthly
+    label: Ghép lãi hằng ngày
+    params: { compoundsPerYear: 365 }
+    explanation: Tăng m từ 12 lên 365 làm EAR nhích lên rất ít và gần như trùng đường ghép liên tục — lợi ích của ghép lãi dày hơn giảm dần (giới hạn là e^r − 1).
+  - id: very-long
+    label: 60 năm, lãi 15%
+    params: { years: 60, ratePct: 15 }
+    explanation: Tăng trưởng mũ khiến con số bùng nổ. Đây là lý do phải nghi ngờ mọi dự phóng "lãi kép dài hạn" giả định lãi suất cao không đổi — giả định quan trọng hơn công thức.

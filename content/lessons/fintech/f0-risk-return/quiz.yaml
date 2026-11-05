@@ -1,0 +1,55 @@
+items:
+  - id: q-ev-calc
+    type: numeric
+    conceptId: expected-value-variance
+    prompt: "Kịch bản: 50% lãi 10%, 50% lỗ 4%. Lợi suất kỳ vọng là bao nhiêu %?"
+    answer: 3
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "E[R] = 0,5 × 10% + 0,5 × (−4%) = 3%."
+  - id: q-std-calc
+    type: numeric
+    conceptId: expected-value-variance
+    prompt: "Cùng ví dụ trên (50% lãi 10%, 50% lỗ 4%), độ lệch chuẩn là bao nhiêu điểm %?"
+    answer: 7
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "điểm %"
+    explanation: "Độ lệch so với 3% là ±7 điểm %, mỗi bên 50%, nên Var = 49 và σ = 7."
+  - id: q-sharpe-compare
+    type: mcq
+    conceptId: risk-return
+    prompt: "R_f = 2%. A: E[R]=10%, σ=20%. B: E[R]=7%, σ=8%. Khoản nào có Sharpe cao hơn?"
+    options:
+      - { id: a, text: "A (Sharpe 0,4)" }
+      - { id: b, text: "B (Sharpe 0,625)" }
+      - { id: c, text: "Bằng nhau" }
+    correct: [b]
+    explanation: "A: (10−2)/20 = 0,4. B: (7−2)/8 = 0,625. B cho nhiều phần thưởng hơn trên mỗi đơn vị rủi ro."
+  - id: q-risk-premium
+    type: mcq
+    conceptId: risk-return
+    prompt: "Phần bù rủi ro (risk premium) là?"
+    options:
+      - { id: a, text: "Lợi suất kỳ vọng vượt lãi suất phi rủi ro để bù cho việc gánh rủi ro" }
+      - { id: b, text: "Phí bảo hiểm phải trả cho ngân hàng" }
+      - { id: c, text: "Lãi suất của trái phiếu chính phủ" }
+    correct: [a]
+    explanation: "Người ác cảm rủi ro chỉ nắm tài sản rủi ro khi được kỳ vọng trả công thêm."
+  - id: q-risk-order
+    type: ordering
+    conceptId: risk-return
+    prompt: "R_f = 1%. Sắp xếp theo Sharpe từ thấp đến cao."
+    items:
+      - { id: x, text: "E[R]=5%, σ=20%" }
+      - { id: y, text: "E[R]=4%, σ=6%" }
+      - { id: z, text: "E[R]=3%, σ=2%" }
+    explanation: "Sharpe: 0,2; 0,5; 1,0."
+  - id: q-risk-explain
+    type: explain
+    conceptId: risk-return
+    prompt: "Vì sao chỉ nhìn độ lệch chuẩn có thể đánh giá thấp rủi ro của một chiến lược?"
+    rubric:
+      - { id: tails, criterion: "Nêu sự kiện đuôi hiếm nhưng thiệt hại lớn" }
+      - { id: regime, criterion: "Nêu σ ước lượng từ giai đoạn yên bình có thể thay đổi khi khủng hoảng" }
+    modelAnswer: "σ là trung bình bình phương độ lệch nên các sự kiện hiếm nhưng cực lớn ít ảnh hưởng tới nó khi dữ liệu ngắn; hơn nữa σ ước lượng trong giai đoạn yên bình không phản ánh lúc tương quan và thanh khoản xấu đi. Cần thêm stress test và đo rủi ro đuôi."
+    explanation: "Đây là bài học trung tâm của các case LTCM và SVB."

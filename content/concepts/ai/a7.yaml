@@ -1,0 +1,8 @@
+track: ai
+stage: a7
+concepts:
+  - { id: "quantization", name: { vi: "Lượng tử hoá", en: "Quantization" }, short: "Giảm độ chính xác số của trọng số để tiết kiệm bộ nhớ và tăng tốc.", prerequisites: [neural-networks], difficulty: 3, tags: [int8, int4] }
+  - { id: "kv-cache", name: { vi: "KV cache", en: "KV cache" }, short: "Lưu key/value của token đã xử lý để không tính lại khi sinh token mới.", prerequisites: [transformer-attention], difficulty: 4, tags: [KV cache] }
+  - { id: "batching-throughput", name: { vi: "Batching và thông lượng", en: "Batching and throughput" }, short: "Gộp yêu cầu để tận dụng GPU; đánh đổi thông lượng và độ trễ.", prerequisites: [kv-cache], difficulty: 4, tags: [batching] }
+  - { id: "serving-infrastructure", name: { vi: "Hạ tầng phục vụ mô hình", en: "Model serving infrastructure" }, short: "Máy chủ inference, autoscaling, định tuyến và giám sát.", prerequisites: [batching-throughput], difficulty: 4, tags: [serving] }
+  - { id: "speculative-decoding", name: { vi: "Speculative decoding", en: "Speculative decoding" }, short: "Mô hình nhỏ đề xuất token, mô hình lớn kiểm tra để tăng tốc sinh.", prerequisites: [sampling-decoding, kv-cache], difficulty: 4, tags: [speculative] }

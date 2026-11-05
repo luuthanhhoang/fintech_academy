@@ -1,0 +1,56 @@
+items:
+  - id: q-eval-swebench
+    type: mcq
+    conceptId: agent-evaluation
+    prompt: "SWE-bench chấm một lời giải bằng cách nào?"
+    options:
+      - { id: a, text: "Chạy test thật của repo trên patch mà mô hình tạo ra" }
+      - { id: b, text: "Người chấm đọc patch" }
+      - { id: c, text: "So khớp từng ký tự với patch gốc" }
+    correct: [a]
+    explanation: "Kiểm chứng bằng test cho phép nhiều lời giải đúng khác nhau."
+  - id: q-eval-passk
+    type: numeric
+    conceptId: agent-evaluation
+    prompt: "Agent thành công mỗi lần với xác suất 0,8 (độc lập). pass^3 (cả 3 lần đều thành công) là bao nhiêu? (3 chữ số thập phân)"
+    answer: 0.512
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "0,8³ = 0,512 — dù mỗi lần 80%, chỉ khoảng một nửa số lần người dùng gặp 3/3 lần đúng."
+  - id: q-eval-passk-at
+    type: numeric
+    conceptId: agent-evaluation
+    prompt: "Cùng p = 0,8, pass@3 (ít nhất một lần thành công) là bao nhiêu? (3 chữ số thập phân)"
+    answer: 0.992
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "1 − 0,2³ = 0,992."
+  - id: q-eval-graders
+    type: mcq
+    conceptId: agent-evaluation
+    prompt: "Chọn TẤT CẢ phát biểu đúng về grader cho agent."
+    options:
+      - { id: a, text: "Grader dạng code phù hợp cho tiêu chí cứng như test pass" }
+      - { id: b, text: "Grader dạng model nên được hiệu chuẩn với người chấm" }
+      - { id: c, text: "Nên ép agent đi đúng một chuỗi tool call cố định" }
+      - { id: d, text: "Đọc transcript giúp phát hiện grader từ chối lời giải hợp lệ" }
+    correct: [a, b, d]
+    explanation: "Chấm kết quả thay vì đường đi; đường đi cứng nhắc phạt cả lời giải đúng khác cách."
+  - id: q-eval-order
+    type: ordering
+    conceptId: agent-evaluation
+    prompt: "Sắp xếp quy trình đánh giá khi đổi model cho agent."
+    items:
+      - { id: fix, text: "Cố định bộ tác vụ, môi trường và grader" }
+      - { id: run, text: "Chạy nhiều lần mỗi tác vụ với model cũ và mới" }
+      - { id: compare, text: "So sánh tỷ lệ thành công theo từng tác vụ" }
+      - { id: read, text: "Đọc transcript các tác vụ thay đổi kết quả" }
+    explanation: "So sánh công bằng cần cùng điều kiện, nhiều lần chạy, rồi kiểm tra định tính."
+  - id: q-eval-explain
+    type: explain
+    conceptId: agent-evaluation
+    prompt: "Vì sao tỷ lệ thành công trung bình 90% trên bộ eval vẫn có thể che giấu vấn đề nghiêm trọng?"
+    rubric:
+      - { id: distribution, criterion: "Trung bình che các tác vụ luôn thất bại / các loại tác vụ quan trọng" }
+      - { id: reliability, criterion: "Không phân biệt pass@k với pass^k (độ ổn định)" }
+      - { id: grader, criterion: "Grader có thể sai — cần đọc transcript" }
+    modelAnswer: "Trung bình có thể đến từ việc tác vụ dễ luôn đúng trong khi một nhóm tác vụ quan trọng luôn sai; một lần pass không cho biết độ ổn định khi chạy lại; và grader có thể chấm nhầm. Cần xem theo tác vụ, đo nhiều lần chạy và kiểm tra transcript."
+    explanation: "Eval tốt cho thấy phân phối, không chỉ một con số."

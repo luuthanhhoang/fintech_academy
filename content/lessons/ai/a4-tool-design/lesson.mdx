@@ -1,0 +1,62 @@
+---
+id: a4-tool-design
+track: ai
+stage: a4
+order: 1
+title: { vi: "Thiết kế công cụ cho agent", en: "Designing tools for agents" }
+summary: "Công cụ là hợp đồng giữa agent và thế giới: chọn đúng công cụ, đặt tên và mô tả rõ, schema chặt, kết quả gọn và có ý nghĩa, lỗi giúp agent tự sửa — và vì sao mọi phép tính số nên đi qua công cụ."
+concepts: [tool-design]
+estMinutes: 30
+whyQuestion: "Vì sao thêm một API wrapper mỏng cho mỗi endpoint lại thường làm agent kém đi chứ không tốt hơn?"
+devMapping:
+  - finance: "Tool definition"
+    dev: "Public API contract (tên, docstring, JSON schema)"
+    explanation: "Mô hình chỉ biết công cụ qua tên, mô tả và schema — viết như viết tài liệu API cho một người dùng mới không đọc được code."
+  - finance: "Kết quả công cụ token-efficient"
+    dev: "Pagination, filter, projection trong API"
+    explanation: "Trả về 10.000 dòng làm đầy context như một query không LIMIT làm sập client. Cho phép lọc, phân trang, chọn trường."
+  - finance: "Lỗi có hướng dẫn"
+    dev: "Error message actionable (400 kèm field sai và định dạng đúng)"
+    explanation: "Thông báo lỗi cụ thể giúp agent tự sửa tham số ở vòng sau thay vì lặp lại sai lầm."
+sources: [anthropic-writing-tools, anthropic-context-engineering, agent-skills-spec]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Thiết kế lại một công cụ 'list_all_transactions()' trả về toàn bộ giao dịch thành một công cụ phù hợp cho agent. Giải thích từng thay đổi."
+  rubric:
+    - { id: filter, criterion: "Thêm tham số lọc (khoảng ngày, tài khoản, số tiền) và giới hạn/phân trang" }
+    - { id: output, criterion: "Trả về trường cần thiết, có tóm tắt, định danh dễ đọc" }
+    - { id: errors, criterion: "Lỗi rõ ràng nêu cách sửa" }
+    - { id: naming, criterion: "Tên/namespace rõ, mô tả khi nào dùng" }
+---
+
+## Công cụ là hợp đồng
+
+Bài "Writing effective tools for agents" của Anthropic nêu các nguyên tắc chính: **chọn đúng công cụ để cài (và không cài)**, **đặt namespace** cho công cụ, **trả về ngữ cảnh có ý nghĩa**, **tối ưu kết quả cho hiệu quả token**, và **viết mô tả công cụ cẩn thận như viết prompt**. Bài về context engineering cũng nhấn mạnh: công cụ định nghĩa hợp đồng giữa agent và không gian thông tin/hành động, nên chúng phải thúc đẩy sự hiệu quả.
+
+## Chọn ít công cụ nhưng đúng
+
+Một wrapper cho mỗi endpoint buộc agent tự ghép nhiều lời gọi, đọc nhiều dữ liệu thừa. Tốt hơn là công cụ **theo tác vụ**: thay vì `list_users` + `list_events` + `create_event`, có `schedule_meeting(attendees, window)`. Câu hỏi mở đầu có lời giải ở đây: nhiều công cụ chồng chéo làm mô hình phân vân, và mỗi công cụ tốn context để mô tả.
+
+<Quiz id="q-tool-choose" />
+
+## Mô tả và schema
+
+- Tên rõ nghĩa, có namespace khi nhiều nguồn (ví dụ `ledger_search`, `ledger_post`).
+- Mô tả nói **khi nào dùng**, **không dùng khi nào**, đơn vị và định dạng tham số.
+- Schema chặt: kiểu, enum, giá trị bắt buộc. Validate đầu vào ở harness và trả lỗi có hướng dẫn.
+
+## Kết quả và lỗi
+
+- Trả về **tín hiệu cao, ít token**: trường cần thiết, có phân trang/lọc, định danh con người đọc được.
+- Lỗi phải **actionable**: "date_from phải dạng YYYY-MM-DD, nhận được '5/11'".
+
+<Callout kind="dev" title="Ví dụ trong chính site này">
+Gia sư AI không được tự nhẩm số. Mọi phép tính tài chính đi qua các công cụ sinh từ zod schema trong `lib/tutor/tools.ts` (gọi thẳng vào `lib/finance`), đầu vào được validate trước khi chạy và lỗi trả về dạng có cấu trúc. Mỗi lần gọi được hiển thị lại cho người học.
+</Callout>
+
+## Công cụ, kỹ năng và MCP
+
+Không phải mọi năng lực đều nên là một công cụ. Định dạng mở **Agent Skills** (khởi xướng bởi Anthropic) đóng gói chỉ dẫn và tài nguyên cho một loại tác vụ trong thư mục có file `SKILL.md`, nạp theo kiểu **progressive disclosure**: lúc đầu chỉ tên và mô tả, nội dung đầy đủ chỉ được nạp khi tác vụ cần — giữ context gọn. Công cụ thực thi hành động; skill cung cấp "cách làm"; MCP là giao thức để harness kết nối với nguồn công cụ/dữ liệu bên ngoài.
+
+<Quiz id="q-tool-error" />

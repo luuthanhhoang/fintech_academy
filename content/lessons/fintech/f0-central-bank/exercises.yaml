@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-cb-feedback
+    conceptId: central-bank-policy
+    prompt: "Mô hình hoá chính sách tiền tệ như một bộ điều khiển phản hồi có độ trễ. Điều gì xảy ra nếu bộ điều khiển phản ứng quá mạnh với dữ liệu mới nhất?"
+    hint: "Nghĩ về một vòng điều khiển có độ trễ lớn trong hệ thống autoscaling."
+    solution: "Phản ứng quá mạnh trong hệ có độ trễ dễ gây dao động (overshoot): tăng lãi suất quá đà làm kinh tế suy yếu quá mức, rồi phải đảo chiều. Giống autoscaler phản ứng với metric trễ gây 'flapping'. Vì vậy chính sách thường điều chỉnh từng bước và dựa trên dự báo."

@@ -1,0 +1,58 @@
+id: knight-capital-2012
+title: { vi: "Knight Capital — 45 phút mất kiểm soát", en: "Knight Capital: 45 minutes out of control" }
+period: 2012–2013
+summary: Một lỗi triển khai phần mềm định tuyến lệnh khiến Knight Capital gửi hàng triệu lệnh không mong muốn ngay sau giờ mở cửa; SEC sau đó xử phạt vì vi phạm quy tắc kiểm soát rủi ro truy cập thị trường.
+concepts: [matching-engine, operational-risk, deployment-safety-finance]
+lastVerified: 2026-11-05
+status: verified
+timeline:
+  - date: "2005"
+    event: Theo SEC, Knight di chuyển một đoạn code trong hệ thống định tuyến, khiến một chức năng cũ bị lỗi nhưng vẫn còn trong hệ thống.
+    sourceIds: [sec-knight-2013]
+    status: verified
+  - date: "07/2012"
+    event: Knight triển khai code mới nhưng triển khai không đúng (theo SEC), tạo điều kiện kích hoạt lại chức năng lỗi.
+    sourceIds: [sec-knight-2013]
+    status: verified
+  - date: "01/08/2012 (trước giờ mở cửa)"
+    event: Hệ thống gửi 97 email tự động báo lỗi nhưng không dẫn tới hành động xử lý (theo SEC).
+    sourceIds: [sec-knight-2013]
+    status: verified
+  - date: "01/08/2012 (45 phút đầu phiên)"
+    event: Bộ định tuyến gửi hơn 4 triệu lệnh khi đang cố khớp 212 lệnh của khách hàng; hơn 397 triệu cổ phiếu được giao dịch, để lại vị thế không mong muốn trị giá vài tỷ USD và khoản lỗ hơn 460 triệu USD (theo SEC).
+    sourceIds: [sec-knight-2013]
+    status: verified
+  - date: "16/10/2013"
+    event: Knight đồng ý nộp phạt 12 triệu USD để dàn xếp cáo buộc vi phạm Rule 15c3-5 (market access rule, ban hành năm 2010) — vụ cưỡng chế đầu tiên theo quy tắc này; công ty phải thuê tư vấn độc lập rà soát kiểm soát.
+    sourceIds: [sec-knight-2013]
+    status: verified
+rootCauses:
+  - text: Kiểm soát rủi ro tài chính trước giao dịch yếu — không có liên kết giữa tài khoản thực hiện lệnh và hạn mức rủi ro tổng thể (theo SEC).
+    sourceIds: [sec-knight-2013]
+  - text: Quy trình triển khai và kiểm thử code không đầy đủ; code chết (dead code) còn khả năng chạy được.
+    sourceIds: [sec-knight-2013]
+  - text: Quy trình phản ứng sự cố không đủ — cảnh báo tự động có trước giờ mở cửa nhưng không ai hành động.
+    sourceIds: [sec-knight-2013]
+questions:
+  - id: pre-trade
+    prompt: Bạn thiết kế lớp kiểm soát trước giao dịch (pre-trade risk check) thế nào để 212 lệnh khách hàng không thể biến thành hàng triệu lệnh?
+    rubric:
+      - { id: "limits", criterion: "Có hạn mức theo số lệnh / khối lượng / giá trị vị thế, kiểm tra ở tầng độc lập với logic chiến lược" }
+      - { id: "kill", criterion: "Có kill switch tự động khi vượt ngưỡng và quy trình con người xác nhận" }
+      - { id: "aggregate", criterion: "Liên kết vị thế thực hiện với hạn mức rủi ro tổng thể của công ty" }
+  - id: deploy
+    prompt: Viết checklist triển khai (deployment) cho một hệ thống gửi lệnh tự động. Điều gì ngăn được việc một máy chạy code cũ?
+    rubric:
+      - { id: "parity", criterion: "Kiểm tra mọi máy chạy cùng phiên bản (version parity) trước khi bật" }
+      - { id: "flags", criterion: "Xoá code chết và không tái sử dụng feature flag cũ cho nghĩa mới" }
+      - { id: "canary", criterion: "Triển khai từng phần (canary) với giám sát và rollback được tập dượt" }
+  - id: alerts
+    prompt: 97 email cảnh báo không dẫn tới hành động. Bạn sẽ thiết kế cảnh báo và trực sự cố thế nào?
+    rubric:
+      - { id: "severity", criterion: "Phân mức nghiêm trọng, cảnh báo nghiêm trọng phải chặn (block) hoặc gọi người trực" }
+      - { id: "owner", criterion: "Mỗi cảnh báo có người chịu trách nhiệm và runbook" }
+controls:
+  - { control: "Pre-trade risk check độc lập (hạn mức lệnh, khối lượng, giá trị)", devAnalogy: "Rate limiter + circuit breaker ở gateway, không nằm trong service nghiệp vụ" }
+  - { control: "Kill switch", devAnalogy: "Feature flag tắt toàn cục + dừng consumer hàng đợi" }
+  - { control: "Triển khai đồng nhất và rollback", devAnalogy: "Immutable deploy, kiểm tra version trên mọi node, canary" }
+  - { control: "Xoá code chết / flag cũ", devAnalogy: "Dọn feature flag có hạn sử dụng, không tái sử dụng tên flag" }

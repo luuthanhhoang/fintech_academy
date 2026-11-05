@@ -1,0 +1,88 @@
+---
+id: f1-microstructure
+track: fintech
+stage: f1
+order: 3
+title: { vi: "Cấu trúc thị trường: sổ lệnh, khớp lệnh, thanh khoản", en: "Market microstructure: order books, matching, liquidity" }
+summary: "Sổ lệnh giới hạn, nguyên tắc ưu tiên giá rồi thời gian, lệnh thị trường và lệnh giới hạn, spread, độ sâu và trượt giá — và vì sao kiểm soát rủi ro trước giao dịch là bắt buộc."
+concepts: [order-book, matching-engine, liquidity-spread]
+estMinutes: 45
+whyQuestion: "Vì sao cùng một cổ phiếu, mua 100 cổ và mua 100.000 cổ lại cho giá bình quân khác nhau?"
+devMapping:
+  - finance: "Sổ lệnh (order book)"
+    dev: "Hai priority queue (max-heap bid, min-heap ask)"
+    explanation: "Bên mua sắp giá giảm dần, bên bán giá tăng dần; trong cùng giá theo thứ tự đến (FIFO). Khớp lệnh là pop từ đỉnh heap đối diện."
+  - finance: "Ưu tiên giá – thời gian"
+    dev: "Sort key (price, sequence number)"
+    explanation: "Một sequence number đơn điệu tăng đảm bảo tính công bằng và tất định — replay cùng chuỗi lệnh phải ra cùng kết quả."
+  - finance: "Kiểm soát rủi ro trước giao dịch"
+    dev: "Rate limiter + circuit breaker ở gateway"
+    explanation: "Chặn lệnh bất thường trước khi vào engine, độc lập với logic chiến lược — bài học trực tiếp từ case Knight Capital."
+simulators: [orderbook]
+labs: [matching-engine]
+cases: [knight-capital-2012]
+sources: [vn-hnx-trading-rules, sec-knight-2013]
+facts:
+  - id: vn-priority-rule
+    text: "Quy chế giao dịch (bản đăng lại, có thể đã được thay thế) mô tả nguyên tắc ưu tiên giá trước, cùng giá thì lệnh nhập trước được ưu tiên"
+    sourceId: vn-hnx-trading-rules
+    asOf: 2026-11-05
+    status: needs_verification
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Mô tả điều gì xảy ra khi một lệnh mua thị trường lớn đi vào sổ lệnh mỏng, và đề xuất hai cơ chế bảo vệ."
+  rubric:
+    - { id: walk, criterion: "Lệnh 'đi bộ' qua nhiều mức giá, giá bình quân xấu dần (trượt giá)" }
+    - { id: residual, criterion: "Có thể còn phần không khớp khi hết độ sâu" }
+    - { id: protect, criterion: "Đề xuất bảo vệ như lệnh giới hạn, biên độ giá, kiểm soát khối lượng trước giao dịch" }
+---
+
+## Sổ lệnh giới hạn
+
+Phần lớn sàn chứng khoán hiện đại vận hành một **sổ lệnh giới hạn (limit order book)**:
+
+- **Bid**: các lệnh mua đang chờ, giá cao nhất ở đầu.
+- **Ask** (offer): các lệnh bán đang chờ, giá thấp nhất ở đầu.
+- **Spread** = ask tốt nhất − bid tốt nhất.
+- **Độ sâu (depth)**: khối lượng chờ ở mỗi mức giá.
+
+## Khớp lệnh theo ưu tiên giá – thời gian
+
+Bộ máy khớp lệnh (matching engine) khớp lệnh mới với phía đối diện theo:
+
+1. **Giá tốt hơn trước**: lệnh mua giá cao hơn, lệnh bán giá thấp hơn được ưu tiên.
+2. **Cùng giá thì lệnh đến trước được khớp trước.**
+
+Ở Việt Nam: <Fact id="vn-priority-rule" />. Giá khớp trong khớp liên tục là giá của lệnh đang nằm trong sổ (maker).
+
+## Lệnh thị trường và lệnh giới hạn
+
+- **Lệnh giới hạn (limit order)**: chỉ khớp ở giá bằng hoặc tốt hơn giá đặt; phần chưa khớp nằm chờ trong sổ.
+- **Lệnh thị trường (market order)**: khớp ngay với các mức giá tốt nhất hiện có, chấp nhận "đi bộ" qua nhiều mức.
+
+<Quiz id="q-ms-priority" />
+
+## Thanh khoản, spread và trượt giá
+
+Câu hỏi mở đầu có lời giải ở đây: lệnh nhỏ khớp ở giá tốt nhất; lệnh lớn **ăn qua nhiều mức giá**, nên giá bình quân xấu hơn. Chênh lệch so với giá tốt nhất ban đầu là **trượt giá (slippage)** — chi phí thực của thanh khoản mỏng.
+
+$$
+\text{Giá khớp bình quân} = \frac{\sum_i p_i q_i}{\sum_i q_i}
+\qquad
+\text{Trượt giá (mua)} = \frac{\bar p - p_{\text{ask tốt nhất}}}{p_{\text{ask tốt nhất}}}
+$$
+
+<Simulator id="orderbook" />
+
+## Tự cài một matching engine
+
+<Lab id="matching-engine" />
+
+## Khi hệ thống gửi lệnh mất kiểm soát
+
+Theo SEC, ngày 1/8/2012 bộ định tuyến của Knight Capital đã gửi hơn 4 triệu lệnh trong 45 phút đầu phiên. Một matching engine chỉ làm đúng việc của nó — khớp lệnh. Ngăn lệnh sai đi vào thị trường là trách nhiệm của **kiểm soát rủi ro trước giao dịch** đặt độc lập phía trước.
+
+<Case id="knight-capital-2012" />
+
+<Quiz id="q-ms-slippage" />

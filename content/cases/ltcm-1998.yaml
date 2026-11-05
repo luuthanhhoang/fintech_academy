@@ -1,0 +1,55 @@
+id: ltcm-1998
+title: { vi: "LTCM — khi đòn bẩy khuếch đại mọi thứ", en: "LTCM: when leverage magnifies everything" }
+period: 1998–1999
+summary: Quỹ phòng hộ Long-Term Capital Management suýt sụp đổ năm 1998; một nhóm ngân hàng và công ty chứng khoán tái cấp vốn với sự điều phối của Fed New York. Báo cáo liên cơ quan năm 1999 rút ra bài học về đòn bẩy và quản trị rủi ro đối tác.
+concepts: [leverage, derivatives-basics, diversification, liquidity-risk]
+lastVerified: 2026-11-05
+status: verified
+timeline:
+  - date: "18/09/1998"
+    event: Lãnh đạo LTCM liên hệ Ngân hàng Dự trữ Liên bang New York về tình trạng của quỹ (theo Federal Reserve History).
+    sourceIds: [frb-history-ltcm]
+    status: verified
+  - date: "23/09/1998"
+    event: Một nhóm 14 ngân hàng và công ty môi giới đồng ý góp khoảng 3,6 tỷ USD (Fed ghi 3,625 tỷ USD) vào LTCM để đổi lấy 90% quyền sở hữu, nhằm ngăn quỹ sụp đổ.
+    sourceIds: [frb-history-ltcm]
+    status: verified
+  - date: "1998"
+    event: Fed đóng vai trò điều phối, không cho vay bằng tiền của mình; không có tiền ngân sách liên bang nào được cam kết cho việc tái cấp vốn.
+    sourceIds: [frb-history-ltcm, gao-ltcm-2000]
+    status: verified
+  - date: "04/1999"
+    event: Nhóm Công tác của Tổng thống về Thị trường Tài chính (Bộ Tài chính, Fed, SEC, CFTC) công bố báo cáo về quỹ phòng hộ, đòn bẩy và bài học từ LTCM.
+    sourceIds: [pwg-ltcm-1999]
+    status: verified
+  - date: "cuối 1999"
+    event: LTCM bán phần lớn vị thế còn lại và hoàn trả khoản đầu tư của nhóm tái cấp vốn (theo Federal Reserve History, dẫn GAO).
+    sourceIds: [frb-history-ltcm]
+    status: verified
+rootCauses:
+  - text: Đòn bẩy quá mức có thể khuếch đại rất lớn tác động tiêu cực của một biến cố thị trường (kết luận của báo cáo PWG).
+    sourceIds: [pwg-ltcm-1999]
+  - text: Quản trị rủi ro đối tác (counterparty risk) của các tổ chức cho quỹ vay/giao dịch với quỹ chưa đủ chặt — trọng tâm khuyến nghị của báo cáo.
+    sourceIds: [pwg-ltcm-1999]
+  - text: Rủi ro mang tính hệ thống — sự sụp đổ của một quỹ lớn có thể lan sang các đối tác, nên cơ quan quản lý được khuyến nghị chú trọng hơn tới rủi ro hệ thống.
+    sourceIds: [gao-ltcm-2000]
+questions:
+  - id: leverage
+    prompt: Giải thích bằng ví dụ số (tự chọn) vì sao đòn bẩy cao (ví dụ giả định 25 lần — không phải số liệu của LTCM) biến một biến động giá nhỏ thành mất toàn bộ vốn. Bạn đặt giới hạn gì?
+    rubric:
+      - { id: "math", criterion: "Chỉ ra lỗ trên vốn chủ ≈ đòn bẩy × % biến động tài sản" }
+      - { id: "limit", criterion: "Đề xuất giới hạn đòn bẩy/ký quỹ gắn với kịch bản căng thẳng, không chỉ với biến động bình thường" }
+  - id: correlation
+    prompt: Vì sao các vị thế "đa dạng hoá" có thể cùng lỗ trong khủng hoảng? Bạn kiểm thử điều này thế nào?
+    rubric:
+      - { id: "corr", criterion: "Nêu tương quan tăng vọt trong căng thẳng / thanh khoản cạn kiệt" }
+      - { id: "stress", criterion: "Đề xuất stress test với tương quan và thanh khoản xấu đi, không chỉ dùng dữ liệu lịch sử bình thường" }
+  - id: counterparty
+    prompt: Nếu bạn là ngân hàng cho quỹ vay, bạn cần dữ liệu gì và hạn mức gì để kiểm soát rủi ro đối tác?
+    rubric:
+      - { id: "transparency", criterion: "Yêu cầu minh bạch tổng vị thế/đòn bẩy của đối tác, không chỉ phần giao dịch với mình" }
+      - { id: "margin", criterion: "Ký quỹ/tài sản bảo đảm và hạn mức tập trung theo đối tác" }
+controls:
+  - { control: "Giới hạn đòn bẩy theo kịch bản căng thẳng", devAnalogy: "Capacity planning theo tải đỉnh chứ không theo tải trung bình" }
+  - { control: "Stress test tương quan & thanh khoản", devAnalogy: "Chaos engineering — giả lập nhiều phụ thuộc cùng hỏng một lúc" }
+  - { control: "Minh bạch rủi ro đối tác", devAnalogy: "Theo dõi blast radius của một dependency dùng chung" }

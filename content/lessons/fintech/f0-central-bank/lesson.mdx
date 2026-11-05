@@ -1,0 +1,81 @@
+---
+id: f0-central-bank
+track: fintech
+stage: f0
+order: 7
+title: { vi: "Ngân hàng trung ương và chính sách tiền tệ", en: "Central banks and monetary policy" }
+summary: "Ngân hàng trung ương điều hành chính sách tiền tệ nhằm ổn định giá trị đồng tiền; cơ chế truyền dẫn từ lãi suất chính sách tới nền kinh tế; khung pháp lý của NHNN Việt Nam (cần đối chiếu văn bản gốc)."
+concepts: [central-bank-policy]
+estMinutes: 30
+whyQuestion: "Khi ngân hàng trung ương thay đổi một lãi suất, vì sao lãi vay mua nhà của bạn lại thay đổi theo?"
+devMapping:
+  - finance: "Lãi suất chính sách"
+    dev: "Tham số điều khiển (control knob) của một hệ phản hồi"
+    explanation: "Ngân hàng trung ương điều chỉnh một tham số, quan sát lạm phát/tăng trưởng (metric), rồi điều chỉnh tiếp — một vòng điều khiển phản hồi có độ trễ lớn, dễ 'over-correct'."
+  - finance: "Truyền dẫn chính sách (transmission)"
+    dev: "Lan truyền cấu hình qua nhiều tầng cache"
+    explanation: "Thay đổi ở tầng gốc (lãi suất chính sách) lan dần qua lãi suất liên ngân hàng, lãi suất cho vay, giá tài sản — mỗi tầng có độ trễ và có thể 'giữ cache cũ'."
+  - finance: "Uy tín và kỳ vọng"
+    dev: "SLA đáng tin cậy"
+    explanation: "Nếu người dùng tin SLA, họ thiết kế hệ thống dựa trên nó; nếu ngân hàng trung ương đáng tin, kỳ vọng lạm phát được 'neo' và chính sách hiệu quả hơn."
+sources: [vn-law-sbv-2010, imf-inflation, vn-sbv-law-amend-2026]
+facts:
+  - id: sbv-legal-status
+    text: "Theo Luật NHNN hiện hành, NHNN là cơ quan ngang bộ của Chính phủ và là ngân hàng trung ương của Việt Nam"
+    sourceId: vn-law-sbv-2010
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: sbv-inflation-target
+    text: "Chỉ tiêu lạm phát hằng năm (thể hiện qua CPI) do Quốc hội quyết định theo đề xuất của Chính phủ"
+    sourceId: vn-law-sbv-2010
+    asOf: 2026-11-05
+    status: needs_verification
+  - id: sbv-law-amend-2026
+    text: "Quốc hội đã thông qua luật sửa đổi, bổ sung một số điều của Luật NHNN, Luật Phòng, chống rửa tiền và Luật Các tổ chức tín dụng; ngày thông qua và ngày hiệu lực cần đối chiếu văn bản chính thức"
+    sourceId: vn-sbv-law-amend-2026
+    asOf: 2026-11-05
+    status: needs_verification
+lastVerified: 2026-11-05
+status: needs_verification
+selfExplain:
+  prompt: "Mô tả chuỗi truyền dẫn khi ngân hàng trung ương tăng lãi suất chính sách, và vì sao tác động tới lạm phát có độ trễ."
+  rubric:
+    - { id: chain, criterion: "Lãi suất chính sách → lãi suất liên ngân hàng → lãi suất cho vay/tiền gửi → chi tiêu, đầu tư" }
+    - { id: lag, criterion: "Nêu độ trễ do hợp đồng, kỳ vọng và hành vi điều chỉnh chậm" }
+    - { id: expectations, criterion: "Nhắc vai trò kỳ vọng và uy tín" }
+---
+
+## Ngân hàng trung ương làm gì
+
+Ngân hàng trung ương (NHTW) là định chế phát hành tiền và điều hành **chính sách tiền tệ** của quốc gia. Mục tiêu cốt lõi phổ biến là **ổn định giá trị đồng tiền** — tức kiểm soát lạm phát — bên cạnh các mục tiêu như ổn định hệ thống tài chính.
+
+<Callout kind="warning" title="Bài này đang ở trạng thái cần kiểm chứng">
+Phần khung pháp lý Việt Nam dưới đây dựa trên Luật NHNN 2010 qua trích đoạn tìm kiếm; môi trường soạn bài chưa mở được toàn văn. Các dữ kiện cụ thể được đánh dấu "chưa kiểm chứng" và không nêu chi tiết số liệu. Hãy đối chiếu văn bản gốc (bản hợp nhất mới nhất) trước khi dựa vào.
+</Callout>
+
+## Công cụ và cơ chế truyền dẫn
+
+Ở mức khái niệm, NHTW tác động tới **giá và lượng tiền** trong hệ thống ngân hàng qua các công cụ như lãi suất điều hành, nghiệp vụ thị trường mở và dự trữ bắt buộc. Chuỗi truyền dẫn điển hình:
+
+1. NHTW điều chỉnh lãi suất chính sách / thanh khoản cho ngân hàng.
+2. Lãi suất liên ngân hàng thay đổi theo.
+3. Ngân hàng thương mại điều chỉnh lãi suất cho vay và tiền gửi.
+4. Hộ gia đình và doanh nghiệp thay đổi vay, chi tiêu, đầu tư; giá tài sản và tỷ giá phản ứng.
+5. Tổng cầu thay đổi, dần dần tác động tới lạm phát.
+
+Mỗi bước có độ trễ, nên chính sách phải "nhìn trước". IMF nhấn mạnh **uy tín** của NHTW quyết định mức độ các thông báo của nó định hình kỳ vọng lạm phát.
+
+<Quiz id="q-cb-transmission" />
+
+## Khung pháp lý ở Việt Nam
+
+- Vị trí pháp lý: <Fact id="sbv-legal-status" />.
+- Mục tiêu lạm phát: <Fact id="sbv-inflation-target" />.
+
+Theo Luật NHNN, chính sách tiền tệ quốc gia gồm việc xác định mục tiêu ổn định giá trị đồng tiền (biểu hiện qua chỉ tiêu lạm phát) và lựa chọn công cụ thực hiện; NHNN còn có các nhiệm vụ quản lý nhà nước như thanh tra, giám sát ngân hàng và quản lý ngoại hối. Đây là mô tả tóm lược — **cần đối chiếu điều khoản cụ thể**.
+
+<Callout kind="note" title="Cập nhật 11/2026">
+Khung pháp lý đang thay đổi: <Fact id="sbv-law-amend-2026" />. Theo báo chí, nội dung sửa đổi gồm trách nhiệm thanh tra, giám sát của NHNN, cơ chế tài chính và quy định ngoại hối. Khi luật có hiệu lực, các điều khoản của Luật NHNN 2010 nêu trên cần được đọc cùng bản sửa đổi.
+</Callout>
+
+<Quiz id="q-cb-goal" />

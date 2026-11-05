@@ -1,0 +1,32 @@
+id: orderbook
+componentKey: orderbook
+title: { vi: "Sổ lệnh & bộ máy khớp lệnh", en: "Order book & matching engine" }
+summary: Gửi lệnh thị trường/giới hạn vào một sổ lệnh tổng hợp; xem khớp theo ưu tiên giá rồi thời gian, spread và trượt giá.
+concepts: [order-book, matching-engine, liquidity-spread]
+dataKind: synthetic
+syntheticNote: Sổ lệnh được sinh tất định từ tham số (giá giữa, spread, số mức giá, khối lượng cơ sở, seed) bằng bộ sinh số giả ngẫu nhiên có seed. Không phải dữ liệu của bất kỳ sàn nào.
+params:
+  - { key: "mid", label: "Giá giữa ban đầu", min: 1, max: 1000, step: 1, default: 100, unit: "đơn vị giá" }
+  - { key: "spreadTicks", label: "Spread ban đầu", min: 1, max: 50, step: 1, default: 2, unit: "bước giá" }
+  - { key: "tick", label: "Bước giá (tick)", min: 0.01, max: 10, step: 0.01, default: 0.1, unit: "đơn vị giá" }
+  - { key: "levels", label: "Số mức giá mỗi bên", min: 1, max: 15, step: 1, default: 6, unit: "mức" }
+  - { key: "baseQty", label: "Khối lượng cơ sở mỗi mức", min: 1, max: 10000, step: 1, default: 500, unit: "cp" }
+  - { key: "seed", label: "Seed sinh dữ liệu", min: 1, max: 999, step: 1, default: 7 }
+  - { key: "orderQty", label: "Khối lượng lệnh của bạn", min: 1, max: 100000, step: 1, default: 800, unit: "cp" }
+howToRead: |-
+  Bên bán (ask) xếp giá thấp nhất ở gần giữa; bên mua (bid) giá cao nhất ở gần giữa. Lệnh thị trường "ăn" lần lượt từng mức giá tốt nhất.
+  Giá khớp bình quân càng xa giá tốt nhất thì trượt giá càng lớn — đó là chi phí của thanh khoản mỏng. Lệnh giới hạn không khớp hết sẽ nằm lại trong sổ và chờ.
+breakIt:
+  - id: eat-the-book
+    label: Lệnh lớn hơn toàn bộ độ sâu
+    params: { orderQty: 100000, levels: 3 }
+    explanation: Lệnh thị trường quét hết các mức giá rồi vẫn còn dư — phần dư không có đối ứng. Trên sàn thật, các cơ chế như biên độ giá, ngắt mạch, hay quy tắc huỷ phần dư của lệnh thị trường tồn tại để ngăn kịch bản này. Đây cũng là kiểu thiệt hại khi một hệ thống tự động gửi lệnh mất kiểm soát (case Knight Capital).
+  - id: thin-book
+    label: Thanh khoản mỏng
+    params: { baseQty: 20, spreadTicks: 20 }
+    explanation: >-
+      Spread rộng và mỗi mức chỉ có ít cổ phiếu: chỉ một lệnh vừa phải cũng gây trượt giá đáng kể. Thanh khoản = khả năng giao dịch khối lượng lớn mà không làm giá chạy.
+  - id: one-level
+    label: Chỉ một mức giá
+    params: { levels: 1 }
+    explanation: Khi chỉ còn một mức mỗi bên, lệnh nào lớn hơn mức đó sẽ làm sổ một bên trống rỗng — giá "tốt nhất" biến mất (hiển thị —).

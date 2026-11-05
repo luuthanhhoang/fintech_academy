@@ -1,0 +1,50 @@
+items:
+  - id: q-map-secondary
+    type: mcq
+    conceptId: financial-markets-map
+    prompt: "Bạn mua 100 cổ phiếu của công ty X trên sàn từ một nhà đầu tư khác. Ai nhận tiền?"
+    options:
+      - { id: a, text: "Công ty X" }
+      - { id: b, text: "Nhà đầu tư bán cổ phiếu cho bạn" }
+      - { id: c, text: "Sở giao dịch" }
+    correct: [b]
+    explanation: "Đây là giao dịch thứ cấp: quyền sở hữu chuyển giữa hai nhà đầu tư. Sàn và công ty chứng khoán chỉ thu phí dịch vụ."
+  - id: q-map-money-market
+    type: mcq
+    conceptId: financial-markets-map
+    prompt: "Chọn TẤT CẢ công cụ thuộc thị trường tiền tệ."
+    options:
+      - { id: a, text: "Tín phiếu kỳ hạn ngắn" }
+      - { id: b, text: "Vay liên ngân hàng qua đêm" }
+      - { id: c, text: "Cổ phiếu phổ thông" }
+      - { id: d, text: "Trái phiếu 10 năm" }
+    correct: [a, b]
+    explanation: "Thị trường tiền tệ gồm công cụ ngắn hạn; cổ phiếu và trái phiếu dài hạn thuộc thị trường vốn."
+  - id: q-map-primary
+    type: mcq
+    conceptId: financial-markets-map
+    prompt: "Một công ty phát hành cổ phiếu lần đầu ra công chúng (IPO). Đây là thị trường nào?"
+    options:
+      - { id: a, text: "Sơ cấp" }
+      - { id: b, text: "Thứ cấp" }
+      - { id: c, text: "Tiền tệ" }
+    correct: [a]
+    explanation: "Phát hành lần đầu → sơ cấp; công ty nhận vốn."
+  - id: q-map-order
+    type: ordering
+    conceptId: financial-markets-map
+    prompt: "Sắp xếp vòng đời của một cổ phiếu."
+    items:
+      - { id: issue, text: "Công ty phát hành và nhận tiền (sơ cấp)" }
+      - { id: list, text: "Cổ phiếu được niêm yết trên sàn" }
+      - { id: trade, text: "Nhà đầu tư mua bán với nhau (thứ cấp)" }
+    explanation: "Phát hành → niêm yết → giao dịch thứ cấp."
+  - id: q-map-explain
+    type: explain
+    conceptId: financial-markets-map
+    prompt: "Nếu thị trường thứ cấp không đem tiền mới cho doanh nghiệp, vì sao doanh nghiệp vẫn quan tâm đến nó?"
+    rubric:
+      - { id: liquidity, criterion: "Thanh khoản khiến nhà đầu tư sẵn lòng mua ở sơ cấp" }
+      - { id: price, criterion: "Giá thứ cấp là tín hiệu định giá cho lần huy động tiếp theo" }
+    modelAnswer: "Nhà đầu tư chỉ sẵn lòng mua ở sơ cấp nếu biết có thể bán lại dễ dàng; thị trường thứ cấp cung cấp thanh khoản đó và tạo giá tham chiếu, ảnh hưởng tới chi phí huy động vốn lần sau."
+    explanation: "Thanh khoản và khám phá giá là hai chức năng then chốt của thị trường thứ cấp."

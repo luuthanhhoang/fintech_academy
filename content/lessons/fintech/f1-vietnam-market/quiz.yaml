@@ -1,0 +1,50 @@
+items:
+  - id: q-vn-roles
+    type: mcq
+    conceptId: vn-securities-market
+    prompt: "Tổ chức nào thực hiện bù trừ, thanh toán và ghi nhận sở hữu chứng khoán ở Việt Nam?"
+    options:
+      - { id: a, text: "Tổng công ty Lưu ký và Bù trừ chứng khoán Việt Nam (VSDC)" }
+      - { id: b, text: "Công ty chứng khoán của bạn" }
+      - { id: c, text: "Ngân hàng Nhà nước" }
+    correct: [a]
+    explanation: "Sở giao dịch khớp lệnh; VSDC đảm nhận hạ tầng sau giao dịch."
+  - id: q-vn-flow
+    type: ordering
+    conceptId: vn-securities-market
+    prompt: "Sắp xếp đường đi của một lệnh mua."
+    items:
+      - { id: app, text: "Nhà đầu tư đặt lệnh qua công ty chứng khoán" }
+      - { id: check, text: "Công ty chứng khoán kiểm tra tài khoản và chuyển lệnh" }
+      - { id: match, text: "Sở giao dịch khớp lệnh" }
+      - { id: settle, text: "VSDC bù trừ, thanh toán và ghi nhận sở hữu" }
+    explanation: "Thành viên → sở giao dịch → hạ tầng bù trừ–thanh toán."
+  - id: q-vn-regulator
+    type: mcq
+    conceptId: vn-securities-market
+    prompt: "Cơ quan nào trực tiếp tham mưu quản lý nhà nước về chứng khoán và thị trường chứng khoán?"
+    options:
+      - { id: a, text: "Ủy ban Chứng khoán Nhà nước (thuộc Bộ Tài chính)" }
+      - { id: b, text: "Bộ Công Thương" }
+      - { id: c, text: "Sở Giao dịch Chứng khoán" }
+    correct: [a]
+    explanation: "Sở giao dịch là tổ chức vận hành thị trường, không phải cơ quan quản lý nhà nước."
+  - id: q-vn-priority
+    type: mcq
+    conceptId: vn-securities-market
+    prompt: "Trong khớp lệnh liên tục, hai lệnh mua cùng giá được ưu tiên theo tiêu chí nào?"
+    options:
+      - { id: a, text: "Lệnh nhập vào hệ thống trước" }
+      - { id: b, text: "Lệnh của nhà đầu tư tổ chức" }
+      - { id: c, text: "Ngẫu nhiên" }
+    correct: [a]
+    explanation: "Ưu tiên giá trước, cùng giá thì ưu tiên thời gian."
+  - id: q-vn-explain
+    type: explain
+    conceptId: vn-securities-market
+    prompt: "Vì sao việc cho nhà đầu tư tổ chức nước ngoài mua không cần đủ tiền trước (non-prefunding) cần một bên chịu trách nhiệm thanh toán?"
+    rubric:
+      - { id: risk, criterion: "Nếu không có tiền trước, tồn tại rủi ro thanh toán thất bại sau khớp" }
+      - { id: party, criterion: "Ngân hàng lưu ký/thành viên cam kết thanh toán và có hạn mức để kiểm soát" }
+    modelAnswer: "Không yêu cầu tiền trước nghĩa là lúc khớp lệnh chưa chắc có tiền; để thanh toán không thất bại, một bên (ngân hàng lưu ký) cam kết chịu trách nhiệm thanh toán, kèm hạn mức nhận lệnh và quy trình xác nhận số dư."
+    explanation: "Đây là bài toán quản lý rủi ro thanh toán (liên hệ bài bù trừ–thanh toán)."

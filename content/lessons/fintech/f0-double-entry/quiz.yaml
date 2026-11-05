@@ -1,0 +1,58 @@
+items:
+  - id: q-de-entry
+    type: mcq
+    conceptId: double-entry-accounting
+    prompt: "Doanh nghiệp vay ngân hàng 500 và nhận tiền vào tài khoản. Bút toán đúng?"
+    options:
+      - { id: a, text: "Nợ Tiền 500 / Có Vay ngân hàng 500" }
+      - { id: b, text: "Nợ Vay ngân hàng 500 / Có Tiền 500" }
+      - { id: c, text: "Nợ Tiền 500 / Có Doanh thu 500" }
+    correct: [a]
+    explanation: "Tài sản (Tiền) tăng → ghi Nợ; nợ phải trả (Vay) tăng → ghi Có. Tiền vay không phải doanh thu."
+  - id: q-de-equation
+    type: numeric
+    conceptId: double-entry-accounting
+    prompt: "Tài sản 2.400, Nợ phải trả 900. Vốn chủ sở hữu là bao nhiêu?"
+    answer: 1500
+    tolerance: { kind: abs, value: 0 }
+    explanation: "Vốn chủ = Tài sản − Nợ phải trả = 1.500."
+  - id: q-de-statement
+    type: mcq
+    conceptId: financial-statements
+    prompt: "Báo cáo nào cho biết tình trạng tài sản–nguồn vốn tại một THỜI ĐIỂM?"
+    options:
+      - { id: a, text: "Bảng cân đối kế toán" }
+      - { id: b, text: "Báo cáo kết quả kinh doanh" }
+      - { id: c, text: "Báo cáo lưu chuyển tiền tệ" }
+    correct: [a]
+    explanation: "Bảng cân đối là ảnh chụp tại một thời điểm; hai báo cáo còn lại đo dòng chảy trong một kỳ."
+  - id: q-de-normal-side
+    type: mcq
+    conceptId: double-entry-accounting
+    prompt: "Chọn TẤT CẢ loại tài khoản tăng khi ghi Có."
+    options:
+      - { id: a, text: "Nợ phải trả" }
+      - { id: b, text: "Doanh thu" }
+      - { id: c, text: "Vốn chủ sở hữu" }
+      - { id: d, text: "Chi phí" }
+    correct: [a, b, c]
+    explanation: "Tài sản và chi phí tăng bên Nợ; nợ phải trả, vốn chủ và doanh thu tăng bên Có."
+  - id: q-de-order
+    type: ordering
+    conceptId: double-entry-accounting
+    prompt: "Sắp xếp các bước xử lý một nghiệp vụ trong hệ thống sổ cái."
+    items:
+      - { id: validate, text: "Kiểm tra tài khoản tồn tại và tổng Nợ = tổng Có" }
+      - { id: commit, text: "Ghi bút toán vào sổ (append-only)" }
+      - { id: project, text: "Cập nhật số dư / báo cáo từ các bút toán" }
+      - { id: trial, text: "Đối chiếu bảng cân đối thử cuối kỳ" }
+    explanation: "Validate trước khi commit; số dư và báo cáo là projection; trial balance là kiểm tra tổng thể."
+  - id: q-de-explain
+    type: explain
+    conceptId: financial-statements
+    prompt: "Vì sao một công ty có lợi nhuận vẫn có thể hết tiền?"
+    rubric:
+      - { id: accrual, criterion: "Phân biệt ghi nhận doanh thu (dồn tích) với thu tiền" }
+      - { id: example, criterion: "Ví dụ: bán chịu, tồn kho tăng, mua tài sản lớn, trả nợ gốc" }
+    modelAnswer: "Lợi nhuận ghi nhận theo dồn tích: bán chịu tạo doanh thu nhưng chưa có tiền, tồn kho và tài sản dài hạn tiêu tiền trước khi thành chi phí. Nếu khách trả chậm hoặc đầu tư lớn, dòng tiền âm dù lợi nhuận dương."
+    explanation: "Đó là lý do báo cáo lưu chuyển tiền tệ và định giá theo dòng tiền tồn tại."

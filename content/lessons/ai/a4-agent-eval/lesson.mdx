@@ -1,0 +1,66 @@
+---
+id: a4-agent-eval
+track: ai
+stage: a4
+order: 4
+title: { vi: "Đánh giá agent", en: "Evaluating agents" }
+summary: "Đo agent bằng bộ tác vụ có bộ chấm: chấm kết quả thay vì đường đi, kết hợp grader dạng code, model và người; đọc transcript; đo độ tin cậy qua nhiều lần chạy; theo dõi hồi quy khi đổi model hoặc harness."
+concepts: [agent-evaluation]
+estMinutes: 35
+whyQuestion: "Agent của bạn giải đúng một tác vụ khi demo — làm sao biết nó sẽ đúng ở lần thứ 100?"
+devMapping:
+  - finance: "Bộ eval"
+    dev: "Test suite tích hợp chạy trong CI"
+    explanation: "Mỗi tác vụ là một test case có môi trường, đầu vào và bộ chấm; chạy lại mỗi khi đổi prompt, model hoặc harness."
+  - finance: "Grader dạng code"
+    dev: "Assertion tất định"
+    explanation: "Kiểm tra điều kiện cứng: test pass, file tồn tại, số khớp. Rẻ, nhanh, khách quan."
+  - finance: "pass@k và độ tin cậy"
+    dev: "Flakiness rate"
+    explanation: "Một lần pass chưa nói gì về độ ổn định; chạy nhiều lần để đo tỷ lệ thành công — như đo test flaky."
+sources: [swe-bench-2023, anthropic-agent-evals, anthropic-building-agents]
+lastVerified: 2026-11-05
+status: verified
+selfExplain:
+  prompt: "Thiết kế bộ eval cho một agent sửa bug trong repo nội bộ: tác vụ lấy từ đâu, chấm thế nào, đo gì."
+  rubric:
+    - { id: tasks, criterion: "Tác vụ thật (issue + commit sửa) có test kiểm chứng, giống cách SWE-bench xây dựng" }
+    - { id: graders, criterion: "Grader code (test) cho tiêu chí cứng + model/người cho chất lượng" }
+    - { id: trials, criterion: "Nhiều lần chạy mỗi tác vụ, đo tỷ lệ thành công" }
+    - { id: transcripts, criterion: "Đọc transcript để kiểm tra grader và phát hiện lỗi" }
+---
+
+## Vì sao agent khó đánh giá
+
+Agent nhiều bước, không tất định, tương tác với môi trường. Một lần demo thành công không cho biết **tỷ lệ thành công** hay **độ ổn định**. Cần một bộ tác vụ, môi trường tái lập được và bộ chấm.
+
+## Benchmark kiểu SWE-bench
+
+**SWE-bench** (Jimenez và cộng sự, ICLR 2024) xây bộ đánh giá từ các issue GitHub thật và pull request tương ứng trong nhiều repo Python phổ biến: mô hình nhận codebase + mô tả issue và phải tạo patch; patch được chấm bằng **test thật** của repo. Đây là khuôn mẫu: tác vụ thật, kiểm chứng tự động.
+
+<Quiz id="q-eval-swebench" />
+
+## Grader: code, model, người
+
+Bài "Demystifying evals for AI agents" (Anthropic, 01/2026) mô tả ba họ grader:
+
+- **Code-based**: assertion tất định cho tiêu chí cứng (test pass, đầu ra đúng định dạng).
+- **Model-based**: mô hình chấm theo rubric cho tiêu chí khó viết thành code.
+- **Human**: người chấm, dùng để hiệu chuẩn grader dạng model.
+
+Các nguyên tắc đi kèm (theo các bản tóm tắt của bài): **chấm kết quả thay vì ép một chuỗi tool call cụ thể** (có nhiều cách đúng), và **đọc transcript** của nhiều lần chạy để biết grader có đang chấm đúng không — agent có thể sai thật, hoặc grader từ chối một lời giải hợp lệ.
+
+## Độ tin cậy qua nhiều lần chạy
+
+Với mỗi tác vụ chạy $k$ lần:
+
+- **pass@k**: xác suất ít nhất một trong $k$ lần thành công — phù hợp khi có thể thử lại và kiểm chứng.
+- **pass^k**: xác suất **cả** $k$ lần đều thành công — phù hợp khi người dùng cần agent đúng mọi lần.
+
+Nếu mỗi lần thành công độc lập với xác suất $p$: $\text{pass@}k = 1 - (1 - p)^k$ và $\text{pass}^k = p^k$.
+
+<Quiz id="q-eval-passk" />
+
+## Eval là test hồi quy
+
+Mỗi thay đổi — model mới, prompt mới, công cụ mới, chiến lược context mới — có thể làm tốt lên ở chỗ này và tệ đi ở chỗ khác. Chạy lại bộ eval cố định, so sánh theo tác vụ, đọc transcript của các tác vụ đổi trạng thái. Câu hỏi mở đầu: bạn biết agent đúng ở lần thứ 100 bằng cách **đo** nó trên nhiều lần chạy và nhiều tác vụ, không phải bằng một demo.

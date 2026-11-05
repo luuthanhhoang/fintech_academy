@@ -1,0 +1,28 @@
+id: inflation
+componentKey: inflation
+title: { vi: "Lạm phát & lợi suất thực", en: "Inflation & real return" }
+summary: Tách lợi suất danh nghĩa thành phần bù lạm phát và phần tăng sức mua thật (phương trình Fisher).
+concepts: [inflation, real-return]
+dataKind: formula
+params:
+  - { key: "amount", label: "Số tiền ban đầu", min: 0, max: 1000000, step: 1000, default: 100000, unit: "đơn vị tiền" }
+  - { key: "nominalPct", label: "Lợi suất danh nghĩa", min: -10, max: 40, step: 0.25, default: 6, unit: "%/năm" }
+  - { key: "inflationPct", label: "Lạm phát", min: -5, max: 100, step: 0.25, default: 4, unit: "%/năm" }
+  - { key: "years", label: "Số năm", min: 1, max: 40, step: 1, default: 15, unit: "năm" }
+howToRead: |-
+  Đường "Danh nghĩa" là con số trên sao kê. Đường "Thực" quy về sức mua của năm 0 bằng cách chia cho mức giá (1 + π)^t.
+  Lợi suất thực chính xác là (1 + n)/(1 + π) − 1; xấp xỉ n − π chỉ tốt khi cả hai nhỏ.
+breakIt:
+  - id: negative-real
+    label: Lạm phát vượt lãi
+    params: { nominalPct: 5, inflationPct: 9 }
+    explanation: >-
+      Khi π > n, lợi suất thực âm: số tiền danh nghĩa vẫn tăng nhưng mua được ít hơn. Đây là "ảo giác tiền tệ" — nhìn số danh nghĩa thấy giàu lên nhưng thực ra nghèo đi.
+  - id: high-inflation
+    label: Lạm phát 80%
+    params: { nominalPct: 40, inflationPct: 80 }
+    explanation: Ở mức lạm phát cao, xấp xỉ n − π sai lệch lớn so với công thức chính xác (xem chỉ số sai lệch). Luôn dùng công thức Fisher chính xác khi số lớn.
+  - id: deflation
+    label: Giảm phát −3%
+    params: { nominalPct: 0, inflationPct: -3 }
+    explanation: Khi mức giá giảm, giữ tiền mặt lãi 0% vẫn có lợi suất thực dương. Giảm phát kéo dài có thể khiến người ta trì hoãn chi tiêu — một lý do ngân hàng trung ương thường không nhắm tới lạm phát 0.

@@ -1,0 +1,20 @@
+# accessed = ngày kiểm tra thực tế khi soạn. "note" ghi rõ phương thức kiểm chứng.
+sources:
+  - id: openstax-finance
+    title: Principles of Finance (Dahlquist & Knight) — Ch.7–9 Time Value of Money, Ch.10 Bonds, Ch.11 Stocks, Ch.15 Risk & Return
+    url: https://openstax.org/books/principles-finance/pages/preface
+    publisher: OpenStax, Rice University
+    accessed: 2026-11-05
+    note: Giáo trình mở (CC BY). Kiểm tra mục lục qua kết quả tìm kiếm; công thức trong bài là công thức chuẩn và được đối chiếu bằng unit test.
+  - id: openstax-accounting
+    title: Principles of Accounting, Volume 1 — Financial Accounting (Franklin, Graybeal, Cooper)
+    url: https://openstax.org/books/principles-financial-accounting/pages/preface
+    publisher: OpenStax, Rice University
+    accessed: 2026-11-05
+    note: Giáo trình mở; mục lục (báo cáo tài chính, phân tích và ghi nhận nghiệp vụ) kiểm tra qua kết quả tìm kiếm.
+  - id: markowitz-1952
+    title: Portfolio Selection — The Journal of Finance, Vol. 7, No. 1, pp. 77–91 (1952)
+    url: https://doi.org/10.1111/j.1540-6261.1952.tb01525.x
+    publisher: Harry Markowitz / Wiley (American Finance Association)
+    accessed: 2026-11-05
+    note: Thông tin trích dẫn (tập, số, trang, DOI) khớp giữa nhiều cơ sở dữ liệu thư mục trong kết quả tìm kiếm.
