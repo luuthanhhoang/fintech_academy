@@ -1,0 +1,51 @@
+name: Deploy to Vercel
+
+# Deploys the static export to Vercel (production) after the full check passes.
+# Requires one repository secret: VERCEL_TOKEN (vercel.com/account/tokens).
+# Optional repository variable: VERCEL_PROJECT (defaults to "finai-academy"); VERCEL_SCOPE for a team slug.
+on:
+  push:
+    branches: [main, claude/relaxed-meitner-lltbw0]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_PROJECT: ${{ vars.VERCEL_PROJECT || 'finai-academy' }}
+      SCOPE_FLAG: ${{ vars.VERCEL_SCOPE && format('--scope={0}', vars.VERCEL_SCOPE) || '' }}
+    steps:
+      - name: Require VERCEL_TOKEN
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::Missing repository secret VERCEL_TOKEN (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Link Vercel project (creates it on first run)
+        run: npx --yes vercel@65.11.0 link --yes --project "$VERCEL_PROJECT" --token "$VERCEL_TOKEN" $SCOPE_FLAG
+      - name: Deploy (production)
+        id: deploy
+        run: |
+          url=$(npx --yes vercel@65.11.0 deploy --prod --yes --token "$VERCEL_TOKEN" $SCOPE_FLAG)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed: $url" >> "$GITHUB_STEP_SUMMARY"
+      - name: Smoke test
+        run: |
+          for p in / /generated/catalog.json /lessons/f0-money/ /pyodide/pyodide.mjs; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "${{ steps.deploy.outputs.url }}$p")
+            echo "$p → $code"
+            # 401/403 = Vercel Deployment Protection on the per-deployment URL (site itself is up).
+            case "$code" in 200|401|403) ;; *) exit 1 ;; esac
+          done
