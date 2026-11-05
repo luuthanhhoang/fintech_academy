@@ -182,7 +182,7 @@ export function SkyAndLight({ sky, shadowMapSize }: { sky: SkyState; shadowMapSi
       <directionalLight
         ref={sun}
         castShadow
-        intensity={(night ? 0.25 : look.sunIntensity * Math.max(0.15, daylight)) * (1 - overcast * 0.7)}
+        intensity={(night ? look.sunIntensity : look.sunIntensity * Math.max(0.15, daylight)) * (1 - overcast * 0.7)}
         color={srgb(look.sun)}
         shadow-mapSize={[shadowMapSize, shadowMapSize]}
         shadow-camera-left={-170}

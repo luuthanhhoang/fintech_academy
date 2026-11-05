@@ -104,8 +104,9 @@ export function createTerrain(map: WorldMap): Terrain {
   const height = (x: number, z: number) => {
     let h = raw(x, z)
     const rw = map.rail.width
-    const rn = rail.near(x, z, rw * 4)
-    if (rn) h = lerp(h, railHeight(rn.t) - 0.45, 1 - smoothstep(rw * 0.9, rw * 4, rn.distance))
+    // A wide, gently graded corridor so the line runs on low embankments rather than through deep cuttings.
+    const rn = rail.near(x, z, rw * 12)
+    if (rn) h = lerp(h, railHeight(rn.t) - 0.45, 1 - smoothstep(rw * 0.9, rw * 12, rn.distance))
     for (const f of map.features) {
       const d = Math.hypot(x - f.at[0], z - f.at[1])
       if (d < 14) h = Math.max(h, lerp(2.6, h, smoothstep(6, 14, d)))
