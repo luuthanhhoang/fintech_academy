@@ -59,3 +59,19 @@ export function isMusicLayerKey(key: string): key is MusicLayerKey {
 export function isWorldModelKey(key: string): key is WorldModelKey {
   return (WORLD_MODEL_KEYS as readonly string[]).includes(key)
 }
+
+/** Environment maps the graphics looks may reference (loaded lazily in components/world/hdri.ts). */
+export const HDRI_KEYS = ['night', 'sunrise', 'park', 'sunset', 'dawn', 'sky', 'forest'] as const
+export type HdriKey = (typeof HDRI_KEYS)[number]
+
+export function isHdriKey(key: string): key is HdriKey {
+  return (HDRI_KEYS as readonly string[]).includes(key)
+}
+
+/** Vegetation kinds the map may scatter (geometries in components/world/tree-geometry.ts). */
+export const TREE_KINDS = ['broadleaf', 'pine', 'palm', 'bamboo', 'areca', 'banana', 'flowering', 'shrub', 'rock'] as const
+export type TreeKind = (typeof TREE_KINDS)[number]
+
+export function isTreeKind(key: string): key is TreeKind {
+  return (TREE_KINDS as readonly string[]).includes(key)
+}

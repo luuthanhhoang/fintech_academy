@@ -61,7 +61,10 @@ mỗi chặng là một ga trên tuyến tàu, mỗi khái niệm là một ngô
 - Mặt Trời/Mặt Trăng tính theo giờ máy bạn và ngày thật (xấp xỉ thiên văn, có test với một lần trăng tròn đã biết).
 - Thời tiết là lựa chọn không khí học, không phải dự báo. Nhạc và âm thanh môi trường được **tổng hợp tại chỗ** (Web Audio) — không dùng bản thu của ai.
 - Không có WebGL → bản đồ 2D (SVG) cùng bố cục, điều hướng được bằng bàn phím.
-- Người trong làng là mô hình cách điệu dựng bằng hình khối (không dùng asset tải về).
+- Đồ hoạ: ánh sáng môi trường HDRI (Poly Haven, CC0, qua `@pmndrs/assets`), bầu trời shader theo giờ, mây thể tích, hậu kỳ
+  (AO, bloom, tone mapping ACES, chỉnh màu theo `content/world/graphics.yaml`), nước có độ sâu/bọt/phản chiếu, thảm cỏ bám camera,
+  cây/nhà/người dựng thủ tục (nhà mái ngói cong, nón lá, đòn gánh, trâu, vịt, chim, đom đóm). Texture vữa/ngói/gạch/gỗ sinh bằng code.
+- Mức đồ hoạ Cao/Vừa/Thấp (dữ liệu trong `graphics.yaml`, nhớ theo thiết bị; `?quality=thap` để ép mức).
 
 | Muốn thêm/sửa | File |
 |---|---|
@@ -69,6 +72,8 @@ mỗi chặng là một ga trên tuyến tàu, mỗi khái niệm là một ngô
 | Công trình cho simulator/lab/case/tình huống, người dẫn đường | `content/world/landmarks.yaml` (`model` ∈ `WORLD_MODEL_KEYS`) |
 | Góc ngắm (tàu, hiên mưa, ao cá, đỉnh núi, hải đăng…) | `content/world/views.yaml` |
 | Thời tiết, nhạc sinh tự động | `content/world/weather.yaml`, `content/world/music.yaml` |
+| Màu/ánh sáng theo giờ, mức đồ hoạ, màu cỏ/hoa/nước, ghi công tài nguyên | `content/world/graphics.yaml` (`hdri` ∈ `HDRI_KEYS`) |
+| Loài cây theo vùng, màu lá | `map.yaml` → `vegetation.species`, `vegetation.leaves` (loài ∈ `TREE_KINDS`) |
 | Hành trình tập trung, thời gian ân hạn, mục tiêu ngày | `content/config/focus.yaml` |
 
 Validator bắt buộc: mỗi lộ trình đúng một vùng; mỗi simulator/lab/case/tình huống đúng một công trình; ray không đi qua biển;

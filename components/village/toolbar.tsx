@@ -15,6 +15,8 @@ const TIMES: { value: TimeOfDay; label: string }[] = [
 
 export interface ToolbarProps {
   world: WorldBundle
+  quality: string
+  onQuality(id: string): void
   viewId: string
   weatherId: string
   time: TimeOfDay
@@ -44,6 +46,7 @@ export function Toolbar(p: ToolbarProps) {
           options={p.world.weather.presets.map((w) => ({ value: w.id, label: w.label }))}
         />
         <Select label="Thời điểm" value={p.time} onChange={(v) => p.onTime(v as TimeOfDay)} options={TIMES} />
+        <Select label="Đồ hoạ" value={p.quality} onChange={p.onQuality} options={p.world.graphics.quality.map((q) => ({ value: q.id, label: q.label }))} />
         <Select
           label="Nhạc"
           value={p.audio.pieceId ?? ''}
@@ -67,6 +70,19 @@ export function Toolbar(p: ToolbarProps) {
       </div>
       <p className="mt-2 text-[11px] leading-snug text-ink-3">{p.skyNote}</p>
       <p className="mt-1 text-[11px] leading-snug text-ink-3">{p.world.music.note}</p>
+      <details className="mt-1 text-[11px] text-ink-3">
+        <summary className="cursor-pointer">Nguồn tài nguyên đồ hoạ</summary>
+        <ul className="mt-1 space-y-0.5">
+          {p.world.graphics.credits.map((c) => (
+            <li key={c.url}>
+              {c.what} — {c.author} ({c.license}){' '}
+              <a href={c.url} target="_blank" rel="noreferrer" className="underline">
+                nguồn
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
     </Panel>
   )
 }

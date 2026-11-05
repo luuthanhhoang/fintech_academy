@@ -128,7 +128,25 @@ function checkFocus(b: ContentBundle, push: Push) {
   for (const v of focusViews) if (!f.journeys.some((j) => j.view === v.id)) push(`view:${v.id}`, 'góc ngắm focus chưa hành trình nào dùng')
 }
 
+function checkGraphics(b: ContentBundle, opts: ValidateOptions, push: Push) {
+  const g = b.world.graphics
+  const ids = new Set(g.quality.map((q) => q.id))
+  dupes(push, 'quality', g.quality.map((q) => q.id))
+  for (const id of [g.defaultQuality, g.lightQuality]) if (!ids.has(id)) push('world:graphics', `mức chất lượng "${id}" không tồn tại`)
+  const looks = new Set(g.looks.map((l) => l.id))
+  if (looks.size !== g.looks.length) push('world:graphics', 'mỗi look (night/dawn/day/dusk) chỉ khai báo một lần')
+  for (const l of g.looks) if (!opts.hdriKeys.includes(l.hdri)) push(`look:${l.id}`, `hdri "${l.hdri}" chưa có trong HDRI_KEYS`)
+  for (const q of g.quality) if (q.dpr[0] > q.dpr[1]) push(`quality:${q.id}`, 'dpr phải [min, max]')
+  const v = b.world.map.vegetation
+  for (const k of [...v.species.lowland, ...v.species.highland, ...v.species.coast].map((x) => x.kind)) {
+    if (!opts.treeKinds.includes(k)) push('world:vegetation', `loài "${k}" chưa có trong TREE_KINDS`)
+  }
+  for (const k of opts.treeKinds) if (!v.leaves[k]) push('world:vegetation', `thiếu màu lá cho "${k}"`)
+  for (const k of Object.keys(v.leaves)) if (!opts.treeKinds.includes(k)) push('world:vegetation', `màu lá cho loài lạ "${k}"`)
+}
+
 export function validateWorld(b: ContentBundle, opts: ValidateOptions, push: Push) {
+  checkGraphics(b, opts, push)
   checkMap(b, push)
   checkLandmarks(b, opts, push)
   checkAtmosphere(b, opts, push)

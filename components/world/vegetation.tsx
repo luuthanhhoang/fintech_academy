@@ -3,73 +3,97 @@
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { isTreeKind, type TreeKind } from '@/lib/registry/keys'
 import type { Scatter } from '@/lib/world/layout'
 import type { Plant } from '@/lib/world/plants'
-import { treeGeometry, withSway, type TreeKind } from './tree-geometry'
-
-const LEAF: Record<TreeKind, string[]> = {
-  pine: ['#2f5d3a', '#386b43', '#28513a'],
-  broadleaf: ['#4f8a3a', '#5f9a42', '#457a35', '#6aa04a'],
-  palm: ['#5b9a3c', '#6aa748'],
-  bamboo: ['#7fa64a', '#6e9a40'],
-  shrub: ['#557f37', '#6a8f3e', '#4a7034'],
-}
+import { treeGeometry, withSway } from './tree-geometry'
 
 const swayTime = { value: 0 }
 const swayWind = { value: 0.3 }
+const BARK = new THREE.Color('#6a5038').convertSRGBToLinear()
 
-function Instanced({ kind, items, color }: { kind: TreeKind; items: { position: [number, number, number]; scale: number; rotation: number }[]; color: (i: number) => string }) {
-  const ref = useRef<THREE.InstancedMesh>(null)
-  const geometry = useMemo(() => treeGeometry(kind), [kind])
-  const material = useMemo(() => withSway(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9 }), swayTime, swayWind), [])
+interface Item { position: [number, number, number]; scale: number; rotation: number }
+
+function Instanced({ kind, items, color }: { kind: TreeKind; items: Item[]; color: (i: number) => THREE.Color }) {
+  const trunkRef = useRef<THREE.InstancedMesh>(null)
+  const crownRef = useRef<THREE.InstancedMesh>(null)
+  const geo = useMemo(() => treeGeometry(kind), [kind])
+  const still = kind === 'rock'
+  // Fronds are open strips and need both sides; blob crowns are closed and render single-sided.
+  const fronds = kind === 'palm' || kind === 'areca' || kind === 'banana'
+  const crownMat = useMemo(() => {
+    const m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: still ? 0.95 : 0.9, envMapIntensity: 0.5, side: fronds ? THREE.DoubleSide : THREE.FrontSide })
+    return still ? m : withSway(m, swayTime, swayWind, 9, 0.3)
+  }, [still, fronds])
+  const trunkMat = useMemo(() => withSway(new THREE.MeshStandardMaterial({ color: BARK, roughness: 0.95 }), swayTime, swayWind, 14), [])
   useLayoutEffect(() => {
-    const m = ref.current
-    if (!m) return
     const d = new THREE.Object3D()
-    const c = new THREE.Color()
     items.forEach((it, i) => {
       d.position.set(...it.position)
       d.rotation.set(0, it.rotation, 0)
       d.scale.setScalar(it.scale)
       d.updateMatrix()
-      m.setMatrixAt(i, d.matrix)
-      m.setColorAt(i, c.set(color(i)))
+      trunkRef.current?.setMatrixAt(i, d.matrix)
+      crownRef.current?.setMatrixAt(i, d.matrix)
+      crownRef.current?.setColorAt(i, color(i))
     })
-    m.instanceMatrix.needsUpdate = true
-    if (m.instanceColor) m.instanceColor.needsUpdate = true
-    m.computeBoundingSphere()
+    for (const m of [trunkRef.current, crownRef.current]) {
+      if (!m) continue
+      m.instanceMatrix.needsUpdate = true
+      if (m.instanceColor) m.instanceColor.needsUpdate = true
+      m.computeBoundingSphere()
+    }
   }, [items, color])
   if (items.length === 0) return null
-  return <instancedMesh ref={ref} args={[geometry, material, items.length]} castShadow receiveShadow />
+  return (
+    <group>
+      {!still && <instancedMesh ref={trunkRef} args={[geo.trunk, trunkMat, items.length]} castShadow receiveShadow />}
+      <instancedMesh ref={crownRef} args={[geo.crown, crownMat, items.length]} castShadow receiveShadow />
+    </group>
+  )
 }
 
-/** Scattered trees and shrubs; all sway with the weather's wind. */
-export function Vegetation({ trees, shrubs, wind }: { trees: Scatter[]; shrubs: Scatter[]; wind: number }) {
+/** Scattered trees, shrubs and rocks by species (data: map.yaml vegetation); everything sways with the wind. */
+export function Vegetation({ trees, shrubs, wind, leaves, density }: { trees: Scatter[]; shrubs: Scatter[]; wind: number; leaves: Record<string, string[]>; density: number }) {
   useEffect(() => {
-    swayWind.value = 0.15 + wind * 1.4
+    swayWind.value = 0.12 + wind * 1.3
   }, [wind])
   useFrame((_, dt) => {
     swayTime.value += dt
   })
   const byKind = useMemo(() => {
-    const out: Record<TreeKind, Scatter[]> = { pine: [], broadleaf: [], palm: [], bamboo: [], shrub: [] }
-    for (const t of [...trees, ...shrubs]) out[t.kind].push(t)
+    const out = new Map<TreeKind, Scatter[]>()
+    const all = [...trees, ...shrubs]
+    all.forEach((t, i) => {
+      // Deterministic thinning for lower quality presets.
+      const keep = ((i * 2654435761) >>> 0) % 1000 < density * 1000
+      if (!isTreeKind(t.kind) || !keep) return
+      out.set(t.kind, [...(out.get(t.kind) ?? []), t])
+    })
     return out
-  }, [trees, shrubs])
+  }, [trees, shrubs, density])
+  const palettes = useMemo(() => {
+    const p = new Map<string, THREE.Color[]>()
+    for (const [k, list] of Object.entries(leaves)) p.set(k, list.map((c) => new THREE.Color(c).convertSRGBToLinear()))
+    return p
+  }, [leaves])
   return (
     <>
-      {(Object.keys(byKind) as TreeKind[]).map((k) => (
-        <Instanced key={k} kind={k} items={byKind[k]} color={(i) => LEAF[k][i % LEAF[k].length]!} />
-      ))}
+      {[...byKind.entries()].map(([k, items]) => {
+        const pal = palettes.get(k) ?? [new THREE.Color(0.3, 0.5, 0.2)]
+        return <Instanced key={k} kind={k} items={items} color={(i) => pal[(i * 7) % pal.length]!} />
+      })}
     </>
   )
 }
 
-/** Your forest: one tree per focus segment; withered ones are grey-brown. */
+/** Your forest: one tree per focus segment; withered ones are grey-brown and bare-looking. */
 export function FocusForest({ plants }: { plants: Plant[] }) {
   const pines = useMemo(() => plants.filter((p) => p.kind === 'pine').map((p) => ({ ...p, rotation: p.minutes })), [plants])
   const broad = useMemo(() => plants.filter((p) => p.kind === 'broadleaf').map((p) => ({ ...p, rotation: p.minutes })), [plants])
-  const paint = (list: Plant[]) => (i: number) => (list[i]?.withered ? '#8a7a62' : '#3f9a4a')
+  const green = useMemo(() => new THREE.Color('#4f9a3e').convertSRGBToLinear(), [])
+  const dead = useMemo(() => new THREE.Color('#8a7556').convertSRGBToLinear(), [])
+  const paint = (list: Plant[]) => (i: number) => (list[i]?.withered ? dead : green)
   return (
     <>
       <Instanced kind="pine" items={pines} color={paint(pines)} />

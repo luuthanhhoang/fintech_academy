@@ -14,7 +14,7 @@ export interface Station { id: string; trackId: string; regionId: string; title:
 export interface Lot { conceptId: string; stageId: string; regionId: string; house: Pos; plot: Pos; rotation: number; plotKind: Region['plot'] }
 export interface PlacedLandmark { landmark: Landmark; stationId: string; regionId: string; position: Pos; rotation: number }
 export interface PlacedGuide { guide: Guide; position: Pos; rotation: number }
-export interface Scatter { kind: 'pine' | 'broadleaf' | 'palm' | 'bamboo' | 'shrub'; position: Pos; scale: number; rotation: number }
+export interface Scatter { kind: string; position: Pos; scale: number; rotation: number }
 
 export interface WorldLayout {
   stations: Station[]
@@ -146,7 +146,18 @@ function placeLandmarks(src: LayoutSource, terrain: Terrain, stations: Station[]
   return { landmarks, guides }
 }
 
-function scatter(src: LayoutSource, terrain: Terrain, occ: Occupancy, count: number, seed: number, shrub: boolean): Scatter[] {
+/** Weighted pick from a species list. */
+function pickSpecies(list: readonly { kind: string; weight: number }[], r: number): string {
+  const total = list.reduce((a, s) => a + s.weight, 0)
+  let acc = 0
+  for (const s of list) {
+    acc += s.weight / total
+    if (r <= acc) return s.kind
+  }
+  return list[list.length - 1]!.kind
+}
+
+function scatter(src: LayoutSource, terrain: Terrain, occ: Occupancy, count: number, seed: number, fixed: string | null): Scatter[] {
   const m = src.world.map
   const rand = mulberry32(seed)
   const half = m.size / 2
@@ -155,13 +166,14 @@ function scatter(src: LayoutSource, terrain: Terrain, occ: Occupancy, count: num
     const x = (rand() * 2 - 1) * half * 0.97
     const z = (rand() * 2 - 1) * half * 0.97
     const h = terrain.height(x, z)
-    if (h > m.snowline - 6 || terrain.isWet(x, z) || terrain.slope(x, z) > m.vegetation.maxSlope) continue
+    if ((fixed !== 'rock' && h > m.snowline - 6) || terrain.isWet(x, z) || terrain.slope(x, z) > m.vegetation.maxSlope) continue
     if (!occ.free(x, z, 3) || terrain.rail.nearest(x, z).distance < m.rail.width * 2.5) continue
     const w = terrain.regionWeights(x, z)
     const region = m.regions[w.indexOf(Math.max(...w))]!
     const nearCoast = z > terrain.coastZ(x) - m.coast.beach * 3
-    const r = rand()
-    const kind: Scatter['kind'] = shrub ? 'shrub' : region.biome === 'highland' ? (r < 0.8 ? 'pine' : 'broadleaf') : nearCoast ? 'palm' : r < 0.25 ? 'bamboo' : 'broadleaf'
+    const sp = m.vegetation.species
+    const kind = fixed ?? pickSpecies(region.biome === 'highland' ? sp.highland : nearCoast ? sp.coast : sp.lowland, rand())
+    if (fixed === null) occ.take(x, z, 2)
     out.push({ kind, position: [x, h, z], scale: 0.75 + rand() * 0.7, rotation: rand() * Math.PI * 2 })
   }
   return out
@@ -188,7 +200,7 @@ export function buildWorldLayout(src: LayoutSource, terrain: Terrain): WorldLayo
   }
   return {
     stations, lots, landmarks, guides, features, waypoints,
-    trees: scatter(src, terrain, occ, veg.trees, src.world.map.seed + 1, false),
-    shrubs: scatter(src, terrain, occ, veg.shrubs, src.world.map.seed + 2, true),
+    trees: scatter(src, terrain, occ, veg.trees, src.world.map.seed + 1, null),
+    shrubs: [...scatter(src, terrain, occ, veg.shrubs, src.world.map.seed + 2, 'shrub'), ...scatter(src, terrain, occ, veg.rocks, src.world.map.seed + 3, 'rock')],
   }
 }

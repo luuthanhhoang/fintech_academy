@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import type { Catalog } from '@/lib/content/catalog'
 import type { WorldView } from '@/lib/content/schema/world'
 import { ambienceLevels, resolveWeather } from '@/lib/world/atmosphere'
+import { blendLook } from '@/lib/world/looks'
 import { moonPhase, moonPhaseName, moonPosition, daylight as daylightOf, sceneHour, sunPosition, type TimeOfDay } from '@/lib/world/sky'
 import type { SkyState } from '@/components/world/sky'
 
@@ -22,10 +23,11 @@ export function useSceneState(catalog: Catalog, view: WorldView, picked: string,
     const phase = moonPhase(date)
     const s: SkyState = {
       sunDir: sun.direction, sunElevation: sun.elevation, moonDir: moon.direction, daylight: daylightOf(sun.elevation), clouds: weather.clouds, fog: weather.fog,
+      look: blendLook(w.graphics.looks, sun.elevation, hour),
     }
     const text = `Mặt Trời và Mặt Trăng tính theo ${effectiveTime === 'auto' ? 'giờ trên máy bạn' : 'thời điểm đã chọn'} ở ${w.map.location.label}. Hôm nay: ${moonPhaseName(phase.age)} (ước lượng ${Math.round(phase.illumination * 100)}% sáng).`
     return { sky: s, note: text }
-  }, [minute, effectiveTime, w.map.location, weather.clouds, weather.fog])
+  }, [minute, effectiveTime, w.map.location, w.graphics.looks, weather.clouds, weather.fog])
   const ambience = useMemo(() => ambienceLevels(weather, view, sky.daylight), [weather, view, sky.daylight])
   return { weather, sky, note, ambience }
 }

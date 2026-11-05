@@ -1,11 +1,13 @@
 'use client'
 
+import { Cloud, Clouds } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { Weather } from '@/lib/content/schema/world'
 import { mulberry32 } from '@/lib/finance/random'
 import { lightningFlash } from './fx-state'
+import { useCloudTexture } from './hdri'
 
 const BOX = { x: 90, y: 50, z: 90 }
 
@@ -101,49 +103,34 @@ function Snow({ intensity, wind }: { intensity: number; wind: number }) {
   )
 }
 
-function cloudTexture() {
-  const c = document.createElement('canvas')
-  c.width = c.height = 128
-  const g = c.getContext('2d')!
-  const grad = g.createRadialGradient(64, 64, 4, 64, 64, 64)
-  grad.addColorStop(0, 'rgba(255,255,255,0.9)')
-  grad.addColorStop(0.6, 'rgba(255,255,255,0.35)')
-  grad.addColorStop(1, 'rgba(255,255,255,0)')
-  g.fillStyle = grad
-  g.fillRect(0, 0, 128, 128)
-  return new THREE.CanvasTexture(c)
-}
-
-function Clouds({ cover, wind, daylight, size }: { cover: number; wind: number; daylight: number; size: number }) {
-  const count = Math.round(260 * cover)
-  const ref = useRef<THREE.InstancedMesh>(null)
-  const texture = useMemo(() => cloudTexture(), [])
+/**
+ * Volumetric-looking clouds (drei <Clouds/>, CC0 cloud sprite) lit by the scene, so sunsets colour them.
+ * Count comes from the quality preset; cover and darkness from the weather.
+ */
+function VolumeClouds({ cover, wind, daylight, size, max }: { cover: number; wind: number; daylight: number; size: number; max: number }) {
+  const texture = useCloudTexture()
+  const group = useRef<THREE.Group>(null)
   const seeds = useMemo(() => {
     const rand = mulberry32(11)
-    return Array.from({ length: count }, () => ({ x: (rand() - 0.5) * size * 1.6, y: 170 + rand() * 90, z: (rand() - 0.5) * size * 1.6, s: 50 + rand() * 90 }))
-  }, [count, size])
-  const dummy = useMemo(() => new THREE.Object3D(), [])
+    return Array.from({ length: max }, (_, i) => ({ x: (rand() - 0.5) * size * 1.8, y: 150 + rand() * 80, z: (rand() - 0.5) * size * 1.8, seed: i + 1, vol: 30 + rand() * 30 }))
+  }, [max, size])
   useFrame((_, dt) => {
-    const m = ref.current
-    if (!m) return
-    seeds.forEach((c, i) => {
-      c.x += wind * 8 * dt
-      if (c.x > size * 0.8) c.x -= size * 1.6
-      dummy.position.set(c.x, c.y, c.z)
-      dummy.rotation.set(-Math.PI / 2, 0, i)
-      dummy.scale.set(c.s, c.s * 0.7, 1)
-      dummy.updateMatrix()
-      m.setMatrixAt(i, dummy.matrix)
-    })
-    m.instanceMatrix.needsUpdate = true
+    const g = group.current
+    if (!g) return
+    g.position.x = (g.position.x + wind * 6 * dt + size) % (size * 2) - size
   })
-  if (count === 0) return null
-  const tone = 0.35 + daylight * 0.6 - cover * 0.2
+  const n = Math.round(max * Math.min(1, 0.25 + cover))
+  if (!texture || n === 0) return null
+  const grey = 1 - cover * 0.55
+  const tone = new THREE.Color().setScalar(Math.max(0.25, grey * (0.4 + 0.6 * daylight)))
   return (
-    <instancedMesh ref={ref} args={[undefined, undefined, count]} frustumCulled={false}>
-      <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial map={texture} color={new THREE.Color(tone, tone, tone * 1.05)} transparent depthWrite={false} side={THREE.DoubleSide} fog={false} />
-    </instancedMesh>
+    <group ref={group}>
+      <Clouds texture={texture} material={THREE.MeshLambertMaterial} limit={max * 40} frustumCulled={false}>
+        {seeds.slice(0, n).map((c) => (
+          <Cloud key={c.seed} seed={c.seed} position={[c.x, c.y, c.z]} bounds={[70, 12, 40]} segments={22} volume={c.vol} smallestVolume={0.4} growth={6} speed={0.05} fade={400} opacity={0.85} color={tone} />
+        ))}
+      </Clouds>
+    </group>
   )
 }
 
@@ -215,12 +202,12 @@ function Rainbow({ sunDir }: { sunDir: [number, number, number] }) {
   )
 }
 
-export function WeatherFx({ weather, daylight, sunDir, size, onStrike }: { weather: Weather; daylight: number; sunDir: [number, number, number]; size: number; onStrike: (d: number) => void }) {
+export function WeatherFx({ weather, daylight, sunDir, size, clouds, onStrike }: { weather: Weather; daylight: number; sunDir: [number, number, number]; size: number; clouds: number; onStrike: (d: number) => void }) {
   return (
     <>
       <Rain intensity={weather.rain} wind={weather.wind} />
       <Snow intensity={weather.snow} wind={weather.wind} />
-      <Clouds cover={weather.clouds} wind={weather.wind} daylight={daylight} size={size} />
+      <VolumeClouds cover={weather.clouds} wind={weather.wind} daylight={daylight} size={size} max={clouds} />
       {weather.lightning > 0 && <Lightning rate={weather.lightning} onStrike={onStrike} />}
       {weather.rainbow && daylight > 0.3 && <Rainbow sunDir={sunDir} />}
     </>

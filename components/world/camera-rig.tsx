@@ -11,7 +11,8 @@ import { trainPose } from './rail-train'
 const UP = new THREE.Vector3(0, 1, 0)
 
 /** Camera for each view: rides the train, sits at an anchor, or orbits freely; flies to a selected place. */
-export function CameraRig({ view, anchor, focus }: { view: WorldView; anchor: Pos | 'train'; focus: Pos | null }) {
+/** `zoom` is the fly-to distance for a selected place (people are framed closer than buildings). */
+export function CameraRig({ view, anchor, focus, zoom = 48 }: { view: WorldView; anchor: Pos | 'train'; focus: Pos | null; zoom?: number }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const { camera } = useThree()
   const fly = useRef<{ eye: THREE.Vector3; look: THREE.Vector3; left: number } | null>(null)
@@ -19,12 +20,12 @@ export function CameraRig({ view, anchor, focus }: { view: WorldView; anchor: Po
   useEffect(() => {
     if (anchor === 'train') return
     const base = new THREE.Vector3(...anchor)
-    const target = focus ? new THREE.Vector3(...focus) : base.clone().add(new THREE.Vector3(...view.look))
+    const target = focus ? new THREE.Vector3(...focus).add(new THREE.Vector3(0, zoom < 20 ? 1.4 : 0, 0)) : base.clone().add(new THREE.Vector3(...view.look))
     const eye = focus
-      ? target.clone().add(camera.position.clone().sub(target).setY(0).normalize().multiplyScalar(48)).add(new THREE.Vector3(0, 34, 0))
+      ? target.clone().add(camera.position.clone().sub(target).setY(0).normalize().multiplyScalar(zoom)).add(new THREE.Vector3(0, zoom * 0.7, 0))
       : base.clone().add(new THREE.Vector3(...view.eye))
-    fly.current = { eye, look: target, left: 1.6 }
-  }, [view, anchor, focus, camera])
+    fly.current = { eye, look: target, left: 6 }
+  }, [view, anchor, focus, zoom, camera])
 
   useFrame((_, dt) => {
     const c = controls.current
@@ -56,7 +57,7 @@ export function CameraRig({ view, anchor, focus }: { view: WorldView; anchor: Po
       enableDamping
       dampingFactor={0.08}
       maxPolarAngle={overview ? 1.42 : 1.55}
-      minDistance={overview ? 25 : 2}
+      minDistance={focus ? Math.min(25, zoom * 0.5) : overview ? 25 : 2}
       maxDistance={overview ? 1300 : 120}
       enablePan={overview}
     />

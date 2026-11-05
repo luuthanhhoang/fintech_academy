@@ -1,7 +1,7 @@
 /** The registry keys the content validator checks references against (shared by the CLI script and tests). */
 import type { ValidateOptions } from '../content/validate'
 import {
-  AMBIENCE_KEYS, ICON_KEYS, MUSIC_LAYER_KEYS, PROVIDER_KINDS, SHORTCUT_ACTIONS, SIMULATOR_KEYS, SIMULATOR_PARAMS, WORLD_MODEL_KEYS,
+  AMBIENCE_KEYS, HDRI_KEYS, ICON_KEYS, MUSIC_LAYER_KEYS, PROVIDER_KINDS, SHORTCUT_ACTIONS, SIMULATOR_KEYS, SIMULATOR_PARAMS, TREE_KINDS, WORLD_MODEL_KEYS,
 } from './keys'
 
 export const VALIDATE_OPTIONS: ValidateOptions = {
@@ -13,4 +13,6 @@ export const VALIDATE_OPTIONS: ValidateOptions = {
   worldModelKeys: WORLD_MODEL_KEYS,
   ambienceKeys: AMBIENCE_KEYS,
   musicLayerKeys: MUSIC_LAYER_KEYS,
+  hdriKeys: HDRI_KEYS,
+  treeKinds: TREE_KINDS,
 }

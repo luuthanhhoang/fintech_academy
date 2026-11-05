@@ -5,11 +5,14 @@
  */
 import { z } from 'zod'
 import { IdSchema } from './common'
+import type { Graphics } from './graphics'
 
 export const Vec2Schema = z.tuple([z.number(), z.number()])
 export type Vec2 = z.infer<typeof Vec2Schema>
 const Vec3Schema = z.tuple([z.number(), z.number(), z.number()])
 const Unit = z.number().min(0).max(1)
+
+const SpeciesSchema = z.strictObject({ kind: z.string().min(1), weight: z.number().positive() })
 
 export const RegionSchema = z.strictObject({
   id: IdSchema,
@@ -47,7 +50,16 @@ export const MapSchema = z.strictObject({
   rail: z.strictObject({ name: z.string().min(1), points: z.array(Vec2Schema).min(2), width: z.number().positive() }),
   /** Scenery anchors that views can sit at (porch, lighthouse, pier...). */
   features: z.array(z.strictObject({ id: IdSchema, kind: z.enum(['lighthouse', 'porch', 'pier', 'bench']), name: z.string().min(1), at: Vec2Schema })),
-  vegetation: z.strictObject({ trees: z.number().int().nonnegative(), shrubs: z.number().int().nonnegative(), maxSlope: z.number().positive() }),
+  vegetation: z.strictObject({
+    trees: z.number().int().nonnegative(),
+    shrubs: z.number().int().nonnegative(),
+    rocks: z.number().int().nonnegative(),
+    maxSlope: z.number().positive(),
+    /** Species mix (weights) per zone; kinds must be in TREE_KINDS. */
+    species: z.strictObject({ lowland: z.array(SpeciesSchema).min(1), highland: z.array(SpeciesSchema).min(1), coast: z.array(SpeciesSchema).min(1) }),
+    /** Crown colours per kind (several = variation). */
+    leaves: z.record(z.string(), z.array(z.string().regex(/^#[0-9a-f]{6}$/i)).min(1)),
+  }),
   village: z.strictObject({ lotSpacing: z.number().positive(), lotsPerRow: z.number().int().positive(), offsetFromRail: z.number().positive() }),
   people: z.strictObject({
     count: z.number().int().nonnegative(),
@@ -178,6 +190,7 @@ export type FocusConfig = z.infer<typeof FocusConfigSchema>
 
 export interface WorldBundle {
   map: WorldMap
+  graphics: Graphics
   landmarks: Landmark[]
   guides: Guide[]
   views: WorldView[]

@@ -5,17 +5,60 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Catalog } from '@/lib/content/catalog'
 import { db } from '@/lib/db/dexie'
 import { plotHealth, type PlotHealth } from '@/lib/world/health'
+import { grassMask, scatterGroundCover } from '@/lib/world/grass'
+import { sampleGrid } from '@/lib/world/grid'
 import { buildWorldLayout } from '@/lib/world/layout'
+import { pathSegments, rasterisePaths } from '@/lib/world/paths'
 import { plantsFromSessions } from '@/lib/world/plants'
 import { createTerrain } from '@/lib/world/terrain'
 import { useDueCards, useMastery } from '@/components/data/use-learner'
 
-/** Terrain + layout are deterministic from content, computed once per catalog. */
+const PATH_RES = 1024
+const PATH_WIDTH = 1.6
+const GRASS_RES = 256
+
+/** Terrain, layout, height grid and footpath mask are deterministic from content, computed once per catalog. */
 export function useWorld(catalog: Catalog) {
   return useMemo(() => {
     const terrain = createTerrain(catalog.world.map)
-    return { terrain, layout: buildWorldLayout(catalog, terrain) }
+    const layout = buildWorldLayout(catalog, terrain)
+    const grid = sampleGrid(terrain)
+    const pathMask = rasterisePaths(pathSegments(layout), catalog.world.map.size, PATH_RES, PATH_WIDTH)
+    const grass = grassMask(terrain, grid, layout, GRASS_RES)
+    return { terrain, layout, grid, pathMask, pathRes: PATH_RES, grassMask: grass, grassRes: GRASS_RES }
   }, [catalog])
+}
+
+/** Wildflowers for the chosen quality preset (grass itself follows the camera; see GrassField). */
+export function useFlowers(catalog: Catalog, world: ReturnType<typeof useWorld>, flowers: number) {
+  return useMemo(
+    () => scatterGroundCover(world.terrain, world.grid, world.layout, flowers, catalog.world.graphics.grass.patchRadius * 1.6, catalog.world.map.seed + 22),
+    [catalog, world, flowers],
+  )
+}
+
+const QUALITY_KEY = 'village:quality'
+
+/** Remembers the viewer's quality choice on this device (a per-viewer convenience). */
+export function rememberQuality(id: string) {
+  try {
+    window.localStorage.setItem(QUALITY_KEY, id)
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+/** Initial quality: the remembered choice, else the light preset on narrow screens or few CPU cores. */
+export function initialQuality(catalog: Catalog): string {
+  const g = catalog.world.graphics
+  try {
+    const saved = window.localStorage.getItem(QUALITY_KEY)
+    if (saved && g.quality.some((q) => q.id === saved)) return saved
+  } catch {
+    /* storage unavailable */
+  }
+  const light = window.innerWidth < 820 || (navigator.hardwareConcurrency ?? 8) <= 4
+  return light ? g.lightQuality : g.defaultQuality
 }
 
 /** Learner state as the village shows it: plot health, the focus forest, due cards (fish), focus records. */

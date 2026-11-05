@@ -24,7 +24,7 @@ regions:
     biome: highland
     plot: tea
     railSpan: [0.02, 0.46]
-    palette: { ground: "#6f8f4e", roof: ["#5b6b7a", "#7a5c48", "#4f6157"], wall: ["#d9d2c3", "#cbbfa8", "#e4ddd0"] }
+    palette: { ground: "#6f8f4e", roof: ["#6f8090", "#93705a", "#677a6e"], wall: ["#d9d2c3", "#cbbfa8", "#e4ddd0"] }
   - id: dong-bang-fintech
     track: fintech
     title: "Đồng bằng Fintech"
@@ -36,7 +36,7 @@ regions:
     biome: lowland
     plot: paddy
     railSpan: [0.54, 0.98]
-    palette: { ground: "#7fa257", roof: ["#a8543a", "#8f4a33", "#b9673f"], wall: ["#efe6d2", "#e6d9bd", "#f3ecdc"] }
+    palette: { ground: "#7fa257", roof: ["#c8673f", "#b9583a", "#d27c4b"], wall: ["#efe6d2", "#e6d9bd", "#f3ecdc"] }
 peaks:
   - { id: dinh-transformer, name: "Đỉnh Transformer", at: [-300, -440], height: 150, radius: 150 }
   - { id: dinh-harness, name: "Đỉnh Harness", at: [-10, -480], height: 112, radius: 125 }
@@ -71,7 +71,25 @@ features:
   - { id: hai-dang, kind: lighthouse, name: "Hải đăng Mũi Sao", at: [470, 392] }
   - { id: hien-nha-mua, kind: porch, name: "Hiên nhà nghe mưa", at: [205, 92] }
   - { id: cau-ca, kind: pier, name: "Cầu câu cá", at: [228, 97] }
-vegetation: { trees: 1400, shrubs: 900, maxSlope: 0.9 }
+vegetation:
+  trees: 1700
+  shrubs: 1100
+  rocks: 320
+  maxSlope: 0.9
+  species:
+    lowland: [{ kind: broadleaf, weight: 4 }, { kind: bamboo, weight: 2.5 }, { kind: banana, weight: 2 }, { kind: areca, weight: 2 }, { kind: flowering, weight: 0.8 }]
+    highland: [{ kind: pine, weight: 8 }, { kind: broadleaf, weight: 2 }]
+    coast: [{ kind: palm, weight: 3 }, { kind: broadleaf, weight: 1 }]
+  leaves:
+    broadleaf: ["#5e9138", "#6c9d3e", "#557f33", "#7aa847"]
+    pine: ["#365f3c", "#3e6a42", "#325838"]
+    palm: ["#5c8f35", "#6b9c3c"]
+    bamboo: ["#7fa046", "#6f9440"]
+    areca: ["#5f9038", "#4f7f30"]
+    banana: ["#6fa23c", "#82b246"]
+    flowering: ["#d9532f", "#e2703c", "#e597b5"]
+    shrub: ["#5b8a3a", "#6a9640", "#527d35"]
+    rock: ["#8a867c", "#7a776f", "#9a958a"]
 village: { lotSpacing: 15, lotsPerRow: 4, offsetFromRail: 16 }
 people:
   count: 36

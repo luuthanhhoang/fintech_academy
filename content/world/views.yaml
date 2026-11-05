@@ -13,8 +13,8 @@ views:
     description: "Tàu chạy theo thời gian tập trung; ngoài cửa sổ là ruộng, sông, biển."
     mode: focus
     anchor: { kind: train }
-    eye: [-0.5, 2.6, 0]
-    look: [14, 2.1, 3]
+    eye: [-0.5, 2.7, 0]
+    look: [14, 4.2, 3]
     ambience: [train]
   - id: hien-nha
     title: "Hiên nhà nghe mưa"

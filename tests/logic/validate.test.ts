@@ -100,4 +100,14 @@ describe('learning-block validation', () => {
     b.world.music.pieces[0]!.progression = [0, 99]
     expect(messages(b).some((x) => x.includes('bậc hợp âm 99'))).toBe(true)
   })
+  it('village graphics: unknown HDRI, quality ids and tree species are rejected', () => {
+    const b = clone()
+    b.world.graphics.looks[0]!.hdri = 'mars'
+    b.world.graphics.defaultQuality = 'ultra'
+    b.world.map.vegetation.species.lowland.push({ kind: 'baobab', weight: 1 })
+    const m = messages(b)
+    expect(m.some((x) => x.includes('"mars"'))).toBe(true)
+    expect(m.some((x) => x.includes('"ultra"'))).toBe(true)
+    expect(m.some((x) => x.includes('"baobab"'))).toBe(true)
+  })
 })

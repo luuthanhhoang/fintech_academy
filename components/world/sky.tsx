@@ -1,11 +1,13 @@
 'use client'
 
-import { Sky as SkyShader } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { mulberry32 } from '@/lib/finance/random'
+import { isHdriKey } from '@/lib/registry/keys'
+import type { BlendedLook } from '@/lib/world/looks'
 import { lightningFlash } from './fx-state'
+import { useHdri } from './hdri'
 
 export interface SkyState {
   sunDir: [number, number, number]
@@ -14,96 +16,185 @@ export interface SkyState {
   daylight: number
   clouds: number
   fog: number
+  look: BlendedLook
 }
 
-const DAY_FOG = new THREE.Color('#c9d6df')
-const NIGHT_FOG = new THREE.Color('#0d1424')
-const OVERCAST = new THREE.Color('#8a949c')
+/** Look colours are authored as sRGB hex; convert to the linear working space. */
+const srgb = (c: readonly [number, number, number], into = new THREE.Color()) => into.setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)
+
+const skyVertex = `varying vec3 vDir; void main(){ vDir = position; vec4 p = projectionMatrix * modelViewMatrix * vec4(position,1.0); gl_Position = p.xyww; }`
+const skyFragment = `
+uniform vec3 uZenith; uniform vec3 uHorizon; uniform vec3 uGround; uniform vec3 uSun; uniform vec3 uSunDir;
+uniform float uOvercast; uniform float uFlash;
+varying vec3 vDir;
+void main(){
+  vec3 d = normalize(vDir);
+  float h = d.y;
+  vec3 sky = mix(uHorizon, uZenith, pow(clamp(h, 0.0, 1.0), 0.5));
+  sky = mix(sky, uGround, smoothstep(0.0, -0.25, h));
+  vec3 sd = normalize(uSunDir);
+  float s = max(dot(d, sd), 0.0);
+  float clear = 1.0 - uOvercast;
+  // Forward scattering: broad glow near the sun, stronger close to the horizon at sunrise/sunset.
+  float horizonBoost = 1.0 + 2.5 * (1.0 - smoothstep(0.0, 0.35, abs(sd.y)));
+  sky += uSun * (pow(s, 6.0) * 0.22 * horizonBoost + pow(s, 64.0) * 0.5) * clear;
+  sky += uSun * smoothstep(0.9994, 0.9997, s) * 12.0 * clear * step(-0.02, sd.y);
+  float grey = dot(sky, vec3(0.299, 0.587, 0.114));
+  sky = mix(sky, vec3(grey) * vec3(0.92, 0.95, 1.0), uOvercast * 0.75);
+  sky += vec3(0.75, 0.8, 1.0) * uFlash;
+  gl_FragColor = vec4(sky, 1.0);
+}`
+
+function SkyDome({ look, sunDir, overcast }: { look: BlendedLook; sunDir: [number, number, number]; overcast: number }) {
+  const uniforms = useMemo(
+    () => ({
+      uZenith: { value: new THREE.Color() }, uHorizon: { value: new THREE.Color() }, uGround: { value: new THREE.Color() },
+      uSun: { value: new THREE.Color() }, uSunDir: { value: new THREE.Vector3() }, uOvercast: { value: 0 }, uFlash: { value: 0 },
+    }),
+    [],
+  )
+  useEffect(() => {
+    srgb(look.zenith, uniforms.uZenith.value)
+    srgb(look.horizon, uniforms.uHorizon.value)
+    srgb(look.ground, uniforms.uGround.value)
+    srgb(look.sun, uniforms.uSun.value)
+    uniforms.uSunDir.value.set(...sunDir)
+    uniforms.uOvercast.value = overcast
+  }, [look, sunDir, overcast, uniforms])
+  useFrame(({ camera }) => {
+    uniforms.uFlash.value = lightningFlash.value * 0.6
+    dome.current?.position.copy(camera.position)
+  })
+  const dome = useRef<THREE.Mesh>(null)
+  return (
+    <mesh ref={dome} scale={5000} frustumCulled={false} renderOrder={-1}>
+      <sphereGeometry args={[1, 48, 24]} />
+      <shaderMaterial uniforms={uniforms} vertexShader={skyVertex} fragmentShader={skyFragment} side={THREE.BackSide} depthWrite={false} fog={false} />
+    </mesh>
+  )
+}
+
+const starVertex = `attribute float aSeed; uniform float uTime; varying float vTw;
+void main(){ vTw = 0.6 + 0.4 * sin(uTime * (1.5 + aSeed * 3.0) + aSeed * 40.0); vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_Position = p.xyww; gl_PointSize = 1.0 + aSeed * 2.2; }`
+const starFragment = `uniform float uOpacity; varying float vTw; void main(){ vec2 c = gl_PointCoord - 0.5; float a = smoothstep(0.5, 0.0, length(c)); gl_FragColor = vec4(vec3(1.0, 0.97, 0.92), a * vTw * uOpacity); }`
 
 function Stars({ opacity }: { opacity: number }) {
+  const ref = useRef<THREE.Points>(null)
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uOpacity: { value: 0 } }), [])
   const geometry = useMemo(() => {
     const rand = mulberry32(7)
-    const pos = new Float32Array(2400 * 3)
-    for (let i = 0; i < 2400; i++) {
-      const u = rand() * 2 - 1
+    const n = 3200
+    const pos = new Float32Array(n * 3)
+    const seed = new Float32Array(n)
+    for (let i = 0; i < n; i++) {
+      // Denser band to suggest the Milky Way.
+      const band = rand() < 0.45
       const a = rand() * Math.PI * 2
-      const r = Math.sqrt(1 - u * u)
-      pos.set([Math.cos(a) * r * 1500, Math.abs(u) * 1500, Math.sin(a) * r * 1500], i * 3)
+      const u = band ? (rand() - 0.5) * 0.25 + Math.sin(a) * 0.35 : rand() * 2 - 1
+      const r = Math.sqrt(Math.max(0, 1 - u * u))
+      pos.set([Math.cos(a) * r * 4000, Math.abs(u) * 4000 + 40, Math.sin(a) * r * 4000], i * 3)
+      seed[i] = rand() ** 3
     }
     const g = new THREE.BufferGeometry()
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1))
     return g
   }, [])
+  useFrame(({ camera, clock }) => {
+    uniforms.uTime.value = clock.elapsedTime
+    uniforms.uOpacity.value = opacity
+    ref.current?.position.copy(camera.position)
+  })
+  if (opacity < 0.02) return null
   return (
-    <points geometry={geometry} frustumCulled={false}>
-      <pointsMaterial color="#ffffff" size={1.6} sizeAttenuation={false} transparent opacity={opacity} depthWrite={false} fog={false} />
+    <points ref={ref} geometry={geometry} frustumCulled={false} renderOrder={-1}>
+      <shaderMaterial uniforms={uniforms} vertexShader={starVertex} fragmentShader={starFragment} transparent depthWrite={false} fog={false} />
     </points>
   )
 }
 
 const moonVertex = `varying vec3 vN; void main(){ vN = normalize(mat3(modelMatrix) * normal); gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position,1.0); }`
-const moonFragment = `uniform vec3 uSun; varying vec3 vN; void main(){ float l = max(dot(vN, normalize(uSun)), 0.0); vec3 c = vec3(0.93,0.92,0.86) * (0.04 + l); gl_FragColor = vec4(c, 1.0); }`
+const moonFragment = `uniform vec3 uSun; varying vec3 vN; void main(){ float l = max(dot(vN, normalize(uSun)), 0.0); vec3 c = vec3(1.0,0.97,0.9) * (0.03 + l * 2.2); gl_FragColor = vec4(c, 1.0); }`
 
-/** Moon lit from the real sun direction, so its visible phase matches the date. */
+/** Moon lit from the real sun direction, so its visible phase matches the date (bright enough to bloom). */
 function Moon({ dir, sunDir }: { dir: [number, number, number]; sunDir: [number, number, number] }) {
+  const group = useRef<THREE.Group>(null)
   const uniforms = useMemo(() => ({ uSun: { value: new THREE.Vector3() } }), [])
   useEffect(() => {
     uniforms.uSun.value.set(...sunDir)
   }, [sunDir, uniforms])
+  useFrame(({ camera }) => group.current?.position.copy(camera.position))
   if (dir[1] < -0.05) return null
   return (
-    <mesh position={[dir[0] * 1400, dir[1] * 1400, dir[2] * 1400]}>
-      <sphereGeometry args={[34, 32, 16]} />
-      <shaderMaterial uniforms={uniforms} vertexShader={moonVertex} fragmentShader={moonFragment} fog={false} />
-    </mesh>
+    <group ref={group}>
+      <mesh position={[dir[0] * 3000, dir[1] * 3000, dir[2] * 3000]}>
+        <sphereGeometry args={[55, 32, 16]} />
+        <shaderMaterial uniforms={uniforms} vertexShader={moonVertex} fragmentShader={moonFragment} fog={false} />
+      </mesh>
+    </group>
   )
 }
 
-/** Sky dome, stars, moon, sun/moon lights and fog — all driven by the real clock and the weather. */
-export function SkyAndLight({ sky }: { sky: SkyState }) {
+/** Image-based lighting from a CC0 HDRI (lighting and reflections only; the sky is our own shader). */
+function Environment({ look }: { look: BlendedLook }) {
+  const { scene, gl } = useThree()
+  const key = isHdriKey(look.dominant.hdri) ? look.dominant.hdri : 'park'
+  const tex = useHdri(key)
+  useEffect(() => {
+    if (tex) scene.environment = tex
+  }, [tex, scene])
+  useEffect(() => {
+    scene.environmentIntensity = look.envIntensity
+    gl.toneMappingExposure = look.exposure
+  }, [look, scene, gl])
+  return null
+}
+
+/** Sky, stars, moon, sun/moon lights, IBL and fog — driven by the real clock, the art-direction looks and the weather. */
+export function SkyAndLight({ sky, shadowMapSize }: { sky: SkyState; shadowMapSize: number }) {
   const { scene } = useThree()
   const sun = useRef<THREE.DirectionalLight>(null)
   const flashLight = useRef<THREE.AmbientLight>(null)
-  const { sunDir, moonDir, daylight, clouds, fog } = sky
-  const overcast = Math.min(0.85, clouds * 0.8)
+  const { sunDir, moonDir, daylight, clouds, fog, look } = sky
+  const overcast = Math.min(0.9, clouds * 0.85)
   useEffect(() => {
-    const c = NIGHT_FOG.clone().lerp(DAY_FOG, daylight).lerp(OVERCAST.clone().multiplyScalar(0.3 + daylight * 0.7), overcast * 0.6)
-    scene.fog = new THREE.Fog(c, 60 + (1 - fog) * 200, 2600 - fog * 2100)
-  }, [scene, daylight, fog, overcast])
+    const c = srgb(look.fog)
+    const grey = c.r * 0.3 + c.g * 0.59 + c.b * 0.11
+    c.lerp(new THREE.Color(grey, grey, grey * 1.04), overcast * 0.6)
+    scene.fog = new THREE.FogExp2(c, 0.00045 + fog * 0.0045 + overcast * 0.0006)
+  }, [scene, look, fog, overcast])
   useFrame(({ camera }) => {
-    if (flashLight.current) flashLight.current.intensity = 0.06 + lightningFlash.value * 3
+    if (flashLight.current) flashLight.current.intensity = lightningFlash.value * 4
     const l = sun.current
     if (!l) return
+    const src = sunDir[1] > -0.02 ? sunDir : moonDir
     l.target.position.set(camera.position.x, 0, camera.position.z)
-    l.position.set(camera.position.x + sunDir[0] * 400, Math.max(30, sunDir[1] * 400), camera.position.z + sunDir[2] * 400)
+    l.position.set(camera.position.x + src[0] * 500, Math.max(40, src[1] * 500), camera.position.z + src[2] * 500)
     l.target.updateMatrixWorld()
   })
-  const warm = new THREE.Color('#ffb070').lerp(new THREE.Color('#fff6e8'), Math.min(1, Math.max(0, sky.sunElevation * 4)))
+  const night = sunDir[1] <= -0.02
   return (
     <>
-      <SkyShader distance={4500} sunPosition={sunDir} turbidity={4 + clouds * 8} rayleigh={0.6 + (1 - daylight) * 2} mieCoefficient={0.005} mieDirectionalG={0.8} />
-      <mesh scale={4000}>
-        <sphereGeometry args={[1, 24, 12]} />
-        <meshBasicMaterial color={OVERCAST.clone().multiplyScalar(0.25 + daylight * 0.75)} transparent opacity={overcast} side={THREE.BackSide} fog={false} depthWrite={false} />
-      </mesh>
+      <Environment look={look} />
+      <SkyDome look={look} sunDir={sunDir} overcast={overcast} />
       <Stars opacity={(1 - daylight) * (1 - overcast)} />
       <Moon dir={moonDir} sunDir={sunDir} />
       <directionalLight
         ref={sun}
         castShadow
-        intensity={daylight * (1 - overcast * 0.65) * 2.4}
-        color={warm}
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-160}
-        shadow-camera-right={160}
-        shadow-camera-top={160}
-        shadow-camera-bottom={-160}
-        shadow-camera-far={1200}
-        shadow-bias={-0.0004}
+        intensity={(night ? 0.25 : look.sunIntensity * Math.max(0.15, daylight)) * (1 - overcast * 0.7)}
+        color={srgb(look.sun)}
+        shadow-mapSize={[shadowMapSize, shadowMapSize]}
+        shadow-camera-left={-170}
+        shadow-camera-right={170}
+        shadow-camera-top={170}
+        shadow-camera-bottom={-170}
+        shadow-camera-far={1400}
+        shadow-bias={-0.0003}
+        shadow-normalBias={0.04}
       />
-      <directionalLight position={[moonDir[0] * 400, Math.max(40, moonDir[1] * 400), moonDir[2] * 400]} intensity={(1 - daylight) * 0.35} color="#9fb4ff" />
-      <hemisphereLight args={['#bcd3ff', '#4a5a3a', 0.25 + daylight * 0.55]} />
-      <ambientLight ref={flashLight} intensity={0.06} color="#dfe8ff" />
+      <hemisphereLight args={[srgb(look.horizon), srgb(look.ground), 0.45 + overcast * 0.35]} />
+      <ambientLight ref={flashLight} intensity={0} color="#dfe8ff" />
     </>
   )
 }

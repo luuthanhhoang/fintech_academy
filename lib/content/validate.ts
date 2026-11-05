@@ -22,6 +22,8 @@ export interface ValidateOptions {
   worldModelKeys: readonly string[]
   ambienceKeys: readonly string[]
   musicLayerKeys: readonly string[]
+  hdriKeys: readonly string[]
+  treeKinds: readonly string[]
 }
 
 type Push = (where: string, message: string) => void

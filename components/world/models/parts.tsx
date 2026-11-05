@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import { tinted } from '../materials'
 
 export interface ModelProps {
   /** Night-time: windows and lamps glow. */
@@ -13,9 +14,8 @@ type V3 = [number, number, number]
 
 export function Box({ at, size, color, emissive, children }: { at: V3; size: V3; color: string; emissive?: string; children?: ReactNode }) {
   return (
-    <mesh position={at} castShadow receiveShadow>
+    <mesh position={at} castShadow receiveShadow material={tinted('plaster', color, emissive)}>
       <boxGeometry args={size} />
-      <meshStandardMaterial color={color} emissive={emissive ?? '#000000'} emissiveIntensity={emissive ? 1.4 : 0} roughness={0.85} />
       {children}
     </mesh>
   )
@@ -24,18 +24,16 @@ export function Box({ at, size, color, emissive, children }: { at: V3; size: V3;
 /** Four-sided hip roof (a 4-segment cone rotated to align with the walls). */
 export function Roof({ at, width, depth, height, color }: { at: V3; width: number; depth: number; height: number; color: string }) {
   return (
-    <mesh position={at} rotation-y={Math.PI / 4} scale={[width / Math.SQRT2, 1, depth / Math.SQRT2]} castShadow>
+    <mesh position={at} rotation-y={Math.PI / 4} scale={[width / Math.SQRT2, 1, depth / Math.SQRT2]} castShadow material={tinted('tiles', color)}>
       <coneGeometry args={[1, height, 4]} />
-      <meshStandardMaterial color={color} roughness={0.8} flatShading />
     </mesh>
   )
 }
 
 export function Post({ at, height, radius = 0.25, color }: { at: [number, number]; height: number; radius?: number; color: string }) {
   return (
-    <mesh position={[at[0], height / 2, at[1]]} castShadow>
+    <mesh position={[at[0], height / 2, at[1]]} castShadow material={tinted('wood', color)}>
       <cylinderGeometry args={[radius, radius, height, 8]} />
-      <meshStandardMaterial color={color} roughness={0.8} />
     </mesh>
   )
 }
