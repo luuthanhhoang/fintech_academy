@@ -192,7 +192,7 @@ export function VillageView({ catalog }: { catalog: Catalog }) {
           <div className="absolute left-1/2 top-3 -translate-x-1/2 max-md:hidden">
             <SkyBar time={time} onTime={setTime} weather={w.weather.presets} weatherId={view.weather ?? weatherPick} locked={Boolean(view.weather)} onWeather={setWeatherPick} />
           </div>
-          <div className="absolute right-3 top-3 flex max-h-[calc(100%-6rem)] w-[min(20rem,calc(100%-1.5rem))] flex-col items-end gap-2 overflow-y-auto max-sm:bottom-20 max-sm:top-auto max-sm:max-h-[55%]">
+          <div className="absolute right-3 top-3 flex max-h-[calc(100%-6rem)] w-[min(20rem,calc(100%-1.5rem))] flex-col items-end gap-2 overflow-y-auto max-sm:max-h-[60%]">
             <div className="pointer-events-auto">
               <button type="button" onClick={() => setToolsOpen((o) => !o)} aria-expanded={toolsOpen} className="rounded-full border border-rule bg-paper/90 px-3 py-1.5 font-sans text-xs shadow backdrop-blur">
                 ⚙ Đồ hoạ · âm thanh
@@ -219,7 +219,7 @@ export function VillageView({ catalog }: { catalog: Catalog }) {
               {notice} <button type="button" onClick={() => setNotice(null)} className="ml-1 underline">Đóng</button>
             </p>
           )}
-          <div className="absolute inset-x-0 bottom-[4.5rem] flex flex-col items-center gap-2 px-3">
+          <div className="absolute inset-x-0 bottom-[4.5rem] flex flex-col items-center gap-2 px-3 max-sm:bottom-auto max-sm:top-14">
             {walk.near && !reader && !selected && <InteractPrompt near={walk.near} onEnter={() => setSelected(`${walk.near!.kind}:${walk.near!.id}`)} />}
             {walking && mode === '3d' && !walk.moved && !coarse && <WalkHint />}
           </div>
