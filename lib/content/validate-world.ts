@@ -100,10 +100,16 @@ function checkAtmosphere(b: ContentBundle, opts: ValidateOptions, push: Push) {
   for (const v of w.views) {
     const where = `view:${v.id}`
     const a = v.anchor
-    if (a.kind !== 'train' && a.kind !== 'overview' && !anchorIds[a.kind].has(a.id)) push(where, `${a.kind} "${a.id}" không tồn tại`)
+    if ('id' in a && !anchorIds[a.kind].has(a.id)) push(where, `${a.kind} "${a.id}" không tồn tại`)
+    if ((v.mode === 'walk') !== (a.kind === 'frontier')) push(where, 'chế độ walk đi cùng anchor frontier (và ngược lại)')
     if (v.weather && !weather.has(v.weather)) push(where, `thời tiết "${v.weather}" không tồn tại`)
     for (const s of v.ambience) if (!opts.ambienceKeys.includes(s)) push(where, `âm thanh "${s}" chưa có trong AMBIENCE_KEYS`)
   }
+  const p = w.map.player
+  if (p.camera.minDistance >= p.camera.maxDistance) push('world:player', 'camera.minDistance phải nhỏ hơn maxDistance')
+  if (p.walkSpeed >= p.runSpeed) push('world:player', 'runSpeed phải lớn hơn walkSpeed')
+  for (const [k, line] of Object.entries(w.map.people.chatter)) if (!line.includes('{concept}')) push(`world:chatter.${k}`, 'câu thoại phải có {concept}')
+  for (const k of ['school', 'busStop'] as const) if (!w.map.civic[k].includes('{region}')) push(`world:civic.${k}`, 'phải có {region}')
   for (const id of [w.weather.defaultWeather, w.weather.celebration, w.weather.scenario]) if (!weather.has(id)) push('world:weather', `preset "${id}" không tồn tại`)
   for (const p of w.weather.presets) for (const s of p.ambience) if (!opts.ambienceKeys.includes(s)) push(`weather:${p.id}`, `âm thanh "${s}" chưa có trong AMBIENCE_KEYS`)
   for (const p of w.music.pieces) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
 import * as THREE from 'three'
 import type { Terrain } from '@/lib/world/terrain'
 import { Box } from './models/parts'
@@ -75,7 +75,7 @@ export function Railway({ terrain }: { terrain: Terrain }) {
       </mesh>
       {rails.map((g, i) => (
         <mesh key={i} geometry={g}>
-          <meshStandardMaterial color="#9aa0a6" metalness={0.8} roughness={0.35} side={THREE.DoubleSide} />
+          <meshStandardMaterial color="#8d9196" metalness={0.35} roughness={0.45} side={THREE.DoubleSide} />
         </mesh>
       ))}
       <instancedMesh ref={sleepers} args={[undefined, undefined, data.s.length]} receiveShadow>
@@ -96,7 +96,7 @@ const CAR = 13
 const GAP = 1.2
 
 /** Carriage with an open window band so the camera inside can look out. */
-function Carriage({ color, lead, night }: { color: string; lead: boolean; night: boolean }) {
+function Carriage({ color, night }: { color: string; night: boolean }) {
   const pillars = [-5, -2.5, 0, 2.5, 5]
   return (
     <group>
@@ -112,7 +112,6 @@ function Carriage({ color, lead, night }: { color: string; lead: boolean; night:
       <Box at={[0, 3.7, 0]} size={[3.2, 0.2, CAR + 0.2]} color="#e8e2d4" />
       {[-4, -1.5, 1, 3.5].map((z) => <Box key={z} at={[0.7, 1.4, z]} size={[1, 0.5, 0.9]} color="#7a4a3a" />)}
       {night && <pointLight position={[0, 3.3, 0]} intensity={4} distance={10} color="#ffd9a0" />}
-      {lead && <Box at={[0, 2.2, CAR / 2 + 0.6]} size={[2.6, 2.4, 1]} color="#2f4b7c" />}
       {[-4.5, 4.5].flatMap((z) => [-1.2, 1.2].map((x) => (
         <mesh key={`${x}${z}`} position={[x, 0.55, z]} rotation-z={Math.PI / 2}>
           <cylinderGeometry args={[0.5, 0.5, 0.2, 12]} />
@@ -123,10 +122,85 @@ function Carriage({ color, lead, night }: { color: string; lead: boolean; night:
   )
 }
 
+/** Steam locomotive: boiler, cab, chimney (its top is where the smoke leaves). */
+function Locomotive({ night }: { night: boolean }) {
+  return (
+    <group>
+      <Box at={[0, 0.9, 0]} size={[3, 0.35, CAR]} color="#2b2b2b" />
+      <mesh position={[0, 2.25, 1.6]} rotation-x={Math.PI / 2} castShadow>
+        <cylinderGeometry args={[1.25, 1.25, 8, 20]} />
+        <meshStandardMaterial color="#1f3b2e" metalness={0.4} roughness={0.45} />
+      </mesh>
+      {[-1, 1.5, 4].map((z) => (
+        <mesh key={z} position={[0, 2.25, z]} rotation-x={Math.PI / 2}>
+          <torusGeometry args={[1.27, 0.06, 6, 24]} />
+          <meshStandardMaterial color="#c9a54a" metalness={0.8} roughness={0.3} />
+        </mesh>
+      ))}
+      <mesh position={[0, 4.1, 4.4]} castShadow>
+        <cylinderGeometry args={[0.45, 0.32, 1.5, 14]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
+      </mesh>
+      <Box at={[0, 2.6, -4]} size={[3, 3.4, 3.6]} color="#a13d2d" />
+      <Box at={[0, 4.45, -4]} size={[3.3, 0.25, 4]} color="#2b2b2b" />
+      <mesh position={[0, 2.25, 5.65]} rotation-x={Math.PI / 2}>
+        <circleGeometry args={[0.35, 16]} />
+        <meshStandardMaterial color="#fff4cc" emissive="#ffd27a" emissiveIntensity={night ? 4 : 0.6} toneMapped={false} />
+      </mesh>
+      {night && <pointLight position={[0, 2.2, 7]} intensity={30} distance={40} color="#ffe2a8" />}
+      {[-4.5, -1.5, 1.5, 4.5].flatMap((z) => [-1.25, 1.25].map((x) => (
+        <mesh key={`${x}${z}`} position={[x, 0.75, z]} rotation-z={Math.PI / 2}>
+          <cylinderGeometry args={[0.7, 0.7, 0.16, 16]} />
+          <meshStandardMaterial color="#8a2a20" metalness={0.5} />
+        </mesh>
+      )))}
+    </group>
+  )
+}
+
+const PUFFS = 48
+/** Smoke puffs from the chimney: each rises, swells and drifts with the wind, then is re-emitted. */
+function Smoke({ source, wind }: { source: RefObject<THREE.Group | null>; wind: number }) {
+  const mesh = useRef<THREE.InstancedMesh>(null)
+  const puffs = useMemo(() => Array.from({ length: PUFFS }, (_, i) => ({ p: new THREE.Vector3(), age: (i / PUFFS) * 6, life: 6 })), [])
+  const d = useMemo(() => new THREE.Object3D(), [])
+  const chimney = useMemo(() => new THREE.Vector3(), [])
+  useFrame((_, dt) => {
+    const m = mesh.current
+    const src = source.current
+    if (!m || !src) return
+    chimney.set(0, 4.9, 4.4)
+    src.localToWorld(chimney)
+    puffs.forEach((pf, i) => {
+      pf.age += dt
+      if (pf.age >= pf.life) {
+        pf.age = 0
+        pf.p.copy(chimney)
+      }
+      const k = pf.age / pf.life
+      pf.p.y += dt * (2.4 - k * 1.2)
+      pf.p.x += dt * (0.6 + wind * 3)
+      pf.p.z += dt * 0.3
+      d.position.copy(pf.p)
+      d.scale.setScalar((0.5 + k * 3.2) * (k > 0.85 ? (1 - k) / 0.15 : 1))
+      d.updateMatrix()
+      m.setMatrixAt(i, d.matrix)
+    })
+    m.instanceMatrix.needsUpdate = true
+  })
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, PUFFS]} frustumCulled={false}>
+      <icosahedronGeometry args={[1, 1]} />
+      <meshStandardMaterial color="#e9e6e1" transparent opacity={0.5} roughness={1} depthWrite={false} />
+    </instancedMesh>
+  )
+}
+
 /** The train; `getT()` gives its position on the line (0–1), so focus progress drives it without re-renders. */
-export function Train({ terrain, getT, night }: { terrain: Terrain; getT: () => number; night: boolean }) {
+export function Train({ terrain, getT, night, wind }: { terrain: Terrain; getT: () => number; night: boolean; wind: number }) {
   const cars = useRef<(THREE.Group | null)[]>([])
-  const colors = ['#a13d2d', '#d9cba8', '#d9cba8', '#d9cba8']
+  const loco = useRef<THREE.Group | null>(null)
+  const colors = ['loco', '#a13d2d', '#d9cba8', '#d9cba8']
   const current = useRef(getT())
   useFrame((_, dt) => {
     const target = getT()
@@ -149,10 +223,17 @@ export function Train({ terrain, getT, night }: { terrain: Terrain; getT: () => 
   return (
     <group>
       {colors.map((c, i) => (
-        <group key={i} ref={(el) => void (cars.current[i] = el)}>
-          <Carriage color={c} lead={i === 0} night={night} />
+        <group
+          key={i}
+          ref={(el) => {
+            cars.current[i] = el
+            if (i === 0) loco.current = el
+          }}
+        >
+          {c === 'loco' ? <Locomotive night={night} /> : <Carriage color={c} night={night} />}
         </group>
       ))}
+      <Smoke source={loco} wind={wind} />
     </group>
   )
 }

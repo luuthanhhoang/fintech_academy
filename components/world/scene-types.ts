@@ -1,10 +1,10 @@
 /** Selection ids and shared prop types for the village scene. */
 import type { PlotHealth } from '@/lib/world/health'
 
-/** `${kind}:${id}` — kinds: station, lot, landmark, guide, feature, lake, peak. */
+/** `${kind}:${id}` — kinds: station, lot, landmark, guide, feature, lake, peak, school, bus (school/bus id = region id). */
 export type SelectionId = string
 
-export const selectionId = (kind: 'station' | 'lot' | 'landmark' | 'guide' | 'feature' | 'lake' | 'peak', id: string): SelectionId => `${kind}:${id}`
+export const selectionId = (kind: 'station' | 'lot' | 'landmark' | 'guide' | 'feature' | 'lake' | 'peak' | 'school' | 'bus', id: string): SelectionId => `${kind}:${id}`
 
 export function parseSelection(sel: SelectionId | null): { kind: string; id: string } | null {
   if (!sel) return null

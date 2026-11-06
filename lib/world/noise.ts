@@ -53,3 +53,22 @@ export const smoothstep = (a: number, b: number, x: number) => {
 }
 
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+/** Ridged multifractal: sharp crests where the noise crosses zero, in [0, 1]. Each octave is weighted by the last. */
+export function ridged(noise: (x: number, y: number) => number, x: number, y: number, octaves = 5): number {
+  let amp = 0.5
+  let freq = 1
+  let sum = 0
+  let norm = 0
+  let weight = 1
+  for (let i = 0; i < octaves; i++) {
+    let n = 1 - Math.abs(noise(x * freq, y * freq))
+    n *= n * weight
+    weight = Math.min(1, n * 2)
+    sum += n * amp
+    norm += amp
+    amp *= 0.5
+    freq *= 2.1
+  }
+  return sum / norm
+}

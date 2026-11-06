@@ -6,6 +6,9 @@ import type { Terrain } from './terrain'
 
 export interface PlaceLink { label: string; href: string }
 
+/** A fast-travel destination offered at a bus stop. */
+export interface PlaceTrip { label: string; at: Pos }
+
 export interface PlaceInfo {
   kind: string
   title: string
@@ -16,6 +19,8 @@ export interface PlaceInfo {
   health?: PlotHealth
   /** Scenario landmarks switch the weather to a storm while selected. */
   scenario?: boolean
+  /** Bus stops: other stops you can ride to. */
+  trips?: PlaceTrip[]
 }
 
 const refHref = { simulator: '/simulators/', lab: '/labs/', case: '/cases/', scenario: '/scenarios/' } as const
@@ -78,6 +83,26 @@ export function describePlace(sel: { kind: string; id: string }, catalog: Catalo
       if (!f) return null
       const views = catalog.world.views.filter((v) => v.anchor.kind === 'feature' && v.anchor.id === f.id)
       return { kind: 'Cảnh quan', title: f.name, subtitle: views.map((v) => v.title).join(' · '), at: f.position, body: views.map((v) => v.description), links: [] }
+    }
+    case 'school': {
+      const sc = layout.schools.find((x) => x.regionId === sel.id)
+      const region = catalog.world.map.regions.find((r) => r.id === sel.id)
+      const track = catalog.tracks.find((t) => t.id === region?.track)
+      if (!sc || !region || !track) return null
+      const stages = [...track.stages].sort((a, b) => a.order - b.order)
+      return {
+        kind: 'Trường học', title: sc.title, subtitle: track.title.vi, at: sc.position,
+        body: [catalog.world.map.civic.schoolNote, region.description],
+        links: [{ label: 'Bản đồ lộ trình', href: `/tracks/${track.id}/` }, ...stages.map((st) => ({ label: `Chặng ${st.id.toUpperCase()} · ${st.title.vi}`, href: `/tracks/${track.id}/#${st.id}` }))],
+      }
+    }
+    case 'bus': {
+      const stop = layout.busStops.find((x) => x.regionId === sel.id)
+      if (!stop) return null
+      return {
+        kind: 'Trạm xe buýt', title: stop.title, subtitle: '', at: stop.position, body: [catalog.world.map.civic.busNote], links: [],
+        trips: layout.busStops.filter((s) => s !== stop).map((s) => ({ label: s.title, at: s.position })),
+      }
     }
     case 'lake': {
       const l = terrain.lakes.find((x) => x.id === sel.id)

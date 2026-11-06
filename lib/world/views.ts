@@ -1,10 +1,12 @@
 /** Resolves view anchors and the train's route for a focus journey (pure). */
 import type { WorldView } from '../content/schema/world'
 import type { Pos, Station, WorldLayout } from './layout'
+import type { PlotHealth } from './health'
 import type { Terrain } from './terrain'
+import { spawnPoint } from './walk'
 
 /** World position of a view's anchor; 'train' when the camera rides the train. */
-export function resolveAnchor(view: WorldView, layout: WorldLayout, terrain: Terrain): Pos | 'train' {
+export function resolveAnchor(view: WorldView, layout: WorldLayout, terrain: Terrain, health: ReadonlyMap<string, PlotHealth>): Pos | 'train' {
   const a = view.anchor
   switch (a.kind) {
     case 'train':
@@ -19,6 +21,8 @@ export function resolveAnchor(view: WorldView, layout: WorldLayout, terrain: Ter
       const l = terrain.lakes.find((x) => x.id === a.id)
       return l ? [l.center[0], l.surface, l.center[1]] : [0, 0, 0]
     }
+    case 'frontier':
+      return spawnPoint(layout, health, terrain)
     case 'peak': {
       const p = terrain.map.peaks.find((x) => x.id === a.id)
       return p ? [p.at[0], terrain.height(p.at[0], p.at[1]), p.at[1]] : [0, 0, 0]

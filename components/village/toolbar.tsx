@@ -1,50 +1,27 @@
 'use client'
 
 import type { WorldBundle } from '@/lib/content/schema/world'
-import type { TimeOfDay } from '@/lib/world/sky'
 import type { AudioPrefs } from './use-village-audio'
 import { Panel, Select } from './panel'
-
-const TIMES: { value: TimeOfDay; label: string }[] = [
-  { value: 'golden', label: 'Giờ vàng' },
-  { value: 'auto', label: 'Theo giờ thật' },
-  { value: 'dawn', label: 'Bình minh' },
-  { value: 'day', label: 'Ban ngày' },
-  { value: 'dusk', label: 'Hoàng hôn' },
-  { value: 'night', label: 'Ban đêm' },
-]
 
 export interface ToolbarProps {
   world: WorldBundle
   quality: string
   onQuality(id: string): void
-  /** Weather is fixed by some views; the label says so. */
-  weatherLocked: boolean
-  weatherId: string
-  time: TimeOfDay
   audio: AudioPrefs
   mode: '3d' | '2d'
   webgl: boolean
   skyNote: string
-  onWeather(id: string): void
-  onTime(t: TimeOfDay): void
   onToggleAudio(): void
   onAudio(patch: Partial<AudioPrefs>): void
   onMode(m: '3d' | '2d'): void
 }
 
-/** View, weather, time, music and sound controls. Weather and time are mood choices, not real forecasts. */
+/** Graphics, music and sound controls, plus where the sky and assets come from (time and weather: SkyBar). */
 export function Toolbar(p: ToolbarProps) {
   return (
     <Panel className="w-full sm:w-72">
       <div className="grid grid-cols-2 gap-2">
-        <Select
-          label={p.weatherLocked ? 'Thời tiết (góc này cố định)' : 'Thời tiết'}
-          value={p.weatherId}
-          onChange={p.onWeather}
-          options={p.world.weather.presets.map((w) => ({ value: w.id, label: w.label }))}
-        />
-        <Select label="Thời điểm" value={p.time} onChange={(v) => p.onTime(v as TimeOfDay)} options={TIMES} />
         <Select label="Đồ hoạ" value={p.quality} onChange={p.onQuality} options={p.world.graphics.quality.map((q) => ({ value: q.id, label: q.label }))} />
         <Select
           label="Nhạc"

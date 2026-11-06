@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { mulberry32 } from '@/lib/finance/random'
 import type { HeightGrid } from '@/lib/world/grid'
+import { playerPose } from './walk-state'
 import { NOISE_GLSL } from './glsl'
 
 const RADIUS = 38
@@ -88,7 +89,7 @@ export function GrassField(p: GrassFieldProps) {
     }
     const lin = (h: string) => new THREE.Color(h).convertSRGBToLinear()
     return {
-      uTime: { value: 0 }, uWind: { value: 0.3 }, uR: { value: RADIUS }, uH: { value: p.height },
+      uTime: { value: 0 }, uWind: { value: 0.3 }, uPlayer: { value: new THREE.Vector3(0, -999, 0) }, uR: { value: RADIUS }, uH: { value: p.height },
       uGround: { value: tex(p.grid.heights, p.grid.n, true) }, uGridN: { value: p.grid.n }, uMapSize: { value: p.grid.size },
       uMask: { value: tex(p.mask, p.maskRes, false) }, uPath: { value: tex(p.pathMask, p.pathRes, false) },
       uBase: { value: lin(p.base) }, uTip: { value: lin(p.tip) }, uDry: { value: lin(p.dry) },
@@ -103,7 +104,7 @@ export function GrassField(p: GrassFieldProps) {
           '#include <common>',
           `#include <common>
            attribute vec3 aInst;
-           uniform float uTime; uniform float uWind; uniform float uR; uniform float uH;
+           uniform float uTime; uniform float uWind; uniform float uR; uniform float uH; uniform vec3 uPlayer;
            uniform sampler2D uGround; uniform float uGridN; uniform float uMapSize; uniform sampler2D uMask; uniform sampler2D uPath;
            varying float vH; varying float vDry;
            ${NOISE_GLSL}
@@ -127,6 +128,11 @@ export function GrassField(p: GrassFieldProps) {
            float gust = sin(uTime * 1.6 + wxz.x * 0.17 + wxz.y * 0.11) * 0.7 + sin(uTime * 3.4 + wxz.x * 0.9) * 0.2;
            local.x += gust * uWind * position.y * position.y * hgt * 0.5;
            local.z += gust * uWind * position.y * position.y * hgt * 0.25;
+           // Blades bend away from you (and your dog's path) as you walk through them.
+           vec2 away = wxz - uPlayer.xz;
+           float push = (1.0 - smoothstep(0.3, 1.4, length(away))) * step(abs(uPlayer.y - groundAt(wxz)), 2.0);
+           local.xz += normalize(away + 1e-4) * push * position.y * hgt * 0.9;
+           local.y *= 1.0 - push * 0.45;
            vec3 transformed = local + vec3(wxz.x, groundAt(wxz) - 0.04, wxz.y);`,
         )
       shader.fragmentShader = shader.fragmentShader
@@ -141,6 +147,7 @@ export function GrassField(p: GrassFieldProps) {
   }, [p.wind, uniforms])
   useFrame((_, dt) => {
     uniforms.uTime.value += dt
+    if (playerPose.active) uniforms.uPlayer.value.set(playerPose.x, playerPose.y, playerPose.z)
   })
   if (p.count === 0) return null
   return <mesh geometry={geometry} material={material} frustumCulled={false} receiveShadow />

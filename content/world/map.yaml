@@ -88,6 +88,8 @@ vegetation:
   shrubs: 1100
   rocks: 320
   maxSlope: 0.9
+  # Cây mọc thành rừng và lùm (nhiễu thấp tần), chừa đồng cỏ trống giữa các rừng.
+  forest: { scale: 150, cover: 0.42 }
   species:
     lowland: [{ kind: broadleaf, weight: 4 }, { kind: bamboo, weight: 2.5 }, { kind: banana, weight: 2 }, { kind: areca, weight: 2 }, { kind: flowering, weight: 0.8 }]
     highland: [{ kind: pine, weight: 8 }, { kind: broadleaf, weight: 2 }]
@@ -102,10 +104,41 @@ vegetation:
     flowering: ["#e8805a", "#eea060", "#e898b8"]
     shrub: ["#5ca03c", "#6aac42", "#509236"]
     rock: ["#8a867c", "#7a776f", "#9a958a"]
-village: { lotSpacing: 15, lotsPerRow: 4, offsetFromRail: 16 }
+village: { lotSpacing: 15, lotsPerRow: 4, offsetFromRail: 16, gardenTrees: 3 }
 people:
   count: 36
   walkSpeed: 1.2
   skin: ["#f1c9a5", "#e0ac83", "#c68e64", "#a26e4b", "#7d5236"]
   clothes: ["#2f4b7c", "#a14b3b", "#e3d6b4", "#3f6b4f", "#6b4f7c", "#c9a227", "#2b2b2b", "#f2f0ea"]
   hair: ["#1d1a17", "#3a2a1e", "#6b4a2f", "#9a8a78"]
+  talkRadius: 4.5
+  # Dân làng nói về thửa ruộng gần nhất theo đúng trạng thái học thật của bạn (không phải lời thoại ngẫu nhiên).
+  chatter:
+    weeds: "Ruộng “{concept}” đang mọc cỏ dại rồi — bạn ôn lại vài thẻ là xanh ngay."
+    growing: "Ruộng “{concept}” đang lên đều. Làm thêm bài tập là nhà kia sáng đèn đấy."
+    lit: "Nhà “{concept}” sáng đèn rồi! Bạn nắm chắc phần này."
+    seed: "Ruộng “{concept}” mới gieo hạt — chưa thấy bạn học bài này."
+    locked: "Muốn vào “{concept}” thì phải qua mấy nhà phía trước đã."
+    planned: "Lô “{concept}” còn để trống — bài này chưa được viết."
+player:
+  walkSpeed: 4.2
+  runSpeed: 10
+  swimSpeed: 2.2
+  radius: 0.45
+  interactRadius: 7
+  camera: { minDistance: 3, maxDistance: 60 }
+  look: { skin: "#e0ac83", cloth: "#2f6f78", pants: "#2b2b2b", hair: "#1d1a17", hat: true }
+  companion: { name: "Vàng", coat: "#c8964e", patch: "#f2e6cf", follow: 2.4 }
+road: { width: 4.4, offset: 10, busSpeed: 11, busDwell: 6, busColor: "#e2a92c" }
+civic:
+  school: "Trường {region}"
+  schoolNote: "Trường của vùng này là bản đồ lộ trình: các chặng, khái niệm và bài học theo thứ tự nên học."
+  busStop: "Trạm xe buýt {region}"
+  busNote: "Đứng ở trạm để bắt xe sang vùng khác (đi nhanh), hoặc đi bộ dọc con đường cạnh đường tàu."
+  kids: 8
+wildlife:
+  chickenFlocks: 16
+  flockSize: 5
+  fleeRadius: 5
+  butterflies: 18
+  butterflyColors: ["#f6c445", "#ffffff", "#f08a3e", "#7fb6e8"]

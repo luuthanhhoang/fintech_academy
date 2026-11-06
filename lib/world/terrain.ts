@@ -3,7 +3,7 @@
  * embankment, river channels, lakes and flat pads under scenery features. Sea level is y = 0.
  */
 import type { WorldMap } from '../content/schema/world'
-import { createNoise, fbm, lerp, smoothstep } from './noise'
+import { createNoise, fbm, lerp, ridged, smoothstep } from './noise'
 import { chaikin, createPolyline, type Polyline } from './polyline'
 
 export interface WaterBody {
@@ -71,7 +71,11 @@ export function createTerrain(map: WorldMap): Terrain {
     })
     for (const p of map.peaks) {
       const d = Math.hypot(x - p.at[0], z - p.at[1]) / p.radius
-      if (d < 2.2) h += p.height * Math.exp(-d * d * 2.2) * (0.85 + 0.3 * Math.abs(ridge(x / 45, z / 45)))
+      // Ridged noise carves crests and gullies so peaks read as rock, not smooth domes; strongest near the top.
+      if (d < 2.2) {
+        const mass = Math.exp(-d * d * 2.2)
+        h += p.height * mass * (0.62 + 0.55 * ridged(ridge, x / 70, z / 70) * (0.4 + 0.6 * mass))
+      }
     }
     const cz = coastZ(x)
     h = lerp(h, 1.1 + 0.4 * noise(x / 30, z / 30), smoothstep(cz - map.coast.beach * 2.2, cz - map.coast.beach * 0.3, z))

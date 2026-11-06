@@ -47,6 +47,11 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
       </aside>
       <article className="min-w-0">
         <header className="mb-8 font-sans">
+          {concepts[0] && (
+            <Link href={`/?place=lot:${concepts[0].id}`} className="embed-hide mb-3 inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-3 py-1 text-xs font-medium text-accent hover:bg-accent hover:text-paper">
+              🏡 Về làng — tới nhà “{concepts[0].name.vi}”
+            </Link>
+          )}
           <p className="text-xs text-ink-3">
             <Link href={`/tracks/${lesson.track}/`} className="hover:underline">{track?.title.vi}</Link> · <Link href={`/tracks/${lesson.track}/#${lesson.stage}`} className="hover:underline">{stage?.title.vi}</Link>
           </p>

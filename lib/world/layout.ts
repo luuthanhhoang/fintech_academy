@@ -6,7 +6,10 @@
 import { stageRank, type Catalog } from '../content/catalog'
 import type { Guide, Landmark, Region } from '../content/schema/world'
 import { mulberry32 } from '../finance/random'
+import { createNoise } from './noise'
+import { buildRoad, type Road } from './roads'
 import type { Terrain } from './terrain'
+import { waterSurface } from './walk'
 
 export type Pos = [number, number, number]
 
@@ -15,6 +18,8 @@ export interface Lot { conceptId: string; stageId: string; regionId: string; hou
 export interface PlacedLandmark { landmark: Landmark; stationId: string; regionId: string; position: Pos; rotation: number }
 export interface PlacedGuide { guide: Guide; position: Pos; rotation: number }
 export interface Scatter { kind: string; position: Pos; scale: number; rotation: number }
+/** A school or bus stop of a region. `t` is the road fraction for bus stops. */
+export interface Civic { regionId: string; title: string; position: Pos; rotation: number; t: number }
 
 export interface WorldLayout {
   stations: Station[]
@@ -24,6 +29,9 @@ export interface WorldLayout {
   features: { id: string; kind: string; name: string; position: Pos }[]
   trees: Scatter[]
   shrubs: Scatter[]
+  road: Road
+  schools: Civic[]
+  busStops: Civic[]
   /** Points people walk between, per region. */
   waypoints: Record<string, Pos[]>
 }
@@ -61,6 +69,35 @@ function placeStations(src: LayoutSource, terrain: Terrain): Station[] {
 
 function buildable(terrain: Terrain, occ: Occupancy, x: number, z: number, r: number, maxSlope: number) {
   return !terrain.isWet(x, z) && terrain.slope(x, z) < maxSlope && occ.free(x, z, r) && terrain.rail.nearest(x, z).distance > r + terrain.map.rail.width * 2
+}
+
+/** Marks the road corridor as taken so nothing is built or planted on it. */
+function reserveRoad(road: Road, occ: Occupancy) {
+  for (const s of road.samples) occ.take(s.x, s.z, road.width / 2 + 1)
+}
+
+/** One school (near the middle station) and one bus stop (on the road beside it) per region. */
+function placeCivic(src: LayoutSource, terrain: Terrain, stations: Station[], road: Road, occ: Occupancy) {
+  const m = src.world.map
+  const schools: Civic[] = []
+  const busStops: Civic[] = []
+  for (const r of m.regions) {
+    const own = stations.filter((s) => s.regionId === r.id).sort((a, b) => a.t - b.t)
+    const st = own[Math.floor(own.length / 2)]
+    if (!st) continue
+    const near = road.line.nearest(st.position[0], st.position[2])
+    const t = Math.min(1, near.t + 14 / road.line.length)
+    const [bx, bz] = road.line.at(t)
+    const [tx, tz] = road.line.tangent(t)
+    const sx = bx + tz * (road.width / 2 + 1.6)
+    const sz = bz - tx * (road.width / 2 + 1.6)
+    busStops.push({ regionId: r.id, title: m.civic.busStop.replaceAll('{region}', r.title), position: [sx, terrain.height(sx, sz), sz], rotation: Math.atan2(-tz, tx), t })
+    occ.take(sx, sz, 3)
+    const [x, z] = ringSpot(terrain, occ, st.position, 2.4, m.village.offsetFromRail + m.village.lotSpacing * 3)
+    occ.take(x, z, 14)
+    schools.push({ regionId: r.id, title: m.civic.school.replaceAll('{region}', r.title), position: [x, terrain.height(x, z), z], rotation: Math.atan2(st.position[0] - x, st.position[2] - z), t: 0 })
+  }
+  return { schools, busStops }
 }
 
 function placeLots(src: LayoutSource, terrain: Terrain, stations: Station[], occ: Occupancy): Lot[] {
@@ -160,13 +197,22 @@ function pickSpecies(list: readonly { kind: string; weight: number }[], r: numbe
 function scatter(src: LayoutSource, terrain: Terrain, occ: Occupancy, count: number, seed: number, fixed: string | null): Scatter[] {
   const m = src.world.map
   const rand = mulberry32(seed)
+  const forestNoise = createNoise(m.seed + 41)
+  const { scale, cover } = m.vegetation.forest
+  // Trees (not rocks) keep to forests: noise above a threshold set by the cover share, with soft edges.
+  const forest = (x: number, z: number) => {
+    const n = 0.5 + 0.5 * (forestNoise(x / scale, z / scale) * 0.75 + forestNoise(x / (scale * 0.35), z / (scale * 0.35)) * 0.25)
+    const edge = 1 - cover
+    return Math.min(1, Math.max(0, (n - edge + 0.08) / 0.16))
+  }
   const half = m.size / 2
   const out: Scatter[] = []
-  for (let tries = 0; out.length < count && tries < count * 6; tries++) {
+  for (let tries = 0; out.length < count && tries < count * 14; tries++) {
     const x = (rand() * 2 - 1) * half * 0.97
     const z = (rand() * 2 - 1) * half * 0.97
     const h = terrain.height(x, z)
     if ((fixed !== 'rock' && h > m.snowline - 6) || terrain.isWet(x, z) || terrain.slope(x, z) > m.vegetation.maxSlope) continue
+    if (fixed !== 'rock' && rand() > forest(x, z) * 0.97 + 0.03) continue
     if (!occ.free(x, z, 3) || terrain.rail.nearest(x, z).distance < m.rail.width * 2.5) continue
     const w = terrain.regionWeights(x, z)
     const region = m.regions[w.indexOf(Math.max(...w))]!
@@ -179,16 +225,42 @@ function scatter(src: LayoutSource, terrain: Terrain, occ: Occupancy, count: num
   return out
 }
 
+/** A few garden trees (banana, areca, bamboo… from the region's species) around each house. */
+function gardens(src: LayoutSource, terrain: Terrain, lots: Lot[], occ: Occupancy): Scatter[] {
+  const m = src.world.map
+  const rand = mulberry32(m.seed + 7)
+  const regions = new Map(m.regions.map((r) => [r.id, r]))
+  const out: Scatter[] = []
+  for (const l of lots) {
+    const list = regions.get(l.regionId)?.biome === 'highland' ? m.vegetation.species.highland : m.vegetation.species.lowland
+    for (let k = 0; k < m.village.gardenTrees; k++) {
+      const a = l.rotation + Math.PI * (0.55 + rand() * 0.9) * (k % 2 ? 1 : -1)
+      const d = 6 + rand() * 3
+      const x = l.house[0] + Math.sin(a) * d
+      const z = l.house[2] + Math.cos(a) * d
+      if (!occ.free(x, z, 1.5) || terrain.isWet(x, z)) continue
+      occ.take(x, z, 1.5)
+      out.push({ kind: pickSpecies(list, rand()), position: [x, terrain.height(x, z), z], scale: 0.7 + rand() * 0.4, rotation: rand() * Math.PI * 2 })
+    }
+  }
+  return out
+}
+
 export function buildWorldLayout(src: LayoutSource, terrain: Terrain): WorldLayout {
   const occ = new Occupancy(4)
   const stations = placeStations(src, terrain)
   for (const s of stations) occ.take(s.position[0], s.position[2], 8)
+  const m = src.world.map
+  const road = buildRoad(terrain, m.road.offset, m.road.width, (x, z) => waterSurface(terrain, x, z))
+  reserveRoad(road, occ)
   const features = src.world.map.features.map((f) => {
     occ.take(f.at[0], f.at[1], 8)
     return { id: f.id, kind: f.kind, name: f.name, position: [f.at[0], terrain.height(f.at[0], f.at[1]), f.at[1]] as Pos }
   })
   const lots = placeLots(src, terrain, stations, occ)
   const { landmarks, guides } = placeLandmarks(src, terrain, stations, occ)
+  const { schools, busStops } = placeCivic(src, terrain, stations, road, occ)
+  const garden = gardens(src, terrain, lots, occ)
   const veg = src.world.map.vegetation
   const waypoints: Record<string, Pos[]> = {}
   for (const r of src.world.map.regions) {
@@ -196,11 +268,13 @@ export function buildWorldLayout(src: LayoutSource, terrain: Terrain): WorldLayo
       ...stations.filter((s) => s.regionId === r.id).map((s) => s.position),
       ...landmarks.filter((l) => l.regionId === r.id).map((l) => l.position),
       ...lots.filter((l) => l.regionId === r.id).map((l) => l.house),
+      ...schools.filter((c) => c.regionId === r.id).map((c) => c.position),
+      ...busStops.filter((c) => c.regionId === r.id).map((c) => c.position),
     ]
   }
   return {
-    stations, lots, landmarks, guides, features, waypoints,
-    trees: scatter(src, terrain, occ, veg.trees, src.world.map.seed + 1, null),
+    stations, lots, landmarks, guides, features, waypoints, road, schools, busStops,
+    trees: [...garden, ...scatter(src, terrain, occ, veg.trees, src.world.map.seed + 1, null)],
     shrubs: [...scatter(src, terrain, occ, veg.shrubs, src.world.map.seed + 2, 'shrub'), ...scatter(src, terrain, occ, veg.rocks, src.world.map.seed + 3, 'rock')],
   }
 }

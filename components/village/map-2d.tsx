@@ -51,7 +51,18 @@ export function Map2D({ terrain, layout, health, names, onSelect }: { terrain: T
           <circle cx={l.center[0]} cy={l.center[1]} r={l.radius} fill="#4f8fa6" stroke="#2b5a6a" strokeWidth={2} />
         </Hit>
       ))}
+      <path d={path(layout.road.samples.filter((_, i) => i % 3 === 0).map((r) => [r.x, r.z] as const))} stroke="#d8ccb2" strokeWidth={layout.road.width} fill="none" strokeLinejoin="round" />
       <path d={path(terrain.rail.points)} stroke="#4a4038" strokeWidth={4} fill="none" strokeDasharray="10 6" />
+      {layout.schools.map((c) => (
+        <Hit key={`s:${c.regionId}`} id={selectionId('school', c.regionId)} label={c.title} onSelect={onSelect}>
+          <rect x={c.position[0] - 10} y={c.position[2] - 7} width={20} height={14} fill="#f0c75a" stroke="#b8503a" strokeWidth={2} />
+        </Hit>
+      ))}
+      {layout.busStops.map((c) => (
+        <Hit key={`b:${c.regionId}`} id={selectionId('bus', c.regionId)} label={c.title} onSelect={onSelect}>
+          <circle cx={c.position[0]} cy={c.position[2]} r={6} fill="#e2a92c" stroke="#2b2b2b" strokeWidth={1.5} />
+        </Hit>
+      ))}
       {layout.lots.map((l) => {
         const hp = health.get(l.conceptId)
         const fill = hp?.weeds ? '#c7b25a' : hp && hp.growth > 0.1 ? `rgb(${Math.round(120 - hp.growth * 60)},${Math.round(150 + hp.growth * 60)},70)` : '#8a7a5a'
@@ -95,6 +106,8 @@ const LEGEND: { swatch: React.ReactNode; label: string }[] = [
   { swatch: <rect x={4} y={4} width={8} height={8} transform="rotate(45 8 8)" fill="#1d6a73" />, label: 'Công trình: mô phỏng, lab, case, tình huống' },
   { swatch: <circle cx={8} cy={8} r={5} fill="#ffd36b" stroke="#2b2b2b" />, label: 'Người dẫn đường (gia sư AI)' },
   { swatch: <circle cx={8} cy={8} r={5} fill="#fbfaf6" stroke="#1d1c1a" strokeWidth={2} />, label: 'Ga tàu = một chặng lộ trình' },
+  { swatch: <rect x={2} y={4} width={12} height={8} fill="#f0c75a" stroke="#b8503a" />, label: 'Trường = bản đồ lộ trình của vùng' },
+  { swatch: <circle cx={8} cy={8} r={5} fill="#e2a92c" stroke="#2b2b2b" />, label: 'Trạm xe buýt: đi nhanh sang vùng khác' },
 ]
 
 export function MapLegend() {

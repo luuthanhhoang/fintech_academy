@@ -55,18 +55,75 @@ export const MapSchema = z.strictObject({
     shrubs: z.number().int().nonnegative(),
     rocks: z.number().int().nonnegative(),
     maxSlope: z.number().positive(),
+    /** Trees gather into forests: noise feature size (m) and the share of land that is forest (0–1). */
+    forest: z.strictObject({ scale: z.number().positive(), cover: Unit }),
     /** Species mix (weights) per zone; kinds must be in TREE_KINDS. */
     species: z.strictObject({ lowland: z.array(SpeciesSchema).min(1), highland: z.array(SpeciesSchema).min(1), coast: z.array(SpeciesSchema).min(1) }),
     /** Crown colours per kind (several = variation). */
     leaves: z.record(z.string(), z.array(z.string().regex(/^#[0-9a-f]{6}$/i)).min(1)),
   }),
-  village: z.strictObject({ lotSpacing: z.number().positive(), lotsPerRow: z.number().int().positive(), offsetFromRail: z.number().positive() }),
+  village: z.strictObject({
+    lotSpacing: z.number().positive(),
+    lotsPerRow: z.number().int().positive(),
+    offsetFromRail: z.number().positive(),
+    /** Fruit trees / bamboo planted around each house (kinds from the lowland or highland species list). */
+    gardenTrees: z.number().int().nonnegative(),
+  }),
   people: z.strictObject({
     count: z.number().int().nonnegative(),
     walkSpeed: z.number().positive(),
     skin: z.array(z.string()).min(1),
     clothes: z.array(z.string()).min(1),
     hair: z.array(z.string()).min(1),
+    /** Villagers stop and talk when you come this close (m). */
+    talkRadius: z.number().positive(),
+    /**
+     * What a villager says about the nearest concept plot, by its real state ({concept} = concept name).
+     * Keys follow PlotHealth: weeds (memory decayed), growing, lit (mastered), seed (no data yet), locked, planned.
+     */
+    chatter: z.strictObject({ weeds: z.string().min(1), growing: z.string().min(1), lit: z.string().min(1), seed: z.string().min(1), locked: z.string().min(1), planned: z.string().min(1) }),
+  }),
+  /** You, walking the village (third-person). Speeds in m/s, distances in m. */
+  player: z.strictObject({
+    walkSpeed: z.number().positive(),
+    runSpeed: z.number().positive(),
+    swimSpeed: z.number().positive(),
+    radius: z.number().positive(),
+    /** How close you must be to a building / person to enter it. */
+    interactRadius: z.number().positive(),
+    /** Zoom limits of the follow camera (its starting offset is the walk view's eye/look, relative to you). */
+    camera: z.strictObject({ minDistance: z.number().positive(), maxDistance: z.number().positive() }),
+    look: z.strictObject({ skin: z.string(), cloth: z.string(), pants: z.string(), hair: z.string(), hat: z.boolean() }),
+    /** A dog that trots after you. */
+    companion: z.strictObject({ name: z.string().min(1), coat: z.string(), patch: z.string(), follow: z.number().positive() }),
+  }),
+  /** A road running beside the whole rail line (bridges where it crosses water), with a bus and one stop per region. */
+  road: z.strictObject({
+    width: z.number().positive(),
+    /** Distance from the rail centre line (m), on the side away from the station platforms. */
+    offset: z.number().positive(),
+    busSpeed: z.number().positive(),
+    /** Seconds the bus waits at each stop. */
+    busDwell: z.number().nonnegative(),
+    busColor: z.string(),
+  }),
+  /** Per-region civic buildings; {region} = region title. The school opens that region's track roadmap. */
+  civic: z.strictObject({
+    school: z.string().min(1),
+    schoolNote: z.string().min(1),
+    busStop: z.string().min(1),
+    busNote: z.string().min(1),
+    /** Children playing in each schoolyard. */
+    kids: z.number().int().nonnegative(),
+  }),
+  wildlife: z.strictObject({
+    /** Flocks of chickens around houses, birds per flock, and how close you can get before they scatter (m). */
+    chickenFlocks: z.number().int().nonnegative(),
+    flockSize: z.number().int().positive(),
+    fleeRadius: z.number().positive(),
+    /** Butterflies fluttering around you by day. */
+    butterflies: z.number().int().nonnegative(),
+    butterflyColors: z.array(z.string()).min(1),
   }),
 })
 export type WorldMap = z.infer<typeof MapSchema>
@@ -101,6 +158,8 @@ export const ViewAnchorSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('lake'), id: IdSchema }),
   z.strictObject({ kind: z.literal('peak'), id: IdSchema }),
   z.strictObject({ kind: z.literal('landmark'), id: IdSchema }),
+  /** Where you are in your learning: the first station that still has unfinished concepts. */
+  z.strictObject({ kind: z.literal('frontier') }),
 ])
 export type ViewAnchor = z.infer<typeof ViewAnchorSchema>
 
@@ -108,8 +167,8 @@ export const ViewSchema = z.strictObject({
   id: IdSchema,
   title: z.string().min(1),
   description: z.string().min(1),
-  /** focus: the timer view; review: due cards become fish; explore: free camera. */
-  mode: z.enum(['focus', 'review', 'explore']),
+  /** focus: the timer view; review: due cards become fish; explore: free camera; walk: you walk the village. */
+  mode: z.enum(['focus', 'review', 'explore', 'walk']),
   anchor: ViewAnchorSchema,
   /** Camera position relative to the anchor and the point it looks at (relative too). */
   eye: Vec3Schema,
@@ -123,6 +182,8 @@ export const ViewsFileSchema = z.strictObject({ defaultView: IdSchema, views: z.
 
 export const WeatherSchema = z.strictObject({
   id: IdSchema,
+  /** Short symbol on the weather switcher. */
+  icon: z.string().min(1),
   label: z.string().min(1),
   rain: Unit,
   snow: Unit,

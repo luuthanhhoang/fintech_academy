@@ -1,6 +1,14 @@
 # Các góc ngắm. eye/look tính tương đối so với anchor (với "train": trục x là bên phải hướng tàu chạy, z là hướng tàu chạy).
-defaultView: toan-canh
+defaultView: dao-lang
 views:
+  - id: dao-lang
+    title: "Dạo làng"
+    description: "Đi bộ quanh làng (WASD/phím mũi tên, bấm lên mặt đất hoặc cần điều khiển). Lại gần nhà, ga, người dẫn đường rồi bấm E để vào."
+    mode: walk
+    anchor: { kind: frontier }
+    eye: [0, 4.5, 9]
+    look: [0, 1.5, 0]
+    ambience: [birds]
   - id: toan-canh
     title: "Toàn cảnh"
     description: "Bay quanh làng, bấm vào ga, nhà, công trình để mở bài học và mô phỏng."

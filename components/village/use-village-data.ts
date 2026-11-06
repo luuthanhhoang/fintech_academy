@@ -9,6 +9,7 @@ import { grassMask, scatterGroundCover } from '@/lib/world/grass'
 import { sampleGrid } from '@/lib/world/grid'
 import { buildWorldLayout } from '@/lib/world/layout'
 import { pathSegments, rasterisePaths } from '@/lib/world/paths'
+import { roadSegments } from '@/lib/world/roads'
 import { plantsFromSessions } from '@/lib/world/plants'
 import { createTerrain } from '@/lib/world/terrain'
 import { useDueCards, useMastery } from '@/components/data/use-learner'
@@ -23,7 +24,11 @@ export function useWorld(catalog: Catalog) {
     const terrain = createTerrain(catalog.world.map)
     const layout = buildWorldLayout(catalog, terrain)
     const grid = sampleGrid(terrain)
-    const pathMask = rasterisePaths(pathSegments(layout), catalog.world.map.size, PATH_RES, PATH_WIDTH)
+    const size = catalog.world.map.size
+    const pathMask = rasterisePaths(pathSegments(layout), size, PATH_RES, PATH_WIDTH)
+    // The road is drawn as its own mesh; it joins the mask so grass and flowers keep off it.
+    const roadMask = rasterisePaths(roadSegments(layout.road), size, PATH_RES, layout.road.width)
+    for (let i = 0; i < pathMask.length; i++) pathMask[i] = Math.max(pathMask[i]!, roadMask[i]!)
     const grass = grassMask(terrain, grid, layout, GRASS_RES)
     return { terrain, layout, grid, pathMask, pathRes: PATH_RES, grassMask: grass, grassRes: GRASS_RES }
   }, [catalog])
