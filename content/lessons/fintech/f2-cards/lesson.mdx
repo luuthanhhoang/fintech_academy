@@ -1,0 +1,92 @@
+---
+id: f2-cards
+track: fintech
+stage: f2
+order: 3
+title: { vi: "Một giao dịch thẻ đi qua những đâu", en: "Anatomy of a card transaction" }
+summary: "Một lần quẹt thẻ là hai pha tách rời: uỷ quyền (trong vài giây, ngân hàng phát hành đồng ý và giữ tiền) và bù trừ–quyết toán (sau đó, giao dịch được chốt, tiền chuyển giữa ngân hàng phát hành và ngân hàng thanh toán qua tổ chức thẻ, rồi về đơn vị chấp nhận thẻ). Mô hình bốn bên giải thích ai trả phí cho ai, vì sao số tiền giữ có thể khác số tiền trừ thật, và vì sao tranh chấp (chargeback) có thể xảy ra nhiều tuần sau."
+concepts: [card-payments]
+estMinutes: 35
+whyQuestion: "Bạn đổ xăng, app ngân hàng báo 'giữ' một số tiền, hai ngày sau mới trừ thật một số tiền khác. Hai bước đó là gì, và hệ thống của đơn vị bán hàng phải xử lý chúng ra sao?"
+devMapping:
+  - finance: "Uỷ quyền (authorization)"
+    dev: "Đặt chỗ / giữ tồn kho (reservation)"
+    explanation: "Giữ một lượng tiền khả dụng nhưng chưa ghi nợ thật; có thể hết hạn hoặc được giải phóng."
+  - finance: "Bù trừ (clearing / capture)"
+    dev: "Commit đơn hàng sau khi đã reserve"
+    explanation: "Gửi số tiền cuối cùng để ghi nợ thật; có thể khác số tiền đã giữ."
+  - finance: "Token hoá thẻ"
+    dev: "Thay bí mật bằng tham chiếu không dùng lại được ở nơi khác"
+    explanation: "Hệ thống của bạn lưu token thay vì số thẻ, thu hẹp phạm vi dữ liệu nhạy cảm."
+pretest: [q-f2c-auth, q-f2c-who]
+applications:
+  - id: app-f2c-checkout
+    title: "Xử lý vòng đời thanh toán thẻ ở phía đơn vị bán hàng"
+    context: "Một cửa hàng trực tuyến tích hợp cổng thanh toán thẻ."
+    task: "Thiết kế bảng trạng thái cho một thanh toán thẻ: đã uỷ quyền → đã bù trừ (toàn bộ hoặc một phần) → đã quyết toán → hoàn tiền / bị tranh chấp; xử lý uỷ quyền hết hạn khi hàng giao chậm; quy định khi nào ghi nhận doanh thu; lưu token của cổng thay vì số thẻ."
+    deliverable: "Sơ đồ trạng thái + mô tả webhook cần xử lý + bút toán sổ cái cho mỗi trạng thái."
+sources: [treasury-cas, bis-pfmi-summary]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Kể lại hành trình một giao dịch thẻ từ lúc quẹt tới lúc đơn vị bán hàng nhận tiền, nêu vai trò từng bên."
+  rubric:
+    - { id: parties, criterion: "Bốn bên + tổ chức thẻ: chủ thẻ, đơn vị chấp nhận, ngân hàng thanh toán (acquirer), ngân hàng phát hành (issuer), mạng thẻ" }
+    - { id: auth, criterion: "Uỷ quyền: issuer kiểm tra và giữ tiền trong thời gian thực" }
+    - { id: clear, criterion: "Bù trừ–quyết toán: giao dịch chốt sau, tiền chuyển issuer → acquirer qua mạng thẻ, rồi về đơn vị chấp nhận sau khi trừ phí" }
+    - { id: dispute, criterion: "Chargeback/hoàn tiền là luồng ngược, có thể xảy ra sau nhiều tuần; ảnh hưởng tới ghi nhận doanh thu" }
+---
+
+<Callout kind="story" title="Khoản giữ 'treo' ba ngày">
+Một khách sạn uỷ quyền trước tiền phòng khi khách đặt, rồi bù trừ số tiền thật lúc trả phòng. Một bản cập nhật hệ thống quên bước bù trừ cho các đặt phòng huỷ — không trừ tiền ai, nhưng khoản giữ treo trên tài khoản khách tới khi tự hết hạn. Tổng đài nhận hàng loạt cuộc gọi "khách sạn trừ tiền tôi dù tôi đã huỷ". Không ai bị trừ tiền thật, nhưng trải nghiệm của khách là bị trừ.
+</Callout>
+
+## Mô hình bốn bên
+
+| Bên | Vai trò |
+|---|---|
+| **Chủ thẻ** | Người trả tiền |
+| **Ngân hàng phát hành (issuer)** | Phát hành thẻ, quyết định chấp nhận giao dịch, ghi nợ chủ thẻ |
+| **Đơn vị chấp nhận thẻ (merchant)** | Người bán |
+| **Ngân hàng thanh toán (acquirer)** | Ký hợp đồng với đơn vị bán, nhận tiền từ mạng thẻ và trả cho đơn vị bán |
+| **Tổ chức/mạng thẻ** | Định tuyến tin nhắn, đặt quy tắc, tính toán bù trừ giữa các ngân hàng |
+
+Ngoài ra thường có **cổng thanh toán / bộ xử lý** đứng giữa đơn vị bán và acquirer.
+
+<Quiz id="q-f2c-who" />
+
+## Hai pha tách rời
+
+Tài liệu của Bộ Tài chính Mỹ về dịch vụ chấp nhận thẻ chia quy trình thành **uỷ quyền** — yêu cầu thanh toán được gửi điện tử qua các bên — và **bù trừ, quyết toán** — giao dịch được đối chiếu với acquirer/bộ xử lý, định tuyến qua mạng thẻ và quyết toán giữa tài khoản của issuer và acquirer.
+
+**1. Uỷ quyền (vài giây)**: thông tin thẻ → acquirer → mạng thẻ → issuer. Issuer kiểm tra thẻ, xác thực, chấm điểm gian lận, kiểm tra hạn mức/số dư, rồi **chấp nhận và giữ** một số tiền. Chưa có tiền chuyển giữa các ngân hàng.
+
+**2. Bù trừ và quyết toán (sau đó)**: đơn vị bán **chốt** (capture) số tiền cuối cùng — có thể bằng, nhỏ hơn số đã giữ, hoặc khác hẳn (đổ xăng, tiền boa). Mạng thẻ tính nghĩa vụ ròng giữa các ngân hàng; issuer chuyển tiền cho acquirer; acquirer trả đơn vị bán sau khi trừ phí.
+
+<Diagram id="dg-card-flow" />
+
+<Quiz id="q-f2c-auth" />
+
+## Ai trả phí cho ai
+
+Đơn vị bán trả **phí chiết khấu** cho acquirer. Trong đó, một phần là **phí trao đổi (interchange)** acquirer trả cho issuer theo biểu phí của mạng thẻ, một phần là phí của mạng thẻ, phần còn lại là thu nhập của acquirer. Chủ thẻ thường không thấy phí này trực tiếp. Mức phí cụ thể khác nhau theo thị trường, loại thẻ và quy định từng nước — bài không nêu con số.
+
+## Luồng ngược: hoàn tiền và tranh chấp
+
+- **Huỷ uỷ quyền**: trước khi chốt — chỉ giải phóng khoản giữ (bước bị quên trong câu chuyện đầu bài).
+- **Hoàn tiền (refund)**: sau khi chốt — đơn vị bán chủ động trả lại.
+- **Tranh chấp (chargeback)**: chủ thẻ khiếu nại với issuer; tiền có thể bị thu hồi từ đơn vị bán theo quy tắc mạng thẻ, kể cả nhiều tuần sau giao dịch.
+
+Hệ quả: "thanh toán thành công" ở bước uỷ quyền **chưa phải** tiền đã về; doanh thu và đối soát phải theo trạng thái thật.
+
+<Quiz id="q-f2c-refund" />
+
+## Bảo mật dữ liệu thẻ
+
+- **Token hoá**: lưu token do cổng thanh toán hoặc mạng thẻ cấp thay vì số thẻ — thu hẹp phạm vi hệ thống phải tuân thủ chuẩn bảo mật dữ liệu thẻ (PCI DSS).
+- **Xác thực mạnh** cho giao dịch trực tuyến (ví dụ 3-D Secure) dời một phần trách nhiệm gian lận.
+- Không bao giờ ghi số thẻ đầy đủ, mã bảo mật vào log.
+
+<Callout kind="field" title="Số tiền giữ không phải số tiền trừ">
+Lỗi tôi thấy lặp lại ở nhiều tích hợp: dùng số tiền của bước uỷ quyền làm số tiền ghi doanh thu. Với giao dịch có tiền boa, đổ xăng, khách sạn, thuê xe, hai số này khác nhau gần như chắc chắn. Tôi luôn lưu hai cột riêng (số đã giữ, số đã chốt), ghi doanh thu theo số đã chốt, và đối soát theo file quyết toán của acquirer — không theo log uỷ quyền của chính mình.
+</Callout>

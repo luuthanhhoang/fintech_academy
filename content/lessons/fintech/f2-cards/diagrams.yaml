@@ -1,0 +1,22 @@
+diagrams:
+  - id: dg-card-flow
+    kind: sequence
+    title: "Uỷ quyền rồi bù trừ – quyết toán"
+    caption: "Mô hình bốn bên khái niệm; chi tiết tin nhắn, thời hạn và phí theo quy tắc của từng mạng thẻ."
+    actors:
+      - { id: cardholder, label: "Chủ thẻ" }
+      - { id: merchant, label: "Đơn vị bán" }
+      - { id: acquirer, label: "NH thanh toán" }
+      - { id: network, label: "Mạng thẻ" }
+      - { id: issuer, label: "NH phát hành" }
+    steps:
+      - { from: cardholder, to: merchant, label: "Quẹt/nhập thẻ" }
+      - { from: merchant, to: acquirer, label: "Yêu cầu uỷ quyền" }
+      - { from: acquirer, to: network, label: "Định tuyến" }
+      - { from: network, to: issuer, label: "Yêu cầu uỷ quyền" }
+      - { from: issuer, to: issuer, label: "Xác thực, gian lận, hạn mức → giữ tiền" }
+      - { from: issuer, to: merchant, label: "Chấp nhận (qua mạng thẻ, acquirer)" }
+      - { from: merchant, to: acquirer, label: "Chốt số tiền cuối (sau đó)" }
+      - { from: network, to: network, label: "Bù trừ nghĩa vụ giữa các NH" }
+      - { from: issuer, to: acquirer, label: "Quyết toán (trừ interchange)" }
+      - { from: acquirer, to: merchant, label: "Trả tiền sau phí chiết khấu" }

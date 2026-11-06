@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2w-recon
+    conceptId: digital-wallets
+    prompt: "Cuối ngày: tổng số dư ví trên sổ nội bộ 5.120 triệu; tài khoản đảm bảo 5.080 triệu. Danh sách đang trên đường: nạp tiền khách đã ghi vào ví nhưng ngân hàng chưa báo có 70 triệu; rút tiền đã trừ ví nhưng chưa chuyển khỏi tài khoản đảm bảo 25 triệu. Còn lệch bao nhiêu và bạn làm gì?"
+    hint: "Điều chỉnh số dư ngân hàng cho cả hai loại giao dịch trên đường rồi so."
+    solution: "Số dư ngân hàng điều chỉnh = 5.080 + 70 (nạp sắp về) − 25 (rút sắp đi) = 5.125. So với sổ ví 5.120: ngân hàng cao hơn 5 triệu. Không được bỏ qua: tìm giao dịch cụ thể (ví dụ phí chưa ghi, hoàn tiền ghi thiếu), ghi vào danh sách chênh lệch có người phụ trách và hạn xử lý."
+  - id: ex-f2w-revoke
+    conceptId: open-banking
+    prompt: "Khách thu hồi consent tại app ngân hàng. Ứng dụng của bạn phát hiện điều đó thế nào và phải làm gì?"
+    hint: "Token bị từ chối; thông báo; dữ liệu đã lấy."
+    solution: "Phát hiện: lần gọi API tiếp theo bị từ chối do token/consent không còn hiệu lực (hoặc qua thông báo nếu ngân hàng hỗ trợ). Xử lý: đánh dấu consent đã thu hồi kèm thời điểm, dừng mọi job đồng bộ, không thử lại vô hạn; thông báo cho khách; xử lý dữ liệu đã lấy theo chính sách (xoá hoặc giữ theo căn cứ pháp lý đã công bố); ghi nhật ký."

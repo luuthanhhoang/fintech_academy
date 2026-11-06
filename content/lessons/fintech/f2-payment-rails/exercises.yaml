@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2p-multilateral
+    conceptId: payment-systems
+    prompt: "Ba ngân hàng trong một chu kỳ: A→B 100, B→C 80, C→A 60, A→C 30, B→A 20 (tỉ). Tính vị thế ròng đa phương của từng ngân hàng và kiểm tra tổng bằng 0."
+    hint: "Ròng = tổng nhận − tổng trả."
+    solution: "A: nhận 60 + 20 = 80, trả 100 + 30 = 130 → −50. B: nhận 100, trả 80 + 20 = 100 → 0. C: nhận 80 + 30 = 110, trả 60 → +50. Tổng: −50 + 0 + 50 = 0. Chỉ cần A chuyển 50 cho C thay vì 290 tỉ tổng dòng chảy."
+  - id: ex-f2p-design
+    conceptId: instant-payments
+    prompt: "Liệt kê các kiểm tra phải hoàn thành trước khi một ví gửi lệnh chuyển tiền tức thì, và lý do chúng phải nằm trước lệnh."
+    hint: "Tiền đi rồi thì không thu lại được."
+    solution: "Xác thực khách (mã OTP/sinh trắc), kiểm tra số dư và giữ tiền, hạn mức theo giao dịch/ngày, kiểm tra người nhận (tên chủ tài khoản hiển thị cho khách xác nhận), chấm điểm gian lận theo thời gian thực, kiểm tra danh sách cấm vận/AML, khoá idempotency. Phải xong trước vì chuyển tiền tức thì không huỷ ngang: phát hiện sau khi gửi chỉ còn cách đòi lại qua tra soát, không đảm bảo."

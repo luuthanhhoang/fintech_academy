@@ -1,0 +1,21 @@
+examples:
+  - id: we-wallet-recon
+    title: "Đối soát ví với tài khoản đảm bảo"
+    conceptId: digital-wallets
+    problem: "Dữ liệu tổng hợp (mô phỏng): tổng số dư ví nội bộ 980 triệu; tài khoản đảm bảo 1.000 triệu. Đang trên đường: rút tiền đã trừ ví nhưng chưa chuyển 30 triệu; nạp tiền ngân hàng đã báo có nhưng chưa ghi vào ví 12 triệu."
+    steps:
+      - text: "Đưa tài khoản ngân hàng về cùng thời điểm với sổ ví: trừ khoản rút sắp đi 30 → 970."
+      - text: "Khoản nạp 12 triệu đã ở ngân hàng nhưng chưa ở ví: cộng vào phía ví → 980 + 12 = 992."
+        faded: true
+        prompt: "Số dư ví sau điều chỉnh là bao nhiêu triệu?"
+        answer: 992
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "triệu"
+      - text: "So sánh 970 (ngân hàng) với 992 (ví): ví nhiều hơn tiền đảm bảo 22 triệu."
+        faded: true
+        prompt: "Chênh lệch (ví − ngân hàng) bao nhiêu triệu?"
+        answer: 22
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "triệu"
+      - text: "Ví nợ khách nhiều hơn tiền đang đảm bảo — mức nghiêm trọng nhất: phải tìm nguyên nhân ngay và bổ sung tiền đảm bảo."
+    takeaway: "Hướng chênh lệch quan trọng: thiếu tiền đảm bảo nghĩa là khách có nguy cơ không rút được tiền."

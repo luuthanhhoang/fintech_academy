@@ -1,0 +1,104 @@
+---
+id: f2-bank-balance-sheet
+track: fintech
+stage: f2
+order: 0
+title: { vi: "Ngân hàng kiếm tiền thế nào: bảng cân đối và tạo tiền", en: "How banks make money: the balance sheet and money creation" }
+summary: "Nhìn ngân hàng qua bảng cân đối: tiền gửi của bạn là nợ phải trả của ngân hàng, khoản vay là tài sản, vốn chủ sở hữu là tấm đệm hấp thụ lỗ. Ngân hàng kiếm tiền chủ yếu từ chênh lệch lãi (NIM) và phí. Khi cho vay, ngân hàng ghi đồng thời một khoản vay và một khoản tiền gửi mới — đó là cách phần lớn tiền trong nền kinh tế được tạo ra, trong giới hạn của chính sách tiền tệ và quy định."
+concepts: [bank-balance-sheet, money-creation]
+estMinutes: 35
+whyQuestion: "Bạn gửi 100 triệu vào ngân hàng. Trên sổ của ngân hàng, khoản đó là tài sản hay nợ — và khi ngân hàng cho người khác vay, tiền đó đến từ đâu?"
+facts:
+  - id: boe-deposit-share
+    text: "Tỉ trọng tiền gửi ngân hàng trong tiền rộng ở Anh, theo bài Quarterly Bulletin 2014 Q1 của Bank of England"
+    value: "97% lượng tiền rộng đang lưu hành (thời điểm bài viết)"
+    sourceId: boe-money-creation-2014
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Tiền gửi của khách"
+    dev: "Số dư trong tài khoản là một nghĩa vụ hệ thống phải trả khi được yêu cầu"
+    explanation: "Như số dư ví trong app: con số hiển thị là lời hứa của nhà cung cấp, không phải tiền nằm riêng trong két."
+  - finance: "Cho vay tạo tiền gửi"
+    dev: "Một bút toán kép tạo hai dòng cùng lúc"
+    explanation: "Tài sản (khoản vay) tăng, nợ phải trả (tiền gửi của người vay) tăng cùng số — không cần ai 'chuyển tiền vào trước'."
+  - finance: "Vốn chủ sở hữu"
+    dev: "Dung lượng dự phòng (headroom)"
+    explanation: "Lỗ được trừ vào vốn trước; hết vốn thì nghĩa vụ với người gửi tiền bị đe doạ."
+pretest: [q-f2b-deposit, q-f2b-create]
+applications:
+  - id: app-f2b-statement
+    title: "Đọc bảng cân đối một ngân hàng niêm yết"
+    context: "Báo cáo tài chính công khai của một ngân hàng bạn chọn."
+    task: "Ghi lại (kèm nguồn và kỳ báo cáo): tổng tài sản, cho vay khách hàng, chứng khoán đầu tư, tiền gửi khách hàng, vốn chủ sở hữu, thu nhập lãi thuần. Tính tỉ lệ vốn chủ/tổng tài sản, cho vay/tiền gửi; viết một đoạn nhận xét ngân hàng phụ thuộc nguồn vốn nào."
+    deliverable: "Bảng số có trích nguồn + các tỉ lệ tự tính + nhận xét."
+sources: [boe-money-creation-2014, openstax-accounting, imf-money]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích bảng cân đối của ngân hàng, ngân hàng kiếm tiền từ đâu, và vì sao 'ngân hàng chỉ cho vay lại tiền người gửi' là mô tả chưa đúng."
+  rubric:
+    - { id: sides, criterion: "Tiền gửi là nợ phải trả; cho vay, chứng khoán, dự trữ là tài sản; vốn chủ là phần chênh lệch hấp thụ lỗ" }
+    - { id: nim, criterion: "Thu nhập chủ yếu từ chênh lệch lãi (lãi cho vay − lãi huy động) và phí" }
+    - { id: create, criterion: "Cho vay ghi đồng thời khoản vay và tiền gửi mới — ngân hàng tạo tiền gửi" }
+    - { id: limit, criterion: "Giới hạn bởi chính sách tiền tệ (lãi suất), quy định vốn/thanh khoản và nhu cầu vay, khả năng sinh lời" }
+---
+
+<Callout kind="story" title="Tiền của tôi nằm ở đâu?">
+Một kỹ sư mới vào đội core banking hỏi: "Khi khách gửi 100 triệu, mình cất 100 triệu đó ở đâu?" Trưởng nhóm mở sổ cái: không có "ngăn kéo" nào ghi tên khách. Chỉ có một dòng nợ phải trả 100 triệu đối với khách, và phía tài sản là dự trữ tại ngân hàng trung ương, các khoản cho vay, trái phiếu… Câu hỏi đúng không phải "tiền nằm đâu" mà là "tài sản nào đứng sau nghĩa vụ này".
+</Callout>
+
+## Bảng cân đối: đọc từ góc ngân hàng
+
+Nhắc lại phương trình kế toán (bài bút toán kép): **Tài sản = Nợ phải trả + Vốn chủ sở hữu**.
+
+| Tài sản (ngân hàng sở hữu hoặc được nợ) | Nợ phải trả + Vốn |
+|---|---|
+| Tiền mặt, dự trữ tại ngân hàng trung ương | **Tiền gửi của khách** |
+| **Cho vay khách hàng** | Vay liên ngân hàng, vay ngân hàng trung ương |
+| Chứng khoán (trái phiếu chính phủ…) | Giấy tờ có giá đã phát hành |
+| Tài sản khác | **Vốn chủ sở hữu** |
+
+Điều ngược trực giác: **tiền gửi của bạn là nợ của ngân hàng**. Với bạn nó là tài sản; với ngân hàng nó là nghĩa vụ phải trả khi bạn yêu cầu.
+
+<Quiz id="q-f2b-deposit" />
+
+## Ngân hàng kiếm tiền từ đâu
+
+- **Thu nhập lãi thuần**: lãi thu từ cho vay và chứng khoán trừ lãi trả cho tiền gửi và khoản vay. Chia cho tài sản sinh lãi bình quân ra **biên lãi thuần (NIM)**.
+- **Phí**: thanh toán, thẻ, ngoại hối, bảo lãnh, quản lý tài sản.
+- **Trừ đi**: chi phí hoạt động, **chi phí dự phòng rủi ro tín dụng** (khoản vay có thể không đòi được — chặng F3), thuế.
+
+Vốn chủ sở hữu mỏng so với tổng tài sản — đó là **đòn bẩy**. Đòn bẩy khuếch đại lợi nhuận trên vốn, và cũng khuếch đại lỗ: một tỉ lệ lỗ nhỏ trên tài sản có thể xoá một phần lớn vốn.
+
+<WorkedExample id="we-bank-nim" />
+
+## Cho vay tạo ra tiền gửi
+
+Bài *Money creation in the modern economy* (Bank of England, Quarterly Bulletin 2014 Q1) giải thích: phần lớn tiền trong nền kinh tế hiện đại được tạo ra khi **ngân hàng thương mại cho vay**. Khi duyệt khoản vay 500 triệu, ngân hàng ghi:
+
+- Tài sản: **+500 triệu** khoản vay.
+- Nợ phải trả: **+500 triệu** tiền gửi vào tài khoản người vay.
+
+Không cần ai gửi 500 triệu vào trước. Bài viết bác bỏ hai hiểu lầm phổ biến: ngân hàng **không** chỉ là trung gian cho vay lại tiền người gửi, và **không** "nhân lên" một lượng tiền của ngân hàng trung ương theo hệ số cố định. Tiền gửi là phần chủ yếu của tiền rộng: <Fact id="boe-deposit-share" />.
+
+Ngược lại, khi khoản vay được trả, cả hai dòng cùng giảm — tiền gửi "biến mất".
+
+<Diagram id="dg-loan-creates-deposit" />
+
+<Quiz id="q-f2b-create" />
+
+## Vậy cái gì giới hạn việc tạo tiền?
+
+Cùng bài viết nêu: lượng tiền được tạo ra cuối cùng phụ thuộc **chính sách tiền tệ** — thông thường qua việc đặt lãi suất (bài ngân hàng trung ương). Ngoài ra:
+
+- **Khả năng sinh lời và rủi ro**: cho vay phải có lãi sau chi phí vốn và dự phòng.
+- **Nhu cầu vay** của hộ gia đình, doanh nghiệp.
+- **Quy định**: vốn tối thiểu và tỉ lệ thanh khoản (bài Basel, chặng F3).
+- **Cạnh tranh tiền gửi**: tiền gửi người vay nhận được thường chuyển sang ngân hàng khác; ngân hàng cho vay phải có nguồn dự trữ/thanh khoản để thanh toán.
+
+<Quiz id="q-f2b-limit" />
+
+<Callout kind="field" title="Sổ cái phản ánh đúng bản chất này">
+Trong hệ thống core banking tôi từng đọc, giải ngân khoản vay không phải là "chuyển tiền từ quỹ ngân hàng sang khách" mà là một bút toán: ghi Nợ tài khoản cho vay, ghi Có tài khoản tiền gửi của khách. Hiểu điều đó giúp tránh một lỗi thiết kế hay gặp ở người mới: cố mô hình hoá một "quỹ tiền" bị trừ dần mỗi lần giải ngân. Giới hạn thật nằm ở các kiểm tra hạn mức, vốn và thanh khoản — không ở một con số "tiền còn trong két".
+</Callout>

@@ -1,0 +1,20 @@
+examples:
+  - id: we-duration-gap
+    title: "Khe hở duration và tác động lên vốn chủ (ngân hàng giả định)"
+    conceptId: asset-liability-management
+    problem: "Dữ liệu tổng hợp (mô phỏng): tài sản 2.000 tỉ, duration 6; nợ 1.840 tỉ, duration 0,8; vốn chủ 160 tỉ. Lãi suất tăng 2 điểm %. Ước lượng thay đổi giá trị vốn chủ."
+    steps:
+      - text: "L/A = 1.840 / 2.000 = 0,92."
+      - text: "DGAP = 6 − 0,92 × 0,8 = 6 − 0,736 = 5,264."
+        faded: true
+        prompt: "DGAP bằng bao nhiêu? (3 chữ số thập phân)"
+        answer: 5.264
+        tolerance: { kind: abs, value: 0.001 }
+      - text: "ΔE ≈ −DGAP × A × Δy = −5,264 × 2.000 × 0,02 ≈ −210,6 tỉ."
+        faded: true
+        prompt: "Vốn chủ thay đổi bao nhiêu tỉ? (1 chữ số thập phân, dấu âm nếu giảm)"
+        answer: -210.6
+        tolerance: { kind: abs, value: 0.1 }
+        unit: "tỉ"
+      - text: "Mức giảm ước tính vượt toàn bộ vốn chủ 160 tỉ: về giá trị kinh tế, vốn chủ âm — dù sổ sách theo giá gốc có thể chưa ghi nhận."
+    takeaway: "Ước lượng tuyến tính bằng duration là xấp xỉ bậc một; nhưng ngay cả xấp xỉ cũng đủ cho thấy mức nhạy cảm nguy hiểm khi tài sản dài và vốn mỏng."

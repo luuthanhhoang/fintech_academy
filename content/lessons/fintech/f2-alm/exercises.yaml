@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2a-repricing
+    conceptId: asset-liability-management
+    prompt: "Ngân hàng giả định có 300 tỉ tài sản và 700 tỉ nợ được định giá lại trong 12 tháng tới. Lãi suất tăng đồng loạt 2 điểm %, giữ nguyên trong năm. Ước lượng thay đổi thu nhập lãi thuần 12 tháng (giả định đơn giản: định giá lại ngay đầu kỳ)."
+    hint: "Khe hở định giá lại = tài sản nhạy lãi suất − nợ nhạy lãi suất."
+    solution: "Khe hở = 300 − 700 = −400 tỉ. ΔNII ≈ −400 × 2% = −8 tỉ một năm. Khe hở âm: lãi suất tăng làm thu nhập lãi thuần giảm. Thực tế cần thêm giả định tốc độ chuyển lãi suất sang tiền gửi (không phải 100% ngay)."
+  - id: ex-f2a-plan
+    conceptId: asset-liability-management
+    prompt: "Bạn được giao giảm khe hở duration của ngân hàng trong câu hỏi DGAP (4,08). Đề xuất ba hướng và đánh đổi của mỗi hướng."
+    hint: "Phía tài sản, phía nợ, công cụ phái sinh."
+    solution: "(1) Rút ngắn duration tài sản: bán/không tái đầu tư trái phiếu dài, ưu tiên cho vay lãi thả nổi — giảm lợi suất. (2) Kéo dài duration nợ: huy động có kỳ hạn dài, phát hành giấy tờ có giá dài hạn — chi phí vốn cao hơn. (3) Hoán đổi lãi suất trả cố định nhận thả nổi — có chi phí, rủi ro đối tác và yêu cầu ký quỹ. Mọi hướng đều đổi một phần lợi nhuận lấy độ ổn định; quyết định theo giới hạn rủi ro hội đồng ALCO đặt ra."

@@ -1,0 +1,101 @@
+---
+id: f2-alm
+track: fintech
+stage: f2
+order: 1
+title: { vi: "Lệch kỳ hạn và quản lý tài sản–nợ (ALM)", en: "Maturity mismatch and asset–liability management" }
+summary: "Ngân hàng huy động ngắn hạn (tiền gửi rút được bất cứ lúc nào) và cho vay, đầu tư dài hạn. Lệch kỳ hạn đó tạo ra lợi nhuận và cũng tạo ra hai rủi ro gắn chặt nhau: rủi ro lãi suất (giá trị tài sản dài hạn giảm khi lãi suất tăng, chi phí vốn tăng nhanh hơn thu nhập) và rủi ro thanh khoản (bị buộc bán tài sản lúc giá thấp). ALM đo hai rủi ro này bằng khe hở định giá lại, khe hở duration, độ nhạy thu nhập lãi và giá trị kinh tế vốn chủ."
+concepts: [asset-liability-management]
+estMinutes: 40
+whyQuestion: "Danh mục trái phiếu chính phủ gần như không có rủi ro vỡ nợ. Vậy vì sao một ngân hàng nắm nhiều trái phiếu loại này vẫn có thể sụp đổ?"
+facts:
+  - id: svb-closed
+    text: "Cơ quan quản lý bang California (DFPI) tiếp quản Silicon Valley Bank và chỉ định FDIC làm bên tiếp nhận vào ngày"
+    value: "10/03/2023"
+    sourceId: dfpi-svb-2023
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Lệch kỳ hạn"
+    dev: "Cache dài hạn được nuôi bằng nguồn dữ liệu có thể biến mất bất cứ lúc nào"
+    explanation: "Chạy tốt khi ổn định; khi nguồn rút đi cùng lúc, phải 'xả' tài sản dài hạn ở giá xấu."
+  - finance: "Khe hở duration"
+    dev: "Độ nhạy của hệ thống với một tham số đầu vào (đạo hàm)"
+    explanation: "Cho biết vốn chủ thay đổi bao nhiêu % khi lãi suất dịch 1 điểm — một chỉ số cảnh báo sớm."
+  - finance: "Kịch bản sốc lãi suất"
+    dev: "Load test / chaos test với kịch bản cực đoan"
+    explanation: "Không dự báo lãi suất; hỏi 'nếu lãi suất tăng 2–3 điểm thì sao' và đo hậu quả."
+pretest: [q-f2a-hold, q-f2a-gap]
+applications:
+  - id: app-f2a-dashboard
+    title: "Dashboard ALM tối thiểu"
+    context: "Bạn làm kỹ sư dữ liệu cho một ngân hàng (hoặc dùng dữ liệu tổng hợp tự tạo, ghi rõ là mô phỏng)."
+    task: "Từ bảng tài sản và nợ theo kỳ hạn định giá lại, tính khe hở định giá lại theo từng khung thời gian, khe hở duration, thay đổi thu nhập lãi 12 tháng và thay đổi giá trị vốn chủ dưới các kịch bản ±100, ±200 điểm cơ bản; thêm chỉ số tập trung tiền gửi (tỉ trọng của nhóm khách hàng lớn nhất)."
+    deliverable: "Notebook hoặc dashboard kèm ghi chú giả định hành vi tiền gửi."
+cases: [svb-2023]
+scenarios: [alm-rate-shock]
+sources: [sec-interest-rate-risk, frb-svb-review-2023, dfpi-svb-2023, openstax-finance]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao lệch kỳ hạn vừa là nguồn lợi nhuận vừa là nguồn rủi ro, và hai thước đo ALM chính."
+  rubric:
+    - { id: mismatch, criterion: "Huy động ngắn, cho vay/đầu tư dài: lãi suất dài thường cao hơn nên có chênh lệch" }
+    - { id: rate, criterion: "Lãi suất tăng: giá trị tài sản dài giảm (duration), chi phí vốn tăng nhanh hơn thu nhập" }
+    - { id: liquidity, criterion: "Nếu tiền gửi rút nhanh, phải bán tài sản lỗ — lỗ chưa thực hiện thành lỗ thật" }
+    - { id: metrics, criterion: "Đo bằng khe hở định giá lại / độ nhạy thu nhập lãi (NII) và khe hở duration / giá trị kinh tế vốn chủ (EVE) theo kịch bản" }
+---
+
+<Callout kind="story" title="'Giữ tới đáo hạn thì không lỗ'">
+Một ngân hàng giả định đầu tư phần lớn tiền gửi vào trái phiếu chính phủ 10 năm khi lãi suất thấp. Lãi suất tăng mạnh; giá trái phiếu giảm. Ban điều hành yên tâm: "Ta giữ tới đáo hạn, sổ sách không ghi lỗ." Rồi một nhóm khách hàng doanh nghiệp lớn bắt đầu rút tiền cùng lúc.
+</Callout>
+
+## Lệch kỳ hạn: nghề của ngân hàng
+
+Bài trước: tiền gửi là nợ, cho vay và chứng khoán là tài sản. Hai phía có **kỳ hạn** khác nhau:
+
+- Nợ: tiền gửi không kỳ hạn rút được ngay, tiền gửi có kỳ hạn ngắn.
+- Tài sản: vay mua nhà, vay doanh nghiệp, trái phiếu nhiều năm.
+
+Lãi suất dài hạn thường cao hơn ngắn hạn, nên "vay ngắn cho vay dài" tạo chênh lệch — đồng thời tạo hai rủi ro đi đôi với nhau.
+
+## Rủi ro 1 — Lãi suất
+
+**Góc thu nhập (NII)**: khi lãi suất tăng, nợ ngắn hạn được **định giá lại** (trả lãi cao hơn) nhanh hơn tài sản lãi cố định dài hạn → thu nhập lãi thuần co lại.
+
+**Góc giá trị (EVE)**: giá trái phiếu và khoản vay lãi cố định **giảm** khi lãi suất tăng (bài trái phiếu), mức giảm xấp xỉ duration × thay đổi lãi suất. Tài sản dài hơn nợ thì giá trị tài sản giảm nhiều hơn giá trị nợ → **giá trị kinh tế của vốn chủ** giảm.
+
+**Khe hở duration**: DGAP = D_A − (L/A) × D_L. Thay đổi vốn chủ xấp xỉ −DGAP × A × Δy. DGAP dương lớn = vốn chủ rất nhạy với lãi suất tăng.
+
+<WorkedExample id="we-duration-gap" />
+
+<Quiz id="q-f2a-gap" />
+
+## Rủi ro 2 — Thanh khoản
+
+Lỗ trên giá trái phiếu là **lỗ chưa thực hiện** chừng nào còn giữ. "Giữ tới đáo hạn" chỉ đúng khi **không bị buộc bán**. Nếu tiền gửi rút nhanh hơn tiền vào, ngân hàng phải lấy tiền mặt — bán tài sản ở giá thấp biến lỗ chưa thực hiện thành **lỗ thật**, có thể ăn hết vốn, và tin về khoản lỗ có thể khiến rút tiền tăng tốc.
+
+Các yếu tố làm rủi ro rút tiền lớn hơn: tiền gửi **vượt mức bảo hiểm**, **tập trung** vào một nhóm khách hàng liên hệ chặt với nhau, kênh rút tiền số rất nhanh.
+
+<Quiz id="q-f2a-hold" />
+
+## Câu chuyện thật: Silicon Valley Bank
+
+<Fact id="svb-closed" />. Trong rà soát công bố ngày 28/04/2023, Fed kết luận trước hết rằng hội đồng quản trị và ban điều hành SVB đã không quản trị được rủi ro của ngân hàng. Đọc chi tiết dòng thời gian và nguyên nhân trong case:
+
+<Case id="svb-2023" />
+
+## Công cụ ALM
+
+- **Giới hạn** độ nhạy NII và EVE theo các kịch bản sốc lãi suất, báo cáo định kỳ cho hội đồng ALCO.
+- **Phòng ngừa**: hoán đổi lãi suất (đổi lãi cố định sang thả nổi), rút ngắn kỳ hạn danh mục.
+- **Giả định hành vi tiền gửi**: tiền gửi không kỳ hạn "ổn định" tới đâu — giả định này phải được kiểm tra, vì nó có thể sai đúng lúc tệ nhất.
+- **Đệm thanh khoản** và nguồn vay dự phòng đã thử nghiệm (bài rủi ro thanh khoản, chặng F3).
+
+Thử đóng vai trong một tình huống giả định:
+
+<Scenario id="alm-rate-shock" />
+
+<Callout kind="field" title="Giả định về tiền gửi là dòng code rủi ro nhất">
+Khi xem mô hình ALM, chỗ tôi soi kỹ nhất không phải công thức duration mà là bảng giả định "tiền gửi không kỳ hạn sẽ ở lại bao lâu". Một con số nhập tay, ít ai xem lại, quyết định gần như toàn bộ kết quả EVE. Tôi muốn thấy nó có nguồn (dữ liệu lịch sử nào), có kịch bản căng thẳng riêng cho nhóm khách hàng tập trung, và có ngày xem lại gần nhất.
+</Callout>

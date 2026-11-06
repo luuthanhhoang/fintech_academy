@@ -1,0 +1,31 @@
+items:
+  - id: q-f2w-balance
+    type: mcq
+    conceptId: digital-wallets
+    prompt: "Bạn có 2 triệu đồng số dư trong một ví giữ số dư. Trên sổ sách của công ty ví, khoản này là gì?"
+    options:
+      - { id: a, text: "Doanh thu của công ty ví" }
+      - { id: b, text: "Nghĩa vụ phải trả của công ty ví đối với bạn, được đảm bảo bằng tiền tại tài khoản ngân hàng đối tác" }
+      - { id: c, text: "Tiền gửi của bạn tại ngân hàng trung ương" }
+    correct: [b]
+    explanation: "Giống tiền gửi ngân hàng, số dư ví là nghĩa vụ của nhà cung cấp; tài sản đứng sau là tiền đảm bảo tại ngân hàng."
+  - id: q-f2w-consent
+    type: mcq
+    conceptId: open-banking
+    prompt: "Trong luồng open banking đúng chuẩn, ứng dụng thứ ba có được nhận mật khẩu ngân hàng của khách không?"
+    options:
+      - { id: a, text: "Có, để đăng nhập thay khách" }
+      - { id: b, text: "Không; khách xác thực trực tiếp với ngân hàng và ngân hàng cấp cho ứng dụng một token có phạm vi và thời hạn" }
+      - { id: c, text: "Có, nhưng phải mã hoá" }
+    correct: [b]
+    explanation: "Open banking thay việc chia sẻ mật khẩu (screen scraping) bằng ủy quyền qua API."
+  - id: q-f2w-scope
+    type: mcq
+    conceptId: open-banking
+    prompt: "Ứng dụng chấm điểm tín dụng chỉ cần lịch sử giao dịch 12 tháng. Yêu cầu consent nào phù hợp nguyên tắc tối thiểu?"
+    options:
+      - { id: a, text: "Toàn quyền đọc mọi tài khoản và khởi tạo thanh toán, không thời hạn" }
+      - { id: b, text: "Chỉ quyền đọc lịch sử giao dịch của tài khoản khách chọn, có thời hạn, ghi rõ mục đích" }
+      - { id: c, text: "Quyền khởi tạo thanh toán để thu phí dịch vụ" }
+    correct: [b]
+    explanation: "Phạm vi, thời hạn và mục đích tối thiểu giảm rủi ro khi token bị lộ và đúng tinh thần bảo vệ dữ liệu."

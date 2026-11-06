@@ -1,0 +1,29 @@
+items:
+  - id: q-f2p-net
+    type: numeric
+    conceptId: payment-systems
+    prompt: "Trong một chu kỳ, ngân hàng A phải trả B tổng 900 tỉ, B phải trả A tổng 750 tỉ. Với quyết toán ròng song phương, cần chuyển bao nhiêu tỉ? (So với RTGS cần 1.650 tỉ dòng chảy.)"
+    answer: 150
+    tolerance: { kind: abs, value: 0 }
+    unit: "tỉ"
+    explanation: "Chỉ chuyển phần chênh 900 − 750 = 150 tỉ từ A sang B — tiết kiệm thanh khoản, đổi lại nghĩa vụ treo trong chu kỳ."
+  - id: q-f2p-instant
+    type: mcq
+    conceptId: instant-payments
+    prompt: "Người nhận thấy tiền trong 3 giây qua một hệ thống chuyển tiền tức thì quyết toán liên ngân hàng theo chu kỳ. Nhận định nào đúng?"
+    options:
+      - { id: a, text: "Hai ngân hàng đã quyết toán xong ngay trong 3 giây đó" }
+      - { id: b, text: "Ngân hàng nhận đã báo có cho khách; nghĩa vụ giữa hai ngân hàng sẽ được quyết toán ở cuối chu kỳ, trong giới hạn hạn mức/tài sản bảo đảm" }
+      - { id: c, text: "Giao dịch vẫn có thể bị người gửi huỷ ngang trước khi quyết toán" }
+    correct: [b]
+    explanation: "Trải nghiệm tức thì và quyết toán liên ngân hàng là hai lớp khác nhau; rủi ro trong khoảng chờ được giới hạn bằng quy tắc của hệ thống."
+  - id: q-f2p-timeout
+    type: mcq
+    conceptId: instant-payments
+    prompt: "Dịch vụ của bạn gửi lệnh chuyển tiền tức thì nhưng hết thời gian chờ mà không nhận phản hồi. Cách xử lý đúng?"
+    options:
+      - { id: a, text: "Gửi lại lệnh mới ngay với mã giao dịch mới" }
+      - { id: b, text: "Đánh dấu 'chưa rõ', tra soát trạng thái bằng mã giao dịch gốc; chỉ hoàn tiền hoặc xác nhận khi có kết quả" }
+      - { id: c, text: "Báo thất bại và hoàn tiền cho khách ngay" }
+    correct: [b]
+    explanation: "Lệnh có thể đã thành công; gửi lại tạo chuyển trùng, hoàn tiền vội tạo mất tiền. Tra soát bằng mã gốc."

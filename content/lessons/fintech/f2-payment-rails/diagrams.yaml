@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-instant-payment
+    kind: sequence
+    title: "Một lệnh chuyển tiền tức thì đi qua những đâu"
+    caption: "Mô hình khái niệm chung, không mô tả quy trình cụ thể của một hệ thống nào; thời điểm quyết toán liên ngân hàng tuỳ thiết kế (ngay hoặc theo chu kỳ)."
+    actors:
+      - { id: payer, label: "Người gửi" }
+      - { id: bank-a, label: "Ngân hàng gửi" }
+      - { id: switch, label: "Hệ thống chuyển mạch" }
+      - { id: bank-b, label: "Ngân hàng nhận" }
+      - { id: settle, label: "Tài khoản quyết toán" }
+    steps:
+      - { from: payer, to: bank-a, label: "Lệnh chuyển + xác thực" }
+      - { from: bank-a, to: bank-a, label: "Kiểm tra gian lận, giữ tiền" }
+      - { from: bank-a, to: switch, label: "Gửi lệnh (mã giao dịch)" }
+      - { from: switch, to: bank-b, label: "Chuyển tiếp lệnh" }
+      - { from: bank-b, to: bank-b, label: "Báo có người nhận" }
+      - { from: bank-b, to: switch, label: "Chấp nhận" }
+      - { from: switch, to: bank-a, label: "Xác nhận thành công" }
+      - { from: switch, to: settle, label: "Quyết toán nghĩa vụ A→B (ngay hoặc cuối chu kỳ)" }

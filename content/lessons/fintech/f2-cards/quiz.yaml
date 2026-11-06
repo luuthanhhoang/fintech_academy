@@ -1,0 +1,31 @@
+items:
+  - id: q-f2c-auth
+    type: mcq
+    conceptId: card-payments
+    prompt: "Ngay sau khi máy POS báo 'giao dịch được chấp nhận', điều gì đã xảy ra?"
+    options:
+      - { id: a, text: "Tiền đã chuyển từ ngân hàng phát hành sang tài khoản của đơn vị bán" }
+      - { id: b, text: "Ngân hàng phát hành đã chấp nhận và giữ một số tiền khả dụng của chủ thẻ; bù trừ và quyết toán xảy ra sau" }
+      - { id: c, text: "Mạng thẻ đã trả tiền cho đơn vị bán" }
+    correct: [b]
+    explanation: "Uỷ quyền chỉ giữ tiền; tiền chỉ di chuyển giữa các ngân hàng ở pha quyết toán."
+  - id: q-f2c-who
+    type: mcq
+    conceptId: card-payments
+    prompt: "Bên nào quyết định chấp nhận hay từ chối một giao dịch thẻ trong pha uỷ quyền?"
+    options:
+      - { id: a, text: "Ngân hàng thanh toán (acquirer)" }
+      - { id: b, text: "Ngân hàng phát hành (issuer)" }
+      - { id: c, text: "Đơn vị bán hàng" }
+    correct: [b]
+    explanation: "Issuer giữ quan hệ với chủ thẻ, biết hạn mức/số dư và chấm điểm gian lận, nên ra quyết định."
+  - id: q-f2c-refund
+    type: mcq
+    conceptId: card-payments
+    prompt: "Khách huỷ đơn trước khi cửa hàng giao hàng; cửa hàng mới uỷ quyền, chưa chốt. Thao tác đúng?"
+    options:
+      - { id: a, text: "Tạo một giao dịch hoàn tiền (refund)" }
+      - { id: b, text: "Huỷ uỷ quyền (void) để giải phóng khoản giữ" }
+      - { id: c, text: "Không làm gì, khoản giữ sẽ tự hết hạn" }
+    correct: [b]
+    explanation: "Chưa chốt thì chưa có tiền để hoàn; void giải phóng khoản giữ ngay thay vì để khách chờ hết hạn."

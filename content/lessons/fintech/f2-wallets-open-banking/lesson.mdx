@@ -1,0 +1,98 @@
+---
+id: f2-wallets-open-banking
+track: fintech
+stage: f2
+order: 4
+title: { vi: "Ví điện tử và open banking", en: "Digital wallets and open banking" }
+summary: "Có hai kiểu ví rất khác nhau: ví 'chuyển qua' lưu token của thẻ hay tài khoản ngân hàng và không giữ tiền, và ví giữ số dư — số dư đó là nghĩa vụ của nhà cung cấp ví, được đảm bảo bằng tiền gửi tại ngân hàng đối tác. Open banking cho phép bên thứ ba, với sự đồng ý của khách hàng, đọc dữ liệu tài khoản hoặc khởi tạo thanh toán qua API chuẩn. Với kỹ sư, cốt lõi là mô hình sổ sách đúng, quản lý đồng ý (consent) và bảo mật API."
+concepts: [digital-wallets, open-banking]
+estMinutes: 40
+whyQuestion: "Số dư 2 triệu trong ví điện tử của bạn: đó là tiền của ai, nằm ở đâu, và nếu công ty ví gặp sự cố thì sao?"
+facts:
+  - id: vn-tt64
+    text: "Thông tư 64/2024/TT-NHNN quy định về triển khai Open API trong ngành Ngân hàng có hiệu lực từ"
+    value: "01/03/2025"
+    sourceId: sbv-tt64-2024
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Ví giữ số dư"
+    dev: "Sổ cái nội bộ phải khớp với một tài khoản ngân hàng thật"
+    explanation: "Tổng số dư mọi ví (nợ) phải được đảm bảo bởi tiền tại tài khoản đảm bảo (tài sản) — đối soát hằng ngày."
+  - finance: "Open banking"
+    dev: "OAuth với phạm vi quyền (scope) và thời hạn"
+    explanation: "Khách cấp cho ứng dụng thứ ba quyền đọc tài khoản hoặc khởi tạo thanh toán, thu hồi được bất cứ lúc nào."
+  - finance: "Khởi tạo thanh toán qua API"
+    dev: "Gọi API chuyển tiền thay mặt người dùng sau khi họ xác thực ở ngân hàng"
+    explanation: "Ứng dụng thứ ba không bao giờ thấy mật khẩu ngân hàng; ngân hàng tự xác thực khách."
+pretest: [q-f2w-balance, q-f2w-consent]
+applications:
+  - id: app-f2w-consent
+    title: "Mô hình dữ liệu cho consent open banking"
+    context: "Ứng dụng quản lý tài chính cá nhân của bạn kết nối tài khoản ngân hàng qua Open API."
+    task: "Thiết kế bảng consent (khách, ngân hàng, phạm vi dữ liệu, mục đích, thời điểm cấp, thời hạn, trạng thái, thời điểm thu hồi); luồng làm mới token; xử lý khi khách thu hồi ở phía ngân hàng; chính sách xoá dữ liệu đã lấy khi consent hết hiệu lực; nhật ký truy cập để khách xem lại."
+    deliverable: "Schema + sơ đồ luồng cấp/thu hồi + danh sách kiểm thử."
+sources: [eu-psd2-2015, sbv-tt64-2024, cfpb-1033-2024, napas-vietqr]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "So sánh hai mô hình ví và giải thích open banking hoạt động thế nào từ góc nhìn API và quyền."
+  rubric:
+    - { id: models, criterion: "Ví chuyển qua (token thẻ/tài khoản, không giữ tiền) vs ví giữ số dư (nghĩa vụ của nhà cung cấp)" }
+    - { id: safeguard, criterion: "Số dư ví phải được đảm bảo bằng tiền tại ngân hàng đối tác; đối soát tổng số dư với tài khoản đảm bảo" }
+    - { id: ob, criterion: "Open banking: đọc dữ liệu tài khoản và khởi tạo thanh toán qua API theo đồng ý của khách" }
+    - { id: consent, criterion: "Consent có phạm vi, thời hạn, thu hồi được; xác thực tại ngân hàng; không chia sẻ mật khẩu" }
+---
+
+<Callout kind="story" title="Lệch 3 triệu mỗi đêm">
+Một ví điện tử giả định có hàng nghìn khách. Mỗi đêm, tổng số dư trên sổ cái nội bộ được so với số dư tài khoản đảm bảo tại ngân hàng đối tác — và lệch vài triệu, khi dương khi âm. Đội kỹ thuật coi là "do giờ chốt khác nhau" và bỏ qua. Ba tháng sau, kiểm toán phát hiện một lỗi ghi phí hoàn tiền đã tích luỹ thành con số không thể bỏ qua.
+</Callout>
+
+## Hai kiểu ví
+
+| | Ví chuyển qua (pass-through) | Ví giữ số dư (stored value) |
+|---|---|---|
+| Giữ tiền không? | Không — lưu **token** của thẻ hoặc tài khoản | Có — khách nạp tiền vào ví |
+| Khi thanh toán | Kích hoạt giao dịch thẻ/tài khoản bên dưới (bài thẻ, bài đường ray) | Ghi giảm số dư ví của người trả, tăng của người nhận trên sổ nội bộ |
+| Số dư là | Số dư ở ngân hàng | **Nghĩa vụ của nhà cung cấp ví** đối với khách |
+| Rủi ro chính | Bảo mật token, gian lận | Đảm bảo số dư, đối soát, thanh khoản |
+
+Với ví giữ số dư, quy định ở nhiều nơi yêu cầu tiền của khách được **tách riêng và đảm bảo** (ví dụ ở tài khoản đảm bảo tại ngân hàng đối tác), không dùng cho hoạt động của công ty. Quy định cụ thể khác nhau theo nước và thay đổi theo thời gian — kiểm tra văn bản hiện hành nơi bạn hoạt động.
+
+Bất biến kỹ thuật: **tổng số dư mọi ví trên sổ nội bộ = số dư tài khoản đảm bảo** (sau khi tính các giao dịch đang trên đường). Đó là đối soát mỗi ngày — và đúng thứ câu chuyện đầu bài bỏ qua.
+
+<Quiz id="q-f2w-balance" />
+
+<WorkedExample id="we-wallet-recon" />
+
+## Open banking
+
+**Open banking** cho phép bên thứ ba được khách hàng cho phép:
+
+- **Đọc dữ liệu tài khoản** (số dư, lịch sử giao dịch) — cho ứng dụng quản lý tài chính, chấm điểm tín dụng.
+- **Khởi tạo thanh toán** từ tài khoản của khách — thay cho nhập thẻ.
+
+Các khung pháp lý tiêu biểu:
+
+- **EU — PSD2** (Chỉ thị 2015/2366): đưa dịch vụ khởi tạo thanh toán và dịch vụ thông tin tài khoản vào khung quản lý, kèm yêu cầu **xác thực khách hàng mạnh**.
+- **Việt Nam** — Thông tư 64/2024/TT-NHNN về Open API: <Fact id="vn-tt64" />; quy định danh mục Open API cơ bản và đặc tả kỹ thuật.
+- **Mỹ** — quy định về quyền dữ liệu tài chính cá nhân (Mục 1033) được CFPB chốt tháng 10/2024; theo các nguồn thứ cấp, quy định này sau đó bị khởi kiện và đang được xem xét lại, nên trạng thái hiện hành chưa kiểm chứng được.
+
+<Quiz id="q-f2w-consent" />
+
+## Luồng đồng ý điển hình
+
+<Diagram id="dg-open-banking-consent" />
+
+Nguyên tắc thiết kế:
+
+- **Khách xác thực tại ngân hàng**, không đưa mật khẩu ngân hàng cho bên thứ ba (khác với "screen scraping" kiểu cũ). Về kỹ thuật, luồng này giống <Term id="oauth-oidc">OAuth</Term>.
+- **Phạm vi tối thiểu và thời hạn**: chỉ xin dữ liệu cần cho mục đích đã nói; consent có ngày hết hạn.
+- **Thu hồi được** ở cả hai phía; khi thu hồi, dừng truy cập và xử lý dữ liệu đã lấy theo chính sách.
+- **Nhật ký**: ai truy cập dữ liệu gì, khi nào.
+
+<Quiz id="q-f2w-scope" />
+
+<Callout kind="field" title="Đối soát ví là chỉ số sức khoẻ, không phải việc kế toán">
+Tôi đặt chênh lệch giữa tổng số dư ví và tài khoản đảm bảo lên dashboard vận hành, cạnh tỉ lệ lỗi API, với ngưỡng cảnh báo bằng 0 sau khi trừ các giao dịch đang trên đường có danh sách cụ thể. Mọi chênh lệch không giải thích được bằng một danh sách giao dịch là sự cố, kể cả khi chỉ vài nghìn đồng — vì lỗi nhỏ lặp lại mỗi ngày mới là loại nguy hiểm.
+</Callout>

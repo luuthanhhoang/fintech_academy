@@ -1,0 +1,29 @@
+items:
+  - id: q-f2a-hold
+    type: mcq
+    conceptId: asset-liability-management
+    prompt: "Ngân hàng giữ trái phiếu chính phủ đang lỗ chưa thực hiện và dự định giữ tới đáo hạn. Khi nào khoản lỗ trở thành lỗ thật?"
+    options:
+      - { id: a, text: "Không bao giờ, vì trái phiếu chính phủ không vỡ nợ" }
+      - { id: b, text: "Khi ngân hàng buộc phải bán trước hạn để có tiền mặt, ví dụ vì tiền gửi bị rút nhanh" }
+      - { id: c, text: "Chỉ khi lãi suất giảm" }
+    correct: [b]
+    explanation: "Rủi ro lãi suất gặp rủi ro thanh khoản: bị buộc bán là hiện thực hoá lỗ."
+  - id: q-f2a-gap
+    type: numeric
+    conceptId: asset-liability-management
+    prompt: "Ngân hàng giả định: tài sản 1.000 tỉ, duration tài sản 5; nợ 920 tỉ, duration nợ 1. Khe hở duration DGAP = D_A − (L/A) × D_L bằng bao nhiêu?"
+    answer: 4.08
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "5 − 0,92 × 1 = 4,08. Lãi suất tăng 1 điểm % → vốn chủ giảm khoảng 4,08% × 1.000 = 40,8 tỉ, tức hơn một nửa vốn 80 tỉ."
+  - id: q-f2a-risk-factors
+    type: mcq
+    conceptId: asset-liability-management
+    prompt: "Đặc điểm nào làm rủi ro rút tiền ồ ạt lớn hơn? (chọn tất cả)"
+    options:
+      - { id: a, text: "Phần lớn tiền gửi vượt mức được bảo hiểm" }
+      - { id: b, text: "Tiền gửi tập trung vào một nhóm khách hàng có liên hệ chặt với nhau" }
+      - { id: c, text: "Khách hàng rút tiền được tức thì qua kênh số" }
+      - { id: d, text: "Tiền gửi phân tán ở rất nhiều hộ gia đình nhỏ, được bảo hiểm" }
+    correct: [a, b, c]
+    explanation: "Không được bảo hiểm, tập trung và rút nhanh làm hành vi bầy đàn mạnh và nhanh hơn."

@@ -1,0 +1,92 @@
+---
+id: f2-payment-rails
+track: fintech
+stage: f2
+order: 2
+title: { vi: "Đường ray thanh toán: RTGS, bù trừ ròng và chuyển tiền tức thì", en: "Payment rails: RTGS, net settlement and instant payments" }
+summary: "Chuyển tiền giữa hai ngân hàng thực chất là chuyển dự trữ giữa tài khoản của chúng tại ngân hàng trung ương (hoặc một tổ chức thanh toán). Hai kiểu thiết kế: quyết toán tổng tức thời (RTGS) xử lý từng lệnh ngay bằng tiền ngân hàng trung ương; quyết toán ròng gom lệnh rồi chỉ chuyển phần chênh. Hệ thống chuyển tiền tức thì 24/7 cho người dùng cuối thấy tiền đến trong vài giây, và đặt ra yêu cầu vận hành không ngừng, chống gian lận thời gian thực."
+concepts: [payment-systems, instant-payments]
+estMinutes: 40
+whyQuestion: "Bạn chuyển khoản lúc 23 giờ Chủ nhật, người nhận thấy tiền sau vài giây. Lúc đó hai ngân hàng đã thật sự chuyển tiền cho nhau chưa — và nếu chưa thì ai đang chịu rủi ro?"
+facts:
+  - id: fednow-live
+    text: "Dịch vụ chuyển tiền tức thì FedNow của Cục Dự trữ Liên bang Mỹ đi vào hoạt động ngày"
+    value: "20/07/2023, thiết kế xử lý liên tục 24x7x365"
+    sourceId: fed-fednow-about
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "RTGS"
+    dev: "Ghi đồng bộ từng giao dịch vào DB chính"
+    explanation: "Mỗi lệnh quyết toán ngay, cuối cùng và không huỷ ngang — đổi lại cần nhiều thanh khoản."
+  - finance: "Quyết toán ròng hoãn lại"
+    dev: "Gom batch rồi flush định kỳ"
+    explanation: "Tiết kiệm thanh khoản, nhưng trong khoảng giữa các lần flush có nghĩa vụ chưa thanh toán (rủi ro)."
+  - finance: "Tính cuối cùng (finality)"
+    dev: "Commit đã durable, không rollback được"
+    explanation: "Thời điểm pháp lý mà khoản thanh toán không thể bị đảo ngược — mọi thiết kế sổ sách phải biết nó nằm ở đâu."
+pretest: [q-f2p-net, q-f2p-instant]
+applications:
+  - id: app-f2p-states
+    title: "Máy trạng thái cho một lệnh chuyển tiền"
+    context: "Bạn xây dịch vụ chuyển tiền trong một ứng dụng ngân hàng hoặc ví kết nối hệ thống chuyển tiền tức thì."
+    task: "Thiết kế máy trạng thái (khởi tạo → giữ tiền → gửi đi → được chấp nhận/bị từ chối → quyết toán → đối soát) kèm hành vi khi hết thời gian chờ phản hồi; xác định bước nào ghi sổ, bước nào có thể đảo ngược; viết test cho trường hợp phản hồi đến sau khi đã hết thời gian chờ."
+    deliverable: "Sơ đồ trạng thái + bảng bút toán theo từng chuyển trạng thái + bộ test."
+sources: [bis-pfmi-summary, fed-fednow-about, napas-vietqr, boe-money-creation-2014]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho đồng nghiệp sự khác biệt giữa RTGS, quyết toán ròng và chuyển tiền tức thì cho người dùng cuối."
+  rubric:
+    - { id: reserves, criterion: "Chuyển tiền liên ngân hàng = chuyển dự trữ/tài khoản quyết toán giữa các ngân hàng" }
+    - { id: rtgs, criterion: "RTGS: từng lệnh, ngay lập tức, cuối cùng; tốn thanh khoản" }
+    - { id: net, criterion: "Ròng: gom và bù trừ, chuyển phần chênh định kỳ; tiết kiệm thanh khoản nhưng có rủi ro trong khoảng chờ" }
+    - { id: instant, criterion: "Tức thì: báo có cho người nhận trong vài giây 24/7; quyết toán liên ngân hàng có thể ngay hoặc theo chu kỳ; đòi hỏi vận hành liên tục và chống gian lận tức thời" }
+---
+
+<Callout kind="story" title="Tiền đã đến, nhưng đã 'đến' thật chưa?">
+Một kỹ sư ví điện tử nhận ticket: khách chuyển tiền đi, ứng dụng báo "thành công", người nhận thấy tiền — nhưng sáng hôm sau file đối soát của đối tác thiếu đúng giao dịch đó. Cả đội tranh cãi: tiền đã chuyển hay chưa? Câu trả lời phụ thuộc vào câu hỏi mà không ai trong đội từng đặt ra: **quyết toán** xảy ra ở đâu và khi nào.
+</Callout>
+
+## Chuyển tiền giữa ngân hàng là chuyển gì
+
+Tiền gửi là nợ của từng ngân hàng (bài trước). Khi bạn ở ngân hàng A chuyển cho người ở ngân hàng B:
+
+- A giảm tiền gửi của bạn; B tăng tiền gửi người nhận.
+- Để B chịu ghi tăng nợ, A phải chuyển cho B một tài sản tương ứng: thường là **dự trữ tại ngân hàng trung ương** (tiền của ngân hàng trung ương), hoặc số dư tại một tổ chức thanh toán.
+
+Vì vậy hạ tầng thanh toán có hai lớp: lớp **nhắn tin/xử lý** (lệnh đi từ A tới B) và lớp **quyết toán** (nghĩa vụ giữa A và B được thanh toán xong).
+
+## Hai kiểu quyết toán
+
+| | Quyết toán tổng tức thời (RTGS) | Quyết toán ròng hoãn lại (DNS) |
+|---|---|---|
+| Cách làm | Từng lệnh, ngay khi xử lý | Gom lệnh trong một chu kỳ, bù trừ, chuyển phần chênh |
+| Thanh khoản cần | Nhiều (đủ cho từng lệnh) | Ít (chỉ phần ròng) |
+| Rủi ro | Thấp — lệnh cuối cùng ngay | Có nghĩa vụ chưa thanh toán trong chu kỳ; nếu một bên không trả được, ảnh hưởng lan ra |
+| Dùng cho | Giá trị lớn, khẩn | Giá trị nhỏ, khối lượng lớn |
+
+Bộ Nguyên tắc cho hạ tầng thị trường tài chính (PFMI, bài bù trừ và thanh toán) đặt chuẩn quốc tế cho các hệ thống này, gồm yêu cầu rõ ràng về **tính cuối cùng của quyết toán** và việc quyết toán bằng tiền ngân hàng trung ương khi khả thi.
+
+<Quiz id="q-f2p-net" />
+
+## Chuyển tiền tức thì 24/7
+
+Hệ thống chuyển tiền tức thì cho phép người nhận có tiền trong vài giây, mọi lúc. Ví dụ: <Fact id="fednow-live" />. Ở Việt Nam, NAPAS vận hành dịch vụ chuyển tiền nhanh liên ngân hàng NAPAS 247 và chuẩn mã QR **VietQR** — theo báo chí, VietQR dựa trên chuẩn QR thanh toán của EMVCo và tiêu chuẩn cơ sở về mã QR do Ngân hàng Nhà nước ban hành (chưa đối chiếu văn bản gốc, nên bài không nêu các hạn mức cụ thể).
+
+Điểm then chốt cho kỹ sư: **báo có cho người nhận** có thể xảy ra ngay, còn **quyết toán liên ngân hàng** có thể ngay (từng lệnh) hoặc theo chu kỳ tuỳ thiết kế của từng hệ thống. Trong mô hình theo chu kỳ, ngân hàng nhận đang tạm "ứng" cho người nhận — và hệ thống thường dùng hạn mức hoặc tài sản bảo đảm để giới hạn rủi ro đó.
+
+<Diagram id="dg-instant-payment" />
+
+<Quiz id="q-f2p-instant" />
+
+## Hệ quả kỹ thuật
+
+- **Không có giờ đóng cửa**: không còn cửa sổ bảo trì ban đêm; triển khai và nâng cấp phải không gián đoạn.
+- **Thời gian chờ và trạng thái không chắc chắn**: lệnh gửi đi mà không nhận phản hồi kịp → trạng thái "chưa rõ", phải tra soát chứ không gửi lại mù quáng (bài idempotency, chặng F4).
+- **Không huỷ ngang**: tiền đã đi là đi — chống gian lận và xác thực phải xong **trước** khi gửi lệnh, trong vài trăm mili giây.
+- **Đối soát** với file/tin nhắn của hệ thống chuyển mạch mỗi chu kỳ (chặng F4) — đúng thứ thiếu trong câu chuyện đầu bài.
+
+<Callout kind="field" title="Ghi rõ ba mốc thời gian">
+Với mỗi lệnh chuyển tiền, tôi lưu tách biệt ba mốc: lúc khách bấm gửi, lúc hệ thống chuyển mạch chấp nhận, và lúc quyết toán được xác nhận. Gộp chung thành một cột "thời gian giao dịch" là nguồn gốc của rất nhiều buổi đối soát kéo dài, nhất là với giao dịch quanh nửa đêm hoặc quanh mốc chốt chu kỳ.
+</Callout>

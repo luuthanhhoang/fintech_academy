@@ -1,0 +1,43 @@
+sources:
+  - id: boe-money-creation-2014
+    title: "Money creation in the modern economy — Quarterly Bulletin 2014 Q1"
+    url: https://www.bankofengland.co.uk/quarterly-bulletin/2014/q1/money-creation-in-the-modern-economy
+    publisher: Bank of England (McLeay, Radia & Thomas)
+    accessed: 2026-11-06
+    note: Phần lớn tiền trong nền kinh tế hiện đại do ngân hàng thương mại tạo ra khi cho vay; tiền gửi ngân hàng chiếm 97% tiền rộng đang lưu hành (tại thời điểm bài viết). Kiểm tra qua trích đoạn kết quả tìm kiếm.
+  - id: fed-fednow-about
+    title: About the FedNow Service
+    url: https://www.federalreserve.gov/paymentsystems/fednow_about.htm
+    publisher: Board of Governors of the Federal Reserve System
+    accessed: 2026-11-06
+    note: Vận hành từ 20/07/2023, thiết kế xử lý liên tục 24x7x365; trang không truy cập trực tiếp được từ môi trường dựng, kiểm tra qua trích đoạn kết quả tìm kiếm.
+  - id: treasury-cas
+    title: How the Card Acquiring Service works
+    url: https://fiscal.treasury.gov/payments-to-government/card-acquiring-service-cas/how-cas-works
+    publisher: U.S. Department of the Treasury, Bureau of the Fiscal Service
+    accessed: 2026-11-06
+    note: Mô tả các pha uỷ quyền (authorization) và bù trừ–quyết toán (clearing and settlement) của giao dịch thẻ. Kiểm tra qua trích đoạn kết quả tìm kiếm.
+  - id: eu-psd2-2015
+    title: Directive (EU) 2015/2366 on payment services in the internal market (PSD2)
+    url: https://eur-lex.europa.eu/eli/dir/2015/2366/oj
+    publisher: European Parliament and Council (EUR-Lex)
+    accessed: 2026-11-06
+    note: Đưa dịch vụ khởi tạo thanh toán và dịch vụ thông tin tài khoản vào khung pháp lý; yêu cầu xác thực khách hàng mạnh.
+  - id: sbv-tt64-2024
+    title: "Thông tư 64/2024/TT-NHNN quy định về triển khai giao diện lập trình ứng dụng mở (Open API) trong ngành Ngân hàng"
+    url: https://sbv.gov.vn/en/w/open-api-tr%E1%BB%A5c-k%E1%BA%BFt-n%E1%BB%91i-m%E1%BB%9Bi-c%E1%BB%A7a-h%E1%BB%87-sinh-th%C3%A1i-t%C3%A0i-ch%C3%ADnh-s%E1%BB%91-vi%E1%BB%87t-nam
+    publisher: Ngân hàng Nhà nước Việt Nam
+    accessed: 2026-11-06
+    note: Ban hành 31/12/2024, hiệu lực 01/03/2025; danh mục Open API cơ bản tại Điều 6. Kiểm tra qua trích đoạn kết quả tìm kiếm (trang NHNN và Thư viện Pháp luật), chưa đối chiếu Công báo.
+  - id: cfpb-1033-2024
+    title: "CFPB Finalizes Section 1033 Rule on Personal Financial Data Rights (law-firm summary)"
+    url: https://www.cooley.com/news/insight/2024/2024-10-31-cfpb-finalizes-section-1033-rule-on-personal-financial-data-rights
+    publisher: Cooley LLP
+    accessed: 2026-11-06
+    note: Quy định chốt tháng 10/2024; theo các nguồn thứ cấp, sau đó bị khởi kiện và đang được CFPB xem xét lại — trạng thái hiện hành needs_verification.
+  - id: napas-vietqr
+    title: "Ra mắt thương hiệu VietQR và dịch vụ chuyển tiền nhanh NAPAS247 bằng mã QR"
+    url: https://baophapluat.vn/ra-mat-thuong-hieu-vietqr-va-trien-khai-dich-vu-chuyen-tien-nhanh-napas247-bang-ma-qr-post398609.html
+    publisher: Báo Pháp luật Việt Nam
+    accessed: 2026-11-06
+    note: Báo chí, không phải văn bản gốc; VietQR theo chuẩn QR thanh toán EMVCo và tiêu chuẩn cơ sở QR của NHNN — needs_verification, không nêu hạn mức/số ngân hàng.

@@ -1,10 +1,5 @@
 track: fintech
 lessons:
-  - { id: "f2-bank-balance-sheet", stage: "f2", order: 0, title: { vi: "Ngân hàng kiếm tiền thế nào", en: "How banks make money" }, concepts: [bank-balance-sheet, money-creation] }
-  - { id: "f2-alm", stage: "f2", order: 1, title: { vi: "Lệch kỳ hạn và quản lý tài sản–nợ", en: "Maturity mismatch and ALM" }, concepts: [asset-liability-management] }
-  - { id: "f2-payment-rails", stage: "f2", order: 2, title: { vi: "Đường ray thanh toán", en: "Payment rails" }, concepts: [payment-systems, instant-payments] }
-  - { id: "f2-cards", stage: "f2", order: 3, title: { vi: "Một giao dịch thẻ đi qua những đâu", en: "Anatomy of a card transaction" }, concepts: [card-payments] }
-  - { id: "f2-wallets-open-banking", stage: "f2", order: 4, title: { vi: "Ví điện tử và open banking", en: "Wallets and open banking" }, concepts: [digital-wallets, open-banking] }
   - { id: "f3-credit-risk", stage: "f3", order: 0, title: { vi: "Rủi ro tín dụng và tổn thất kỳ vọng", en: "Credit risk and expected loss" }, concepts: [credit-risk] }
   - { id: "f3-market-liquidity-risk", stage: "f3", order: 1, title: { vi: "Rủi ro thị trường và thanh khoản", en: "Market and liquidity risk" }, concepts: [market-risk-var, liquidity-risk] }
   - { id: "f3-operational-risk", stage: "f3", order: 2, title: { vi: "Rủi ro vận hành", en: "Operational risk" }, concepts: [operational-risk] }

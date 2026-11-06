@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2c-ledger
+    conceptId: card-payments
+    prompt: "Đơn hàng 1.000.000 đ: uỷ quyền 1.000.000; chốt 900.000 (một món hết hàng); acquirer quyết toán sau khi trừ phí 2% (giả định); 20 ngày sau khách tranh chấp thành công 300.000. Viết các bút toán trên sổ của cửa hàng."
+    hint: "Uỷ quyền không tạo bút toán; doanh thu theo số chốt; phải thu từ acquirer."
+    solution: "Uỷ quyền: không ghi sổ (chỉ ghi trạng thái). Chốt: Nợ Phải thu acquirer 900.000 / Có Doanh thu 900.000. Quyết toán: Nợ Tiền 882.000, Nợ Chi phí thanh toán 18.000 / Có Phải thu acquirer 900.000. Tranh chấp: Nợ Giảm trừ doanh thu (hoặc Tổn thất tranh chấp) 300.000 / Có Tiền 300.000 (hoặc trừ vào lần quyết toán sau). Đối soát từng bước với file quyết toán."
+  - id: ex-f2c-expire
+    conceptId: card-payments
+    prompt: "Cửa hàng giao hàng sau 10 ngày nhưng uỷ quyền đã hết hạn. Nêu rủi ro và hai cách thiết kế để xử lý."
+    hint: "Chốt trên uỷ quyền hết hạn có thể bị từ chối hoặc mất quyền tranh chấp."
+    solution: "Rủi ro: chốt bị từ chối hoặc không được bảo vệ khi tranh chấp, khách đã tưởng thanh toán xong. Cách 1: chốt ngay khi đặt hàng (nếu luật và chính sách cho phép) và hoàn tiền phần không giao. Cách 2: theo dõi thời hạn uỷ quyền, uỷ quyền lại gần hạn (với sự đồng ý phù hợp) hoặc chốt từng phần khi giao từng phần. Kèm cảnh báo khi đơn có uỷ quyền sắp hết hạn."

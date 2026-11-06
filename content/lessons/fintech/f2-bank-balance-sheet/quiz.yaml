@@ -1,0 +1,40 @@
+items:
+  - id: q-f2b-deposit
+    type: mcq
+    conceptId: bank-balance-sheet
+    prompt: "Trên bảng cân đối của ngân hàng, 100 triệu bạn gửi tiết kiệm được ghi nhận ở đâu?"
+    options:
+      - { id: a, text: "Tài sản của ngân hàng" }
+      - { id: b, text: "Nợ phải trả của ngân hàng (nghĩa vụ trả lại cho bạn)" }
+      - { id: c, text: "Vốn chủ sở hữu của ngân hàng" }
+    correct: [b]
+    explanation: "Tiền gửi là nghĩa vụ ngân hàng phải trả khi bạn yêu cầu; phía tài sản là những gì ngân hàng nắm giữ (dự trữ, cho vay, chứng khoán)."
+  - id: q-f2b-create
+    type: mcq
+    conceptId: money-creation
+    prompt: "Ngân hàng giải ngân khoản vay 500 triệu vào tài khoản của người vay tại chính ngân hàng đó. Bảng cân đối thay đổi thế nào?"
+    options:
+      - { id: a, text: "Tài sản (cho vay) +500 triệu và nợ phải trả (tiền gửi) +500 triệu" }
+      - { id: b, text: "Tài sản dự trữ −500 triệu, tài sản cho vay +500 triệu; tổng không đổi" }
+      - { id: c, text: "Vốn chủ sở hữu −500 triệu" }
+    correct: [a]
+    explanation: "Cho vay tạo đồng thời tài sản và tiền gửi mới — bảng cân đối phình ra hai phía."
+  - id: q-f2b-limit
+    type: mcq
+    conceptId: money-creation
+    prompt: "Yếu tố nào giới hạn việc ngân hàng thương mại tạo tiền bằng cho vay? (chọn tất cả)"
+    options:
+      - { id: a, text: "Chính sách tiền tệ, chủ yếu qua lãi suất" }
+      - { id: b, text: "Quy định về vốn và thanh khoản" }
+      - { id: c, text: "Nhu cầu vay và khả năng sinh lời sau rủi ro" }
+      - { id: d, text: "Một hệ số nhân cố định nhân với lượng tiền mặt đang có" }
+    correct: [a, b, c]
+    explanation: "Bank of England mô tả việc tạo tiền phụ thuộc chính sách tiền tệ, không theo một hệ số nhân cơ học."
+  - id: q-f2b-leverage
+    type: numeric
+    conceptId: bank-balance-sheet
+    prompt: "Ngân hàng giả định có tổng tài sản 1.000 tỉ, vốn chủ 80 tỉ. Nếu tài sản mất giá 3%, vốn chủ còn lại bao nhiêu phần trăm so với ban đầu?"
+    answer: 62.5
+    tolerance: { kind: abs, value: 0.1 }
+    unit: "%"
+    explanation: "Lỗ 30 tỉ trừ vào vốn: 80 − 30 = 50 tỉ, tức 62,5% vốn ban đầu. Lỗ 3% tài sản xoá 37,5% vốn — đó là đòn bẩy."

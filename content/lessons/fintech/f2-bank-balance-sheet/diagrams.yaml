@@ -1,0 +1,17 @@
+diagrams:
+  - id: dg-loan-creates-deposit
+    kind: sequence
+    title: "Khoản vay tạo ra tiền gửi"
+    caption: "Mô hình khái niệm theo mô tả của Bank of England (2014): giải ngân ghi đồng thời tài sản và tiền gửi; trả nợ huỷ cả hai."
+    actors:
+      - { id: borrower, label: "Người vay" }
+      - { id: bank, label: "Ngân hàng" }
+      - { id: ledger, label: "Sổ cái ngân hàng" }
+    steps:
+      - { from: borrower, to: bank, label: "Đề nghị vay 500 triệu" }
+      - { from: bank, to: bank, label: "Thẩm định: rủi ro, hạn mức, vốn, thanh khoản" }
+      - { from: bank, to: ledger, label: "Nợ: Cho vay +500" }
+      - { from: bank, to: ledger, label: "Có: Tiền gửi người vay +500" }
+      - { from: ledger, to: borrower, label: "Số dư tài khoản +500 (tiền mới)" }
+      - { from: borrower, to: bank, label: "Trả nợ 500" }
+      - { from: bank, to: ledger, label: "Tiền gửi −500, Cho vay −500 (tiền bị huỷ)" }

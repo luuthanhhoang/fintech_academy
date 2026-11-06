@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-open-banking-consent
+    kind: sequence
+    title: "Cấp consent open banking"
+    caption: "Luồng khái niệm dạng OAuth; tên bước và đặc tả cụ thể theo quy định/chuẩn API của từng thị trường."
+    actors:
+      - { id: customer, label: "Khách hàng" }
+      - { id: tpp, label: "Ứng dụng thứ ba" }
+      - { id: bank, label: "Ngân hàng" }
+    steps:
+      - { from: customer, to: tpp, label: "Muốn kết nối tài khoản" }
+      - { from: tpp, to: bank, label: "Yêu cầu consent: phạm vi, mục đích, thời hạn" }
+      - { from: bank, to: customer, label: "Chuyển sang trang ngân hàng" }
+      - { from: customer, to: bank, label: "Đăng nhập + xác thực mạnh + đồng ý" }
+      - { from: bank, to: tpp, label: "Mã uỷ quyền → token có phạm vi" }
+      - { from: tpp, to: bank, label: "Gọi API đọc dữ liệu bằng token" }
+      - { from: customer, to: bank, label: "Thu hồi consent (bất cứ lúc nào)" }
+      - { from: tpp, to: bank, label: "Gọi API → bị từ chối" }

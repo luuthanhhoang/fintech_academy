@@ -1,0 +1,21 @@
+examples:
+  - id: we-bank-nim
+    title: "Từ bảng cân đối tới lợi nhuận trên vốn (ngân hàng giả định)"
+    conceptId: bank-balance-sheet
+    problem: "Dữ liệu tổng hợp (mô phỏng): tài sản sinh lãi 900 tỉ, lợi suất bình quân 7%; nguồn vốn trả lãi 850 tỉ, chi phí bình quân 4%; vốn chủ 90 tỉ. Bỏ qua phí, chi phí hoạt động và thuế. Tính thu nhập lãi thuần, NIM và lợi nhuận trên vốn (ROE)."
+    steps:
+      - text: "Thu lãi = 900 × 7% = 63 tỉ; chi lãi = 850 × 4% = 34 tỉ."
+      - text: "Thu nhập lãi thuần = 63 − 34 = 29 tỉ."
+        faded: true
+        prompt: "Thu nhập lãi thuần bằng bao nhiêu tỉ?"
+        answer: 29
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "tỉ"
+      - text: "NIM = 29 / 900 ≈ 3,22%."
+        faded: true
+        prompt: "NIM bằng bao nhiêu %? (2 chữ số thập phân)"
+        answer: 3.22
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+      - text: "ROE (trước chi phí) = 29 / 90 ≈ 32,2% — vốn chủ chỉ bằng 10% tài sản nên lợi nhuận trên vốn gấp nhiều lần NIM."
+    takeaway: "Đòn bẩy làm ROE gấp nhiều lần biên lãi; cùng cơ chế đó khuếch đại lỗ khi tài sản mất giá hay khoản vay không đòi được."
