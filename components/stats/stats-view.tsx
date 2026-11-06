@@ -44,8 +44,8 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
     <div className="space-y-6 font-sans">
       {empty && <EmptyState title="Chưa có dữ liệu học tập">Mọi con số ở đây đều tính từ hoạt động thật của bạn (lưu trên trình duyệt). Học một bài hoặc ôn thẻ để bắt đầu.</EmptyState>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Tile label="Chuỗi ngày (streak)" value={`${s.streak} ngày`} hint={`dài nhất ${s.longest} ngày`} />
-        <Tile label="Thời gian học (đo khi tab mở & có tương tác)" value={fmtDuration(s.totalMs)} hint={`${s.activeDayCount} ngày có học`} />
+        <Tile label="Chuỗi ngày học liên tiếp" value={`${s.streak} ngày`} hint={`dài nhất ${s.longest} ngày`} />
+        <Tile label="Thời gian học" value={fmtDuration(s.totalMs)} hint={`${s.activeDayCount} ngày có học · chỉ tính lúc trang mở và bạn đang thao tác`} />
         <Tile label="Lượt ôn thẻ" value={fmtNum(s.reviewsTotal, 0)} />
         <Tile label="Quiz đúng" value={s.quizAccuracy === null ? '—' : fmtPct(s.quizAccuracy, 0)} hint={`${s.quizTotal} lượt`} />
         <Tile label="Bài đã hoàn thành" value={fmtNum(s.lessonsCompleted, 0)} hint={`/ ${catalog.lessons.length} bài đã viết`} />

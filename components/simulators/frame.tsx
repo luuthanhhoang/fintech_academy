@@ -22,18 +22,24 @@ export function SimulatorFrame({ meta, syntheticLabel, initial, embedded = false
   const active = meta.breakIt.find((b) => b.id === broken)
 
   return (
-    <figure className="my-8 rounded-xl border border-rule bg-paper font-sans">
-      <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="text-xs text-ink-3">Mô phỏng</span>
-        <span className="font-medium">{meta.title.vi}</span>
-        <span className="text-sm text-ink-3">({meta.title.en})</span>
-        {meta.dataKind === 'synthetic' && <SyntheticBadge label={syntheticLabel} note={meta.syntheticNote} />}
-        {embedded && (
-          <Link href={`/simulators/${meta.id}/`} className="ml-auto text-xs text-accent underline">
-            Mở toàn màn hình
-          </Link>
-        )}
-      </figcaption>
+    <figure className="my-8 rounded-2xl border border-rule/70 bg-card font-sans">
+      {/* On its own page the title is already the page heading; inside a lesson the caption names it. */}
+      {(embedded || meta.dataKind === 'synthetic') && (
+        <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule/70 px-5 py-3">
+          {embedded && (
+            <>
+              <span className="text-sm text-ink-3">Mô phỏng</span>
+              <span className="font-semibold">{meta.title.vi}</span>
+            </>
+          )}
+          {meta.dataKind === 'synthetic' && <SyntheticBadge label={syntheticLabel} note={meta.syntheticNote} />}
+          {embedded && (
+            <Link href={`/simulators/${meta.id}/`} className="ml-auto text-sm text-accent hover:underline">
+              Mở toàn màn hình
+            </Link>
+          )}
+        </figcaption>
+      )}
       <div className="grid gap-6 p-4 md:grid-cols-[240px_1fr]">
         <div>
           <ParamControls params={meta.params} values={values} onChange={(k, v) => (setValues((s) => ({ ...s, [k]: v })), setBroken(null))} />
