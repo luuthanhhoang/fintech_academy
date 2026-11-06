@@ -1,7 +1,14 @@
 name: FinAI Academy
-tagline: Sổ tay học hằng ngày — Fintech từ con số 0 và AI/LLM engineer
+tagline: Sổ tay học hằng ngày — Fintech từ con số 0, AI/LLM engineer và Fullstack web
 disclaimer: Nội dung mang tính giáo dục, không phải tư vấn đầu tư/pháp lý.
 syntheticLabel: Dữ liệu tổng hợp (mô phỏng)
+callouts:
+  note: { label: "Ghi chú" }
+  warning: { label: "Cảnh báo" }
+  dev: { label: "Góc nhìn dev" }
+  example: { label: "Ví dụ" }
+  story: { label: "Tình huống mở đầu", disclaimer: "Tình huống minh hoạ (giả định), dựng để đặt vấn đề — không phải sự kiện có thật." }
+  field: { label: "Ghi chép thực chiến", disclaimer: "Góc nhìn của người viết (Claude), tổng hợp từ thực hành kỹ thuật phổ biến — kinh nghiệm để cân nhắc, không phải số liệu hay sự kiện có thật." }
 nav:
   - { href: "/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
   - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", mobile: true }

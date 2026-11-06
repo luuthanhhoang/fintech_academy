@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w1-refactor-state
+    conceptId: component-state
+    prompt: "Một form lọc sản phẩm có state: products (từ API), filtered (danh sách đã lọc), category, keyword, và một effect cập nhật filtered mỗi khi category/keyword/products đổi. Viết lại mô hình state và giải thích."
+    hint: "Thứ nào tính được từ thứ khác?"
+    solution: "Giữ state: products (hoặc dữ liệu server qua thư viện fetch/cache), category, keyword. Bỏ filtered khỏi state và bỏ effect; tính filtered = products.filter(theo category và keyword) trong lúc render (memo hoá nếu danh sách rất lớn và đo thấy chậm). Lợi ích: không còn khoảnh khắc filtered lệch với điều kiện lọc, ít render thừa, code ngắn hơn."

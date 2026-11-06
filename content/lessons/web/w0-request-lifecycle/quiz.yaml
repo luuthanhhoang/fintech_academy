@@ -1,0 +1,55 @@
+items:
+  - id: q-w0-where-time
+    type: mcq
+    conceptId: web-request-lifecycle
+    prompt: "Server đo thời gian xử lý trung bình 40 ms, nhưng người dùng ở nước ngoài chờ hơn 2 giây mới thấy trang. Đâu là những chỗ CÓ THỂ chiếm phần thời gian còn lại? (chọn tất cả)"
+    options:
+      - { id: a, text: "DNS và các vòng bắt tay TCP/TLS tới máy chủ ở xa" }
+      - { id: b, text: "Hàng đợi ở load balancer/connection pool trước khi ứng dụng bắt đầu đếm" }
+      - { id: c, text: "Trình duyệt tải thêm CSS/JS từ nhiều domain và chạy JavaScript" }
+      - { id: d, text: "Không thể — nếu server nhanh thì trang phải nhanh" }
+    correct: [a, b, c]
+    explanation: "Thời gian xử lý trên server chỉ là một đoạn. Mạng (mỗi vòng round trip), hàng đợi phía trước và công việc của trình duyệt đều nằm ngoài timer đó."
+  - id: q-w0-idempotent
+    type: mcq
+    conceptId: http-semantics
+    prompt: "Phương thức nào KHÔNG idempotent theo RFC 9110?"
+    options:
+      - { id: a, text: "PUT" }
+      - { id: b, text: "DELETE" }
+      - { id: c, text: "POST" }
+      - { id: d, text: "GET" }
+    correct: [c]
+    explanation: "GET/HEAD/OPTIONS (safe), PUT và DELETE là idempotent. POST không — gửi lại có thể tạo thêm bản ghi, nên retry POST cần cơ chế riêng (idempotency key)."
+  - id: q-w0-status
+    type: mcq
+    conceptId: http-semantics
+    prompt: "Người dùng đã đăng nhập nhưng cố xem đơn hàng của người khác. API nên trả mã nào?"
+    options:
+      - { id: a, text: "401 Unauthorized" }
+      - { id: b, text: "403 Forbidden (hoặc 404 để không lộ sự tồn tại của đơn hàng)" }
+      - { id: c, text: "200 với body rỗng" }
+      - { id: d, text: "500 Internal Server Error" }
+    correct: [b]
+    explanation: "401 nghĩa là chưa xác thực (cần đăng nhập). Đã đăng nhập mà không có quyền là 403; nhiều API chọn 404 để không xác nhận tài nguyên tồn tại."
+  - id: q-w0-order
+    type: ordering
+    conceptId: web-request-lifecycle
+    prompt: "Sắp xếp các bước của một lần tải trang HTTPS mới (chưa có cache, chưa có kết nối):"
+    items:
+      - { id: dns, text: "Phân giải tên miền (DNS)" }
+      - { id: conn, text: "Mở kết nối TCP/QUIC" }
+      - { id: tls, text: "Bắt tay TLS, kiểm tra chứng chỉ" }
+      - { id: req, text: "Gửi request HTTP" }
+      - { id: render, text: "Trình duyệt parse HTML và tải tài nguyên phụ" }
+    explanation: "Không thể gửi byte HTTP nào trước khi có IP, kết nối và kênh TLS."
+  - id: q-w0-get-transfer
+    type: explain
+    conceptId: http-semantics
+    prompt: "Vì sao endpoint chuyển tiền dạng GET /transfer?to=...&amount=... là thiết kế nguy hiểm?"
+    rubric:
+      - { id: safe, criterion: "GET được hiểu là safe: prefetch, link preview, crawler, cache có thể gọi tự do" }
+      - { id: retry, criterion: "Các tầng có thể tự retry request được coi là an toàn → chuyển trùng" }
+      - { id: fix, criterion: "Dùng POST + xác thực + chống CSRF + idempotency key" }
+    explanation: "Phương thức là hợp đồng mà mọi tầng trung gian đọc; vi phạm nó làm hành vi tự động của hạ tầng trở thành thao tác ngoài ý muốn."
+    modelAnswer: "GET được mọi tầng coi là an toàn và có thể gọi lại tự do (prefetch, preview link trong chat, crawler, retry tự động), nên một GET thay đổi trạng thái có thể chuyển tiền mà người dùng không hề bấm. Thao tác thay đổi trạng thái phải dùng POST (hoặc PUT/DELETE phù hợp), có xác thực, chống CSRF và khoá idempotency để retry không tạo giao dịch trùng."

@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w2i-race
+    conceptId: api-idempotency-retries
+    prompt: "Đoạn xử lý: (1) SELECT kết quả theo idempotency_key; (2) nếu không có thì gọi cổng thanh toán; (3) INSERT kết quả. Hai request cùng khoá đến cách nhau 5 ms. Chuyện gì có thể xảy ra, và sửa thế nào?"
+    hint: "Khoảng giữa bước 1 và 3."
+    solution: "Cả hai cùng thấy 'chưa có' ở bước 1 và cùng gọi cổng thanh toán → trừ tiền hai lần. Sửa: INSERT một bản ghi 'đang xử lý' với ràng buộc UNIQUE trên khoá TRƯỚC khi gọi ra ngoài; request thứ hai vi phạm UNIQUE thì trả 409 (đang xử lý) hoặc chờ rồi trả kết quả đã lưu. Đồng thời truyền khoá xuống cổng thanh toán để phía đó cũng chống trùng."

@@ -1,0 +1,39 @@
+items:
+  - id: q-w5-mean
+    type: mcq
+    conceptId: latency-percentiles
+    prompt: "Trang gọi song song 30 dịch vụ và chỉ hiện xong khi tất cả trả về. Mỗi dịch vụ có 1% request chậm (độc lập). Xác suất một lần tải trang gặp ít nhất một request chậm gần nhất với?"
+    options:
+      - { id: a, text: "1%" }
+      - { id: b, text: "Khoảng 26%" }
+      - { id: c, text: "30%" }
+    correct: [b]
+    explanation: "1 − 0,99^30 ≈ 0,26. Đuôi của từng thành phần trở thành trải nghiệm thường gặp của cả trang."
+  - id: q-w5-nonlinear
+    type: mcq
+    conceptId: queueing-littles-law
+    prompt: "Với M/M/1, nếu mức sử dụng tăng từ 50% lên 90%, thời gian phản hồi trung bình W thay đổi thế nào (cùng thời gian xử lý)?"
+    options:
+      - { id: a, text: "Tăng khoảng 1,8 lần (tỉ lệ thuận với tải)" }
+      - { id: b, text: "Tăng 5 lần, vì W tỉ lệ với 1/(1 − ρ)" }
+      - { id: c, text: "Không đổi" }
+    correct: [b]
+    explanation: "W = (1/μ)/(1 − ρ): từ 1/(0,5) = 2 lên 1/(0,1) = 10 lần thời gian xử lý — tăng 5 lần."
+  - id: q-w5-bucket
+    type: mcq
+    conceptId: rate-limiting
+    prompt: "Token bucket dung lượng 10, nạp 2 token/giây, đang đầy. Client gửi 15 request cùng lúc. Bao nhiêu request được chấp nhận ngay?"
+    options:
+      - { id: a, text: "2" }
+      - { id: b, text: "10" }
+      - { id: c, text: "15" }
+    correct: [b]
+    explanation: "Burst tối đa bằng dung lượng xô. Sau đó chỉ được 2 request/giây theo tốc độ nạp."
+  - id: q-w5-little
+    type: numeric
+    conceptId: queueing-littles-law
+    prompt: "Một API nhận 200 request/giây, mỗi request mất trung bình 0,15 giây (tính cả chờ DB). Theo định luật Little, trung bình có bao nhiêu request đang được xử lý đồng thời?"
+    answer: 30
+    tolerance: { kind: abs, value: 0.01 }
+    unit: request
+    explanation: "L = λW = 200 × 0,15 = 30. Connection pool tới DB nhỏ hơn mức này thì request phải xếp hàng chờ kết nối."

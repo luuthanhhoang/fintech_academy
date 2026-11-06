@@ -1,18 +1,27 @@
 import type { ReactNode } from 'react'
+import { getContent } from '@/lib/content/server'
 
-const CALLOUT: Record<string, { label: string; cls: string }> = {
-  note: { label: 'Ghi chú', cls: 'border-accent bg-accent-soft' },
-  warning: { label: 'Cảnh báo', cls: 'border-warn bg-warn-soft' },
-  dev: { label: 'Góc nhìn dev', cls: 'border-good bg-good-soft' },
-  example: { label: 'Ví dụ', cls: 'border-rule bg-paper-2' },
+/** Visual style per callout kind (labels and honesty notes come from site.yaml → callouts). */
+const STYLE: Record<string, string> = {
+  note: 'border-accent bg-accent-soft',
+  warning: 'border-warn bg-warn-soft',
+  dev: 'border-good bg-good-soft',
+  example: 'border-rule bg-paper-2',
+  story: 'border-ink-3 bg-paper-2 italic-none',
+  field: 'border-warn bg-warn-soft/60',
 }
 
 export function Callout({ kind = 'note', title, children }: { kind?: string; title?: string; children: ReactNode }) {
-  const c = CALLOUT[kind] ?? (CALLOUT.note as { label: string; cls: string })
+  const labels = getContent().config.site.callouts
+  const c = labels[kind] ?? labels.note
   return (
-    <aside className={`my-6 rounded-r-md border-l-4 px-4 py-3 font-sans text-[0.95rem] ${c.cls}`}>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-2">{title ?? c.label}</p>
+    <aside className={`my-6 rounded-r-md border-l-4 px-4 py-3 font-sans text-[0.95rem] ${STYLE[kind] ?? STYLE.note}`}>
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-2">
+        {c?.label}
+        {title ? ` · ${title}` : ''}
+      </p>
       <div className="[&>p]:my-1">{children}</div>
+      {c?.disclaimer && <p className="mt-2 text-[11px] text-ink-3">{c.disclaimer}</p>}
     </aside>
   )
 }

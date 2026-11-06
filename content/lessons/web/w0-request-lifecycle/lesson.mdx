@@ -1,0 +1,105 @@
+---
+id: w0-request-lifecycle
+track: web
+stage: w0
+order: 0
+title: { vi: "Một request đi đâu: từ thanh địa chỉ tới byte cuối cùng", en: "Where a request goes: from the address bar to the last byte" }
+summary: "Đi theo một request thật qua DNS, kết nối, TLS, HTTP và quay về — để khi người dùng nói 'web chậm', bạn biết chính xác chậm ở chặng nào. Kèm ngữ nghĩa HTTP đủ dùng cả đời: phương thức safe/idempotent, mã trạng thái, header."
+concepts: [web-request-lifecycle, http-semantics]
+estMinutes: 35
+whyQuestion: "Người dùng báo 'trang thanh toán quay mãi'. Server log nói mọi request xử lý dưới 50 ms. Cả hai cùng đúng được không — và thời gian còn lại đã đi đâu?"
+devMapping:
+  - finance: "DNS"
+    dev: "Danh bạ tên → địa chỉ IP, có cache nhiều tầng (trình duyệt, OS, resolver)"
+    explanation: "Đổi bản ghi DNS không có hiệu lực ngay cho mọi người: các tầng cache giữ bản cũ tới hết TTL."
+  - finance: "TLS handshake"
+    dev: "Bắt tay xác thực server + thoả thuận khoá trước khi gửi byte HTTP đầu tiên"
+    explanation: "Tốn thêm vòng mạng cho kết nối mới; vì vậy giữ kết nối (keep-alive, HTTP/2, HTTP/3) quan trọng với người dùng ở xa."
+  - finance: "Mã trạng thái 4xx vs 5xx"
+    dev: "Lỗi của client (sửa request) vs lỗi của server (thử lại có thể có ích)"
+    explanation: "Trả sai nhóm mã làm client retry vô ích (4xx bị retry) hoặc bỏ cuộc sai lúc (5xx bị coi là lỗi người dùng)."
+pretest: [q-w0-where-time, q-w0-idempotent]
+applications:
+  - id: app-w0-waterfall
+    title: "Đọc waterfall của chính sản phẩm bạn"
+    context: "Một trang quan trọng (đăng nhập, thanh toán) bị phàn nàn là chậm."
+    task: "Mở DevTools > Network, tải lại trang ở chế độ throttling mạng chậm, ghi lại thời gian DNS, kết nối, TLS, chờ server (TTFB) và tải nội dung cho request HTML và 3 request API quan trọng nhất."
+    deliverable: "Bảng thời gian từng chặng + một đề xuất cải thiện chặng chiếm nhiều thời gian nhất."
+sources: [mdn-http-overview, rfc9110]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho một đồng nghiệp backend vì sao 'server xử lý 50 ms' không mâu thuẫn với 'người dùng chờ 3 giây', và bạn sẽ đo ở đâu để biết thời gian đi đâu."
+  rubric:
+    - { id: stages, criterion: "Kể đủ các chặng ngoài server: DNS, kết nối, TLS, hàng đợi phía trước, truyền dữ liệu, trình duyệt xử lý" }
+    - { id: measure, criterion: "Nêu cách đo: waterfall DevTools/RUM phía client, tracing phía server" }
+    - { id: latency, criterion: "Phân biệt độ trễ mạng (round trip) với thời gian xử lý" }
+---
+
+<Callout kind="story" title="'Server nhanh mà, sao khách kêu chậm?'">
+Thứ Hai đầu tháng, đội hỗ trợ dồn ticket: trang thanh toán quay vòng 3–4 giây. Bạn mở dashboard backend: thời gian xử lý trung bình của API thanh toán vẫn rất thấp, không có lỗi. Đội backend nói "không phải tụi mình". Đội frontend nói "bundle không đổi". Một tuần trôi qua trong im lặng.
+</Callout>
+
+Câu chuyện này lặp lại ở rất nhiều công ty vì một lý do: mỗi đội chỉ nhìn **một chặng** của request. Người dùng thì trải nghiệm **cả hành trình**. Bài này đi hết hành trình đó một lần cho thật kỹ.
+
+## Hành trình của một request
+
+Bạn gõ `https://shop.example/checkout` và nhấn Enter. Thứ tự xảy ra (bỏ qua chi tiết hiếm gặp):
+
+1. **Phân giải tên (DNS).** Trình duyệt cần địa chỉ IP của `shop.example`. Nó hỏi cache của chính nó, rồi hệ điều hành, rồi resolver của nhà mạng/doanh nghiệp. Mỗi tầng có thể trả lời từ cache cho tới khi hết TTL.
+2. **Mở kết nối.** Với HTTP/1.1 và HTTP/2 là kết nối TCP (bắt tay ba bước). HTTP/3 chạy trên QUIC (trên UDP) để gộp bớt vòng bắt tay.
+3. **TLS.** Hai bên thoả thuận khoá, trình duyệt kiểm tra chứng chỉ có đúng là của `shop.example` và được tin cậy không. Chưa qua bước này thì chưa có byte HTTP nào.
+4. **Gửi request HTTP.** Dòng đầu là phương thức + đường dẫn (`GET /checkout`), sau đó là header (cookie, ngôn ngữ, khả năng nén…), có thể có body.
+5. **Phía server.** Request thường đi qua CDN/load balancer, tới ứng dụng, ứng dụng gọi DB, cache, dịch vụ khác. Đây là phần duy nhất "thời gian xử lý" trên dashboard backend đo được.
+6. **Response quay về.** Dòng trạng thái (`200 OK`), header (kiểu nội dung, cache, cookie), rồi body.
+7. **Trình duyệt xử lý.** Parse HTML, phát hiện CSS/JS/ảnh, mở thêm request (lặp lại từ bước 1–6 cho domain khác), chạy JavaScript, vẽ lên màn hình.
+
+<Diagram id="dg-http-request" />
+
+<Quiz id="q-w0-where-time" />
+
+<Callout kind="field" title="Thời gian thường trốn ở đâu">
+Khi điều tra "chậm nhưng server nhanh", thứ tôi kiểm tra đầu tiên luôn là **waterfall phía client**, không phải code server. Những thủ phạm hay gặp: request đi qua nhiều domain khác nhau (mỗi domain lại DNS + TCP + TLS từ đầu); một script bên thứ ba chặn render; người dùng ở xa máy chủ nên mỗi vòng mạng tốn nhiều; và hàng đợi **trước** ứng dụng (load balancer, connection pool) — nơi mà timer của ứng dụng chưa bắt đầu đếm. Chỉ số "thời gian xử lý" trên server là thật, nhưng nó chỉ là một đoạn trong cả hành trình.
+</Callout>
+
+## Ngữ nghĩa HTTP: hợp đồng mà mọi tầng đều đọc
+
+HTTP không chỉ là "gửi dữ liệu". Phương thức và mã trạng thái là **lời hứa** mà cache, proxy, trình duyệt và thư viện retry đều dựa vào. Theo RFC 9110:
+
+- **Safe** (an toàn): không nhằm thay đổi trạng thái server — `GET`, `HEAD`, `OPTIONS`. Crawler, prefetch, cache được phép gọi thoải mái.
+- **Idempotent**: gửi một lần hay nhiều lần giống hệt nhau thì tác động dự định lên server như nhau — mọi phương thức safe, cộng `PUT` và `DELETE`. `POST` thì **không**.
+- Vì sao quan trọng: khi mạng chập chờn, nhiều tầng (client, proxy) có thể **tự gửi lại** request idempotent. Một `GET /transfer?to=...&amount=...` thực hiện chuyển tiền là phá hợp đồng — link preview của ứng dụng chat cũng đủ chuyển tiền giùm bạn.
+
+<Quiz id="q-w0-idempotent" />
+
+### Mã trạng thái theo nhóm
+
+| Nhóm | Ý nghĩa | Hay dùng |
+|---|---|---|
+| 2xx | Thành công | `200 OK`, `201 Created`, `204 No Content` |
+| 3xx | Đi chỗ khác / dùng bản đã có | `301`/`308` chuyển hẳn, `302`/`307` tạm, `304 Not Modified` |
+| 4xx | Client cần sửa request | `400` sai dữ liệu, `401` chưa xác thực, `403` không có quyền, `404`, `409` xung đột, `422` hợp lệ cú pháp nhưng sai nghiệp vụ, `429` quá nhiều request |
+| 5xx | Server lỗi | `500` lỗi chung, `502`/`504` lỗi ở upstream/timeout, `503` tạm quá tải |
+
+<Callout kind="field" title="Ba quyết định mã trạng thái tôi thấy đội ngũ hay làm sai">
+**Trả 200 kèm `{"error": ...}` trong body**: monitoring nhìn mọi thứ đều xanh trong khi người dùng lỗi hàng loạt. **Trả 500 cho lỗi đầu vào**: client retry vô ích, và on-call bị đánh thức vì lỗi không phải của mình. **Trả 401 khi ý là 403**: client tưởng phải đăng nhập lại, rơi vào vòng lặp đăng nhập. Mã trạng thái là thứ tự động hoá đọc — chọn đúng là một dạng tài liệu miễn phí.
+</Callout>
+
+### Header đáng thuộc lòng
+
+- `Content-Type` / `Accept`: dữ liệu là gì, client muốn gì.
+- `Cache-Control`, `ETag`: response có được tái dùng không (bài tiếp theo).
+- `Set-Cookie` / `Cookie`: trạng thái phiên (bài xác thực).
+- `Location`: đi tiếp đâu (sau `201` hoặc `3xx`).
+- `Retry-After`: chờ bao lâu rồi thử lại (với `429`, `503`).
+
+<Quiz id="q-w0-status" />
+
+## Nếu là tôi, khi nhận ticket "web chậm"
+
+1. Hỏi **ai** chậm (vùng nào, mạng nào, thiết bị nào) — chậm cho mọi người khác hẳn chậm cho một nhóm.
+2. Lấy **waterfall** phía client (DevTools, hoặc dữ liệu đo từ người dùng thật nếu có).
+3. Đặt cạnh **trace phía server** của cùng request để thấy thời gian xử lý thật.
+4. Phần chênh lệch nằm ở mạng, hàng đợi, hoặc trình duyệt — giờ mới bàn cách sửa.
+
+<Quiz id="q-w0-order" />

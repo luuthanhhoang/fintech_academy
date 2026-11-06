@@ -1,0 +1,43 @@
+items:
+  - id: q-w2-resource
+    type: mcq
+    conceptId: rest-api-design
+    prompt: "Thiết kế nào phù hợp nhất cho 'huỷ đơn hàng 123'?"
+    options:
+      - { id: a, text: "GET /cancelOrder?id=123" }
+      - { id: b, text: "POST /orders/123/cancellation (hoặc PATCH /orders/123 đổi trạng thái)" }
+      - { id: c, text: "DELETE /orders/123 dù muốn giữ lịch sử đơn" }
+    correct: [b]
+    explanation: "Thay đổi trạng thái không dùng GET. Huỷ không phải xoá bản ghi; mô hình hoá thành tài nguyên con hoặc cập nhật trạng thái."
+  - id: q-w2-error
+    type: mcq
+    conceptId: api-errors-validation
+    prompt: "Response lỗi nào giúp client tự xử lý tốt nhất?"
+    options:
+      - { id: a, text: "400 với body 'Bad request'" }
+      - { id: b, text: "200 với body có trường error" }
+      - { id: c, text: "422 application/problem+json có type ổn định, detail và danh sách trường sai" }
+      - { id: d, text: "500 kèm stack trace để dễ debug" }
+    correct: [c]
+    explanation: "Mã đúng nhóm + định dạng chung + mã lỗi ổn định cho máy + liệt kê trường sai. Stack trace là lộ thông tin."
+  - id: q-w2-offset
+    type: mcq
+    conceptId: api-pagination-versioning
+    prompt: "Vì sao OFFSET/LIMIT có vấn đề với bảng lớn đang được ghi liên tục? (chọn tất cả)"
+    options:
+      - { id: a, text: "Trang càng sâu, DB càng phải duyệt và bỏ nhiều dòng" }
+      - { id: b, text: "Có dòng mới chèn vào giữa hai lần gọi thì client thấy trùng hoặc sót" }
+      - { id: c, text: "OFFSET không được SQL hỗ trợ" }
+    correct: [a, b]
+    explanation: "Cursor (keyset) pagination tránh cả hai bằng cách bắt đầu từ mốc của dòng cuối trang trước."
+  - id: q-w2-breaking
+    type: mcq
+    conceptId: api-pagination-versioning
+    prompt: "Thay đổi nào là phá vỡ tương thích (breaking)? (chọn tất cả)"
+    options:
+      - { id: a, text: "Thêm trường tuỳ chọn 'nickname' vào response" }
+      - { id: b, text: "Đổi kiểu trường 'price' từ số sang chuỗi" }
+      - { id: c, text: "Thêm tham số bắt buộc vào endpoint đang dùng" }
+      - { id: d, text: "Thêm endpoint mới" }
+    correct: [b, c]
+    explanation: "Cộng thêm thứ tuỳ chọn là an toàn; đổi kiểu, đổi ý nghĩa, thêm bắt buộc làm client cũ hỏng."

@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w6-strategy
+    conceptId: testing-pyramid
+    prompt: "Viết chiến lược kiểm thử cho tính năng 'mã giảm giá' (nhập mã ở giỏ hàng, áp dụng điều kiện: hạn dùng, giá trị tối thiểu, mỗi người dùng một lần). Phân bổ test vào các tầng."
+    hint: "Logic tính toán và điều kiện ở đâu? Phần nào chạm DB? Hành trình nào đáng có E2E?"
+    solution: "Unit: hàm tính giảm giá và kiểm điều kiện (hết hạn, dưới giá trị tối thiểu, làm tròn tiền, phần trăm vs cố định) với nhiều ca biên. Integration: lưu/kiểm 'mỗi người một lần' với DB thật, kể cả hai request song song (ràng buộc duy nhất). Contract: response API áp mã (tổng tiền, lý do từ chối có mã lỗi ổn định) khớp với frontend. E2E: một hành trình 'thêm giỏ → nhập mã hợp lệ → thanh toán thấy đúng tổng' và một hành trình mã không hợp lệ hiện thông báo. Không lặp lại mọi ca biên ở E2E."

@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w5-pool
+    conceptId: queueing-littles-law
+    prompt: "Service gọi DB với connection pool 20 kết nối. Mỗi truy vấn giữ kết nối trung bình 40 ms. Lưu lượng cao điểm 600 request/giây, mỗi request 1 truy vấn. Pool có đủ không? Nếu không, bạn đề xuất gì?"
+    hint: "Little's law cho số kết nối cần dùng đồng thời."
+    solution: "Số kết nối bận trung bình L = λW = 600 × 0,04 = 24 > 20 → pool là nút cổ chai, request xếp hàng chờ kết nối và độ trễ tăng mạnh. Lựa chọn: giảm thời gian giữ kết nối (index, bỏ truy vấn thừa, không giữ kết nối trong lúc gọi dịch vụ khác), tăng pool nếu DB chịu được tổng kết nối từ mọi instance, cache kết quả đọc, và đặt timeout chờ pool ngắn kèm rate limit để quá tải không lan."

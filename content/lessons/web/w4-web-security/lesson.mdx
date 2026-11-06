@@ -1,0 +1,91 @@
+---
+id: w4-web-security
+track: web
+stage: w4
+order: 1
+title: { vi: "Nghĩ như kẻ tấn công: OWASP Top 10, XSS, CSRF, CORS, injection và phân quyền", en: "Think like an attacker: OWASP Top 10, XSS, CSRF, CORS, injection and access control" }
+summary: "Đa số lỗ hổng web không phải mật mã cao siêu mà là tin nhầm dữ liệu hoặc quên kiểm quyền. Bài này dùng OWASP Top 10:2025 làm bản đồ, đi sâu vào những lỗi một dev fullstack gặp hằng ngày và cách chặn chúng bằng mặc định an toàn."
+concepts: [web-security-owasp, xss-csrf-cors, injection-access-control]
+estMinutes: 50
+whyQuestion: "API GET /invoices/1043 trả hoá đơn nếu người gọi đã đăng nhập. Đổi số thành 1044 thì thấy hoá đơn của công ty khác. Lỗi này tên là gì, và vì sao nó đứng đầu danh sách rủi ro web?"
+devMapping:
+  - finance: "Kiểm soát truy cập (access control)"
+    dev: "Mỗi request: người này có quyền với ĐỐI TƯỢNG này không? — kiểm ở server"
+    explanation: "Đăng nhập rồi chưa có nghĩa được xem mọi thứ. Ẩn nút ở UI không phải là phân quyền."
+  - finance: "Truy vấn tham số hoá"
+    dev: "Placeholder ($1, ?) thay vì nối chuỗi SQL"
+    explanation: "Dữ liệu luôn là dữ liệu, không bao giờ trở thành mã lệnh — chặn SQL injection từ gốc."
+  - finance: "Output encoding / CSP"
+    dev: "Escape theo ngữ cảnh khi chèn vào HTML; Content-Security-Policy giới hạn script được chạy"
+    explanation: "Framework hiện đại escape mặc định — lỗ hổng thường nằm ở chỗ bạn cố tình tắt nó."
+pretest: [q-w4s-idor, q-w4s-cors]
+applications:
+  - id: app-w4s-idor-hunt
+    title: "Săn lỗi phân quyền theo đối tượng"
+    context: "API có các endpoint dạng /resources/:id."
+    task: "Với hai tài khoản test thuộc hai tổ chức khác nhau, thử truy cập/sửa/xoá đối tượng của nhau qua mọi endpoint có id; viết test tự động cho các trường hợp đó và thêm vào CI."
+    deliverable: "Danh sách endpoint đã kiểm + test tự động chạy trong CI."
+sources: [owasp-top10-2025, owasp-xss-csrf, mdn-cors]
+facts:
+  - id: owasp-2025-top5
+    text: "Năm hạng mục đầu của OWASP Top 10:2025"
+    value: "A01 Broken Access Control · A02 Security Misconfiguration · A03 Software Supply Chain Failures · A04 Cryptographic Failures · A05 Injection"
+    sourceId: owasp-top10-2025
+    asOf: 2026-11-06
+    status: verified
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho một dev mới vì sao 'tôi đã ẩn nút Xoá với người không phải admin' không phải là phân quyền, và phân quyền đúng nên đặt ở đâu."
+  rubric:
+    - { id: server, criterion: "Kẻ tấn công gọi thẳng API, không cần UI — kiểm quyền phải ở server" }
+    - { id: object, criterion: "Kiểm theo đối tượng (người này có quyền với bản ghi này), không chỉ theo vai trò" }
+    - { id: default, criterion: "Mặc định từ chối, tập trung logic phân quyền một chỗ, có test" }
+---
+
+<Callout kind="story" title="Đổi một con số trên URL">
+Một khách hàng doanh nghiệp tò mò sửa số trên thanh địa chỉ và mở được hoá đơn của công ty khác. Code đã kiểm tra "người dùng đăng nhập chưa" ở mọi endpoint. Nó chỉ quên một câu hỏi: "hoá đơn này **của ai**?".
+</Callout>
+
+## Bản đồ: OWASP Top 10:2025
+
+OWASP Top 10 là danh sách rủi ro phổ biến nhất của ứng dụng web, cập nhật định kỳ từ dữ liệu thực tế. <Fact id="owasp-2025-top5" />
+
+Đáng chú ý: **kiểm soát truy cập hỏng** vẫn đứng đầu. Chuỗi cung ứng phần mềm (thư viện, pipeline build) là hạng mục mới. Danh sách này nên được dùng làm **checklist khi thiết kế và review**, không phải để học thuộc.
+
+## Kiểm soát truy cập: câu hỏi bị quên nhiều nhất
+
+Lỗi ở câu chuyện trên thường được gọi là IDOR (Insecure Direct Object Reference) hay BOLA (Broken Object Level Authorization) trong API. Cách chặn:
+
+- Mọi truy vấn lấy dữ liệu đều **lọc theo chủ sở hữu**: `WHERE id = $1 AND org_id = $2` (org lấy từ phiên, không từ request).
+- **Mặc định từ chối**; logic phân quyền tập trung một chỗ, không rải rác trong từng handler.
+- Viết **test với hai tài khoản** thuộc hai tổ chức — loại test rẻ mà bắt được rất nhiều lỗi.
+
+<Quiz id="q-w4s-idor" />
+
+## Injection: dữ liệu biến thành lệnh
+
+SQL injection xảy ra khi nối chuỗi từ người dùng vào câu lệnh. Cách chặn duy nhất đáng tin: **truy vấn tham số hoá** (prepared statement) — ORM và query builder làm điều này mặc định; nguy hiểm khi bạn tự viết SQL "thô" bằng cách nối chuỗi. Cùng tư tưởng áp dụng cho lệnh shell, LDAP, template.
+
+## XSS: kẻ tấn công chạy JavaScript trên trang của bạn
+
+XSS (Cross-Site Scripting) cho phép kẻ tấn công chèn script chạy trong trang với quyền của người dùng — đọc dữ liệu trên trang, gửi request thay họ. Theo OWASP XSS Prevention Cheat Sheet:
+
+- **Escape theo ngữ cảnh** khi đưa dữ liệu vào HTML, thuộc tính, URL, JavaScript. React và các framework hiện đại escape mặc định khi bạn chèn text.
+- Cẩn thận với các "cửa thoát": chèn HTML thô, `innerHTML`, `href` nhận `javascript:`.
+- **Content-Security-Policy** làm lớp phòng thủ thứ hai: chỉ cho phép script từ nguồn được khai báo.
+- Cookie phiên `HttpOnly` để script không đọc được (bài trước).
+
+## CSRF và CORS: hai thứ hay bị nhầm
+
+- **CSRF** (Cross-Site Request Forgery): trang độc gửi request tới site của bạn, trình duyệt **tự đính kèm cookie** của người dùng. Chặn bằng `SameSite` cookie, token CSRF cho form, và không dùng `GET` để thay đổi dữ liệu.
+- **CORS** là cơ chế trình duyệt cho phép trang ở origin khác **đọc** response từ API của bạn. Nó **nới lỏng** chính sách same-origin, không phải hàng rào bảo vệ server. Bật `Access-Control-Allow-Origin: *` cùng cho phép gửi credential là mở cửa cho mọi trang đọc dữ liệu người dùng.
+
+<Quiz id="q-w4s-cors" />
+
+<Callout kind="field" title="Thứ tự ưu tiên của tôi khi review bảo mật một app web">
+1) **Mỗi endpoint kiểm quyền theo đối tượng chưa?** (rủi ro lớn nhất, dễ bỏ sót nhất). 2) **Có chỗ nào nối chuỗi vào SQL/shell/HTML không?** — grep là đủ để tìm phần lớn. 3) **Secret có nằm trong repo, log, hay bundle JS gửi xuống trình duyệt không?** 4) **Thư viện có lỗ hổng đã biết không?** — bật cảnh báo phụ thuộc trong CI. 5) **Header bảo mật và cookie** đặt đúng chưa. Không cần là chuyên gia bảo mật để làm được năm bước này — chỉ cần làm đều đặn.
+</Callout>
+
+<Quiz id="q-w4s-sqli" />
+<Quiz id="q-w4s-xss" />

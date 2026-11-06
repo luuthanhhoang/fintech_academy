@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-delivery-pipeline
+    kind: flow
+    direction: LR
+    title: "Từ commit tới production, có cổng chặn và đường lùi"
+    caption: "Mỗi mũi tên là một cổng: chỉ đi tiếp khi bước trước đạt. Canary so chỉ số với bản cũ và tự lùi nếu xấu đi. Mô hình khái niệm."
+    nodes:
+      - { id: commit, label: "Commit / PR" }
+      - { id: ci, label: "CI: lint, test, build" }
+      - { id: artifact, label: "Artifact bất biến" }
+      - { id: staging, label: "Staging + E2E" }
+      - { id: canary, label: "Canary vài %", tone: accent }
+      - { id: full, label: "Toàn bộ", tone: good }
+      - { id: rollback, label: "Rollback", tone: warn }
+    edges:
+      - { from: commit, to: ci }
+      - { from: ci, to: artifact, label: "xanh" }
+      - { from: artifact, to: staging }
+      - { from: staging, to: canary, label: "đạt" }
+      - { from: canary, to: full, label: "chỉ số ổn" }
+      - { from: canary, to: rollback, label: "lỗi tăng" }

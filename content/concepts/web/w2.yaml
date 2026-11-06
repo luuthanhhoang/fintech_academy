@@ -1,0 +1,9 @@
+track: web
+stage: w2
+concepts:
+  - { id: "rest-api-design", name: { vi: "Thiết kế REST API", en: "REST API design" }, short: "Tài nguyên và URL, dùng đúng phương thức và mã trạng thái, hợp đồng ổn định cho client.", prerequisites: [http-semantics], difficulty: 2, tags: [REST, API, endpoint] }
+  - { id: "api-errors-validation", name: { vi: "Lỗi và validate trong API", en: "API errors and validation" }, short: "Validate đầu vào ở biên, trả lỗi có cấu trúc (Problem Details) giúp client tự sửa.", prerequisites: [rest-api-design], difficulty: 2, tags: [validation, error, RFC 9457, 4xx] }
+  - { id: "api-pagination-versioning", name: { vi: "Phân trang và phiên bản API", en: "Pagination and API versioning" }, short: "Cursor vs offset, giới hạn kích thước, tiến hoá hợp đồng mà không phá client cũ.", prerequisites: [rest-api-design], difficulty: 2, tags: [pagination, cursor, versioning] }
+  - { id: "api-idempotency-retries", name: { vi: "Idempotency và retry cho API", en: "API idempotency and retries" }, short: "Mạng chập chờn thì client sẽ gửi lại: khoá idempotency, retry có backoff + jitter để không tạo trùng.", prerequisites: [rest-api-design], difficulty: 3, tags: [idempotency, retry, backoff, Idempotency-Key] }
+  - { id: "graphql-grpc", name: { vi: "GraphQL và gRPC", en: "GraphQL and gRPC" }, short: "Truy vấn theo hình dữ liệu client cần, hoặc RPC có schema nhị phân; khi nào dùng thay REST.", prerequisites: [rest-api-design], difficulty: 3, tags: [GraphQL, gRPC, protobuf] }
+  - { id: "webhooks-async-api", name: { vi: "Webhook và API bất đồng bộ", en: "Webhooks and async APIs" }, short: "Server gọi ngược client khi có sự kiện: ký HMAC, retry, xử lý trùng và sai thứ tự.", prerequisites: [api-idempotency-retries], difficulty: 3, tags: [webhook, HMAC, event] }

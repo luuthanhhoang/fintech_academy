@@ -17,4 +17,5 @@ export const SIMULATOR_REGISTRY: Record<SimulatorKey, ComponentType<SimBodyProps
   options: dynamic(() => import('./bodies/options').then((m) => m.OptionsSim), { ssr: false, loading }),
   portfolio: dynamic(() => import('./bodies/portfolio').then((m) => m.PortfolioSim), { ssr: false, loading }),
   dcf: dynamic(() => import('./bodies/dcf').then((m) => m.DcfSim), { ssr: false, loading }),
+  queueing: dynamic(() => import('./bodies/queueing').then((m) => m.QueueingSim), { ssr: false, loading }),
 }

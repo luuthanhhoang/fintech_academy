@@ -1,0 +1,14 @@
+id: idempotency-store
+title: { vi: "API tạo thanh toán idempotent", en: "Idempotent payment API" }
+summary: Cài xử lý khoá Idempotency-Key cho endpoint tạo thanh toán — retry không tạo giao dịch trùng, dùng lại khoá với nội dung khác bị từ chối.
+concepts: [api-idempotency-retries, rest-api-design]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện lớp PaymentAPI. Mỗi request là create_payment(key, body) với body là dict (ví dụ {"amount": 150000, "to": "acc-1"}).
+  Trả về tuple (status, response):
+  1. Không có key (None hoặc chuỗi rỗng): (400, {"error": "missing_idempotency_key"}).
+  2. Key mới: tạo thanh toán (gọi self._charge(body), trả id tăng dần "pay_1", "pay_2"…), lưu kết quả theo key, trả (201, {"id": ..., "amount": ...}).
+  3. Key đã thấy với CÙNG body: trả lại đúng response đã lưu, KHÔNG charge lần nữa (status giống lần đầu).
+  4. Key đã thấy với body KHÁC: (422, {"error": "idempotency_key_reused"}) — theo bản nháp IETF.
+  5. Nếu _charge raise lỗi (ví dụ thẻ bị từ chối), lưu và trả (402, {"error": "card_declined"}) cho key đó; retry cùng key nhận lại đúng lỗi này.
+  6. So sánh body theo nội dung (dict bằng nhau), không theo thứ tự khoá.

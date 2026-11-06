@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w0-pick-status
+    conceptId: http-semantics
+    prompt: "Chọn mã trạng thái và header cho từng trường hợp: (1) tạo bài viết thành công; (2) email đăng ký đã tồn tại; (3) client gửi quá 100 request/phút; (4) dịch vụ thanh toán phía sau không phản hồi kịp."
+    hint: "Nghĩ xem client nên làm gì tiếp theo trong từng trường hợp."
+    solution: "(1) 201 Created + header Location trỏ tới bài mới. (2) 409 Conflict (hoặc 422 nếu coi là lỗi nghiệp vụ), kèm lỗi có cấu trúc nói rõ trường email. (3) 429 Too Many Requests + Retry-After. (4) 504 Gateway Timeout (hoặc 503 nếu chủ động từ chối khi quá tải) — client có thể retry sau, với backoff."

@@ -1,0 +1,84 @@
+---
+id: w1-rendering-strategies
+track: web
+stage: w1
+order: 2
+title: { vi: "UI là hàm của state — và render ở đâu cho đúng: CSR, SSR, SSG", en: "UI as a function of state, and where to render it: CSR, SSR, SSG" }
+summary: "Cách nghĩ về component và state giúp UI dễ đoán; sau đó là câu hỏi kiến trúc mà mọi team frontend phải trả lời: render trên trình duyệt, trên server mỗi request, hay sẵn lúc build — và cái giá của hydration."
+concepts: [component-state, rendering-strategies]
+estMinutes: 40
+whyQuestion: "Trang marketing được viết hoàn toàn bằng SPA: trên điện thoại tầm trung người dùng nhìn màn hình trắng vài giây, và chia sẻ link lên mạng xã hội không có ảnh xem trước. Vì sao, và nên đổi sang cách render nào?"
+devMapping:
+  - finance: "State tối thiểu"
+    dev: "Single source of truth — giá trị suy ra được thì tính, đừng lưu"
+    explanation: "Lưu cả 'danh sách' lẫn 'số phần tử' là mời bug lệch nhau. Giống chuẩn hoá trong database."
+  - finance: "Hydration"
+    dev: "Gắn event handler và state vào HTML đã render sẵn từ server"
+    explanation: "Người dùng thấy nội dung sớm, nhưng trang chỉ tương tác được sau khi JS tải và chạy xong — xử lý cùng một UI hai lần."
+  - finance: "SSG (static)"
+    dev: "Build-time rendering → file tĩnh trên CDN"
+    explanation: "Nhanh và rẻ nhất khi nội dung giống nhau cho mọi người; chính site này là SSG (output: export)."
+pretest: [q-w1-derived-state, q-w1-pick-render]
+applications:
+  - id: app-w1-render-map
+    title: "Bản đồ render cho sản phẩm của bạn"
+    context: "Một sản phẩm có trang marketing, blog, trang sản phẩm, dashboard sau đăng nhập và trang thanh toán."
+    task: "Với từng loại trang, chọn CSR/SSR/SSG (hoặc kết hợp), ghi lý do theo 4 tiêu chí: nội dung cá nhân hoá hay không, tần suất thay đổi, cần SEO/preview không, độ nhạy với tốc độ hiển thị đầu."
+    deliverable: "Bảng quyết định + 1 trang chuyển đổi thử, đo LCP trước/sau."
+sources: [react-thinking, webdev-rendering]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích hydration cho một backend dev: nó giải quyết vấn đề gì, tốn gì, và khi nào bạn tránh được nó."
+  rubric:
+    - { id: what, criterion: "HTML có sẵn từ server, JS gắn tương tác sau" }
+    - { id: cost, criterion: "Tốn tải/chạy JS, xử lý UI hai lần, khoảng 'thấy được nhưng chưa bấm được'" }
+    - { id: avoid, criterion: "Nội dung tĩnh/ít tương tác thì giảm JS phía client (SSG, phần tương tác nhỏ)" }
+---
+
+<Callout kind="story" title="Bug 'giỏ hàng hiện 3 món nhưng tổng tiền tính cho 2'">
+Một component giữ cả `items` lẫn `total` trong state. Ai đó thêm nút "xoá món" và quên cập nhật `total`. Bug chỉ xuất hiện theo một thứ tự thao tác nhất định, QA mất hai ngày mới tái hiện được. Nguyên nhân không phải React. Nguyên nhân là có **hai nguồn sự thật** cho cùng một điều.
+</Callout>
+
+## UI là hàm của state
+
+Mô hình tư duy của React (và hầu hết framework hiện đại): bạn không "sửa giao diện", bạn **mô tả giao diện ứng với state hiện tại**, framework lo phần cập nhật DOM. Tài liệu "Thinking in React" đề xuất quy trình:
+
+1. Chia UI thành cây component, mỗi component một việc.
+2. Dựng bản tĩnh từ props trước.
+3. Tìm **state tối thiểu** — thứ gì thay đổi theo thời gian *và* không tính được từ thứ khác.
+4. Đặt state ở component cha chung gần nhất của các component cần nó.
+5. Dữ liệu chảy xuống qua props, sự kiện chảy lên qua callback.
+
+Bước 3 là chỗ hầu hết bug state sinh ra. `total`, `count`, `isEmpty`, danh sách đã lọc — đều là **giá trị suy ra**, tính lại mỗi lần render là rẻ và luôn đúng.
+
+<Quiz id="q-w1-derived-state" />
+
+<Callout kind="field" title="Ba mùi code về state tôi hay gặp khi review">
+**Đồng bộ state bằng effect** ("khi A đổi thì set B") — gần như luôn nên tính B trực tiếp từ A. **Copy props vào state** rồi thắc mắc vì sao UI không cập nhật khi props đổi. **Mọi thứ vào global store** từ ngày đầu — state cục bộ của một form không cần cả ứng dụng biết. Câu hỏi tôi tự hỏi trước khi thêm state: "nếu xoá biến này, mình có tính lại được nó không?" Nếu có, đừng thêm.
+</Callout>
+
+## Render ở đâu?
+
+Theo bài "Rendering on the Web" của web.dev, có ba hướng chính (và nhiều biến thể lai):
+
+| Cách | HTML được tạo khi nào | Mạnh | Yếu |
+|---|---|---|---|
+| **CSR** (client-side) | Trên trình duyệt, sau khi tải JS | Ứng dụng tương tác nhiều, server đơn giản | Màn hình trắng tới khi JS chạy xong; khó nhanh trên máy yếu; SEO/preview kém |
+| **SSR** (server-side) | Trên server, mỗi request | Nội dung hiện sớm, cá nhân hoá được | Tốn server mỗi request, có thể tăng thời gian chờ byte đầu; vẫn cần hydration |
+| **SSG** (static) | Lúc build | Nhanh và rẻ nhất, phục vụ từ CDN | Phải sinh trước mọi URL; dữ liệu cũ tới lần build sau |
+
+**Hydration**: với SSR/SSG, HTML đến trước, sau đó JavaScript chạy lại để gắn tương tác. Bài web.dev lưu ý cái giá: bạn thường xử lý cùng một ứng dụng **hai lần**, và có khoảng thời gian trang trông như xong nhưng chưa bấm được. Khuyến nghị chung của bài: cân nhắc SSR hoặc static rendering thay vì CSR thuần + rehydration toàn trang, và có thể trộn từng trang một cách khác.
+
+<Quiz id="q-w1-pick-render" />
+
+<Callout kind="dev" title="Chính site này">
+FinAI Academy dùng SSG hoàn toàn (`output: 'export'`): bài học được biên dịch lúc build thành HTML tĩnh; phần tương tác (quiz, mô phỏng, làng 3D) là các "đảo" client component nạp riêng. Không có server nên không có chi phí SSR, đổi lại nội dung chỉ cập nhật khi build lại.
+</Callout>
+
+<Callout kind="field" title="Cách tôi chọn trong thực tế">
+Bắt đầu từ câu hỏi "**nội dung có giống nhau cho mọi người không?**". Giống nhau (marketing, blog, tài liệu) → static, làm mới khi đổi. Khác nhau theo người dùng nhưng cần hiện nhanh/SEO (trang sản phẩm có giá theo vùng) → SSR hoặc static + phần nhỏ cá nhân hoá phía client. Sau đăng nhập, tương tác dày (dashboard) → CSR chấp nhận được vì không cần SEO và người dùng quay lại thường xuyên (cache có tác dụng). Sai lầm đắt nhất tôi thấy là chọn một cách cho **cả** sản phẩm vì "team quen framework X".
+</Callout>
+
+<Quiz id="q-w1-hydration" />
+<Quiz id="q-w1-lift-state" />

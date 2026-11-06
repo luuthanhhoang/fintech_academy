@@ -1,0 +1,99 @@
+---
+id: w7-deploy-observe
+track: web
+stage: w7
+order: 1
+title: { vi: "Sau khi bấm deploy: thả dần, quan sát, SLO và học từ sự cố", en: "After you hit deploy: gradual rollout, observability, SLOs and learning from incidents" }
+summary: "Code chỉ bắt đầu cuộc đời thật khi chạy trên production. Bài này là phần mà trường học hiếm khi dạy: thả thay đổi từng phần và lùi nhanh, nhìn thấy hệ thống qua log–metric–trace, đặt mục tiêu tin cậy bằng SLO và error budget, xử lý sự cố bình tĩnh và viết postmortem không đổ lỗi."
+concepts: [cicd-deploy-strategies, observability-otel, slo-error-budget, incident-response-postmortem]
+estMinutes: 55
+whyQuestion: "Một quy tắc cấu hình được đẩy tới mọi server cùng lúc và làm sập dịch vụ toàn cầu; một lệnh gõ nhầm máy xoá mất dữ liệu production và backup thì không dùng được. Hai sự cố khác nhau — bài học chung là gì?"
+devMapping:
+  - finance: "Canary release"
+    dev: "Thả bản mới cho một phần nhỏ lưu lượng, so chỉ số với bản cũ, rồi mới mở rộng"
+    explanation: "Biến 'sự cố toàn cầu' thành 'sự cố ở 1% người dùng trong vài phút'."
+  - finance: "Trace phân tán"
+    dev: "Một request mang trace ID qua mọi dịch vụ; mỗi đoạn là một span có thời gian"
+    explanation: "Trả lời 'chậm ở đâu' cho request đi qua nhiều service — điều log riêng lẻ không làm được."
+  - finance: "Error budget"
+    dev: "100% − SLO: lượng 'không tin cậy' được phép, dùng để chi cho thay đổi"
+    explanation: "Còn ngân sách thì cứ phát hành; tiêu hết thì ưu tiên ổn định — biến tranh cãi 'nhanh hay ổn' thành quy tắc."
+scenarios: [migration-lock]
+cases: [cloudflare-2019, gitlab-2017]
+pretest: [q-w7-canary, q-w7-budget]
+applications:
+  - id: app-w7-slo
+    title: "Đặt SLO đầu tiên cho một dịch vụ"
+    context: "Một dịch vụ quan trọng chưa có mục tiêu tin cậy rõ ràng; cảnh báo hiện dựa trên CPU."
+    task: "Chọn 1–2 SLI theo trải nghiệm người dùng (tỉ lệ request thành công, tỉ lệ request dưới ngưỡng độ trễ), đề xuất SLO dựa trên số liệu 4 tuần gần nhất, tính error budget, viết chính sách khi tiêu hết ngân sách, và chuyển một cảnh báo CPU thành cảnh báo theo tốc độ tiêu ngân sách."
+    deliverable: "Tài liệu SLO một trang + chính sách error budget + một cảnh báo mới."
+sources: [sre-book, otel-signals, gitlab-postmortem-2017, cloudflare-2019-postmortem]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Bạn là người trực khi tỉ lệ lỗi tăng vọt ngay sau một lần deploy. Mô tả 30 phút đầu tiên của bạn, và những gì bạn làm trong tuần sau đó."
+  rubric:
+    - { id: mitigate, criterion: "Ưu tiên giảm thiệt hại trước (rollback/tắt feature flag), không debug trên production trước" }
+    - { id: communicate, criterion: "Thông báo, phân vai (người chỉ huy, người liên lạc), ghi dòng thời gian" }
+    - { id: postmortem, criterion: "Postmortem không đổ lỗi, nguyên nhân hệ thống, hành động có chủ và hạn" }
+---
+
+<Callout kind="story" title="Thứ Sáu, 17 giờ 40">
+Một bản deploy nhỏ — "chỉ đổi một dòng cấu hình". Mười phút sau, tỉ lệ lỗi tăng, khách hàng gửi ảnh chụp màn hình. Ba người cùng vào sửa trực tiếp trên production, mỗi người một hướng. Một giờ sau không ai còn nhớ đã thay đổi những gì, theo thứ tự nào.
+</Callout>
+
+## Thả dần, lùi nhanh
+
+Phần lớn sự cố bắt đầu bằng một **thay đổi**: code, cấu hình, schema, hạ tầng. Không thể bỏ thay đổi, nên mục tiêu là làm mỗi thay đổi **nhỏ, thả dần và lùi được**:
+
+- **Rolling**: thay dần từng máy. Đơn giản, nhưng lúc lùi cũng chậm dần.
+- **Blue/green**: dựng nguyên bản mới song song, chuyển lưu lượng một lần, lùi bằng cách chuyển lại.
+- **Canary**: thả cho một phần nhỏ lưu lượng, **so chỉ số** (lỗi, độ trễ) với bản cũ, tự động dừng nếu xấu đi, rồi mới mở rộng.
+- **Feature flag**: tách "deploy code" khỏi "bật tính năng" — tắt tính năng không cần deploy lại.
+
+<Diagram id="dg-delivery-pipeline" />
+
+Bài học này áp dụng cho **cấu hình** không kém gì code. Sự cố Cloudflare 2019 là ví dụ được phân tích kỹ: một quy tắc WAF mới chứa biểu thức chính quy backtracking quá mức được đẩy đồng loạt tới toàn mạng, làm CPU cạn kiệt ở khắp nơi cùng lúc.
+
+<Case id="cloudflare-2019" />
+
+<Quiz id="q-w7-canary" />
+
+<Callout kind="field" title="Thói quen deploy tôi giữ ở mọi team">
+**Mỗi thay đổi đủ nhỏ để đọc hết trong một lần review** — thay đổi lớn là nơi rủi ro trốn. **Tách deploy schema khỏi deploy code**, và mọi bước tương thích ngược (expand → migrate → contract). **Biết cách lùi trước khi tiến**: nếu không trả lời được "lùi bằng cách nào, mất bao lâu", chưa nên deploy. **Tránh deploy ngay trước lúc cả đội nghỉ** — không phải vì mê tín, mà vì không có ai đủ tỉnh táo để theo dõi.
+</Callout>
+
+<Scenario id="migration-lock" />
+
+## Observability: nhìn thấy hệ thống đang chạy
+
+OpenTelemetry mô tả các **tín hiệu** chính: **trace** (đường đi của một request qua các dịch vụ, chia thành span có thời gian), **metric** (số đo gộp theo thời gian: tỉ lệ lỗi, độ trễ theo phân vị, độ dài hàng đợi), và **log** (bản ghi sự kiện, nên có cấu trúc và mang trace ID để nối với trace).
+
+- Metric trả lời "**có** vấn đề không?" — rẻ, dùng cho cảnh báo và dashboard.
+- Trace trả lời "vấn đề **ở đâu**?" — một request chậm, chậm ở span nào.
+- Log trả lời "**chuyện gì** đã xảy ra?" — chi tiết của một sự kiện cụ thể.
+
+## SLO và error budget
+
+Sách SRE của Google (chương "Embracing Risk" và "Service Level Objectives") đặt nền: độ tin cậy 100% vừa không thể vừa không đáng — người dùng không phân biệt được 99,99% và 100%, nhưng chi phí thì khác hẳn. Thay vào đó:
+
+- **SLI**: chỉ số phản ánh trải nghiệm người dùng (tỉ lệ request thành công, tỉ lệ nhanh hơn ngưỡng).
+- **SLO**: mục tiêu cho SLI trong một khoảng thời gian (ví dụ 99,9% request thành công trong 30 ngày).
+- **Error budget = 100% − SLO**: phần "được phép hỏng". Còn ngân sách thì cứ thử nghiệm và phát hành; tiêu hết thì ưu tiên ổn định.
+
+<Quiz id="q-w7-budget" />
+
+<Callout kind="field" title="Cảnh báo nên đánh thức người khi nào">
+Cảnh báo theo **triệu chứng người dùng thấy** (tỉ lệ lỗi, độ trễ vượt SLO, tốc độ tiêu error budget) thay vì theo **nguyên nhân có thể** (CPU 80%, ổ đĩa 70%). CPU cao mà người dùng không bị ảnh hưởng thì để sáng mai xử lý; người dùng lỗi mà CPU thấp thì vẫn phải dậy. Mỗi cảnh báo đánh thức ai đó phải **cần hành động ngay** — cảnh báo không cần hành động dạy người ta bỏ qua cảnh báo.
+</Callout>
+
+## Khi sự cố xảy ra — và sau đó
+
+Trong sự cố: **giảm thiệt hại trước, hiểu nguyên nhân sau** (rollback, tắt flag, chuyển lưu lượng); một người chỉ huy, một người liên lạc; ghi dòng thời gian ngay lúc đó.
+
+Sau sự cố: **postmortem không đổ lỗi** (sách SRE, chương "Postmortem Culture") — tìm điều kiện hệ thống cho phép lỗi xảy ra, không tìm người để trách; mỗi hành động có người chịu trách nhiệm và hạn. Postmortem công khai của GitLab năm 2017 là một ví dụ hiếm có về sự minh bạch: một lệnh chạy nhầm trên máy chủ chính, và nhiều lớp backup hoá ra không dùng được khi cần.
+
+<Case id="gitlab-2017" />
+
+<Quiz id="q-w7-signals" />
+<Quiz id="q-w7-mitigate" />

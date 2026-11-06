@@ -1,6 +1,7 @@
 # FinAI Academy — Hướng dẫn cho Claude Code
 
-Website học cá nhân (chỉ FE, static export, deploy Vercel) cho 2 lộ trình: Fintech từ 0 và AI/LLM engineer.
+Website học cá nhân (chỉ FE, static export, deploy Vercel) cho 3 lộ trình: Fintech từ 0, AI/LLM engineer và Fullstack web developer.
+Bài mới viết theo giọng trải nghiệm: mở bằng `<Callout kind="story">` (tình huống giả định), có `<Callout kind="field">` (góc nhìn người viết, có nhãn trung thực) — nhãn lấy từ `site.yaml → callouts`; kiến thức cốt lõi vẫn phải đầy đủ.
 
 ## NGUYÊN TẮC BẮT BUỘC (không có ngoại lệ)
 1. **Không hardcode**, không fix cứng keyword/query/danh sách. Bài học, khái niệm, quiz, quan hệ tiền đề, cấu hình lộ trình,

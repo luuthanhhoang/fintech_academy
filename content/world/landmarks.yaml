@@ -86,6 +86,36 @@ landmarks:
     ref: { kind: scenario, id: agent-injection }
     title: "Trạm tín hiệu harness"
     metaphor: "Diễn tập agent đọc email chứa prompt injection — hàng rào nào chặn được (tình huống giả định)."
+  - id: ben-hang-doi
+    model: watermill
+    ref: { kind: simulator, id: queueing }
+    title: "Bến sông hàng đợi"
+    metaphor: "Nước đổ về nhanh hơn bánh xe kịp quay thì mặt nước dâng — request đến nhanh hơn công suất thì hàng đợi dài ra, và dâng rất nhanh khi gần ngưỡng."
+  - id: xuong-van-dieu-tiet
+    model: workshop
+    ref: { kind: lab, id: rate-limiter }
+    title: "Xưởng van điều tiết"
+    metaphor: "Van cho nước qua theo nhịp: chấp nhận một đợt dồn ngắn nhưng giữ dòng trung bình — token bucket."
+  - id: buu-cuc
+    model: archive
+    ref: { kind: lab, id: idempotency-store }
+    title: "Bưu cục số hiệu thư"
+    metaphor: "Mỗi lá thư mang số hiệu riêng; thư gửi lại cùng số hiệu chỉ được phát một lần — khoá idempotency."
+  - id: di-tich-cloudflare
+    model: ruin
+    ref: { kind: case, id: cloudflare-2019 }
+    title: "Di tích Cloudflare 2019"
+    metaphor: "Một quy tắc nhỏ đẩy đồng loạt khắp nơi — nhắc rằng cấu hình cũng cần thả dần như code."
+  - id: di-tich-gitlab
+    model: ruin
+    ref: { kind: case, id: gitlab-2017 }
+    title: "Di tích GitLab 2017"
+    metaphor: "Kho lưu trữ có năm lớp khoá mà không lớp nào mở được khi cần — backup chưa khôi phục thử thì chưa phải backup."
+  - id: tram-truc-van-hanh
+    model: signal-tower
+    ref: { kind: scenario, id: migration-lock }
+    title: "Trạm trực vận hành"
+    metaphor: "Nơi diễn tập xử lý sự cố deploy giờ cao điểm (tình huống giả định)."
 guides:
   - id: cu-lai
     name: "Cụ Lãi"
@@ -105,3 +135,9 @@ guides:
     landmark: tram-tin-hieu-agent
     tutorMode: qa
     greeting: "Hỏi tôi về agent, công cụ và các lớp phòng thủ — tôi trả lời có trích nguồn từ bài học."
+  - id: anh-van
+    name: "Anh Vận"
+    role: "Người trực vận hành ở Phố Fullstack"
+    landmark: tram-truc-van-hanh
+    tutorMode: socratic
+    greeting: "Hệ thống chậm, ta không đoán — ta hỏi đúng câu hỏi. Em muốn bắt đầu từ request, từ database, hay từ lần deploy gần nhất?"

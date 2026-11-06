@@ -7,6 +7,7 @@ import { breakevens, strategyProfit } from '@/lib/finance/options'
 import { minimumVariance, portfolioStats } from '@/lib/finance/portfolio'
 import { effectiveAnnualRate, futureValue, npv } from '@/lib/finance/tvm'
 import { withinTolerance } from '@/lib/quiz/grade'
+import { mmc } from '@/lib/systems/queueing'
 
 const bundle = loadContent()
 const examples = new Map(bundle.lessons.flatMap((l) => l.examples.map((e) => [e.id, e] as const)))
@@ -26,9 +27,10 @@ const EXPECTED: Record<string, number[]> = {
   'we-walk-the-book': [(200 * 10 + 200 * 10.1 + 100 * 10.2) / 500, 0.8],
   'we-bull-spread': [breakevens([call(100, 1, 6), call(110, -1, 2)], 50, 150)[0] as number, strategyProfit([call(100, 1, 6), call(110, -1, 2)], 107)],
   'we-min-variance': [w[0] as number, portfolioStats(w, [0.1, 0.05], cov).vol * 100],
+  'we-mm1-latency': [mmc(80, 100).w * 1000, mmc(80, 100).l, mmc(95, 100).w * 1000],
 }
 
-describe('worked examples match lib/finance', () => {
+describe('worked examples match the tested libraries', () => {
   it('covers every example in content', () => {
     expect([...examples.keys()].sort()).toEqual(Object.keys(EXPECTED).sort())
   })

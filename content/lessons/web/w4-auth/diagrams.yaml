@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-oauth-pkce
+    kind: sequence
+    title: "OAuth 2.0 authorization code + PKCE"
+    caption: "Client tạo code_verifier bí mật và gửi đi bản băm (code_challenge, S256). Kẻ chặn được authorization code vẫn không đổi được token vì thiếu verifier. Rút gọn từ luồng chuẩn."
+    actors:
+      - { id: user, label: "Người dùng" }
+      - { id: app, label: "Ứng dụng (client)" }
+      - { id: auth, label: "Authorization server" }
+      - { id: api, label: "Resource server (API)" }
+    steps:
+      - { from: user, to: app, label: "Bấm 'Đăng nhập với…'" }
+      - { from: app, to: app, label: "Sinh code_verifier, state; tính code_challenge = S256(verifier)" }
+      - { from: app, to: auth, label: "Chuyển hướng: client_id, redirect_uri, scope, state, code_challenge" }
+      - { from: user, to: auth, label: "Đăng nhập + đồng ý cấp quyền" }
+      - { from: auth, to: app, label: "Chuyển hướng về redirect_uri kèm code + state" }
+      - { from: app, to: app, label: "Kiểm tra state khớp" }
+      - { from: app, to: auth, label: "Đổi code + code_verifier lấy token" }
+      - { from: auth, to: app, label: "Access token (+ ID token với OIDC)" }
+      - { from: app, to: api, label: "Gọi API với access token" }

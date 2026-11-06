@@ -1,0 +1,40 @@
+id: cloudflare-2019
+title: { vi: "Cloudflare 2019 — một biểu thức chính quy làm nghẽn CPU toàn cầu", en: "Cloudflare 2019: one regular expression exhausts CPU worldwide" }
+period: "2019"
+summary: Ngày 2/7/2019, một quy tắc WAF mới chứa biểu thức chính quy gây backtracking quá mức được triển khai đồng loạt, làm CPU ở các máy chủ xử lý HTTP/HTTPS tăng vọt và gây lỗi 502 diện rộng. Cloudflare công bố phân tích chi tiết sau đó.
+concepts: [cicd-deploy-strategies, incident-response-postmortem, injection-access-control]
+lastVerified: 2026-11-06
+status: draft
+timeline:
+  - date: "02/07/2019"
+    event: Cloudflare triển khai một bộ quy tắc WAF mới; một quy tắc có biểu thức chính quy backtracking quá mức, khiến CPU trên các máy chủ xử lý lưu lượng bị dùng cạn.
+    sourceIds: [cloudflare-2019-postmortem]
+    status: verified
+  - date: "02/07/2019"
+    event: "Người dùng gặp lỗi 502 diện rộng; sự cố kéo dài cho tới khi quy tắc bị vô hiệu hoá trên toàn cầu (thời lượng chính xác: xem postmortem gốc)."
+    sourceIds: [cloudflare-2019-postmortem]
+    status: needs_verification
+  - date: "Sau 02/07/2019"
+    event: Cloudflare công bố phân tích chi tiết và các thay đổi, gồm dừng phát hành quy tắc WAF để rà soát quy trình và chuyển sang engine biểu thức chính quy không backtracking.
+    sourceIds: [cloudflare-2019-postmortem]
+    status: needs_verification
+rootCauses:
+  - text: Biểu thức chính quy có thể backtracking theo cấp số nhân (ReDoS) — chi phí xử lý phụ thuộc mạnh vào dữ liệu đầu vào.
+    sourceIds: [cloudflare-2019-postmortem]
+  - text: Quy tắc được đẩy đồng loạt tới toàn mạng thay vì triển khai dần theo giai đoạn (canary), nên không có vùng nhỏ nào lộ lỗi trước.
+    sourceIds: [cloudflare-2019-postmortem]
+questions:
+  - id: staged-rollout
+    prompt: Bạn phụ trách hệ thống đẩy cấu hình (rule, feature flag) tới hàng nghìn server. Thiết kế quy trình triển khai để lỗi kiểu này chỉ ảnh hưởng một phần nhỏ.
+    rubric:
+      - { id: "canary", criterion: "Triển khai theo giai đoạn: canary → % nhỏ → toàn bộ, có cổng kiểm tra chỉ số" }
+      - { id: "metric", criterion: "Theo dõi chỉ số sức khoẻ (CPU, tỉ lệ lỗi, latency) và tự dừng/lùi khi vượt ngưỡng" }
+      - { id: "killswitch", criterion: "Có công tắc tắt toàn cục nhanh, không phụ thuộc chính hệ thống đang lỗi" }
+  - id: regex
+    prompt: Làm sao phát hiện trước một regex nguy hiểm trong code review hoặc CI?
+    rubric:
+      - { id: "engine", criterion: "Dùng engine thời gian tuyến tính (kiểu RE2) cho đầu vào không tin cậy" }
+      - { id: "test", criterion: "Kiểm thử hiệu năng với chuỗi xấu nhất / fuzz; đặt giới hạn thời gian" }
+controls:
+  - { control: "Triển khai cấu hình theo giai đoạn", devAnalogy: "Canary release cho config, không chỉ cho code" }
+  - { control: "Regex engine không backtracking cho input bên ngoài", devAnalogy: "Chọn thuật toán có chi phí bị chặn trên với dữ liệu không tin cậy" }

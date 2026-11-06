@@ -1,0 +1,7 @@
+track: web
+stage: w6
+concepts:
+  - { id: "testing-pyramid", name: { vi: "Kim tự tháp kiểm thử", en: "Test pyramid" }, short: "Nhiều test nhỏ nhanh, ít test lớn chậm; mỗi tầng kiểm một loại rủi ro.", difficulty: 1, tags: [testing, unit test, pyramid] }
+  - { id: "integration-contract-tests", name: { vi: "Integration và contract test", en: "Integration and contract tests" }, short: "Kiểm phần ghép với DB/dịch vụ thật và hợp đồng giữa consumer–provider.", prerequisites: [testing-pyramid], difficulty: 2, tags: [integration test, contract test] }
+  - { id: "e2e-testing", name: { vi: "Kiểm thử end-to-end", en: "End-to-end testing" }, short: "Chạy trình duyệt thật theo hành trình người dùng; ít nhưng phủ luồng quan trọng, chống flaky.", prerequisites: [testing-pyramid], difficulty: 2, tags: [E2E, Playwright, flaky] }
+  - { id: "ci-pipelines", name: { vi: "Pipeline CI", en: "CI pipelines" }, short: "Mỗi thay đổi tự build, lint, test; cổng chặn merge khi đỏ.", prerequisites: [testing-pyramid], difficulty: 2, tags: [CI, pipeline, GitHub Actions] }

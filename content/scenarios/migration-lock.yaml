@@ -1,0 +1,36 @@
+id: migration-lock
+title: { vi: "Deploy giờ cao điểm: migration khoá bảng orders", en: "Peak-hour deploy: a migration locks the orders table" }
+role: "Kỹ sư fullstack của một cửa hàng online giả định, vừa bấm deploy bản có thêm cột vào bảng orders."
+summary: "Vài phút sau deploy, API đặt hàng bắt đầu timeout và đồ thị latency dựng đứng. Bạn cần quyết định nhanh."
+concepts: [schema-migrations, cicd-deploy-strategies, incident-response-postmortem, db-transactions-isolation]
+hypotheticalNote: "Tình huống giả định để luyện phán đoán vận hành, không mô tả sự kiện thật. Để đối chiếu một sự cố có thật về database, xem case GitLab 2017."
+relatedCase: gitlab-2017
+start: alert
+nodes:
+  - id: alert
+    text: "Cảnh báo: p99 của POST /orders vượt ngưỡng, tỉ lệ 5xx tăng. Dashboard DB cho thấy nhiều truy vấn đang chờ khoá trên bảng orders. Migration (ALTER TABLE ... thêm cột có giá trị mặc định + tạo index) vẫn đang chạy. Bạn làm gì trước?"
+    choices:
+      - { id: stop-bleeding, label: "Dừng migration đang chạy (huỷ truy vấn/transaction của nó) và bật feature flag tắt tính năng mới", next: stabilised, feedback: "Ưu tiên giảm thiệt hại: thứ đang giữ khoá phải dừng trước, rồi mới tính chuyện sửa.", quality: good }
+      - { id: scale-app, label: "Tăng gấp đôi số instance ứng dụng", next: scaled, feedback: "Thêm instance là thêm kết nối cùng xếp hàng chờ một khoá — thường làm tình hình tệ hơn (cạn connection pool, DB thêm tải).", quality: bad }
+      - { id: wait, label: "Chờ migration chạy xong vì 'chắc sắp xong rồi'", next: waited, feedback: "Không có ước lượng thời gian thì 'chờ' là đánh cược bằng doanh thu và lòng tin người dùng.", quality: risky }
+  - id: scaled
+    text: "Số kết nối DB chạm trần, cả các API không liên quan tới orders cũng bắt đầu lỗi."
+    choices:
+      - { id: stop-late, label: "Dừng migration và giảm instance về như cũ", next: stabilised, feedback: "Đúng hướng, nhưng sự cố đã lan rộng hơn cần thiết.", quality: risky }
+      - { id: raise-pool, label: "Nâng giới hạn kết nối của database lên gấp đôi", next: waited, feedback: "Thêm kết nối không giải phóng được khoá; DB còn tốn thêm bộ nhớ cho từng kết nối. Gốc vấn đề vẫn là migration đang giữ khoá.", quality: bad }
+  - id: waited
+    text: "Mười mấy phút trôi qua, migration vẫn chạy; khách hàng bắt đầu phàn nàn trên mạng xã hội."
+    choices:
+      - { id: stop-now, label: "Dừng migration ngay", next: stabilised, feedback: "Muộn nhưng cần thiết.", quality: risky }
+      - { id: keep-waiting, label: "Tiếp tục chờ và đăng thông báo bảo trì", next: patch-end, feedback: "Thông báo cho người dùng là tốt, nhưng không dừng thứ đang gây hại thì thiệt hại vẫn tăng.", quality: bad }
+  - id: stabilised
+    text: "Khoá được nhả, latency về bình thường. Code mới đang chạy có đọc cột mới — một số request lỗi vì cột chưa có. Bước tiếp?"
+    choices:
+      - { id: rollback-code, label: "Rollback code về bản trước (tương thích schema cũ), mở sự cố, ghi lại dòng thời gian", next: good-end, feedback: "Code và schema phải tương thích cả hai chiều trong lúc chuyển đổi; rollback code nhanh và an toàn hơn sửa nóng.", quality: good }
+      - { id: hot-patch, label: "Sửa nóng code để bỏ qua cột mới rồi deploy lại ngay", next: patch-end, feedback: "Có thể chạy, nhưng deploy vội trong sự cố, không review, là rủi ro thứ hai chồng lên rủi ro thứ nhất.", quality: risky }
+  - id: patch-end
+    text: "Bản vá chạy được, nhưng không ai còn nhớ chính xác chuyện gì đã xảy ra theo thứ tự nào."
+    ending: { verdict: mixed, debrief: "Hệ thống ổn trở lại nhưng mất bài học. Quy trình tốt: rollback về trạng thái đã biết, ghi dòng thời gian khi sự việc còn mới, postmortem không đổ lỗi." }
+  - id: good-end
+    text: "Hệ thống ổn định. Postmortem đề xuất: migration theo kiểu expand/contract, tạo index không khoá ghi, chạy migration tách khỏi deploy code và ngoài giờ cao điểm, có ngưỡng thời gian chờ khoá (lock timeout)."
+    ending: { verdict: good, debrief: "Bài học vận hành: thay đổi schema là một deploy riêng, có kế hoạch lùi; mọi bước phải tương thích ngược; và khi sự cố xảy ra — dừng thứ đang gây hại trước, hiểu sau." }

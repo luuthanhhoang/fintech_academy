@@ -1,0 +1,42 @@
+items:
+  - id: q-w4s-idor
+    type: mcq
+    conceptId: injection-access-control
+    prompt: "GET /invoices/:id kiểm tra người dùng đã đăng nhập, rồi SELECT * FROM invoices WHERE id = :id. Lỗ hổng là gì và sửa thế nào?"
+    options:
+      - { id: a, text: "SQL injection — đổi sang ORM" }
+      - { id: b, text: "Kiểm soát truy cập theo đối tượng (IDOR/BOLA) — lọc thêm theo tổ chức/chủ sở hữu lấy từ phiên" }
+      - { id: c, text: "XSS — escape output" }
+    correct: [b]
+    explanation: "Đăng nhập rồi chưa có nghĩa được xem mọi hoá đơn. Mọi truy vấn phải giới hạn theo quyền của người gọi."
+  - id: q-w4s-cors
+    type: mcq
+    conceptId: xss-csrf-cors
+    prompt: "Phát biểu nào về CORS là đúng?"
+    options:
+      - { id: a, text: "CORS bảo vệ server khỏi request từ trang khác" }
+      - { id: b, text: "CORS là cơ chế của trình duyệt cho phép trang ở origin khác ĐỌC response — cấu hình lỏng là nới quyền đọc dữ liệu" }
+      - { id: c, text: "Bật CORS là đủ chống CSRF" }
+    correct: [b]
+    explanation: "Same-origin policy mặc định chặn đọc chéo; CORS nới lỏng nó. Request vẫn tới server — CSRF cần biện pháp riêng (SameSite, CSRF token)."
+  - id: q-w4s-sqli
+    type: mcq
+    conceptId: injection-access-control
+    prompt: "Cách nào chặn SQL injection đáng tin cậy?"
+    options:
+      - { id: a, text: "Xoá dấu nháy đơn khỏi input" }
+      - { id: b, text: "Truy vấn tham số hoá (prepared statement / placeholder)" }
+      - { id: c, text: "Giới hạn độ dài input" }
+    correct: [b]
+    explanation: "Lọc ký tự luôn có kẽ hở. Tham số hoá tách hẳn dữ liệu khỏi câu lệnh."
+  - id: q-w4s-xss
+    type: mcq
+    conceptId: xss-csrf-cors
+    prompt: "Những biện pháp nào giảm rủi ro XSS? (chọn tất cả)"
+    options:
+      - { id: a, text: "Escape dữ liệu theo ngữ cảnh khi chèn vào trang (framework làm mặc định khi chèn text)" }
+      - { id: b, text: "Content-Security-Policy giới hạn nguồn script" }
+      - { id: c, text: "Cookie phiên HttpOnly" }
+      - { id: d, text: "Lưu access token trong localStorage để dễ dùng" }
+    correct: [a, b, c]
+    explanation: "Escape ngăn chèn; CSP là lớp thứ hai; HttpOnly giảm thiệt hại. Token trong localStorage thì script nào trên trang cũng đọc được."

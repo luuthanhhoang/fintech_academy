@@ -1,0 +1,39 @@
+items:
+  - id: q-w7-canary
+    type: mcq
+    conceptId: cicd-deploy-strategies
+    prompt: "Mục đích chính của canary release là gì?"
+    options:
+      - { id: a, text: "Deploy nhanh hơn" }
+      - { id: b, text: "Giới hạn phạm vi ảnh hưởng: thả cho phần nhỏ lưu lượng, so chỉ số, tự dừng nếu xấu đi trước khi mở rộng" }
+      - { id: c, text: "Không cần test nữa" }
+    correct: [b]
+    explanation: "Canary biến lỗi tiềm ẩn thành lỗi nhỏ, phát hiện sớm. Nó bổ sung cho test, không thay thế."
+  - id: q-w7-budget
+    type: numeric
+    conceptId: slo-error-budget
+    prompt: "SLO tính sẵn sàng 99,9% trong 30 ngày. Error budget tương ứng là bao nhiêu phút 'không sẵn sàng' được phép? (30 ngày = 43.200 phút)"
+    answer: 43.2
+    tolerance: { kind: abs, value: 0.05 }
+    unit: phút
+    explanation: "Error budget = 100% − 99,9% = 0,1%; 0,1% × 43.200 = 43,2 phút."
+  - id: q-w7-signals
+    type: mcq
+    conceptId: observability-otel
+    prompt: "Request thanh toán chậm 4 giây, đi qua 6 dịch vụ. Tín hiệu nào trả lời trực tiếp nhất 'chậm ở dịch vụ nào'?"
+    options:
+      - { id: a, text: "Metric CPU trung bình của cụm" }
+      - { id: b, text: "Trace phân tán của request đó, xem span nào chiếm thời gian" }
+      - { id: c, text: "Log của frontend" }
+    correct: [b]
+    explanation: "Trace nối các span của cùng một request qua mọi dịch vụ, cho thấy thời gian nằm ở đâu."
+  - id: q-w7-mitigate
+    type: mcq
+    conceptId: incident-response-postmortem
+    prompt: "Tỉ lệ lỗi tăng vọt ngay sau deploy. Bước đầu tiên hợp lý nhất?"
+    options:
+      - { id: a, text: "Đọc code tìm nguyên nhân rồi sửa nóng" }
+      - { id: b, text: "Rollback (hoặc tắt feature flag) để giảm thiệt hại, rồi điều tra" }
+      - { id: c, text: "Chờ xem có tự hết không" }
+    correct: [b]
+    explanation: "Giảm thiệt hại trước. Rollback về trạng thái đã biết là tốt thường nhanh và an toàn hơn sửa nóng giữa sự cố."

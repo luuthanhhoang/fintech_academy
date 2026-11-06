@@ -1,0 +1,86 @@
+---
+id: w2-idempotency-retries
+track: web
+stage: w2
+order: 1
+title: { vi: "Mạng sẽ phản bội bạn: idempotency, timeout, retry có backoff và jitter", en: "The network will betray you: idempotency, timeouts, retries with backoff and jitter" }
+summary: "Mọi request qua mạng có ba kết cục, không phải hai: thành công, thất bại, và 'không biết'. Bài này dạy cách thiết kế để 'không biết' không biến thành tạo đơn trùng hay trừ tiền hai lần: khoá idempotency, timeout hợp lý, retry có giới hạn với backoff và jitter."
+concepts: [api-idempotency-retries]
+estMinutes: 40
+whyQuestion: "Client gửi POST /payments, chờ 10 giây không thấy phản hồi rồi báo lỗi; người dùng bấm lại. Sáng hôm sau họ bị trừ tiền hai lần. Phần mềm nào sai, và sửa ở đâu?"
+devMapping:
+  - finance: "Idempotency-Key"
+    dev: "Khoá duy nhất do client sinh cho mỗi ý định (một lần bấm 'Thanh toán'), server lưu kết quả theo khoá"
+    explanation: "Gửi lại cùng khoá thì nhận lại đúng kết quả cũ, không thực hiện lần hai. Cùng khoá mà nội dung khác thì bị từ chối."
+  - finance: "Exponential backoff"
+    dev: "Chờ lâu dần giữa các lần thử: base × 2^n, có trần"
+    explanation: "Cho hệ thống đang quá tải thời gian hồi phục thay vì dội thêm request."
+  - finance: "Jitter"
+    dev: "Cộng ngẫu nhiên vào thời gian chờ"
+    explanation: "Nếu không, hàng nghìn client lỗi cùng lúc sẽ retry cùng lúc — tạo đợt sóng tiếp theo."
+labs: [idempotency-store]
+pretest: [q-w2i-unknown, q-w2i-retry-4xx]
+applications:
+  - id: app-w2i-audit
+    title: "Rà các lời gọi ra ngoài có thể gây trùng"
+    context: "Hệ thống của bạn gọi cổng thanh toán, gửi email/SMS, hoặc tạo bản ghi qua API bên thứ ba."
+    task: "Liệt kê mọi lời gọi POST ra ngoài và mọi handler POST nhận vào; với mỗi cái ghi: timeout bao nhiêu, retry ở tầng nào (có bị nhân nhiều tầng không), có khoá idempotency không, hậu quả nếu chạy hai lần."
+    deliverable: "Bảng rủi ro + kế hoạch thêm khoá idempotency cho 2 điểm nguy hiểm nhất."
+sources: [idempotency-key-draft, stripe-idempotency, aws-backoff-jitter, rfc9110]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Thiết kế luồng 'Đặt hàng & thanh toán' để người dùng bấm lại, app retry hay mạng rớt giữa chừng đều không tạo đơn/trừ tiền trùng."
+  rubric:
+    - { id: key, criterion: "Client sinh khoá idempotency một lần cho mỗi ý định đặt hàng, gửi lại cùng khoá khi retry" }
+    - { id: store, criterion: "Server lưu khoá + hash nội dung + kết quả; cùng khoá cùng nội dung trả lại kết quả cũ, khác nội dung thì từ chối" }
+    - { id: retry, criterion: "Retry có giới hạn, backoff + jitter, chỉ cho lỗi đáng retry (timeout, 5xx, 429), không cho 4xx" }
+    - { id: downstream, criterion: "Truyền tiếp khoá idempotency sang cổng thanh toán phía sau" }
+---
+
+<Callout kind="story" title="Ba kết cục, không phải hai">
+Một app gọi API tạo thanh toán. Request tới server, server trừ tiền thành công, rồi đúng lúc gửi response thì mạng điện thoại chuyển từ Wi-Fi sang 4G. App nhận timeout, hiện "Có lỗi, thử lại". Người dùng thử lại. Từ góc nhìn của app, lần đầu "thất bại". Từ góc nhìn của ngân hàng, có hai giao dịch.
+</Callout>
+
+Khi một lời gọi mạng không trả lời kịp, bạn **không biết** nó đã được thực hiện hay chưa. Không có thiết kế timeout nào xoá được kết cục thứ ba này. Câu hỏi đúng không phải "làm sao để không bao giờ timeout", mà là "**làm sao để gửi lại an toàn**".
+
+<Quiz id="q-w2i-unknown" />
+
+## Idempotency: biến "gửi lại" thành an toàn
+
+Nhắc lại từ bài HTTP: `GET`, `PUT`, `DELETE` vốn idempotent; `POST` thì không. Với thao tác tạo mới (đơn hàng, thanh toán), ta **tự tạo** tính idempotent bằng một khoá. Ý tưởng này giống hệt <Term id="idempotency">idempotency trong hệ thống tài chính</Term>:
+
+1. Client sinh một khoá ngẫu nhiên đủ dài (ví dụ UUID) **một lần cho mỗi ý định** — một lần bấm "Thanh toán" — và gửi trong header `Idempotency-Key`.
+2. Server, trước khi làm gì, tra khoá:
+   - **Chưa thấy**: thực hiện, lưu `(khoá, hash nội dung, kết quả)`, trả kết quả.
+   - **Đã thấy, cùng nội dung**: trả lại **đúng kết quả đã lưu** — kể cả khi đó là lỗi.
+   - **Đã thấy, nội dung khác**: từ chối — đây là lỗi lập trình phía client.
+   - **Đang xử lý dở** (request đầu chưa xong): từ chối tạm để client thử lại sau, tránh hai luồng cùng chạy.
+3. Khoá có thời hạn lưu (ví dụ vài ngày) — đủ lâu để mọi retry hợp lý đều trúng.
+
+Header `Idempotency-Key` đang được IETF chuẩn hoá (bản nháp, chưa là RFC tại ngày kiểm tra); các bản nháp gần đây dùng `422` khi dùng lại khoá với nội dung khác và `409` khi request trước vẫn đang chạy. Stripe là ví dụ công khai lâu năm áp dụng cơ chế này cho API thanh toán.
+
+<Lab id="idempotency-store" />
+
+<Callout kind="field" title="Những chỗ triển khai idempotency hay sai">
+**Sinh khoá ở server** — vô nghĩa, vì retry của client sẽ mang khoá mới. **Sinh khoá mới mỗi lần retry** — cũng vô nghĩa, khoá phải gắn với *ý định*, không phải với *lần gửi*. **Kiểm tra rồi mới ghi khoá** ở hai bước tách rời — hai request song song cùng lọt qua; phải dùng ràng buộc duy nhất trong DB hoặc khoá nguyên tử. **Quên truyền khoá xuống dưới** — API của bạn idempotent nhưng lời gọi tới cổng thanh toán phía sau thì không, trùng vẫn xảy ra ở đó.
+</Callout>
+
+## Timeout và retry: tử tế với hệ thống đang ốm
+
+Bài "Timeouts, retries, and backoff with jitter" của Amazon Builders' Library (Marc Brooker) nêu vài điểm thực tế:
+
+- **Luôn đặt timeout** cho mọi lời gọi ra ngoài; ưu tiên cơ chế timeout có sẵn của client đã được kiểm chứng.
+- Retry là "ích kỷ": client tiêu thêm thời gian của server để tăng cơ hội của mình. Khi server quá tải vì nhiều người cùng làm vậy, retry làm tình hình tệ thêm.
+- Dùng **exponential backoff có trần** và **jitter** (một cách đơn giản: chờ ngẫu nhiên trong khoảng 0 tới base × 2^n).
+- **Retry ở một tầng**, không phải mọi tầng: nếu UI retry 3 lần, API gateway retry 3 lần, service retry 3 lần thì một lỗi ở đáy thành 27 request.
+- Lỗi 4xx (request sai) không đáng retry.
+
+<Quiz id="q-w2i-retry-4xx" />
+
+<Callout kind="field" title="Bộ quy tắc retry tôi mang theo mọi dự án">
+Retry **chỉ khi** thao tác idempotent (tự nhiên hoặc có khoá). Retry **chỉ cho** timeout, lỗi kết nối, `429`, `502/503/504` — tôn trọng `Retry-After` nếu có. **Tối đa** 2–3 lần, backoff có trần, có jitter. **Một tầng** chịu trách nhiệm retry, các tầng khác thì không. Và luôn có **budget**: nếu tỉ lệ request đang là retry vượt một ngưỡng nhỏ, ngừng retry — hệ thống phía sau đang cần thở, không cần thêm tải.
+</Callout>
+
+<Quiz id="q-w2i-amplify" />
+<Quiz id="q-w2i-key-scope" />

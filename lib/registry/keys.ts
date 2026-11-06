@@ -2,7 +2,7 @@
  * Component keys that content may reference. Typed registries (simulators.tsx) must implement every key,
  * and the content validator rejects simulator metadata whose componentKey is not listed here.
  */
-export const SIMULATOR_KEYS = ['tvm', 'inflation', 'bond', 'orderbook', 'options', 'portfolio', 'dcf'] as const
+export const SIMULATOR_KEYS = ['tvm', 'inflation', 'bond', 'orderbook', 'options', 'portfolio', 'dcf', 'queueing'] as const
 export type SimulatorKey = (typeof SIMULATOR_KEYS)[number]
 
 /** Parameter keys each simulator body reads; the validator requires the YAML to declare exactly these. */
@@ -14,6 +14,7 @@ export const SIMULATOR_PARAMS: Record<SimulatorKey, readonly string[]> = {
   options: ['strike1', 'premium1', 'strike2', 'premium2', 'qty'],
   portfolio: ['rho', 'periods', 'seed', 'riskFreePct'],
   dcf: ['baseFcf', 'growthPct', 'years', 'discountPct', 'terminalGrowthPct', 'netDebt', 'shares'],
+  queueing: ['arrivalRate', 'serviceMs', 'servers'],
 }
 
 export function isSimulatorKey(key: string): key is SimulatorKey {

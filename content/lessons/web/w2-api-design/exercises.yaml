@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w2-design
+    conceptId: rest-api-design
+    prompt: "Thiết kế API cho tính năng 'đánh giá sản phẩm': liệt kê đánh giá của một sản phẩm (mới nhất trước), viết đánh giá, sửa đánh giá của chính mình, ẩn đánh giá vi phạm (quản trị viên). Ghi URL, phương thức, mã trạng thái thành công/lỗi chính và dạng phân trang."
+    hint: "Ai được làm gì là phần của hợp đồng — và lỗi phân quyền trả mã nào?"
+    solution: "GET /products/:id/reviews?cursor=&limit= → 200, object có items và next_cursor, limit tối đa phía server. POST /products/:id/reviews → 201 + Location; 401 nếu chưa đăng nhập, 409 nếu đã đánh giá (1 người 1 đánh giá), 422 lỗi validate dạng problem+json. PATCH /reviews/:reviewId → 200; 403 nếu không phải tác giả (hoặc 404 để không lộ). POST /reviews/:reviewId/moderation (chỉ admin) → 200/204; 403 với người thường. Danh sách sắp theo (created_at, id) giảm dần để cursor ổn định."

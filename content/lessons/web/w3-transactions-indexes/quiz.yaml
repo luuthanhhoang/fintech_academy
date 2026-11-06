@@ -1,0 +1,41 @@
+items:
+  - id: q-w3-lost-update
+    type: mcq
+    conceptId: db-transactions-isolation
+    prompt: "Cách nào ngăn được việc bán quá vé một cách đơn giản và đúng nhất?"
+    options:
+      - { id: a, text: "Bọc đoạn SELECT rồi UPDATE trong transaction ở mức mặc định là đủ" }
+      - { id: b, text: "UPDATE events SET seats_left = seats_left - 1 WHERE id = ? AND seats_left > 0, rồi kiểm tra số dòng bị ảnh hưởng" }
+      - { id: c, text: "Kiểm tra số vé hai lần ở ứng dụng trước khi ghi" }
+    correct: [b]
+    explanation: "Điều kiện nằm trong cùng câu UPDATE nên đọc–kiểm–ghi là nguyên tử. Transaction Read Committed thường không đủ cho mẫu đọc rồi ghi."
+  - id: q-w3-index
+    type: mcq
+    conceptId: db-indexes
+    prompt: "Truy vấn hay dùng nhất: 'đơn hàng của khách X, mới nhất trước, 20 dòng'. Index nào phù hợp?"
+    options:
+      - { id: a, text: "Index trên (created_at)" }
+      - { id: b, text: "Index trên (customer_id, created_at)" }
+      - { id: c, text: "Index riêng trên mọi cột của bảng" }
+    correct: [b]
+    explanation: "Cột lọc bằng đứng trước, cột sắp xếp sau — DB đi thẳng tới khách X và đọc theo thứ tự thời gian. Index mọi cột làm ghi chậm và tốn chỗ."
+  - id: q-w3-default-iso
+    type: mcq
+    conceptId: db-transactions-isolation
+    prompt: "Theo tài liệu PostgreSQL, mức isolation mặc định là gì?"
+    options:
+      - { id: a, text: "Read Uncommitted" }
+      - { id: b, text: "Read Committed" }
+      - { id: c, text: "Serializable" }
+    correct: [b]
+    explanation: "Read Committed: mỗi câu lệnh thấy dữ liệu đã commit lúc câu lệnh bắt đầu. Nó không chặn non-repeatable read hay lost update kiểu đọc–rồi–ghi."
+  - id: q-w3-set-based
+    type: mcq
+    conceptId: sql-queries-joins
+    prompt: "Trang danh sách 50 đơn hàng, mỗi đơn hiển thị tên khách. Code lấy 50 đơn rồi với mỗi đơn chạy một truy vấn lấy khách. Cách tốt hơn?"
+    options:
+      - { id: a, text: "Một truy vấn JOIN orders với customers (hoặc lấy mọi khách cần trong một truy vấn IN)" }
+      - { id: b, text: "Cache từng khách trong bộ nhớ ứng dụng mãi mãi" }
+      - { id: c, text: "Giữ nguyên, 51 truy vấn là bình thường" }
+    correct: [a]
+    explanation: "Đây là lỗi N+1 kinh điển. JOIN hoặc batch loading giảm từ 51 xuống 1–2 truy vấn."

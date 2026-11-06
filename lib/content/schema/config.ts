@@ -14,6 +14,8 @@ export const SiteConfigSchema = z.strictObject({
   tagline: z.string().min(1),
   disclaimer: z.string().min(1),
   syntheticLabel: z.string().min(1),
+  /** Labels (and an honesty note where needed) for MDX <Callout kind="…"> blocks. */
+  callouts: z.record(z.string(), z.strictObject({ label: z.string().min(1), disclaimer: z.string().min(1).optional() })),
   nav: z.array(NavItemSchema).min(1),
 })
 export type SiteConfig = z.infer<typeof SiteConfigSchema>

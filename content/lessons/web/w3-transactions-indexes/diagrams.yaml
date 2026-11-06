@@ -1,0 +1,16 @@
+diagrams:
+  - id: dg-lost-update
+    kind: sequence
+    title: "Cập nhật bị mất: hai transaction, một chiếc vé"
+    caption: "Ở Read Committed, cả hai cùng đọc 1 trước khi bên kia ghi; mỗi bên đều 'thấy còn vé'. Sửa bằng UPDATE có điều kiện, khoá dòng hoặc SERIALIZABLE + retry. Minh hoạ khái niệm."
+    actors:
+      - { id: a, label: "Transaction A" }
+      - { id: db, label: "Database (seats_left = 1)" }
+      - { id: b, label: "Transaction B" }
+    steps:
+      - { from: a, to: db, label: "SELECT seats_left → 1" }
+      - { from: b, to: db, label: "SELECT seats_left → 1" }
+      - { from: a, to: db, label: "1 > 0 nên UPDATE seats_left = 0, tạo vé" }
+      - { from: b, to: db, label: "1 > 0 nên UPDATE seats_left = 0, tạo vé", note: "Đã bán 2 vé cho 1 chỗ" }
+      - { from: a, to: db, label: "COMMIT" }
+      - { from: b, to: db, label: "COMMIT" }

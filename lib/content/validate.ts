@@ -100,7 +100,7 @@ function checkParamKeys(push: Push, where: string, keys: string[], values: Recor
   for (const k of Object.keys(values)) if (!keys.includes(k)) push(where, `tham số "${k}" không tồn tại`)
 }
 
-function checkLessonSourcing(l: Lesson, conceptIds: Set<string>, push: Push) {
+function checkLessonSourcing(l: Lesson, conceptIds: Set<string>, calloutKinds: ReadonlySet<string>, push: Push) {
   const where = `lesson:${l.id}`
   const sources = new Set(l.sources)
   for (const f of l.facts) {
@@ -117,6 +117,9 @@ function checkLessonSourcing(l: Lesson, conceptIds: Set<string>, push: Push) {
     ...l.exercises.flatMap((e) => [e.prompt, e.hint ?? '', e.solution]),
     ...l.examples.flatMap((x) => [x.problem, x.takeaway, ...x.steps.map((st) => st.text)]),
   ])
+  for (const m of l.body.matchAll(/<Callout[^>]*\bkind="([^"]+)"/g)) {
+    if (!calloutKinds.has(m[1]!)) push(where, `Callout kind "${m[1]}" chưa khai báo trong site.yaml → callouts`)
+  }
   const figures = findFigures(extractProse(tree))
   if (figures.length > 0 && l.sources.length === 0) {
     push(where, `bài chứa số liệu (${figures.join(', ')}) nhưng không có nguồn`)
@@ -215,7 +218,7 @@ export function validateContent(b: ContentBundle, opts: ValidateOptions): Issue[
   checkConcepts(b, push)
   for (const l of b.lessons) {
     checkLessonRefs(b, l, push)
-    checkLessonSourcing(l, new Set(b.concepts.map((c) => c.id)), push)
+    checkLessonSourcing(l, new Set(b.concepts.map((c) => c.id)), new Set(Object.keys(b.config.site.callouts)), push)
   }
   checkPlanned(b, push)
   for (const n of b.config.site.nav) if (!opts.iconKeys.includes(n.icon)) push(`nav:${n.href}`, `icon "${n.icon}" chưa có`)

@@ -1,0 +1,97 @@
+---
+id: w2-api-design
+track: web
+stage: w2
+order: 0
+title: { vi: "Thiết kế API như thiết kế hợp đồng: tài nguyên, lỗi, phân trang, phiên bản", en: "Designing APIs as contracts: resources, errors, pagination, versioning" }
+summary: "API công khai sống lâu hơn code bạn viết hôm nay. Bài này đi qua những quyết định khó sửa về sau: đặt tên tài nguyên, chọn phương thức và mã trạng thái, lỗi có cấu trúc (RFC 9457), phân trang bằng cursor, và tiến hoá hợp đồng mà không phá client cũ."
+concepts: [rest-api-design, api-errors-validation, api-pagination-versioning]
+estMinutes: 45
+whyQuestion: "Vì sao nhiều đội phải duy trì song song 'v1' và 'v2' của API trong nhiều năm, và những quyết định nào ở ngày đầu giúp tránh điều đó?"
+devMapping:
+  - finance: "Tài nguyên (resource)"
+    dev: "Danh từ trong URL: /orders, /orders/:id/items — hành động thể hiện bằng phương thức HTTP"
+    explanation: "URL ổn định quanh danh từ dễ đoán hơn /createOrder, /getOrderById, /deleteOrderNow."
+  - finance: "Problem Details (RFC 9457)"
+    dev: "Lỗi JSON có type, title, status, detail, instance + trường mở rộng"
+    explanation: "Một định dạng lỗi chung cho mọi endpoint giúp client xử lý lỗi bằng code, không bằng đọc chữ."
+  - finance: "Cursor pagination"
+    dev: "Trang sau bắt đầu từ 'mốc' (id/thời điểm cuối của trang trước) thay vì OFFSET n"
+    explanation: "Ổn định khi dữ liệu đang thay đổi và không chậm dần khi trang càng sâu."
+pretest: [q-w2-resource, q-w2-offset]
+applications:
+  - id: app-w2-review
+    title: "Review một API đang có"
+    context: "Một nhóm endpoint nội bộ đang được team khác dùng."
+    task: "Chấm theo checklist: tên tài nguyên, phương thức/mã trạng thái, định dạng lỗi thống nhất, validate đầu vào, phân trang và giới hạn kích thước, chính sách thay đổi tương thích ngược. Viết lại 2 endpoint tệ nhất kèm ví dụ request/response."
+    deliverable: "Checklist có điểm + đề xuất thay đổi kèm kế hoạch chuyển đổi không phá client."
+sources: [rfc9110, rfc9457]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Bạn cần đổi trường 'name' của khách hàng thành 'first_name' và 'last_name'. Mô tả cách triển khai thay đổi này mà không làm hỏng ứng dụng mobile đời cũ (người dùng không cập nhật app)."
+  rubric:
+    - { id: additive, criterion: "Thêm trường mới song song, giữ trường cũ (thay đổi cộng thêm)" }
+    - { id: measure, criterion: "Đo client nào còn dùng trường cũ trước khi gỡ" }
+    - { id: deprecate, criterion: "Thông báo ngừng hỗ trợ có thời hạn, rồi mới gỡ" }
+---
+
+<Callout kind="story" title="Cái giá của một trường tên 'data'">
+Ngày đầu, endpoint trả về `"data": [...]` cho danh sách và `"data": {...}` cho một đối tượng, lỗi thì lúc là chuỗi, lúc là object. Một năm sau có bốn ứng dụng client, mỗi app tự viết hàm "đoán xem response là gì". Mỗi lần backend sửa một chỗ, có một app gãy mà không ai biết trước.
+</Callout>
+
+Thay đổi API khó hơn thay đổi code vì **người gọi không ở trong repo của bạn**: ứng dụng mobile người dùng không cập nhật, đối tác tích hợp từ năm ngoái, script của team khác. Vì vậy những quyết định ngày đầu đáng được nghĩ kỹ.
+
+## Tài nguyên và phương thức
+
+- URL quanh **danh từ**: `/orders`, `/orders/123`, `/orders/123/items`. Hành động là phương thức: `GET` đọc, `POST` tạo, `PUT` thay toàn bộ, `PATCH` sửa một phần, `DELETE` xoá.
+- Hành động không vừa CRUD (huỷ đơn, gửi lại email) có thể là tài nguyên con: `POST /orders/123/cancellation`.
+- Tạo xong trả `201 Created` + `Location: /orders/123`. Xoá xong trả `204 No Content`.
+- Danh sách luôn là **object bọc mảng**, không trả mảng trần — để sau này thêm `next_cursor`, `total` mà không phá client.
+
+<Quiz id="q-w2-resource" />
+
+## Validate ở biên, lỗi có cấu trúc
+
+Mọi đầu vào từ bên ngoài đều **không tin cậy**: validate kiểu, giới hạn độ dài, enum, ràng buộc nghiệp vụ ngay ở biên — trước khi chạm vào DB hay dịch vụ khác. Và khi từ chối, nói rõ **sửa thế nào**.
+
+RFC 9457 (Problem Details for HTTP APIs) đưa ra một định dạng chung, media type `application/problem+json`, với các trường `type` (URI định danh loại lỗi), `title`, `status`, `detail`, `instance`, và cho phép thêm trường riêng. Ví dụ:
+
+```json
+{
+  "type": "https://api.example/errors/validation",
+  "title": "Dữ liệu không hợp lệ",
+  "status": 422,
+  "detail": "Có 2 trường không hợp lệ",
+  "errors": [
+    { "field": "email", "message": "Không đúng định dạng email" },
+    { "field": "quantity", "message": "Phải là số nguyên từ 1 đến 99" }
+  ]
+}
+```
+
+<Callout kind="field" title="Lỗi tốt giảm ticket hỗ trợ — thật">
+Một thông báo lỗi chung chung ("Bad request") chuyển chi phí từ người viết API sang mọi người dùng API, mãi mãi. Tôi luôn để lỗi validate **liệt kê mọi trường sai một lần** (đừng bắt client sửa từng lỗi một), kèm **mã lỗi ổn định** cho máy đọc (`type`) tách khỏi **câu chữ** cho người đọc (`title`/`detail`) — câu chữ được phép sửa, mã thì không. Và đừng bao giờ trả stack trace hay câu SQL ra ngoài: đó là quà cho kẻ tấn công.
+</Callout>
+
+<Quiz id="q-w2-error" />
+
+## Phân trang: đừng để trang 5000 làm sập DB
+
+`?page=5000&size=20` thường thành `OFFSET 99980 LIMIT 20` — DB vẫn phải đi qua gần một trăm nghìn dòng rồi bỏ. Và nếu có dòng mới chèn vào giữa hai lần gọi, client thấy trùng hoặc sót.
+
+**Cursor pagination**: trang trả về kèm `next_cursor` (thường mã hoá id/thời điểm của dòng cuối); trang sau truy vấn `WHERE (created_at, id) < (mốc) ORDER BY created_at DESC, id DESC LIMIT 20` — dùng được index, không chậm theo độ sâu, ổn định khi dữ liệu thay đổi. Đánh đổi: không nhảy thẳng tới "trang 37" được.
+
+Luôn đặt **giới hạn kích thước trang** phía server, bất kể client xin bao nhiêu.
+
+<Quiz id="q-w2-offset" />
+
+## Tiến hoá mà không phá
+
+Thay đổi **an toàn** (cộng thêm): thêm endpoint, thêm trường tuỳ chọn vào response, thêm tham số tuỳ chọn. Thay đổi **phá vỡ**: đổi tên/xoá trường, đổi kiểu, đổi ý nghĩa, thêm tham số bắt buộc, siết validate.
+
+<Callout kind="field" title="Quy trình 'expand → migrate → contract' cho API">
+Khi buộc phải đổi: (1) **mở rộng** — thêm trường mới song song trường cũ; (2) **chuyển** — đưa client sang trường mới, và **đo** (log/metrics theo client) ai còn dùng trường cũ; (3) **thu hẹp** — chỉ gỡ khi số đo về 0 hoặc hết hạn thông báo. Version mới (`/v2`) là phương án cuối cùng cho thay đổi lớn, vì nó nhân đôi bề mặt phải duy trì. Bài học đắt nhất: client đọc trường bạn không ngờ tới — đừng dựa vào trí nhớ, dựa vào số đo.
+</Callout>
+
+<Quiz id="q-w2-breaking" />

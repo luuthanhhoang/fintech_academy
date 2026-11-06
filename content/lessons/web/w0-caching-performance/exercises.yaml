@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w0c-render-blocking
+    conceptId: browser-rendering
+    prompt: "Trang chủ có trong `<head>`: 3 file CSS, 4 thẻ `<script src>` thường (analytics, chat widget, A/B test, app.js). Đề xuất thay đổi để nội dung chính hiện sớm hơn, và giải thích đánh đổi."
+    hint: "Phân biệt thứ chặn parse, thứ chặn render và thứ có thể để sau."
+    solution: "Gộp/thu gọn CSS quan trọng, phần còn lại tải sau; app.js dùng defer hoặc type=module; analytics và chat widget dùng async hoặc nạp sau khi trang tương tác được; A/B test nếu phải chạy trước render thì giữ nhỏ và có timeout để không treo trang. Đánh đổi: script async chạy không theo thứ tự; đẩy widget muộn có thể làm số liệu analytics thiếu vài lượt rất ngắn."

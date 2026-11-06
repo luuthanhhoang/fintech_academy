@@ -1,0 +1,40 @@
+items:
+  - id: q-w2i-unknown
+    type: mcq
+    conceptId: api-idempotency-retries
+    prompt: "Client gửi POST /payments và bị timeout. Kết luận nào đúng?"
+    options:
+      - { id: a, text: "Thanh toán chắc chắn chưa được thực hiện" }
+      - { id: b, text: "Thanh toán chắc chắn đã thực hiện" }
+      - { id: c, text: "Không biết — server có thể đã xử lý xong nhưng response bị mất" }
+    correct: [c]
+    explanation: "Timeout là kết cục 'không biết'. Vì vậy cần cơ chế làm cho việc gửi lại an toàn (idempotency key)."
+  - id: q-w2i-retry-4xx
+    type: mcq
+    conceptId: api-idempotency-retries
+    prompt: "Những phản hồi nào thường ĐÁNG retry (với thao tác idempotent)? (chọn tất cả)"
+    options:
+      - { id: a, text: "Timeout / mất kết nối" }
+      - { id: b, text: "503 Service Unavailable (tôn trọng Retry-After)" }
+      - { id: c, text: "422 dữ liệu không hợp lệ" }
+      - { id: d, text: "429 Too Many Requests (sau khi chờ)" }
+    correct: [a, b, d]
+    explanation: "4xx như 422 nghĩa là request sai — gửi lại y hệt vẫn sai. Lỗi tạm thời và quá tải thì có thể thành công sau khi chờ."
+  - id: q-w2i-amplify
+    type: numeric
+    conceptId: api-idempotency-retries
+    prompt: "UI thử tối đa 3 lần, API gateway thử tối đa 3 lần, service thử tối đa 3 lần gọi DB. Một lỗi kéo dài ở DB có thể sinh tối đa bao nhiêu lời gọi tới DB cho MỘT lần bấm của người dùng?"
+    answer: 27
+    tolerance: { kind: abs, value: 0 }
+    unit: "lời gọi"
+    explanation: "3 × 3 × 3 = 27. Retry ở nhiều tầng nhân lên theo cấp số — lý do nên retry ở một tầng duy nhất."
+  - id: q-w2i-key-scope
+    type: mcq
+    conceptId: api-idempotency-retries
+    prompt: "Idempotency key nên được sinh khi nào?"
+    options:
+      - { id: a, text: "Mỗi lần gửi HTTP, kể cả lần retry" }
+      - { id: b, text: "Một lần cho mỗi ý định của người dùng (một lần bấm 'Thanh toán'), dùng lại cho mọi lần retry của ý định đó" }
+      - { id: c, text: "Do server sinh khi nhận request" }
+    correct: [b]
+    explanation: "Khoá đại diện cho ý định. Khoá mới cho mỗi lần gửi thì server không nhận ra đó là cùng một thao tác."

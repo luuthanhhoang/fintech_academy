@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w4-reset
+    conceptId: sessions-cookies
+    prompt: "Thiết kế tính năng 'quên mật khẩu' an toàn: tạo link, gửi email, đặt lại mật khẩu. Liệt kê các quyết định bảo mật."
+    hint: "Link đó tương đương một mật khẩu tạm thời."
+    solution: "Token ngẫu nhiên đủ dài (CSPRNG), chỉ lưu hash của token ở server, một lần dùng, hết hạn ngắn; phản hồi giống nhau dù email có tồn tại hay không (chống dò tài khoản); giới hạn số lần yêu cầu; link HTTPS; sau khi đặt lại thì huỷ mọi phiên đang mở và gửi email thông báo; không tự đăng nhập bằng token nếu có xác thực nhiều lớp mà chưa qua bước đó."

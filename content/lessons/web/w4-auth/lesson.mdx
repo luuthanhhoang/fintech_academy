@@ -1,0 +1,101 @@
+---
+id: w4-auth
+track: web
+stage: w4
+order: 0
+title: { vi: "Bạn là ai và được làm gì: mật khẩu, session, JWT, OAuth 2.0", en: "Who you are and what you may do: passwords, sessions, JWT, OAuth 2.0" }
+summary: "Xác thực là nơi một lỗi nhỏ trở thành sự cố trên báo. Bài này đi từ việc lưu mật khẩu (hash chậm có muối), qua session và cookie an toàn, JWT và cái giá của token không thu hồi được, tới OAuth 2.0 authorization code + PKCE theo khuyến nghị bảo mật mới nhất."
+concepts: [password-storage, sessions-cookies, jwt-tokens, oauth-oidc]
+estMinutes: 50
+whyQuestion: "Database người dùng bị lộ. Với cách lưu mật khẩu nào thì kẻ tấn công gần như không làm được gì, và với cách nào thì mọi tài khoản dùng chung mật khẩu ở nơi khác cũng gặp nguy?"
+devMapping:
+  - finance: "Hash mật khẩu chậm + muối"
+    dev: "Argon2id / scrypt / bcrypt — cố tình tốn CPU và bộ nhớ cho mỗi lần thử"
+    explanation: "Người dùng thật đăng nhập một lần nên không cảm thấy; kẻ dò mật khẩu cần hàng tỉ lần thử nên bị chặn lại."
+  - finance: "Session ID trong cookie"
+    dev: "Chuỗi ngẫu nhiên trỏ tới trạng thái phiên lưu phía server"
+    explanation: "Thu hồi tức thì (xoá phiên ở server); cookie đặt HttpOnly, Secure, SameSite."
+  - finance: "JWT"
+    dev: "Dữ liệu được ký, server kiểm chữ ký thay vì tra DB"
+    explanation: "Không cần lưu trạng thái, nhưng không thu hồi được trước hạn nếu không thêm cơ chế riêng — nên giữ ngắn hạn."
+pretest: [q-w4-password, q-w4-401-403]
+applications:
+  - id: app-w4-review
+    title: "Rà soát luồng đăng nhập của sản phẩm"
+    context: "Ứng dụng có đăng nhập bằng mật khẩu và có thể có 'Đăng nhập với Google'."
+    task: "Kiểm tra: thuật toán hash và tham số; cookie phiên có HttpOnly/Secure/SameSite; đăng xuất có huỷ phiên phía server; đổi mật khẩu có huỷ các phiên khác; thời hạn token; luồng OAuth dùng authorization code + PKCE, kiểm tra state; giới hạn số lần thử đăng nhập."
+    deliverable: "Bảng kiểm có kết quả từng mục + danh sách sửa theo mức độ nghiêm trọng."
+sources: [owasp-password-storage, owasp-session, rfc7519, rfc9700, oidc-core]
+facts:
+  - id: owasp-argon2id-min
+    text: "Cấu hình tối thiểu Argon2id do OWASP khuyến nghị"
+    value: "19 MiB bộ nhớ, 2 vòng lặp, độ song song 1"
+    sourceId: owasp-password-storage
+    asOf: 2026-11-06
+    status: verified
+  - id: rfc9700-date
+    text: "RFC 9700 — Best Current Practice for OAuth 2.0 Security (BCP 240) được IETF công bố"
+    value: "tháng 1/2025"
+    sourceId: rfc9700
+    asOf: 2026-11-06
+    status: verified
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "So sánh session lưu ở server với JWT cho một ứng dụng web có trang quản trị. Bạn chọn gì, và xử lý 'đăng xuất khỏi mọi thiết bị' thế nào?"
+  rubric:
+    - { id: revoke, criterion: "Session thu hồi tức thì; JWT cần thời hạn ngắn + refresh token/danh sách thu hồi" }
+    - { id: storage, criterion: "Lưu token phía trình duyệt: cookie HttpOnly an toàn hơn localStorage trước XSS" }
+    - { id: choice, criterion: "Lý do lựa chọn gắn với yêu cầu (web một domain → session đơn giản và đủ)" }
+---
+
+<Callout kind="story" title="'Mã hoá mật khẩu bằng MD5 rồi mà'">
+Một dự án cũ lưu mật khẩu bằng hàm băm nhanh, không muối. Khi bản sao lưu bị lộ, các mật khẩu phổ biến bị đảo ngược gần như ngay lập tức vì nhiều người dùng chung một mật khẩu cho mọi nơi. Thiệt hại không dừng ở hệ thống của bạn: nó lan sang email, ngân hàng của người dùng.
+</Callout>
+
+## Lưu mật khẩu: chậm là tính năng
+
+Không bao giờ lưu mật khẩu (kể cả "mã hoá được giải mã"). Lưu **hash một chiều, có muối riêng mỗi người, cố tình chậm**. OWASP Password Storage Cheat Sheet khuyến nghị **Argon2id**, với cấu hình tối thiểu: <Fact id="owasp-argon2id-min" />. Không có Argon2id thì dùng scrypt; bcrypt cho hệ thống cũ.
+
+- **Muối** (salt) ngẫu nhiên khác nhau mỗi người: hai người cùng mật khẩu ra hai hash khác nhau, bảng tra sẵn vô dụng.
+- **Chậm và tốn bộ nhớ**: mỗi lần đăng nhập thật tốn vài chục mili-giây là chấp nhận được; với kẻ thử hàng tỉ mật khẩu thì là bức tường.
+- Kèm: giới hạn số lần thử, kiểm tra mật khẩu đã từng bị lộ, và khuyến khích xác thực nhiều lớp.
+
+<Quiz id="q-w4-password" />
+
+## Session và cookie
+
+Sau khi đăng nhập, server tạo **phiên** (lưu ở DB/Redis) và gửi về một **session ID ngẫu nhiên** trong cookie. Theo OWASP Session Management Cheat Sheet, cookie nên có:
+
+- `HttpOnly` — JavaScript không đọc được (giảm thiệt hại khi có XSS).
+- `Secure` — chỉ gửi qua HTTPS.
+- `SameSite=Lax` hoặc `Strict` — hạn chế gửi kèm request từ trang khác (giảm CSRF).
+- **Tạo session ID mới sau khi đăng nhập** (chống session fixation), có hạn sống, và huỷ ở server khi đăng xuất/đổi mật khẩu.
+
+<Quiz id="q-w4-401-403" />
+
+## JWT: tiện, nhưng không miễn phí
+
+JWT (RFC 7519) là một chuỗi gồm header, payload các "claim" (ai, hết hạn lúc nào, dành cho ai) và chữ ký. Server kiểm chữ ký là tin được nội dung, không cần tra DB — phù hợp khi nhiều dịch vụ cần xác minh độc lập.
+
+Cái giá: JWT hợp lệ tới khi hết hạn, **không thu hồi được** nếu không thêm cơ chế (danh sách thu hồi, kiểm tra phiên). Khi kiểm tra JWT, luôn: cố định thuật toán chấp nhận (không tin trường `alg` từ token), kiểm tra `exp`, `iss`, `aud`.
+
+<Callout kind="field" title="Lời khuyên tôi hay đưa nhất về JWT">
+Với một ứng dụng web chạy trên một domain, **session ID trong cookie HttpOnly thường đơn giản và an toàn hơn** JWT — bạn được đăng xuất tức thì, đổi quyền tức thì. JWT tỏa sáng khi có nhiều dịch vụ/bên thứ ba cần tự xác minh. Nếu dùng JWT: access token sống ngắn (vài phút), refresh token lưu ở server và xoay vòng, và **đừng cất token trong localStorage** — một lỗi XSS là đủ để kẻ tấn công lấy đi.
+</Callout>
+
+## OAuth 2.0 và OpenID Connect
+
+**OAuth 2.0** là chuẩn **uỷ quyền**: cho phép một ứng dụng truy cập tài nguyên thay mặt người dùng mà không biết mật khẩu của họ. **OpenID Connect** xây trên OAuth để **đăng nhập**: thêm ID token cho biết người dùng là ai.
+
+RFC 9700 tổng hợp khuyến nghị bảo mật cho OAuth (<Fact id="rfc9700-date" />): client **không nên** dùng implicit grant (token trả thẳng trong URL); dùng **authorization code**; authorization server **phải** hỗ trợ **PKCE** và PKCE được khuyến nghị cho mọi loại client, dùng phương thức `S256`.
+
+<Diagram id="dg-oauth-pkce" />
+
+<Quiz id="q-w4-pkce" />
+
+<Callout kind="field" title="Những lỗi OAuth tôi thấy lặp lại">
+Không kiểm tra tham số `state` (mở cửa cho CSRF trong luồng đăng nhập). Cho phép `redirect_uri` khớp lỏng (wildcard) — kẻ tấn công nhận được code. Dùng access token của Google như "bằng chứng đăng nhập" thay vì ID token đã kiểm audience. Và tự viết thư viện OAuth thay vì dùng thư viện đã được kiểm chứng.
+</Callout>
+
+<Quiz id="q-w4-jwt-alg" />

@@ -1,0 +1,31 @@
+id: queueing
+componentKey: queueing
+title: { vi: "Hàng đợi & độ trễ theo tải", en: "Queueing: latency vs load" }
+summary: Mô hình M/M/c cho một dịch vụ — vì sao độ trễ tăng vọt khi tải tiến gần công suất, và thêm server giúp đến đâu.
+concepts: [queueing-littles-law, latency-percentiles]
+dataKind: formula
+params:
+  - { key: "arrivalRate", label: "Lượng request đến λ", min: 0, max: 2000, step: 5, default: 70, unit: "req/s" }
+  - { key: "serviceMs", label: "Thời gian xử lý trung bình mỗi request", min: 1, max: 500, step: 1, default: 10, unit: "ms" }
+  - { key: "servers", label: "Số worker/server song song c", min: 1, max: 32, step: 1, default: 1, unit: "worker" }
+howToRead: |-
+  Giả định của mô hình: request đến ngẫu nhiên kiểu Poisson, thời gian xử lý phân phối mũ, phục vụ theo thứ tự. Thực tế hiếm khi đúng y hệt,
+  nhưng hình dạng đường cong — phẳng ở tải thấp, dựng đứng khi ρ → 100% — là điều bạn sẽ thấy trên dashboard thật.
+  Định luật Little L = λW đúng cho mọi hệ ổn định, không cần giả định phân phối.
+breakIt:
+  - id: near-capacity
+    label: Chạy ở 95% công suất
+    params: { arrivalRate: 95, serviceMs: 10, servers: 1 }
+    explanation: >-
+      Từ 70% lên 95% tải, độ trễ trung bình không tăng 1,4 lần mà tăng nhiều lần. Đây là lý do đội vận hành đặt ngưỡng cảnh báo CPU/worker trước khi chạm trần,
+      và vì sao "server còn 5% rảnh" không có nghĩa là ổn.
+  - id: overload
+    label: Tải vượt công suất
+    params: { arrivalRate: 120, serviceMs: 10, servers: 1 }
+    explanation: >-
+      λ > cμ: hàng đợi tăng không giới hạn. Không có cấu hình timeout nào cứu được — phải giảm tải (rate limit, load shedding) hoặc thêm công suất.
+  - id: scale-out
+    label: Thêm worker
+    params: { arrivalRate: 120, serviceMs: 10, servers: 2 }
+    explanation: >-
+      Hai worker gánh được 200 req/s. Lưu ý: chỉ đúng khi request độc lập và DB/phụ thuộc phía sau không thành nút cổ chai mới.

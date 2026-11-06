@@ -1,0 +1,41 @@
+items:
+  - id: q-w1-derived-state
+    type: mcq
+    conceptId: component-state
+    prompt: "Component giỏ hàng cần hiển thị danh sách món, tổng tiền và số món. Nên lưu gì trong state?"
+    options:
+      - { id: a, text: "items, total và count — ba biến riêng" }
+      - { id: b, text: "Chỉ items; total và count tính từ items mỗi lần render" }
+      - { id: c, text: "Chỉ total, vì đó là thứ người dùng quan tâm" }
+    correct: [b]
+    explanation: "total và count là giá trị suy ra. Lưu riêng tạo nhiều nguồn sự thật dễ lệch nhau."
+  - id: q-w1-pick-render
+    type: mcq
+    conceptId: rendering-strategies
+    prompt: "Blog công ty: bài viết giống nhau cho mọi người, cập nhật vài lần một tuần, cần SEO và ảnh xem trước khi chia sẻ. Lựa chọn hợp lý nhất?"
+    options:
+      - { id: a, text: "CSR thuần (SPA)" }
+      - { id: b, text: "SSG (build sẵn HTML tĩnh, phục vụ từ CDN), build lại khi có bài mới" }
+      - { id: c, text: "SSR cho mọi request" }
+    correct: [b]
+    explanation: "Nội dung giống nhau và ít đổi là trường hợp lý tưởng cho static: nhanh, rẻ, SEO tốt. SSR được nhưng tốn server không cần thiết."
+  - id: q-w1-hydration
+    type: mcq
+    conceptId: rendering-strategies
+    prompt: "Trang SSR hiện nội dung rất nhanh nhưng người dùng bấm nút 'Mua' không có phản ứng trong vài giây đầu. Nguyên nhân có khả năng nhất?"
+    options:
+      - { id: a, text: "Server chậm" }
+      - { id: b, text: "JavaScript chưa tải/chạy xong nên chưa hydrate — HTML đã hiện nhưng chưa gắn sự kiện" }
+      - { id: c, text: "CSS chưa tải" }
+    correct: [b]
+    explanation: "Đó là khoảng 'thấy được nhưng chưa tương tác được' của hydration. Giảm JS cần cho phần đầu trang hoặc ưu tiên hydrate phần quan trọng."
+  - id: q-w1-lift-state
+    type: mcq
+    conceptId: component-state
+    prompt: "Ô tìm kiếm và danh sách kết quả là hai component anh em, đều cần biết từ khoá. Đặt state từ khoá ở đâu?"
+    options:
+      - { id: a, text: "Trong ô tìm kiếm, danh sách tự đọc DOM của ô" }
+      - { id: b, text: "Ở component cha chung gần nhất, truyền xuống cả hai qua props" }
+      - { id: c, text: "Hai bản copy, đồng bộ bằng effect" }
+    correct: [b]
+    explanation: "'Lifting state up': đặt state ở cha chung gần nhất, dữ liệu chảy xuống, sự kiện chảy lên."

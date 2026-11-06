@@ -1,0 +1,73 @@
+---
+id: w6-testing
+track: web
+stage: w6
+order: 0
+title: { vi: "Test để dám thay đổi: kim tự tháp, integration, E2E và CI", en: "Testing so you dare to change: the pyramid, integration, E2E and CI" }
+summary: "Mục tiêu của test không phải độ phủ mà là sự tự tin khi sửa code. Bài này đi qua kim tự tháp kiểm thử, phần ghép nối (integration, contract) nơi bug thật hay trốn, E2E ít nhưng đúng chỗ và không flaky, và pipeline CI làm cổng chặn."
+concepts: [testing-pyramid, integration-contract-tests, e2e-testing, ci-pipelines]
+estMinutes: 40
+whyQuestion: "Dự án có 2.000 unit test, độ phủ cao, CI xanh — vậy mà bản deploy hôm qua làm hỏng luồng thanh toán. Bộ test đã bỏ sót gì?"
+devMapping:
+  - finance: "Unit test"
+    dev: "Kiểm một hàm/lớp cô lập, chạy mili-giây"
+    explanation: "Nhiều, nhanh, chỉ ra chính xác chỗ sai — nhưng không thấy lỗi ở chỗ các phần ghép với nhau."
+  - finance: "Contract test"
+    dev: "Kiểm hai bên (consumer/provider) cùng hiểu một hợp đồng API"
+    explanation: "Bắt lỗi 'backend đổi trường, frontend không biết' mà không cần dựng cả hệ thống."
+  - finance: "Flaky test"
+    dev: "Test lúc đỏ lúc xanh với cùng code"
+    explanation: "Tệ hơn không có test: dạy cả đội bỏ qua màu đỏ."
+pretest: [q-w6-pyramid, q-w6-flaky]
+applications:
+  - id: app-w6-gap
+    title: "Tìm lỗ hổng trong bộ test hiện tại"
+    context: "Một sản phẩm đã có test nhưng vẫn có bug lọt lên production."
+    task: "Lấy 5 bug production gần nhất, với mỗi bug hỏi: tầng test nào lẽ ra bắt được (unit/integration/contract/E2E)? Viết test đó. Đếm và sửa/cách ly các test flaky trong CI 2 tuần qua."
+    deliverable: "Bảng 5 bug → tầng test thiếu + test mới + danh sách test flaky đã xử lý."
+sources: [practical-test-pyramid, playwright-best-practices]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Bạn chỉ có thời gian viết 5 test E2E cho một cửa hàng online. Chọn 5 hành trình nào, vì sao, và làm sao để chúng không flaky?"
+  rubric:
+    - { id: value, criterion: "Chọn theo giá trị/rủi ro: đăng nhập, tìm–thêm giỏ–thanh toán, đăng ký… (luồng mất tiền khi hỏng)" }
+    - { id: stable, criterion: "Selector theo vai trò/nhãn người dùng thấy, chờ theo điều kiện chứ không sleep cố định" }
+    - { id: isolate, criterion: "Dữ liệu test độc lập mỗi lần chạy, không phụ thuộc thứ tự test" }
+---
+
+<Callout kind="story" title="CI xanh, thanh toán đỏ">
+Backend đổi trường `amount` từ số nguyên (đồng) sang chuỗi có định dạng. Unit test của backend xanh — vì chính nó định nghĩa trường mới. Unit test của frontend xanh — vì nó dùng dữ liệu giả viết tay từ hồi trước. Không có test nào đứng ở **chỗ hai bên gặp nhau**.
+</Callout>
+
+## Kim tự tháp: nhiều test nhỏ, ít test lớn
+
+Bài "The Practical Test Pyramid" (Ham Vocke, martinfowler.com) mô tả ý tưởng: nhóm test theo **độ chi tiết**, có **nhiều** test nhỏ nhanh ở đáy và **ít** test lớn chậm ở đỉnh, và tránh kiểm trùng một điều ở nhiều tầng.
+
+- **Unit**: hàm, lớp, logic thuần. Chạy rất nhanh, chỉ ra đúng chỗ sai.
+- **Integration**: phần của bạn + một thứ thật (DB, hàng đợi, HTTP client). Bắt lỗi truy vấn sai, migration thiếu, cấu hình.
+- **Contract**: consumer và provider cùng kiểm một hợp đồng chung (schema, ví dụ request/response).
+- **E2E / UI**: trình duyệt thật đi theo hành trình người dùng. Đắt và dễ flaky — dành cho luồng giá trị cao.
+
+<Quiz id="q-w6-pyramid" />
+
+<Callout kind="dev" title="Chính dự án này">
+FinAI Academy có unit test (Vitest) cho toàn bộ logic thuần trong `lib/` — tài chính, FSRS, hàng đợi, địa hình làng, máy trạng thái tập trung — và một bộ E2E bằng Playwright chạy trên bản build thật cho các hành trình chính. Validator nội dung là một dạng "contract test" giữa dữ liệu trong `content/` và code: sai tham chiếu là build đỏ.
+</Callout>
+
+## E2E ít nhưng đáng tin
+
+Playwright Best Practices khuyên: kiểm **hành vi người dùng nhìn thấy**, không kiểm chi tiết triển khai; **cô lập** mỗi test (dữ liệu, trạng thái, cookie riêng); chọn phần tử theo **vai trò và nhãn** (`getByRole('button', { name: 'Thanh toán' })`) thay vì class CSS dễ đổi; dựa vào cơ chế **tự chờ** và assertion có chờ thay vì `sleep` cố định.
+
+<Quiz id="q-w6-flaky" />
+
+<Callout kind="field" title="Cách tôi đối xử với test flaky">
+Test flaky là **bug** — của test hoặc của sản phẩm (race condition thật hay trốn trong đó). Khi gặp: cách ly ngay (để không ai học cách bấm "chạy lại"), ghi ticket có chủ, sửa trong vài ngày hoặc xoá. Nguyên nhân hay gặp nhất: chờ bằng thời gian cố định, phụ thuộc thứ tự chạy, dữ liệu dùng chung giữa các test, đồng hồ thật và múi giờ, và gọi dịch vụ bên ngoài thật. Một bộ test 300 cái xanh ổn định có giá trị hơn 3.000 cái mà đội đã quen thấy đỏ.
+</Callout>
+
+## CI: cổng chứ không phải trang trí
+
+Pipeline CI chạy trên **mọi thay đổi**: cài phụ thuộc từ lockfile, lint, kiểm kiểu, test, build. Đỏ thì **không merge**. Giữ nó nhanh (song song hoá, cache, chạy test chậm theo lịch) — CI chậm làm người ta gom thay đổi lớn, và thay đổi lớn mới là thứ nguy hiểm.
+
+<Quiz id="q-w6-contract" />
+<Quiz id="q-w6-order" />

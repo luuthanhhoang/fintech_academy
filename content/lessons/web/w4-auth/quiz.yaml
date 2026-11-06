@@ -1,0 +1,43 @@
+items:
+  - id: q-w4-password
+    type: mcq
+    conceptId: password-storage
+    prompt: "Cách lưu mật khẩu nào phù hợp?"
+    options:
+      - { id: a, text: "SHA-256(mật khẩu)" }
+      - { id: b, text: "Mã hoá AES, giữ khoá trong cấu hình để khôi phục khi cần" }
+      - { id: c, text: "Argon2id với muối ngẫu nhiên mỗi người, tham số theo khuyến nghị" }
+      - { id: d, text: "Lưu nguyên văn trong cột được phân quyền chặt" }
+    correct: [c]
+    explanation: "Hàm băm nhanh bị dò hàng loạt; mã hoá hai chiều thì lộ khoá là lộ hết. Dùng hàm băm mật khẩu chậm, có muối."
+  - id: q-w4-401-403
+    type: mcq
+    conceptId: sessions-cookies
+    prompt: "Thuộc tính cookie nào giúp JavaScript trên trang KHÔNG đọc được session ID (giảm thiệt hại khi có XSS)?"
+    options:
+      - { id: a, text: "Secure" }
+      - { id: b, text: "HttpOnly" }
+      - { id: c, text: "SameSite" }
+      - { id: d, text: "Max-Age" }
+    correct: [b]
+    explanation: "HttpOnly chặn document.cookie đọc giá trị. Secure buộc HTTPS; SameSite hạn chế gửi chéo trang (CSRF)."
+  - id: q-w4-pkce
+    type: mcq
+    conceptId: oauth-oidc
+    prompt: "Theo RFC 9700, luồng nào nên dùng cho ứng dụng web/mobile đăng nhập qua OAuth?"
+    options:
+      - { id: a, text: "Implicit grant — token trả thẳng trong URL" }
+      - { id: b, text: "Authorization code kèm PKCE (S256)" }
+      - { id: c, text: "Resource owner password — ứng dụng hỏi mật khẩu Google của người dùng" }
+    correct: [b]
+    explanation: "RFC 9700 khuyên không dùng implicit grant; authorization server phải hỗ trợ PKCE và PKCE được khuyến nghị cho mọi loại client."
+  - id: q-w4-jwt-alg
+    type: mcq
+    conceptId: jwt-tokens
+    prompt: "Khi kiểm tra JWT ở server, việc nào là SAI?"
+    options:
+      - { id: a, text: "Cố định danh sách thuật toán chấp nhận phía server" }
+      - { id: b, text: "Kiểm tra exp, iss, aud" }
+      - { id: c, text: "Dùng thuật toán ghi trong header 'alg' của chính token để quyết định cách kiểm" }
+    correct: [c]
+    explanation: "Tin trường alg từ token cho phép kẻ tấn công chọn thuật toán yếu hoặc 'none'. Server phải tự quyết định thuật toán."

@@ -1,0 +1,82 @@
+---
+id: w5-latency-queueing
+track: web
+stage: w5
+order: 0
+title: { vi: "Vì sao hệ thống chậm đột ngột: phân vị, hàng đợi và rate limiting", en: "Why systems suddenly get slow: percentiles, queueing and rate limiting" }
+summary: "Trung bình nói dối, đuôi phân phối mới là thứ người dùng gặp. Lý thuyết hàng đợi giải thích vì sao từ 70% lên 95% tải, độ trễ không tăng từ từ mà tăng vọt. Và khi tải vượt công suất, chỉ có giảm tải mới cứu được — rate limiting là cách làm việc đó có chủ đích."
+concepts: [latency-percentiles, queueing-littles-law, rate-limiting]
+estMinutes: 50
+whyQuestion: "Lưu lượng tăng 20% trong đợt khuyến mãi, nhưng độ trễ tăng gấp 5 và rồi cả hệ thống sập. Vì sao quan hệ không tuyến tính, và lẽ ra cần chuẩn bị gì?"
+devMapping:
+  - finance: "p99 latency"
+    dev: "99% request nhanh hơn mức này; 1% chậm hơn"
+    explanation: "Một trang gọi nhiều dịch vụ song song sẽ chờ dịch vụ chậm nhất — đuôi của từng phần trở thành trải nghiệm thường gặp của cả trang."
+  - finance: "Little's law L = λW"
+    dev: "Số request đang xử lý = lượng đến mỗi giây × thời gian mỗi request"
+    explanation: "Cho biết cần bao nhiêu worker/kết nối: 200 req/s × 0,1 s = 20 request đồng thời trung bình."
+  - finance: "Token bucket"
+    dev: "Mỗi request tiêu một token; token nạp đều; hết token thì 429"
+    explanation: "Cho phép burst ngắn nhưng giữ tốc độ trung bình — chặn một client làm nghẽn tất cả."
+simulators: [queueing]
+labs: [rate-limiter]
+pretest: [q-w5-mean, q-w5-nonlinear]
+applications:
+  - id: app-w5-capacity
+    title: "Ước lượng công suất cho đợt cao điểm"
+    context: "Một API sắp có sự kiện khuyến mãi."
+    task: "Lấy số liệu thật: lượng request/giây lúc cao điểm, thời gian xử lý trung bình và p99, số worker. Dùng Little's law ước lượng số request đồng thời; dùng mô phỏng hàng đợi xem độ trễ ở mức tải dự kiến; đề xuất giới hạn rate limit và kế hoạch giảm tải (tắt tính năng phụ)."
+    deliverable: "Bảng tính công suất + ngưỡng cảnh báo + kế hoạch load shedding."
+sources: [tail-at-scale, mm1-queue, stripe-rate-limiters]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho quản lý sản phẩm vì sao 'server mới dùng 85% CPU, còn dư 15%' không có nghĩa là chịu thêm được 15% người dùng mà vẫn mượt."
+  rubric:
+    - { id: curve, criterion: "Độ trễ tăng phi tuyến khi mức sử dụng tiến gần 100% (hàng đợi dài ra)" }
+    - { id: tail, criterion: "Phân vị cao (p99) tăng còn nhanh hơn trung bình" }
+    - { id: plan, criterion: "Đề xuất giữ khoảng dư, autoscale sớm, rate limit/giảm tải khi quá ngưỡng" }
+---
+
+<Callout kind="story" title="Dashboard đẹp, người dùng giận">
+Độ trễ trung bình của API là 80 ms — trên dashboard trông rất ổn. Nhưng trang chủ gọi 30 API con song song, và trang chỉ hiện xong khi API **chậm nhất** trả về. Người dùng không gặp "trung bình". Họ gặp cái đuôi.
+</Callout>
+
+## Trung bình che giấu cái đuôi
+
+Thời gian phản hồi có phân phối **lệch phải**: phần lớn nhanh, một số rất chậm (GC, cache miss, chờ khoá, máy hàng xóm ồn ào). Đo bằng **phân vị**: p50 (trung vị), p95, p99.
+
+Bài "The Tail at Scale" (Dean & Barroso, CACM 2013) chỉ ra: ở hệ thống lớn, những đợt chậm ngắn ngủi tưởng không đáng kể lại **chi phối hiệu năng tổng thể** khi một yêu cầu của người dùng tỏa ra nhiều yêu cầu con. Nếu mỗi dịch vụ con có 1% request chậm và trang gọi 30 dịch vụ, xác suất trang gặp ít nhất một request chậm là $1 - 0{,}99^{30} \approx 26\%$.
+
+<Quiz id="q-w5-mean" />
+
+## Hàng đợi: vì sao chậm đột ngột
+
+Mọi hệ thống có hàng đợi (dù bạn có vẽ ra hay không): connection pool, thread pool, CPU, ổ đĩa. Mô hình M/M/1 đơn giản nhất (request đến ngẫu nhiên với tốc độ $\lambda$, mỗi request xử lý trung bình $1/\mu$) cho:
+
+- Mức sử dụng $\rho = \lambda / \mu$ — phải nhỏ hơn 1, nếu không hàng đợi dài vô hạn.
+- Thời gian trong hệ thống trung bình $W = \dfrac{1}{\mu - \lambda}$.
+- **Định luật Little**: $L = \lambda W$ — số request đang ở trong hệ — đúng cho **mọi** hệ ổn định, không cần giả định phân phối.
+
+Nhìn công thức: khi $\lambda$ tiến gần $\mu$, mẫu số tiến về 0 và $W$ tăng vọt. Đó là đường cong mà ai trực vận hành cũng từng thấy trên dashboard.
+
+<WorkedExample id="we-mm1-latency" />
+
+<Simulator id="queueing" />
+
+<Quiz id="q-w5-nonlinear" />
+
+<Callout kind="field" title="Ba hệ quả vận hành tôi rút ra từ một công thức">
+**Đừng chạy sát trần.** Ngưỡng cảnh báo và autoscale nên kích hoạt khi còn dư địa đáng kể, vì đoạn cuối của đường cong rất dốc. **Timeout dài không cứu được quá tải** — nó chỉ làm hàng đợi dài hơn và tốn thêm bộ nhớ; khi $\lambda > \mu$, mọi request chờ đều là lãng phí. **Giảm thời gian xử lý mỗi request** (cache, bỏ việc thừa) dịch toàn bộ đường cong sang phải — thường rẻ hơn thêm máy. Và nhớ rằng thực tế hiếm khi đúng giả định Poisson/mũ: dùng mô hình để hiểu **hình dạng**, dùng load test để biết **con số**.
+</Callout>
+
+## Rate limiting: giảm tải có chủ đích
+
+Khi tải vượt công suất, sẽ có request bị từ chối — câu hỏi là **ai bị từ chối và theo cách nào**. Rate limiting chọn có chủ đích: mỗi client (API key, người dùng, IP) có hạn mức; vượt thì nhận `429 Too Many Requests` kèm `Retry-After`, thay vì kéo cả hệ thống chậm theo.
+
+**Token bucket** là thuật toán phổ biến: mỗi client có một "xô" chứa tối đa *C* token, nạp *r* token/giây; mỗi request tiêu một token; hết thì từ chối. Kết quả: cho phép burst ngắn tới *C*, nhưng tốc độ dài hạn không vượt *r*. Bài "Scaling your API with rate limiters" của Stripe mô tả việc vận hành bốn loại limiter trong production — bộ giới hạn tốc độ request là quan trọng nhất, cộng giới hạn số request đồng thời và các bộ **load shedder** loại bớt lưu lượng ưu tiên thấp (như báo cáo) để giữ lưu lượng quan trọng (như tạo thanh toán) khi quá tải.
+
+<Lab id="rate-limiter" />
+
+<Quiz id="q-w5-bucket" />
+<Quiz id="q-w5-little" />

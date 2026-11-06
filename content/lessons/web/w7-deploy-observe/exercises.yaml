@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w7-postmortem
+    conceptId: incident-response-postmortem
+    prompt: "Viết dàn ý postmortem cho tình huống 'migration khoá bảng orders giờ cao điểm' (xem tình huống trong bài). Ghi các mục và một ví dụ nội dung cho mỗi mục."
+    hint: "Không đổ lỗi; hành động phải có chủ và hạn."
+    solution: "Tóm tắt (ảnh hưởng: API đặt hàng lỗi/chậm trong khoảng X, ước lượng số đơn bị ảnh hưởng); dòng thời gian (deploy, cảnh báo, ai làm gì lúc nào, lúc giảm thiệt hại, lúc phục hồi); nguyên nhân gốc và yếu tố góp phần (migration khoá bảng chạy cùng deploy code; không có lock timeout; deploy giờ cao điểm; code mới không tương thích schema cũ khi lùi); điều đã làm tốt (rollback nhanh); hành động (tách migration khỏi deploy — chủ: A, hạn: 2 tuần; đặt lock timeout mặc định — B; checklist migration expand/contract trong PR template — C; cảnh báo theo SLO đặt hàng — D); bài học."

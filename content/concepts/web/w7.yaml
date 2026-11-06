@@ -1,0 +1,8 @@
+track: web
+stage: w7
+concepts:
+  - { id: "containers-docker", name: { vi: "Container và Docker", en: "Containers and Docker" }, short: "Đóng gói ứng dụng cùng môi trường chạy thành image bất biến, chạy giống nhau ở mọi nơi.", difficulty: 2, tags: [Docker, container, image] }
+  - { id: "cicd-deploy-strategies", name: { vi: "CI/CD và chiến lược deploy", en: "CI/CD and deploy strategies" }, short: "Rolling, blue/green, canary, feature flag: thả thay đổi từng phần và lùi nhanh.", prerequisites: [ci-pipelines, containers-docker], difficulty: 3, tags: [CD, canary, blue-green, feature flag] }
+  - { id: "observability-otel", name: { vi: "Observability: log, metric, trace", en: "Observability: logs, metrics, traces" }, short: "Ba tín hiệu để hiểu hệ đang chạy; OpenTelemetry làm chuẩn thu thập.", prerequisites: [latency-percentiles], difficulty: 3, tags: [observability, OpenTelemetry, tracing] }
+  - { id: "slo-error-budget", name: { vi: "SLO và error budget", en: "SLOs and error budgets" }, short: "Đặt mục tiêu tin cậy theo trải nghiệm người dùng; phần không tin cậy cho phép là ngân sách để thay đổi.", prerequisites: [observability-otel], difficulty: 3, tags: [SLO, SLI, error budget, SRE] }
+  - { id: "incident-response-postmortem", name: { vi: "Ứng phó sự cố và postmortem", en: "Incident response and postmortems" }, short: "Giảm thiệt hại trước, tìm nguyên nhân sau; postmortem không đổ lỗi, hành động có chủ.", prerequisites: [slo-error-budget], difficulty: 2, tags: [incident, postmortem, on-call] }

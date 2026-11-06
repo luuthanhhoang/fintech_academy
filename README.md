@@ -1,6 +1,6 @@
 # FinAI Academy
 
-Sổ tay học hằng ngày cho hai lộ trình: **Fintech từ con số 0** và **AI/LLM engineer**.
+Sổ tay học hằng ngày cho ba lộ trình: **Fintech từ con số 0**, **AI/LLM engineer** và **Fullstack web developer**.
 Website tĩnh (Next.js static export), không backend; dữ liệu học tập lưu trong IndexedDB của trình duyệt.
 
 > Nội dung mang tính giáo dục, không phải tư vấn đầu tư/pháp lý.
@@ -35,6 +35,8 @@ Yêu cầu Node ≥ 22.
 | Code lab | Thư mục `content/labs/<id>/` với `lab.yaml`, `starter.py`, `tests.py` (các hàm `test_*`), `solution.py` |
 | Case study | `content/cases/<id>.yaml` — mỗi sự kiện timeline phải có `sourceIds` và `status` |
 | Cấu hình | `content/config/*.yaml`: nav, phím tắt, ngưỡng thành thạo, FSRS, khối "Hôm nay", tìm kiếm, gia sư AI |
+
+Khối `Callout` có `kind`: note, warning, dev, example, `story` (tình huống mở đầu — giả định) và `field` (ghi chép thực chiến — góc nhìn người viết); nhãn và câu ghi chú trung thực nằm trong `site.yaml → callouts`.
 
 Thành phần MDX được phép: `Simulator`, `Lab`, `Case`, `Quiz`, `Fact`, `Callout`, `Sidenote`, `Figure`,
 `WorkedExample` (`examples.yaml` trong thư mục bài), `Diagram` (`diagrams.yaml`), `Scenario` (`content/scenarios/*.yaml`), `Term` (khái niệm có sẵn).

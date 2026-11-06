@@ -1,0 +1,10 @@
+track: web
+stage: w4
+concepts:
+  - { id: "password-storage", name: { vi: "Lưu mật khẩu an toàn", en: "Password storage" }, short: "Không bao giờ lưu mật khẩu; lưu hash chậm có muối (Argon2id, scrypt, bcrypt) để chống dò sau khi lộ DB.", difficulty: 2, tags: [password, hashing, Argon2id] }
+  - { id: "sessions-cookies", name: { vi: "Session và cookie", en: "Sessions and cookies" }, short: "Server nhớ phiên qua ID trong cookie HttpOnly, Secure, SameSite; hết hạn và thu hồi.", prerequisites: [http-semantics], difficulty: 2, tags: [session, cookie, SameSite, HttpOnly] }
+  - { id: "jwt-tokens", name: { vi: "JWT và token", en: "JWT and tokens" }, short: "Token tự chứa được ký; kiểm chữ ký, thời hạn, audience; khó thu hồi nên giữ ngắn hạn.", prerequisites: [sessions-cookies], difficulty: 3, tags: [JWT, token, signature] }
+  - { id: "oauth-oidc", name: { vi: "OAuth 2.0 và OpenID Connect", en: "OAuth 2.0 and OpenID Connect" }, short: "Uỷ quyền truy cập (OAuth) và đăng nhập (OIDC) qua authorization code + PKCE.", prerequisites: [jwt-tokens], difficulty: 3, tags: [OAuth, OIDC, PKCE, SSO] }
+  - { id: "web-security-owasp", name: { vi: "Rủi ro bảo mật web (OWASP Top 10)", en: "Web security risks (OWASP Top 10)" }, short: "Danh sách rủi ro phổ biến nhất của ứng dụng web, dùng làm checklist khi thiết kế và review.", prerequisites: [http-semantics], difficulty: 2, tags: [OWASP, security] }
+  - { id: "xss-csrf-cors", name: { vi: "XSS, CSRF và CORS", en: "XSS, CSRF and CORS" }, short: "Chèn script vào trang, lợi dụng cookie để gửi request giả, và chính sách cho phép đọc chéo origin.", prerequisites: [web-security-owasp, sessions-cookies], difficulty: 3, tags: [XSS, CSRF, CORS, CSP] }
+  - { id: "injection-access-control", name: { vi: "Injection và kiểm soát truy cập", en: "Injection and access control" }, short: "Truy vấn tham số hoá chống injection; kiểm quyền trên server cho từng đối tượng (chống IDOR/BOLA).", prerequisites: [web-security-owasp, sql-queries-joins], difficulty: 3, tags: [SQL injection, IDOR, BOLA, authorization] }

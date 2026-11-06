@@ -1,0 +1,49 @@
+items:
+  - id: q-w0c-stale
+    type: mcq
+    conceptId: http-caching
+    prompt: "File app.js (không có hash trong tên) được trả với Cache-Control: max-age=86400. Bạn deploy bản mới. Điều gì xảy ra với người đã tải trang hôm qua?"
+    options:
+      - { id: a, text: "Họ nhận ngay bản mới vì server đã đổi file" }
+      - { id: b, text: "Trình duyệt có thể tiếp tục dùng bản cũ mà không hỏi server cho tới khi hết 24 giờ" }
+      - { id: c, text: "Trình duyệt luôn hỏi lại server trước khi dùng" }
+    correct: [b]
+    explanation: "Trong thời hạn max-age, response là 'fresh' và được dùng lại không cần hỏi. Cách giải: đặt hash vào tên file và để HTML (cache ngắn) trỏ tới tên mới."
+  - id: q-w0c-main-thread
+    type: mcq
+    conceptId: browser-rendering
+    prompt: "Một handler click chạy vòng lặp đồng bộ 400 ms. Trong lúc đó người dùng gõ vào ô tìm kiếm. Điều gì xảy ra?"
+    options:
+      - { id: a, text: "Ký tự hiện ra ngay vì gõ phím chạy trên luồng riêng" }
+      - { id: b, text: "Ký tự chỉ hiện sau khi vòng lặp xong, vì xử lý sự kiện và vẽ dùng chung main thread" }
+      - { id: c, text: "Trình duyệt tự huỷ vòng lặp" }
+    correct: [b]
+    explanation: "JavaScript, xử lý sự kiện và phần lớn công việc render dùng main thread. Việc dài chặn mọi phản hồi — đó là thứ INP đo."
+  - id: q-w0c-cls
+    type: mcq
+    conceptId: web-performance-vitals
+    prompt: "Trang tin tức có CLS cao. Nguyên nhân nào thường gặp nhất?"
+    options:
+      - { id: a, text: "Server phản hồi chậm" }
+      - { id: b, text: "Ảnh, quảng cáo, banner chèn vào mà không giữ sẵn chỗ (không có kích thước)" }
+      - { id: c, text: "Dùng HTTP/2" }
+    correct: [b]
+    explanation: "CLS đo bố cục nhảy. Khi phần tử xuất hiện muộn mà không có chỗ dành sẵn, nội dung bên dưới bị đẩy đi."
+  - id: q-w0c-header
+    type: mcq
+    conceptId: http-caching
+    prompt: "API GET /me trả thông tin tài khoản của người đang đăng nhập. Header cache nào phù hợp nhất?"
+    options:
+      - { id: a, text: "Cache-Control: public, max-age=3600" }
+      - { id: b, text: "Cache-Control: private, no-store (hoặc ít nhất private)" }
+      - { id: c, text: "Không đặt gì, CDN tự biết" }
+    correct: [b]
+    explanation: "Dữ liệu cá nhân không được để cache dùng chung (CDN) lưu — nếu không, người khác có thể nhận nhầm thông tin của bạn."
+  - id: q-w0c-lcp
+    type: numeric
+    conceptId: web-performance-vitals
+    prompt: "Theo web.dev, LCP tối đa bao nhiêu giây (ở phân vị 75) thì được xếp 'tốt'?"
+    answer: 2.5
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "giây"
+    explanation: "LCP ≤ 2,5 s, INP ≤ 200 ms, CLS ≤ 0,1 — đánh giá ở phân vị 75 của lượt truy cập thật."

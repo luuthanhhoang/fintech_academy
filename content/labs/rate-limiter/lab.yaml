@@ -1,0 +1,12 @@
+id: rate-limiter
+title: { vi: "Rate limiter token bucket", en: "Token-bucket rate limiter" }
+summary: Viết bộ giới hạn tốc độ token bucket cho API — cho phép burst ngắn, giữ tốc độ trung bình, trả thời gian cần chờ (Retry-After) khi bị chặn.
+concepts: [rate-limiting, queueing-littles-law]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện lớp TokenBucket(capacity, refill_per_sec):
+  1. Bucket bắt đầu đầy (capacity token). Token nạp lại liên tục theo refill_per_sec, không vượt capacity.
+  2. allow(now, cost=1) -> bool: nạp token theo thời gian trôi qua kể từ lần gọi trước, nếu đủ thì trừ cost và trả True, ngược lại trả False (không trừ).
+  3. retry_after(now, cost=1) -> float: số giây cần chờ để đủ cost token (0 nếu đủ ngay). Dùng để trả header Retry-After cùng mã 429.
+  4. Thời gian `now` do bên gọi truyền vào (giây, tăng dần) để test được — không gọi time.time() bên trong.
+  5. Từ chối cấu hình vô lý: capacity <= 0 hoặc refill_per_sec <= 0 thì raise ValueError; cost > capacity thì allow luôn False và retry_after là inf.

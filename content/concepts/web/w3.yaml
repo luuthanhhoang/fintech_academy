@@ -1,0 +1,9 @@
+track: web
+stage: w3
+concepts:
+  - { id: "relational-modeling", name: { vi: "Mô hình dữ liệu quan hệ", en: "Relational data modeling" }, short: "Bảng, khoá chính/ngoại, chuẩn hoá và ràng buộc để dữ liệu không mâu thuẫn.", difficulty: 2, tags: [SQL, schema, normalization, foreign key] }
+  - { id: "sql-queries-joins", name: { vi: "Truy vấn SQL và JOIN", en: "SQL queries and joins" }, short: "SELECT, WHERE, GROUP BY, JOIN: hỏi dữ liệu theo tập hợp thay vì vòng lặp.", prerequisites: [relational-modeling], difficulty: 2, tags: [SQL, JOIN, query] }
+  - { id: "db-indexes", name: { vi: "Index trong cơ sở dữ liệu", en: "Database indexes" }, short: "Cấu trúc (thường là B-tree) giúp tìm dòng nhanh; đánh đổi tốc độ ghi và dung lượng; đọc EXPLAIN.", prerequisites: [sql-queries-joins], difficulty: 3, tags: [index, B-tree, EXPLAIN] }
+  - { id: "db-transactions-isolation", name: { vi: "Transaction và mức cô lập", en: "Transactions and isolation" }, short: "ACID; các mức isolation chống dirty read, non-repeatable read, phantom, serialization anomaly.", prerequisites: [sql-queries-joins], difficulty: 3, tags: [transaction, ACID, isolation, PostgreSQL] }
+  - { id: "schema-migrations", name: { vi: "Migration lược đồ", en: "Schema migrations" }, short: "Đổi schema an toàn trên hệ đang chạy: tương thích hai chiều, expand/contract, tránh khoá bảng lâu.", prerequisites: [relational-modeling], difficulty: 3, tags: [migration, schema, expand-contract] }
+  - { id: "orm-n-plus-one", name: { vi: "ORM và lỗi N+1", en: "ORMs and the N+1 problem" }, short: "ORM tiện nhưng dễ sinh 1 + N truy vấn; dùng JOIN/batch loading và đo số query.", prerequisites: [sql-queries-joins], difficulty: 2, tags: [ORM, N+1, query] }

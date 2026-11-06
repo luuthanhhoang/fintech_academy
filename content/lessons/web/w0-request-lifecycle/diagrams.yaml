@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-http-request
+    kind: sequence
+    title: "Một request HTTPS đi qua những đâu"
+    caption: "Mỗi mũi tên là ít nhất một vòng mạng. Chỉ đoạn giữa (ứng dụng ↔ DB) là thứ dashboard backend thường đo. Mô hình khái niệm, bỏ qua các chi tiết hiếm."
+    actors:
+      - { id: browser, label: "Trình duyệt" }
+      - { id: dns, label: "DNS resolver" }
+      - { id: edge, label: "CDN / load balancer" }
+      - { id: app, label: "Ứng dụng" }
+      - { id: db, label: "Database" }
+    steps:
+      - { from: browser, to: dns, label: "shop.example là IP nào?" }
+      - { from: dns, to: browser, label: "IP (kèm TTL để cache)" }
+      - { from: browser, to: edge, label: "Kết nối TCP/QUIC + bắt tay TLS" }
+      - { from: browser, to: edge, label: "GET /checkout + header + cookie" }
+      - { from: edge, to: app, label: "Chuyển tiếp (có thể chờ hàng đợi)" }
+      - { from: app, to: db, label: "Truy vấn", note: "Phần backend đo được" }
+      - { from: db, to: app, label: "Dữ liệu" }
+      - { from: app, to: browser, label: "200 OK + HTML" }
+      - { from: browser, to: edge, label: "Tải CSS/JS/ảnh (lặp lại cho domain khác)" }

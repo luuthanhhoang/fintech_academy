@@ -1,0 +1,102 @@
+---
+id: w0-caching-performance
+track: web
+stage: w0
+order: 1
+title: { vi: "Nhanh nhờ không làm gì: cache HTTP, trình duyệt vẽ trang và Core Web Vitals", en: "Fast by doing nothing: HTTP caching, rendering and Core Web Vitals" }
+summary: "Request nhanh nhất là request không cần gửi. Học cách cache an toàn (Cache-Control, ETag, CDN), hiểu trình duyệt biến byte thành pixel trên một luồng chính duy nhất, và đo trải nghiệm bằng Core Web Vitals của người dùng thật."
+concepts: [http-caching, browser-rendering, web-performance-vitals]
+estMinutes: 40
+whyQuestion: "Bạn deploy bản sửa lỗi CSS, nhưng nửa số người dùng vẫn thấy giao diện cũ cả ngày. Lỗi nằm ở đâu, và lần sau thiết kế thế nào để deploy là thấy ngay mà vẫn cache được lâu?"
+devMapping:
+  - finance: "Cache-Control: max-age"
+    dev: "TTL của một bản sao — trong thời hạn này client dùng lại mà không hỏi server"
+    explanation: "Giống cache trong code: nhanh nhất là không gọi, nhưng phải chấp nhận dữ liệu có thể cũ tới hết TTL."
+  - finance: "ETag + If-None-Match"
+    dev: "So sánh phiên bản bằng hash, server trả 304 nếu không đổi"
+    explanation: "Vẫn tốn một vòng mạng nhưng không tải lại body — rẻ cho nội dung lớn hay thay đổi."
+  - finance: "File có hash trong tên (app.3f9a.js)"
+    dev: "Bất biến: nội dung đổi thì tên đổi, nên cache được 'mãi mãi'"
+    explanation: "Đây là cách giải mâu thuẫn 'cache lâu' và 'deploy là thấy ngay': HTML cache ngắn, tài nguyên có hash cache dài."
+pretest: [q-w0c-stale, q-w0c-main-thread]
+applications:
+  - id: app-w0c-cache-audit
+    title: "Kiểm toán header cache của sản phẩm"
+    context: "Ứng dụng web của bạn có HTML, JS/CSS, ảnh và vài API."
+    task: "Liệt kê Cache-Control hiện tại cho từng loại; đề xuất chính sách (HTML no-cache/ngắn, tài nguyên hash immutable dài, API theo dữ liệu, dữ liệu cá nhân private/no-store); đo lại số byte tải ở lần truy cập thứ hai."
+    deliverable: "Bảng chính sách cache + số liệu trước/sau trên chính hệ thống của bạn."
+sources: [rfc9111, mdn-how-browsers-work, webdev-cwv-thresholds]
+facts:
+  - id: cwv-thresholds
+    text: "Ngưỡng 'tốt' của Core Web Vitals, đánh giá ở phân vị 75 lượt truy cập thật"
+    value: "LCP ≤ 2,5 s · INP ≤ 200 ms · CLS ≤ 0,1"
+    sourceId: webdev-cwv-thresholds
+    asOf: 2026-11-06
+    status: verified
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Thiết kế chính sách cache cho một trang sản phẩm thương mại điện tử (HTML, JS/CSS, ảnh, API giá và tồn kho, API giỏ hàng). Giải thích từng lựa chọn."
+  rubric:
+    - { id: split, criterion: "Tách HTML (ngắn/revalidate) và tài nguyên có hash (dài, immutable)" }
+    - { id: private, criterion: "Dữ liệu cá nhân (giỏ hàng) private hoặc no-store, không để CDN dùng chung" }
+    - { id: fresh, criterion: "Dữ liệu thay đổi nhanh (tồn kho) có TTL ngắn hoặc revalidate" }
+    - { id: invalidate, criterion: "Có cách làm mới khi deploy (đổi tên file, purge CDN)" }
+---
+
+<Callout kind="story" title="Bản sửa lỗi mà một nửa người dùng không thấy">
+Bạn sửa nút "Thanh toán" bị che mất trên điện thoại, deploy lúc 10 giờ. Đến chiều vẫn có người chụp màn hình lỗi cũ. Ai đó đề xuất "bảo khách xoá cache". Đó là dấu hiệu chính sách cache đang được quyết định bởi tình cờ, không phải bởi thiết kế.
+</Callout>
+
+## Cache là lời hứa có thời hạn
+
+Mỗi response có thể kèm `Cache-Control` để nói với trình duyệt, CDN và proxy: **ai** được giữ bản sao và **giữ bao lâu**. RFC 9111 mô tả hai trạng thái quan trọng:
+
+- **Fresh** (còn tươi): trong thời hạn `max-age`, cache dùng lại luôn, không hỏi server. Không tốn một vòng mạng nào.
+- **Stale** (đã cũ): hết hạn thì phải **revalidate** — gửi request có điều kiện (`If-None-Match: "etag-cũ"`). Nếu nội dung chưa đổi, server trả `304 Not Modified` không có body.
+
+Vài chỉ thị thường dùng:
+
+| Chỉ thị | Ý nghĩa thực tế |
+|---|---|
+| `max-age=N` | Tươi trong N giây |
+| `no-cache` | Được lưu nhưng **phải hỏi lại** server trước mỗi lần dùng (tên dễ hiểu nhầm!) |
+| `no-store` | Không được lưu ở đâu cả — cho dữ liệu nhạy cảm |
+| `private` | Chỉ trình duyệt của người này được lưu, CDN dùng chung thì không |
+| `immutable` | Nội dung không bao giờ đổi trong thời hạn, khỏi revalidate |
+
+<Quiz id="q-w0c-stale" />
+
+<Callout kind="field" title="Công thức tôi dùng cho hầu hết web app">
+**HTML**: `no-cache` (luôn revalidate, rẻ nhờ ETag) — để mỗi lần deploy, HTML mới trỏ tới tài nguyên mới ngay. **JS/CSS/font/ảnh do build sinh ra, có hash trong tên**: `max-age` một năm + `immutable` — nội dung đổi thì tên đổi, nên không bao giờ dùng nhầm bản cũ. **API trả dữ liệu cá nhân**: `private, no-store` hoặc ít nhất `private`. Sự cố "nửa người dùng thấy bản cũ" gần như luôn do HTML hoặc file không có hash bị cache dài.
+</Callout>
+
+## Byte thành pixel: một luồng chính làm hết
+
+Khi HTML về tới, trình duyệt (theo MDN "How browsers work"):
+
+1. **Parse HTML → DOM**, gặp `<link>` CSS thì tải và parse thành **CSSOM**. CSS chặn render: chưa có CSS thì chưa vẽ (để khỏi nháy giao diện).
+2. Gặp `<script>` thường thì **dừng parse** để tải và chạy (vì script có thể sửa DOM). `defer`/`async`/`type="module"` tránh việc này.
+3. **Layout** (tính vị trí, kích thước) → **paint** (vẽ) → **composite** (ghép lớp).
+4. Sau đó mọi tương tác (click, gõ phím) đều được xử lý trên **main thread** — cùng luồng chạy JavaScript của bạn.
+
+Hệ quả quan trọng nhất: một đoạn JavaScript chạy 300 ms là 300 ms trình duyệt **không thể phản hồi** cú click nào.
+
+<Quiz id="q-w0c-main-thread" />
+
+## Đo cái người dùng cảm thấy: Core Web Vitals
+
+Google định nghĩa ba chỉ số, đo trên **người dùng thật** và đánh giá ở **phân vị 75** (75% lượt truy cập phải tốt hơn ngưỡng):
+
+- **LCP** (Largest Contentful Paint): nội dung chính hiện ra lúc nào.
+- **INP** (Interaction to Next Paint): từ lúc tương tác tới khi màn hình phản hồi.
+- **CLS** (Cumulative Layout Shift): bố cục nhảy lung tung bao nhiêu.
+
+Ngưỡng "tốt": <Fact id="cwv-thresholds" />
+
+<Callout kind="field" title="Ba cách sửa đem lại nhiều nhất, theo kinh nghiệm">
+**LCP chậm**: thường do ảnh chính tải muộn (lazy-load nhầm ảnh đầu trang, ảnh quá to, không ưu tiên) hoặc server/HTML chậm. **INP kém**: một handler click làm quá nhiều việc đồng bộ, hoặc một bundle khổng lồ đang chạy — chia nhỏ việc, đẩy việc nặng sang sau khi vẽ. **CLS cao**: ảnh/quảng cáo/banner không đặt sẵn kích thước, font thay thế làm chữ nhảy. Đo trên máy dev đời mới, mạng văn phòng gần như luôn đẹp hơn thực tế — hãy xem số liệu từ người dùng thật hoặc ít nhất bật throttling.
+</Callout>
+
+<Quiz id="q-w0c-cls" />
+<Quiz id="q-w0c-header" />

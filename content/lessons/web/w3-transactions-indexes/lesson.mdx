@@ -1,0 +1,102 @@
+---
+id: w3-transactions-indexes
+track: web
+stage: w3
+order: 0
+title: { vi: "Database không phải cái hộp: truy vấn theo tập hợp, index và transaction", en: "The database is not a box: set-based queries, indexes and transactions" }
+summary: "Ba thứ quyết định ứng dụng của bạn chạy đúng và nhanh khi dữ liệu lớn: viết truy vấn theo tập hợp thay vì vòng lặp, index đúng chỗ (và đọc EXPLAIN), và hiểu transaction/isolation đủ để không bán cùng một chiếc vé cho hai người."
+concepts: [sql-queries-joins, db-indexes, db-transactions-isolation]
+estMinutes: 45
+whyQuestion: "Chỉ còn 1 vé. Hai người bấm 'Mua' cùng lúc, code kiểm tra 'còn vé không' rồi mới trừ. Cả hai đều mua được. Code sai ở đâu khi mỗi dòng nhìn riêng đều đúng?"
+devMapping:
+  - finance: "Index B-tree"
+    dev: "Mục lục đã sắp xếp: tìm theo giá trị/khoảng trong thời gian logarit thay vì đọc cả bảng"
+    explanation: "Đổi lại: mỗi lần ghi phải cập nhật thêm index, và tốn dung lượng."
+  - finance: "Transaction"
+    dev: "Nhóm thao tác hoặc thành công hết, hoặc như chưa từng xảy ra (atomic)"
+    explanation: "Giống try/rollback, nhưng được DB đảm bảo kể cả khi server sập giữa chừng."
+  - finance: "Isolation level"
+    dev: "Mức độ một transaction 'thấy' thay đổi của transaction khác đang chạy song song"
+    explanation: "Mức thấp nhanh hơn nhưng cho phép nhiều hiện tượng lạ; mức cao an toàn hơn nhưng có thể phải retry khi xung đột."
+pretest: [q-w3-lost-update, q-w3-index]
+applications:
+  - id: app-w3-slow-query
+    title: "Săn truy vấn chậm nhất"
+    context: "Một API có endpoint chậm dần theo thời gian khi dữ liệu tăng."
+    task: "Bật log truy vấn chậm (hoặc dùng thống kê truy vấn của DB), lấy 3 truy vấn tốn tổng thời gian nhiều nhất, chạy EXPLAIN (ANALYZE) trên bản sao dữ liệu, đề xuất index hoặc viết lại truy vấn, đo lại."
+    deliverable: "Trước/sau của kế hoạch thực thi và thời gian, kèm chi phí ghi thêm của index mới."
+sources: [pg-isolation, pg-indexes]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho người mới vì sao 'SELECT số vé còn lại; nếu > 0 thì UPDATE trừ 1' có thể bán quá số vé, và đưa ra hai cách sửa."
+  rubric:
+    - { id: race, criterion: "Mô tả hai transaction cùng đọc 1 trước khi một bên kịp ghi (đọc–sửa–ghi không nguyên tử)" }
+    - { id: atomic, criterion: "Sửa bằng UPDATE có điều kiện trong một câu (… SET n = n - 1 WHERE n > 0) và kiểm tra số dòng bị ảnh hưởng" }
+    - { id: lock, criterion: "Hoặc khoá dòng (SELECT … FOR UPDATE) / isolation SERIALIZABLE kèm retry, hoặc ràng buộc CHECK" }
+---
+
+<Callout kind="story" title="Hai người, một chiếc vé">
+Code nhìn rất đúng: đọc số vé còn lại, nếu lớn hơn 0 thì trừ đi 1 và tạo vé. Chạy thử một mình thì hoàn hảo. Ngày mở bán, hệ thống bán 1.037 vé cho một khán phòng 1.000 chỗ.
+</Callout>
+
+## Nghĩ theo tập hợp
+
+Thói quen của người mới: lấy danh sách về ứng dụng rồi lặp — mỗi vòng một truy vấn. Database được thiết kế để **xử lý cả tập dữ liệu trong một câu**: lọc (`WHERE`), nối (`JOIN`), gom nhóm (`GROUP BY`), sắp xếp và giới hạn. Một truy vấn có `JOIN` thường nhanh hơn hàng trăm truy vấn nhỏ vì ít vòng mạng hơn và DB tự chọn chiến lược thực thi.
+
+```sql
+-- Doanh thu theo khách hàng trong tháng, 10 người cao nhất
+SELECT c.id, c.name, SUM(o.total) AS revenue
+FROM customers c
+JOIN orders o ON o.customer_id = c.id
+WHERE o.created_at >= DATE '2026-10-01' AND o.created_at < DATE '2026-11-01'
+GROUP BY c.id, c.name
+ORDER BY revenue DESC
+LIMIT 10;
+```
+
+## Index: mục lục, không phải phép màu
+
+Không có index, tìm "đơn hàng của khách 42" nghĩa là đọc **cả bảng**. Index (mặc định trong PostgreSQL là B-tree) giữ giá trị cột đã sắp xếp kèm vị trí dòng, nên tìm theo bằng/khoảng/sắp xếp đều nhanh.
+
+- Index **nhiều cột** có thứ tự quan trọng: index `(customer_id, created_at)` phục vụ "đơn của khách X, mới nhất trước", nhưng không giúp truy vấn chỉ lọc theo `created_at`.
+- Mỗi index làm **ghi chậm hơn** và tốn chỗ — đừng index mọi cột.
+- Đọc **EXPLAIN** (và `EXPLAIN ANALYZE` trên bản sao) để biết DB thật sự làm gì: quét tuần tự (Seq Scan) hay dùng index, ước lượng số dòng có lệch với thực tế không.
+
+<Quiz id="q-w3-index" />
+
+<Callout kind="field" title="Thói quen điều tra truy vấn chậm">
+Tôi không đoán — tôi nhìn **truy vấn nào tốn tổng thời gian nhiều nhất** (thời gian mỗi lần × số lần gọi), vì thứ chạy 5 ms nhưng gọi 10.000 lần/phút thường đáng sửa hơn thứ chạy 2 giây mỗi đêm. Sau đó EXPLAIN ANALYZE trên dữ liệu có kích thước gần thật: kế hoạch trên DB dev 100 dòng gần như vô nghĩa. Và nhớ: thêm index trên bảng lớn đang chạy cũng là một thao tác vận hành — nên dùng cách tạo index không khoá ghi mà DB của bạn hỗ trợ.
+</Callout>
+
+## Transaction và isolation
+
+Transaction gom nhiều thao tác thành một khối **nguyên tử**: hoặc tất cả có hiệu lực, hoặc không gì cả. Nhưng nhiều transaction chạy **song song** thì chúng thấy dữ liệu của nhau thế nào? Chuẩn SQL định nghĩa bốn mức isolation qua các hiện tượng chúng ngăn được:
+
+| Hiện tượng | Ý nghĩa |
+|---|---|
+| Dirty read | Đọc dữ liệu transaction khác chưa commit |
+| Non-repeatable read | Đọc lại cùng dòng trong một transaction thấy giá trị khác |
+| Phantom read | Chạy lại cùng truy vấn thấy thêm/bớt dòng |
+| Serialization anomaly | Kết quả không khớp với bất kỳ thứ tự chạy tuần tự nào |
+
+Theo tài liệu PostgreSQL, mức **mặc định là Read Committed**: mỗi câu lệnh thấy dữ liệu đã commit tại thời điểm câu lệnh bắt đầu. Nó chặn dirty read nhưng **không** chặn chuyện bán quá vé ở trên.
+
+<Diagram id="dg-lost-update" />
+
+<Quiz id="q-w3-lost-update" />
+
+Ba cách sửa, từ đơn giản tới mạnh:
+
+1. **Một câu nguyên tử**: `UPDATE events SET seats_left = seats_left - 1 WHERE id = $1 AND seats_left > 0` rồi kiểm tra số dòng bị ảnh hưởng. DB tự lo phần đồng thời cho một dòng.
+2. **Khoá dòng**: `SELECT ... FOR UPDATE` trong transaction, giữ khoá tới khi commit.
+3. **SERIALIZABLE**: DB phát hiện xung đột và huỷ một transaction — ứng dụng **phải retry**.
+
+Thêm một lớp bảo vệ cuối: ràng buộc `CHECK (seats_left >= 0)` để dữ liệu sai không thể được ghi, bất kể code có bug.
+
+<Callout kind="field" title="Điều tôi ước mình biết sớm hơn">
+Phần lớn bug đồng thời không nằm ở chỗ "quên dùng transaction" mà ở mẫu **đọc – quyết định ở ứng dụng – ghi**. Mỗi khi thấy code đọc một giá trị lên rồi quyết định dựa trên nó trước khi ghi, tôi hỏi: "nếu có người khác ghi đúng vào khoảnh khắc giữa hai dòng này thì sao?". Đẩy điều kiện xuống câu SQL hoặc ràng buộc của DB gần như luôn rẻ hơn và đúng hơn khoá ở tầng ứng dụng.
+</Callout>
+
+<Quiz id="q-w3-default-iso" />
+<Quiz id="q-w3-set-based" />

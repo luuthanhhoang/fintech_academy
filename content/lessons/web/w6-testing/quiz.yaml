@@ -1,0 +1,44 @@
+items:
+  - id: q-w6-pyramid
+    type: mcq
+    conceptId: testing-pyramid
+    prompt: "Bug 'backend đổi kiểu trường amount, frontend vẫn gửi kiểu cũ' lẽ ra được bắt rẻ nhất ở tầng nào?"
+    options:
+      - { id: a, text: "Unit test của backend" }
+      - { id: b, text: "Contract test giữa frontend (consumer) và backend (provider)" }
+      - { id: c, text: "Kiểm thử thủ công trước mỗi release" }
+    correct: [b]
+    explanation: "Lỗi nằm ở chỗ hai bên gặp nhau. Unit test mỗi bên đều xanh vì mỗi bên tự định nghĩa dữ liệu của mình."
+  - id: q-w6-flaky
+    type: mcq
+    conceptId: e2e-testing
+    prompt: "Cách nào giảm flaky trong E2E? (chọn tất cả)"
+    options:
+      - { id: a, text: "Chờ theo điều kiện (phần tử hiện ra, request xong) thay vì sleep cố định" }
+      - { id: b, text: "Mỗi test tự tạo dữ liệu riêng, không phụ thuộc test khác" }
+      - { id: c, text: "Chọn phần tử theo class CSS sinh tự động" }
+      - { id: d, text: "Chọn phần tử theo vai trò và nhãn người dùng nhìn thấy" }
+    correct: [a, b, d]
+    explanation: "Class sinh tự động đổi theo build/style — dễ gãy. Vai trò/nhãn ổn định và gần với trải nghiệm thật."
+  - id: q-w6-contract
+    type: mcq
+    conceptId: integration-contract-tests
+    prompt: "Integration test khác unit test ở điểm nào cốt lõi?"
+    options:
+      - { id: a, text: "Chạy với ít nhất một thành phần thật (DB, hàng đợi, HTTP) thay vì giả lập hết" }
+      - { id: b, text: "Viết bằng ngôn ngữ khác" }
+      - { id: c, text: "Luôn chạy trên production" }
+    correct: [a]
+    explanation: "Giá trị của integration test là bắt lỗi ở chỗ ghép với thứ thật: câu SQL sai, migration thiếu, cấu hình kết nối."
+  - id: q-w6-order
+    type: ordering
+    conceptId: ci-pipelines
+    prompt: "Sắp xếp các bước của một pipeline CI hợp lý (nhanh và rẻ trước):"
+    items:
+      - { id: install, text: "Cài phụ thuộc từ lockfile (có cache)" }
+      - { id: lint, text: "Lint + kiểm kiểu" }
+      - { id: unit, text: "Unit test" }
+      - { id: integration, text: "Integration/contract test" }
+      - { id: build, text: "Build bản phát hành" }
+      - { id: e2e, text: "E2E trên bản build" }
+    explanation: "Thất bại sớm ở bước rẻ giúp phản hồi nhanh; E2E đắt nhất chạy cuối trên đúng bản build sẽ được phát hành."

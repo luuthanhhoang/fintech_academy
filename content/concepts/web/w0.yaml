@@ -1,0 +1,8 @@
+track: web
+stage: w0
+concepts:
+  - { id: "web-request-lifecycle", name: { vi: "Vòng đời một request web", en: "Web request lifecycle" }, short: "URL → DNS → kết nối TCP/QUIC → TLS → request HTTP → server xử lý → response → trình duyệt hiển thị.", difficulty: 1, tags: [HTTP, DNS, TLS, request] }
+  - { id: "http-semantics", name: { vi: "Ngữ nghĩa HTTP", en: "HTTP semantics" }, short: "Phương thức (safe, idempotent), mã trạng thái, header và cách server/client hiểu cùng một thông điệp.", prerequisites: [web-request-lifecycle], difficulty: 1, tags: [HTTP, status code, method, RFC 9110] }
+  - { id: "http-caching", name: { vi: "Cache HTTP", en: "HTTP caching" }, short: "Cache-Control, ETag, revalidation và CDN: tái dùng response an toàn để nhanh và rẻ hơn.", prerequisites: [http-semantics], difficulty: 2, tags: [cache, ETag, CDN, Cache-Control] }
+  - { id: "browser-rendering", name: { vi: "Trình duyệt vẽ trang", en: "Browser rendering" }, short: "Parse HTML/CSS thành DOM/CSSOM, layout, paint, composite; JavaScript chạy trên main thread qua event loop.", prerequisites: [web-request-lifecycle], difficulty: 2, tags: [DOM, rendering, event loop, main thread] }
+  - { id: "web-performance-vitals", name: { vi: "Core Web Vitals", en: "Core Web Vitals" }, short: "LCP (tải), INP (phản hồi tương tác), CLS (ổn định bố cục) đo ở phân vị 75 của lượt truy cập thật.", prerequisites: [browser-rendering, http-caching], difficulty: 2, tags: [LCP, INP, CLS, performance] }

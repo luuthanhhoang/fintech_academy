@@ -1,0 +1,26 @@
+examples:
+  - id: we-mm1-latency
+    title: "API 80 request/giây, mỗi request xử lý 10 ms"
+    conceptId: queueing-littles-law
+    problem: "Một worker xử lý trung bình 10 ms mỗi request (μ = 100 req/s). Lưu lượng hiện tại λ = 80 req/s (số giả định, mô hình M/M/1). Tính thời gian phản hồi trung bình, số request trung bình trong hệ, và thời gian phản hồi nếu lưu lượng tăng lên 95 req/s."
+    steps:
+      - text: "Mức sử dụng $\\rho = \\lambda/\\mu = 80/100 = 0{,}8$ — dưới 1 nên hệ ổn định."
+      - text: "$W = 1/(\\mu - \\lambda) = 1/(100 - 80) = 0{,}05$ giây $= 50$ ms — gấp 5 lần thời gian xử lý thuần, phần còn lại là chờ."
+        faded: true
+        prompt: "Tính W (ms)"
+        answer: 50
+        tolerance: { kind: abs, value: 0.5 }
+        unit: ms
+      - text: "Định luật Little: $L = \\lambda W = 80 \\times 0{,}05 = 4$ request đang ở trong hệ trung bình."
+        faded: true
+        prompt: "Tính L (số request)"
+        answer: 4
+        tolerance: { kind: abs, value: 0.05 }
+        unit: request
+      - text: "Tăng lên 95 req/s (chỉ tăng chưa tới 19%): $W = 1/(100 - 95) = 0{,}2$ giây $= 200$ ms — gấp 4 lần."
+        faded: true
+        prompt: "Tính W mới (ms)"
+        answer: 200
+        tolerance: { kind: abs, value: 1 }
+        unit: ms
+    takeaway: "Gần trần công suất, một chút tăng tải làm độ trễ tăng nhiều lần. Giữ khoảng dư, hoặc giảm thời gian xử lý để dời cả đường cong."

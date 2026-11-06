@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w3-transfer
+    conceptId: db-transactions-isolation
+    prompt: "Viết (giả mã SQL) thao tác chuyển điểm thưởng giữa hai người dùng, đảm bảo: không âm điểm, không mất/không sinh thêm điểm khi có nhiều chuyển song song, và không deadlock khi A→B và B→A cùng lúc."
+    hint: "Thứ tự khoá có ý nghĩa."
+    solution: "BEGIN; khoá hai dòng theo thứ tự id tăng dần (SELECT … FROM wallets WHERE id IN (a, b) ORDER BY id FOR UPDATE) để mọi transaction khoá cùng thứ tự, tránh deadlock; UPDATE wallets SET points = points - n WHERE id = from AND points >= n — nếu 0 dòng bị ảnh hưởng thì ROLLBACK và báo không đủ điểm; UPDATE wallets SET points = points + n WHERE id = to; ghi một dòng vào bảng lịch sử chuyển; COMMIT. Thêm CHECK (points >= 0) làm hàng rào cuối."

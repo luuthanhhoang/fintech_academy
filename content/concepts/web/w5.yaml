@@ -1,0 +1,9 @@
+track: web
+stage: w5
+concepts:
+  - { id: "latency-percentiles", name: { vi: "Latency và phân vị", en: "Latency percentiles" }, short: "Trung bình che giấu đuôi chậm; đo p50/p95/p99 vì người dùng gặp cả đuôi.", difficulty: 2, tags: [latency, p99, percentile] }
+  - { id: "queueing-littles-law", name: { vi: "Hàng đợi và định luật Little", en: "Queueing and Little's law" }, short: "L = λW; khi tải tiến gần công suất, thời gian chờ tăng vọt chứ không tăng đều.", prerequisites: [latency-percentiles], difficulty: 3, tags: [queueing, Little's law, utilization] }
+  - { id: "rate-limiting", name: { vi: "Rate limiting", en: "Rate limiting" }, short: "Token bucket, sliding window: bảo vệ hệ thống và chia công bằng khi tải vượt công suất.", prerequisites: [queueing-littles-law], difficulty: 2, tags: [rate limit, token bucket, "429"] }
+  - { id: "caching-layers-cdn", name: { vi: "Các tầng cache và CDN", en: "Caching layers and CDN" }, short: "Cache ở trình duyệt, CDN, ứng dụng, DB; chiến lược invalidation và chống stampede.", prerequisites: [http-caching], difficulty: 3, tags: [cache, CDN, Redis, invalidation] }
+  - { id: "message-queues-jobs", name: { vi: "Hàng đợi thông điệp và job nền", en: "Message queues and background jobs" }, short: "Tách việc chậm khỏi request: at-least-once, idempotent consumer, dead-letter queue.", prerequisites: [queueing-littles-law], difficulty: 3, tags: [queue, background job, DLQ] }
+  - { id: "horizontal-scaling", name: { vi: "Mở rộng ngang", en: "Horizontal scaling" }, short: "Server stateless sau load balancer, chia tải DB (replica, sharding) và giới hạn của từng cách.", prerequisites: [caching-layers-cdn], difficulty: 3, tags: [scaling, load balancer, replica, sharding] }

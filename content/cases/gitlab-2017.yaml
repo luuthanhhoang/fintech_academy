@@ -1,0 +1,46 @@
+id: gitlab-2017
+title: { vi: "GitLab.com 2017 — xoá nhầm DB production, và năm lớp backup không cứu được", en: "GitLab.com 2017: a deleted production database and backups that didn't work" }
+period: "2017"
+summary: Ngày 31/1/2017, trong lúc xử lý sự cố replication, một kỹ sư chạy lệnh xoá thư mục dữ liệu trên máy chủ database chính thay vì máy phụ. GitLab công bố postmortem đầy đủ ngày 10/2/2017.
+concepts: [incident-response-postmortem, slo-error-budget, db-transactions-isolation]
+lastVerified: 2026-11-06
+status: verified
+timeline:
+  - date: "31/01/2017"
+    event: Khi đang dựng lại replica PostgreSQL bị trễ, một kỹ sư chạy lệnh xoá thư mục dữ liệu trên máy chủ chính (primary) thay vì máy phụ.
+    sourceIds: [gitlab-postmortem-2017]
+    status: verified
+  - date: "31/01/2017"
+    event: Khi cần khôi phục, nhóm phát hiện các bản backup bằng pg_dump hằng ngày không chạy như mong đợi và cảnh báo lỗi không tới được ai (email cron bị từ chối).
+    sourceIds: [gitlab-postmortem-2017]
+    status: verified
+  - date: "31/01–01/02/2017"
+    event: GitLab.com ngừng phục vụ nhiều giờ; dịch vụ được khôi phục từ một bản snapshot cũ hơn nhiều giờ, phần thay đổi DB trong khoảng 17:20–00:00 UTC ngày 31/1 bị mất. Repository và wiki không bị mất dữ liệu.
+    sourceIds: [gitlab-postmortem-2017]
+    status: verified
+  - date: "10/02/2017"
+    event: GitLab công bố postmortem công khai, nêu nguyên nhân, dòng thời gian và danh sách cải tiến.
+    sourceIds: [gitlab-postmortem-2017]
+    status: verified
+rootCauses:
+  - text: Lệnh phá huỷ được chạy trên máy chủ chính trong lúc mệt mỏi xử lý sự cố — không có rào chắn nhận biết "đang ở máy nào".
+    sourceIds: [gitlab-postmortem-2017]
+  - text: Backup tồn tại trên giấy nhưng chưa bao giờ được kiểm tra bằng cách khôi phục thật; lỗi backup không phát cảnh báo tới người.
+    sourceIds: [gitlab-postmortem-2017]
+questions:
+  - id: restore-drill
+    prompt: Đội của bạn có backup DB hằng ngày. Bạn sẽ chứng minh nó dùng được như thế nào, và đo điều gì?
+    rubric:
+      - { id: "drill", criterion: "Khôi phục thử định kỳ sang môi trường riêng, có kiểm tra dữ liệu sau khôi phục" }
+      - { id: "rpo-rto", criterion: "Đo RPO (mất bao nhiêu dữ liệu) và RTO (mất bao lâu) thực tế, so với mục tiêu" }
+      - { id: "alert", criterion: "Backup thất bại phải báo tới người trực, không chỉ ghi log/email" }
+  - id: guardrail
+    prompt: Thiết kế rào chắn để một lệnh nguy hiểm không chạy nhầm trên production.
+    rubric:
+      - { id: "visible", criterion: "Nhận diện môi trường rõ ràng (prompt shell, màu, tên host)" }
+      - { id: "two-person", criterion: "Thao tác phá huỷ cần xác nhận/hai người hoặc qua runbook có kiểm tra" }
+      - { id: "least", criterion: "Quyền tối thiểu: tài khoản thường không xoá được dữ liệu production" }
+controls:
+  - { control: "Diễn tập khôi phục backup định kỳ", devAnalogy: "Test cho backup: chưa restore được thì coi như chưa có backup" }
+  - { control: "Cảnh báo lỗi backup tới on-call", devAnalogy: "Job thất bại phải làm đỏ dashboard/trang người trực, không chỉ ghi log" }
+  - { control: "Rào chắn cho thao tác phá huỷ", devAnalogy: "Feature flag + xác nhận + quyền tối thiểu cho lệnh nguy hiểm" }

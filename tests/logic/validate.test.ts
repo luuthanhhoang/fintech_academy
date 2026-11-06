@@ -110,4 +110,10 @@ describe('learning-block validation', () => {
     expect(m.some((x) => x.includes('"ultra"'))).toBe(true)
     expect(m.some((x) => x.includes('"baobab"'))).toBe(true)
   })
+  it('rejects a Callout kind that site.yaml does not declare', () => {
+    const b = clone()
+    const l = b.lessons.find((x) => x.id === 'w0-request-lifecycle')!
+    l.body += '\n\n<Callout kind="rumour">x</Callout>\n'
+    expect(messages(b).some((x) => x.includes('Callout kind "rumour"'))).toBe(true)
+  })
 })

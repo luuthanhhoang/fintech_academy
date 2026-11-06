@@ -1,0 +1,6 @@
+exercises:
+  - id: ex-w4s-middleware
+    conceptId: injection-access-control
+    prompt: "Mô tả cách tổ chức phân quyền trong một API có 3 vai trò (thành viên, quản lý, admin) và dữ liệu thuộc từng tổ chức, sao cho khó quên kiểm quyền khi thêm endpoint mới."
+    hint: "Mặc định từ chối, và để framework nhắc bạn."
+    solution: "Một lớp chính sách tập trung (ví dụ can(user, action, resource)) dùng chung cho mọi handler; truy vấn dữ liệu qua repository luôn nhận org_id từ phiên và tự lọc; route mới mặc định yêu cầu khai báo chính sách (thiếu thì test/lint báo lỗi); test tự động với tài khoản ở hai tổ chức và ba vai trò cho mọi endpoint; log các lần bị từ chối để phát hiện dò quét."

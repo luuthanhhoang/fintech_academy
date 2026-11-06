@@ -1,0 +1,166 @@
+# Nguồn cho lộ trình Fullstack web. accessed = ngày kiểm tra (qua kết quả tìm kiếm: thư mục, tóm tắt, trích đoạn).
+# Với RFC/tài liệu chính thức, bài chỉ dẫn những điểm cốt lõi phổ biến; con số cụ thể chỉ nêu khi đã đối chiếu.
+sources:
+  - id: rfc9110
+    title: "RFC 9110 — HTTP Semantics (IETF, 2022)"
+    url: https://www.rfc-editor.org/rfc/rfc9110
+    publisher: IETF
+    accessed: 2026-11-06
+    note: Định nghĩa phương thức safe/idempotent, mã trạng thái, header. Đối chiếu qua tóm tắt thứ cấp; xem §9 để biết chi tiết.
+  - id: rfc9111
+    title: "RFC 9111 — HTTP Caching (IETF, 2022)"
+    url: https://www.rfc-editor.org/rfc/rfc9111
+    publisher: IETF
+    accessed: 2026-11-06
+  - id: rfc9457
+    title: "RFC 9457 — Problem Details for HTTP APIs (IETF, 2023)"
+    url: https://www.rfc-editor.org/rfc/rfc9457
+    publisher: IETF
+    accessed: 2026-11-06
+    note: Định dạng lỗi chuẩn (application/problem+json). Chưa mở được toàn văn từ môi trường soạn.
+  - id: mdn-http-overview
+    title: "An overview of HTTP — MDN Web Docs"
+    url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+    publisher: Mozilla
+    accessed: 2026-11-06
+  - id: mdn-how-browsers-work
+    title: "Populating the page: how browsers work — MDN Web Docs"
+    url: https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work
+    publisher: Mozilla
+    accessed: 2026-11-06
+  - id: webdev-cwv-thresholds
+    title: "How the Core Web Vitals metrics thresholds were defined — web.dev"
+    url: https://web.dev/articles/defining-core-web-vitals-thresholds
+    publisher: Google / web.dev
+    accessed: 2026-11-06
+    note: Ngưỡng 'tốt' LCP ≤ 2,5 s, INP ≤ 200 ms, CLS ≤ 0,1, đánh giá ở phân vị 75 — đối chiếu qua trích đoạn web.dev và nhiều nguồn thứ cấp nhất quán.
+  - id: webdev-rendering
+    title: "Rendering on the Web — web.dev (cập nhật 2026)"
+    url: https://web.dev/articles/rendering-on-the-web
+    publisher: Google / web.dev
+    accessed: 2026-11-06
+  - id: react-thinking
+    title: "Thinking in React — react.dev"
+    url: https://react.dev/learn/thinking-in-react
+    publisher: React team (Meta)
+    accessed: 2026-11-06
+  - id: idempotency-key-draft
+    title: "The Idempotency-Key HTTP Header Field — IETF Internet-Draft (httpapi WG)"
+    url: https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/
+    publisher: IETF
+    accessed: 2026-11-06
+    note: Bản nháp (Standards Track), chưa phải RFC tại ngày kiểm tra; các bản gần đây dùng 422/409 cho lỗi dùng lại khoá.
+  - id: stripe-idempotency
+    title: "Idempotent requests — Stripe API reference"
+    url: https://docs.stripe.com/api/idempotent_requests
+    publisher: Stripe
+    accessed: 2026-11-06
+  - id: aws-backoff-jitter
+    title: "Timeouts, retries, and backoff with jitter — Amazon Builders' Library (Marc Brooker)"
+    url: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/
+    publisher: Amazon Web Services
+    accessed: 2026-11-06
+  - id: pg-isolation
+    title: "PostgreSQL docs — Transaction Isolation"
+    url: https://www.postgresql.org/docs/current/transaction-iso.html
+    publisher: PostgreSQL Global Development Group
+    accessed: 2026-11-06
+    note: Read Committed là mức mặc định; chuẩn SQL định nghĩa bốn mức và các hiện tượng dirty/non-repeatable/phantom/serialization anomaly.
+  - id: pg-indexes
+    title: "PostgreSQL docs — Indexes và Using EXPLAIN"
+    url: https://www.postgresql.org/docs/current/indexes.html
+    publisher: PostgreSQL Global Development Group
+    accessed: 2026-11-06
+  - id: owasp-password-storage
+    title: "Password Storage Cheat Sheet — OWASP"
+    url: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+    publisher: OWASP
+    accessed: 2026-11-06
+    note: Cấu hình tối thiểu Argon2id 19 MiB bộ nhớ, 2 vòng lặp, độ song song 1 — đối chiếu qua trích đoạn chính thức.
+  - id: owasp-session
+    title: "Session Management Cheat Sheet — OWASP"
+    url: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+    publisher: OWASP
+    accessed: 2026-11-06
+  - id: rfc7519
+    title: "RFC 7519 — JSON Web Token (JWT)"
+    url: https://www.rfc-editor.org/rfc/rfc7519
+    publisher: IETF
+    accessed: 2026-11-06
+  - id: rfc9700
+    title: "RFC 9700 — Best Current Practice for OAuth 2.0 Security (BCP 240, tháng 1/2025)"
+    url: https://www.rfc-editor.org/rfc/rfc9700
+    publisher: IETF
+    accessed: 2026-11-06
+    note: Khuyên không dùng implicit grant; authorization server PHẢI hỗ trợ PKCE; PKCE được khuyến nghị cho mọi loại client, S256.
+  - id: oidc-core
+    title: "OpenID Connect Core 1.0"
+    url: https://openid.net/specs/openid-connect-core-1_0.html
+    publisher: OpenID Foundation
+    accessed: 2026-11-06
+  - id: owasp-top10-2025
+    title: "OWASP Top 10:2025"
+    url: https://owasp.org/Top10/2025/
+    publisher: OWASP
+    accessed: 2026-11-06
+    note: A01 Broken Access Control, A02 Security Misconfiguration, A03 Software Supply Chain Failures, A04 Cryptographic Failures, A05 Injection… (đối chiếu qua trang chính thức trong kết quả tìm kiếm).
+  - id: owasp-xss-csrf
+    title: "Cross Site Scripting Prevention và Cross-Site Request Forgery Prevention Cheat Sheets — OWASP"
+    url: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+    publisher: OWASP
+    accessed: 2026-11-06
+  - id: mdn-cors
+    title: "Cross-Origin Resource Sharing (CORS) — MDN Web Docs"
+    url: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    publisher: Mozilla
+    accessed: 2026-11-06
+  - id: tail-at-scale
+    title: "The Tail at Scale — Dean & Barroso, Communications of the ACM 56 (2013)"
+    url: https://research.google/pubs/pub40801/
+    publisher: Google Research
+    accessed: 2026-11-06
+  - id: mm1-queue
+    title: "M/M/1 queue và Little's law (tổng hợp; dẫn Kleinrock, Queueing Systems Vol. 1)"
+    url: https://en.wikipedia.org/wiki/M/M/1_queue
+    publisher: Wikipedia
+    accessed: 2026-11-06
+    note: Công thức chuẩn W = 1/(μ − λ), ρ = λ/μ < 1, L = λW; được kiểm lại bằng unit test trong lib/systems.
+  - id: stripe-rate-limiters
+    title: "Scaling your API with rate limiters — Stripe blog"
+    url: https://stripe.com/blog/rate-limiters
+    publisher: Stripe
+    accessed: 2026-11-06
+    note: Bốn loại limiter (request rate, concurrent, hai load shedder); token bucket. Đối chiếu qua bản tóm tắt và gist mã mẫu đi kèm.
+  - id: practical-test-pyramid
+    title: "The Practical Test Pyramid — Ham Vocke, martinfowler.com (2018)"
+    url: https://martinfowler.com/articles/practical-test-pyramid.html
+    publisher: martinfowler.com
+    accessed: 2026-11-06
+  - id: playwright-best-practices
+    title: "Best Practices — Playwright docs"
+    url: https://playwright.dev/docs/best-practices
+    publisher: Microsoft / Playwright
+    accessed: 2026-11-06
+  - id: sre-book
+    title: "Site Reliability Engineering (Google) — Ch.3 Embracing Risk, Ch.4 Service Level Objectives, Ch.15 Postmortem Culture"
+    url: https://sre.google/sre-book/table-of-contents/
+    publisher: Google / O'Reilly
+    accessed: 2026-11-06
+    note: Error budget = 100% − SLO; postmortem không đổ lỗi.
+  - id: otel-signals
+    title: "OpenTelemetry — Signals (traces, metrics, logs)"
+    url: https://opentelemetry.io/docs/concepts/signals/
+    publisher: OpenTelemetry (CNCF)
+    accessed: 2026-11-06
+  - id: gitlab-postmortem-2017
+    title: "Postmortem of database outage of January 31 — GitLab blog (10/02/2017)"
+    url: https://about.gitlab.com/blog/postmortem-of-database-outage-of-january-31/
+    publisher: GitLab
+    accessed: 2026-11-06
+    note: Postmortem chính thức; các thay đổi dữ liệu DB trong khoảng 17:20–00:00 UTC ngày 31/1 bị mất; repo/wiki không bị ảnh hưởng mất dữ liệu.
+  - id: cloudflare-2019-postmortem
+    title: "Details of the Cloudflare outage on July 2, 2019 — Cloudflare blog"
+    url: https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/
+    publisher: Cloudflare
+    accessed: 2026-11-06
+    note: Chưa mở được bài gốc; chi tiết đối chiếu qua nhiều nguồn thứ cấp nhất quán (regex WAF backtracking làm cạn CPU, triển khai đồng loạt).
