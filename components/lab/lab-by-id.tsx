@@ -10,7 +10,7 @@ export function LabEmbedById({ id }: { id: string }) {
   const [lab, setLab] = useState<Lab | null>(null)
   const [error, setError] = useState<Error | null>(null)
   useEffect(() => {
-    fetch(`/generated/labs/${id}.json`)
+    fetch(`/data/labs/${id}.json`)
       .then((r) => (r.ok ? (r.json() as Promise<Lab>) : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(setLab, (e: unknown) => setError(e instanceof Error ? e : new Error(String(e))))
   }, [id])

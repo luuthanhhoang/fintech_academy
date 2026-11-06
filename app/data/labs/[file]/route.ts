@@ -4,7 +4,7 @@ import { getContent } from '@/lib/content/server'
 export const dynamic = 'force-static'
 export const dynamicParams = false
 
-/** One file per lab: /generated/labs/<id>.json */
+/** One file per lab: /data/labs/<id>.json */
 export function generateStaticParams() {
   return getContent().labs.map((l) => ({ file: `${l.id}.json` }))
 }

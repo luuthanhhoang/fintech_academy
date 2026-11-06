@@ -1,6 +1,6 @@
 /**
  * Client catalog: the slim, serialisable subset of content that client-side features need
- * (Today, review, mastery, stats, tutor). Served at /generated/catalog.json (app/generated route, static at build).
+ * (Today, review, mastery, stats, tutor). Served at /data/catalog.json (app/data route, static at build).
  */
 import type { ContentBundle, Lesson } from './types'
 

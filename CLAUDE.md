@@ -31,7 +31,7 @@ lib/         logic thuần: content (schema, load, validate, graph), finance, sr
 components/  UI theo miền
 app/         route App Router (chỉ ghép dữ liệu build-time + component)
 scripts/     validate-content, check-file-lines, copy-pyodide
-app/generated  route tĩnh trả catalog/search/tutor/lab JSON (dev: tính lại mỗi request nên không bao giờ lệch code)
+app/data  route tĩnh trả catalog/search/tutor/lab JSON (dev: tính lại mỗi request nên không bao giờ lệch code)
 tests/       Vitest cho lib/
 ```
 - Simulator/lab được map qua registry (`lib/registry/*`, key → lazy component). Không if/else theo tên.

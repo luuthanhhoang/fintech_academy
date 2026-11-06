@@ -58,7 +58,7 @@ Phương pháp học và bằng chứng nằm ở `content/config/methods.yaml`;
 - `content/` — dữ liệu (schema zod trong `lib/content/schema`, validate lúc build).
 - `lib/` — logic thuần (finance, srs, mastery, today, roadmap, search, tutor, db, lab…), có unit test trong `tests/`.
 - `components/` — UI theo miền; `app/` — route.
-- `app/generated/` — route tĩnh trả catalog, chỉ mục tìm kiếm, đoạn cho gia sư, lab (luôn khớp nội dung).
+- `app/data/` — route tĩnh trả catalog, chỉ mục tìm kiếm, đoạn cho gia sư, lab (luôn khớp nội dung).
 - `scripts/` — validate, giới hạn dòng, chép Pyodide.
 
 Xem `CLAUDE.md` để biết các nguyên tắc bắt buộc.

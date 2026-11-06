@@ -7,7 +7,7 @@ import { createRetriever, type Retriever } from '@/lib/tutor/retrieval'
 let cached: Promise<Retriever> | null = null
 
 function load(): Promise<Retriever> {
-  cached ??= fetch('/generated/tutor-chunks.json', { cache: 'no-cache' })
+  cached ??= fetch('/data/tutor-chunks.json', { cache: 'no-cache' })
     .then((r) => {
       if (!r.ok) throw new Error(`Không tải được kho nội dung cho gia sư (HTTP ${r.status})`)
       return r.json() as Promise<TutorChunk[]>
