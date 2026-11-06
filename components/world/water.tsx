@@ -43,7 +43,7 @@ export function Water({ terrain, grid, look, sunDir, water, wind, rain }: WaterP
   const sea = useMemo(() => makeWaterMaterial(grid, water, 0.9, 0.5), [grid, water])
   const fresh = useMemo(() => makeWaterMaterial(grid, { ...water, clarity: water.clarity * 0.6 }, 0.45, 0), [grid, water])
   const seaGeom = useMemo(() => {
-    const g = new THREE.PlaneGeometry(size * 4, size * 4, 220, 220)
+    const g = new THREE.PlaneGeometry(size * 4, size * 4, 128, 128)
     g.rotateX(-Math.PI / 2)
     return g
   }, [size])

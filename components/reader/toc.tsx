@@ -40,11 +40,11 @@ export function ReadingAids({ lessonId, items }: { lessonId: string; items: TocI
 
   return (
     <>
-      <div className="fixed inset-x-0 top-0 z-40 lg:left-60">
+      <div className="fixed inset-x-0 top-[var(--topbar)] z-30">
         <ProgressBar value={progress} label="Tiến độ đọc bài" />
       </div>
       <nav aria-label="Mục lục" className="font-sans text-sm">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-3">Mục lục</p>
+        <p className="mb-2 text-xs font-semibold text-ink-3">Mục lục</p>
         <ol className="space-y-1 border-l border-rule">
           {items.map((i) => (
             <li key={i.slug} style={{ paddingLeft: `${(i.depth - 2) * 0.75 + 0.75}rem` }}>

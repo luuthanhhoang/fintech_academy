@@ -22,6 +22,8 @@ export interface SkyState {
 /** Look colours are authored as sRGB hex; convert to the linear working space. */
 const srgb = (c: readonly [number, number, number], into = new THREE.Color()) => into.setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)
 
+const SHADOW_HALF = 170
+
 const skyVertex = `varying vec3 vDir; void main(){ vDir = position; vec4 p = projectionMatrix * modelViewMatrix * vec4(position,1.0); gl_Position = p.xyww; }`
 const skyFragment = `
 uniform vec3 uZenith; uniform vec3 uHorizon; uniform vec3 uGround; uniform vec3 uSun; uniform vec3 uSunDir;
@@ -151,8 +153,9 @@ function Environment({ look }: { look: BlendedLook }) {
 }
 
 /** Sky, stars, moon, sun/moon lights, IBL and fog — driven by the real clock, the art-direction looks and the weather. */
-export function SkyAndLight({ sky, shadowMapSize }: { sky: SkyState; shadowMapSize: number }) {
-  const { scene } = useThree()
+export function SkyAndLight({ sky, shadowMapSize, shadowEvery }: { sky: SkyState; shadowMapSize: number; shadowEvery: number }) {
+  const { scene, gl } = useThree()
+  const frame = useRef(0)
   const sun = useRef<THREE.DirectionalLight>(null)
   const flashLight = useRef<THREE.AmbientLight>(null)
   const { sunDir, moonDir, daylight, clouds, fog, look } = sky
@@ -168,9 +171,16 @@ export function SkyAndLight({ sky, shadowMapSize }: { sky: SkyState; shadowMapSi
     const l = sun.current
     if (!l) return
     const src = sunDir[1] > -0.02 ? sunDir : moonDir
-    l.target.position.set(camera.position.x, 0, camera.position.z)
-    l.position.set(camera.position.x + src[0] * 500, Math.max(40, src[1] * 500), camera.position.z + src[2] * 500)
+    // Snap the shadow frustum to the shadow-map texel grid so shadows don't shimmer while the camera moves,
+    // and re-render the map only every few frames (the sun barely moves).
+    const texel = (SHADOW_HALF * 2) / shadowMapSize
+    const sx = Math.round(camera.position.x / texel) * texel
+    const sz = Math.round(camera.position.z / texel) * texel
+    l.target.position.set(sx, 0, sz)
+    l.position.set(sx + src[0] * 500, Math.max(40, src[1] * 500), sz + src[2] * 500)
     l.target.updateMatrixWorld()
+    gl.shadowMap.autoUpdate = false
+    if (frame.current++ % shadowEvery === 0) gl.shadowMap.needsUpdate = true
   })
   const night = sunDir[1] <= -0.02
   return (
@@ -185,10 +195,10 @@ export function SkyAndLight({ sky, shadowMapSize }: { sky: SkyState; shadowMapSi
         intensity={(night ? look.sunIntensity : look.sunIntensity * Math.max(0.15, daylight)) * (1 - overcast * 0.7)}
         color={srgb(look.sun)}
         shadow-mapSize={[shadowMapSize, shadowMapSize]}
-        shadow-camera-left={-170}
-        shadow-camera-right={170}
-        shadow-camera-top={170}
-        shadow-camera-bottom={-170}
+        shadow-camera-left={-SHADOW_HALF}
+        shadow-camera-right={SHADOW_HALF}
+        shadow-camera-top={SHADOW_HALF}
+        shadow-camera-bottom={-SHADOW_HALF}
         shadow-camera-far={1400}
         shadow-bias={-0.0003}
         shadow-normalBias={0.04}

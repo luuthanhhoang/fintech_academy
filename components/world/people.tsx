@@ -9,14 +9,18 @@ import type { PlacedGuide, Pos } from '@/lib/world/layout'
 import type { Terrain } from '@/lib/world/terrain'
 import { Label } from './label-portal'
 import { Person, pose, type Look } from './person'
+import { useLabelVisible } from './label-declutter'
 import { selectionId, type SelectionId } from './scene-types'
+
+/** Villagers are drawn only within this many metres of the camera. */
+const SEE_PEOPLE = 170
 
 function Walker({ terrain, points, look, seed, speed }: { terrain: Terrain; points: Pos[]; look: Look; seed: number; speed: number }) {
   const body = useRef<THREE.Group>(null)
   const joints = useRef<(THREE.Object3D | null)[]>([])
   const rand = useMemo(() => mulberry32(seed), [seed])
   const state = useRef({ from: points[seed % points.length]!, to: points[(seed * 7 + 3) % points.length]!, f: 0, wait: 0, phase: 0, yaw: 0 })
-  useFrame(({ clock }, dt) => {
+  useFrame(({ clock, camera }, dt) => {
     const g = body.current
     const s = state.current
     if (!g) return
@@ -37,6 +41,10 @@ function Walker({ terrain, points, look, seed, speed }: { terrain: Terrain; poin
     const oz = Math.cos(seed) * 6
     const x = s.from[0] + ox + (s.to[0] - s.from[0]) * s.f
     const z = s.from[2] + oz + (s.to[2] - s.from[2]) * s.f
+    // Far away a villager is a few pixels but costs ~35 draw calls: only render and animate the ones near the camera.
+    const near = (camera.position.x - x) ** 2 + (camera.position.z - z) ** 2 < SEE_PEOPLE ** 2
+    g.visible = near
+    if (!near) return
     g.position.set(x, terrain.height(x, z), z)
     const target = Math.atan2(s.to[0] - s.from[0], s.to[2] - s.from[2])
     s.yaw += Math.atan2(Math.sin(target - s.yaw), Math.cos(target - s.yaw)) * Math.min(1, dt * 4)
@@ -60,16 +68,16 @@ function makeLook(map: WorldMap, rand: () => number, lowland: boolean): Look {
 }
 
 /** Villagers walking between stations, houses and landmarks of their region. */
-export function Villagers({ terrain, waypoints }: { terrain: Terrain; waypoints: Record<string, Pos[]> }) {
+export function Villagers({ terrain, waypoints, density }: { terrain: Terrain; waypoints: Record<string, Pos[]>; density: number }) {
   const m = terrain.map
   const people = useMemo(() => {
     const rand = mulberry32(m.seed + 5)
     const regions = m.regions.filter((r) => (waypoints[r.id]?.length ?? 0) > 1)
-    return Array.from({ length: regions.length ? m.people.count : 0 }, (_, i) => {
+    return Array.from({ length: regions.length ? Math.round(m.people.count * density) : 0 }, (_, i) => {
       const region = regions[i % regions.length]!
       return { id: i, points: waypoints[region.id]!, look: makeLook(m, rand, region.biome === 'lowland') }
     })
-  }, [m, waypoints])
+  }, [m, waypoints, density])
   return (
     <group>
       {people.map((p) => <Walker key={p.id} terrain={terrain} points={p.points} look={p.look} seed={p.id + 1} speed={m.people.walkSpeed} />)}
@@ -80,6 +88,7 @@ export function Villagers({ terrain, waypoints }: { terrain: Terrain; waypoints:
 function Guide({ g, look, onSelect, labels }: { g: PlacedGuide; look: Look; onSelect: (id: SelectionId) => void; labels: boolean }) {
   const joints = useRef<(THREE.Object3D | null)[]>([])
   const marker = useRef<THREE.Mesh>(null)
+  const labelOk = useLabelVisible(`guide:${g.guide.id}`)
   useFrame(({ clock }) => {
     pose(joints.current, 0, 0, clock.elapsedTime)
     if (marker.current) {
@@ -103,7 +112,7 @@ function Guide({ g, look, onSelect, labels }: { g: PlacedGuide; look: Look; onSe
         <octahedronGeometry args={[0.28]} />
         <meshStandardMaterial color="#ffd36b" emissive="#ffb000" emissiveIntensity={2.5} toneMapped={false} />
       </mesh>
-      {labels && (
+      {labels && labelOk && (
         <Label position={[0, 4, 0]} center zIndexRange={[10, 0]}>
           <button type="button" onClick={() => onSelect(selectionId('guide', g.guide.id))} className="pointer-events-auto whitespace-nowrap rounded-full bg-accent px-2 py-0.5 font-sans text-[11px] text-paper shadow">
             {g.guide.name}

@@ -11,13 +11,14 @@ import { idleT, journeyRoute, resolveAnchor, routeT } from '@/lib/world/views'
 import type { TimeOfDay } from '@/lib/world/sky'
 import { useFocus } from '@/components/focus/focus-provider'
 import { parseSelection, type SelectionId } from '@/components/world/scene-types'
-import { Button } from '@/components/ui/primitives'
 import { FishingPanel } from './fishing-panel'
 import { FocusHud } from './focus-hud'
 import { JourneyPanel } from './journey-panel'
 import { Map2D, MapLegend } from './map-2d'
 import { Panel } from './panel'
 import { PlacePanel } from './place-panel'
+import { QuestDock } from './quest-dock'
+import { ViewDock } from './view-dock'
 import { Toolbar } from './toolbar'
 import { useSceneState } from './use-scene-state'
 import { useVillageAudio } from './use-village-audio'
@@ -45,21 +46,32 @@ export function VillageView({ catalog }: { catalog: Catalog }) {
   const now = useClock(30_000)
   const [viewPick, setViewPick] = useState(() => params.get('view') ?? (focus.active?.viewId ?? w.defaultView))
   const [weatherPick, setWeatherPick] = useState(w.weather.defaultWeather)
-  const [time, setTime] = useState<TimeOfDay>(() => (['auto', 'dawn', 'day', 'dusk', 'night'].find((t) => t === params.get('time')) as TimeOfDay | undefined) ?? 'auto')
+  const [time, setTime] = useState<TimeOfDay>(() => (['auto', 'golden', 'dawn', 'day', 'dusk', 'night'].find((t) => t === params.get('time')) as TimeOfDay | undefined) ?? 'golden')
   const [selected, setSelected] = useState<SelectionId | null>(() => params.get('place'))
   const [modePick, setModePick] = useState<'3d' | '2d' | null>(null)
   const [journeyOpen, setJourneyOpen] = useState(() => params.has('journey'))
   const [celebrating, setCelebrating] = useState(false)
-  // Small screens start with the controls folded so the scene stays visible.
   const [qualityId, setQualityId] = useState(() => {
     const asked = params.get('quality')
     if (asked) rememberQuality(asked)
     return asked ?? initialQuality(catalog)
   })
-  const [toolsOpen, setToolsOpen] = useState(() => window.matchMedia('(min-width: 640px)').matches)
+  const [toolsOpen, setToolsOpen] = useState(false)
+  const [questOpen, setQuestOpen] = useState(false)
 
   const view = w.views.find((v) => v.id === viewPick) ?? w.views[0]!
   const quality = w.graphics.quality.find((q) => q.id === qualityId) ?? w.graphics.quality[0]!
+  // Quality steps down by itself when the frame rate stays low — unless the URL pins it (?quality=…).
+  const pinned = params.has('quality')
+  const [notice, setNotice] = useState<string | null>(null)
+  const stepDown = useCallback(() => {
+    const order = w.graphics.quality
+    const next = order[order.findIndex((q) => q.id === qualityId) + 1]
+    if (!next) return
+    rememberQuality(next.id)
+    setQualityId(next.id)
+    setNotice(`Đã tự giảm đồ hoạ xuống mức “${next.label}” để giữ độ mượt. Bạn có thể đổi lại trong ⚙.`)
+  }, [w.graphics.quality, qualityId])
   const flowers = useFlowers(catalog, world, quality.flowers)
   const mode = webgl === false ? '2d' : (modePick ?? '3d')
   const anchor = useMemo(() => resolveAnchor(view, world.layout, world.terrain), [view, world])
@@ -109,50 +121,50 @@ export function VillageView({ catalog }: { catalog: Catalog }) {
   }
 
   return (
-    <div className="relative h-[calc(100dvh-7.5rem)] w-full overflow-hidden bg-[#0d1424] lg:h-dvh">
+    <div className="relative h-[calc(100dvh-var(--topbar)-3.75rem)] w-full overflow-hidden bg-[#0d1424] lg:h-[calc(100dvh-var(--topbar))]">
       {mode === '3d' && webgl ? (
         <VillageCanvas
           terrain={world.terrain} grid={world.grid} pathMask={world.pathMask} pathRes={world.pathRes} graphics={w.graphics} quality={quality} flowers={flowers} grassMask={world.grassMask} grassRes={world.grassRes}
           layout={world.layout} regions={w.map.regions} health={learner.health} plants={learner.plants}
           weather={scene.weather} sky={scene.sky} view={view} anchor={anchor} selected={selectedAt} fishCount={Math.min(30, learner.dueCount)}
-          getTrainT={getTrainT} onSelect={setSelected} onStrike={(d) => void audio.thunder(d)}
+          getTrainT={getTrainT} onSelect={setSelected} onStrike={(d) => void audio.thunder(d)} onPerfDecline={pinned ? undefined : stepDown}
         />
       ) : (
         <Map2D terrain={world.terrain} layout={world.layout} health={learner.health} names={names} onSelect={setSelected} />
       )}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between gap-2 overflow-y-auto p-2 sm:flex-row sm:items-start sm:p-3">
-        <div className="flex flex-col gap-2">
-          <Panel>
-            <div className="flex items-center justify-between gap-3">
-              <h1 className="font-serif text-lg font-semibold">{w.map.title}</h1>
-              <button type="button" onClick={() => setToolsOpen((o) => !o)} aria-expanded={toolsOpen} className="text-xs underline">
-                {toolsOpen ? 'Thu gọn' : 'Tuỳ chỉnh'}
-              </button>
-            </div>
-            {toolsOpen && <p className="mt-1 max-w-72 text-xs leading-relaxed text-ink-2">{w.map.intro}</p>}
-            <p className="mt-1 text-[11px] text-ink-3">{mode === '2d' ? 'Bản đồ 2D — bấm hoặc dùng Tab/Enter để chọn địa điểm.' : view.description}</p>
-            {mode === '2d' && <div className="mt-2"><MapLegend /></div>}
-          </Panel>
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-3 top-3 flex max-h-[calc(100%-5.5rem)] flex-col gap-2 overflow-y-auto">
+          <button type="button" onClick={() => setQuestOpen((o) => !o)} aria-expanded={questOpen} className="pointer-events-auto self-start rounded-full border border-rule bg-paper/90 px-3 py-1.5 font-sans text-xs shadow backdrop-blur lg:hidden">
+            {questOpen ? 'Ẩn nhiệm vụ' : 'Nhiệm vụ hôm nay'}
+          </button>
+          <div className={`${questOpen ? 'block' : 'hidden'} lg:block`}>
+            {active ? null : <QuestDock catalog={catalog} journeyOpen={journeyOpen} onJourney={() => setJourneyOpen(true)} />}
+          </div>
+          {mode === '2d' && <Panel className="w-72"><MapLegend /></Panel>}
+        </div>
+        <div className="absolute right-3 top-3 flex max-h-[calc(100%-5.5rem)] w-[min(20rem,calc(100%-1.5rem))] flex-col items-end gap-2 overflow-y-auto max-sm:bottom-16 max-sm:top-auto max-sm:max-h-[55%]">
+          <div className="pointer-events-auto">
+            <button type="button" onClick={() => setToolsOpen((o) => !o)} aria-expanded={toolsOpen} className="rounded-full border border-rule bg-paper/90 px-3 py-1.5 font-sans text-xs shadow backdrop-blur">
+              ⚙ Cảnh · giờ · âm thanh
+            </button>
+          </div>
           {toolsOpen && (
             <Toolbar
-              world={w} quality={quality.id} onQuality={(id) => (rememberQuality(id), setQualityId(id))} viewId={view.id} weatherId={view.weather ?? weatherPick} time={time} audio={audio.prefs} mode={mode} webgl={webgl !== false} skyNote={scene.note}
-              onView={setView} onWeather={setWeatherPick} onTime={setTime} onToggleAudio={() => void audio.toggle()} onAudio={audio.update} onMode={setModePick}
+              world={w} quality={quality.id} onQuality={(id) => (rememberQuality(id), setQualityId(id))} weatherId={view.weather ?? weatherPick} weatherLocked={Boolean(view.weather)} time={time} audio={audio.prefs} mode={mode} webgl={webgl !== false} skyNote={scene.note}
+              onWeather={setWeatherPick} onTime={setTime} onToggleAudio={() => void audio.toggle()} onAudio={audio.update} onMode={setModePick}
             />
           )}
-        </div>
-        <div className="flex flex-col gap-2 sm:items-end">
-          {active ? <FocusHud stationNames={route.map((s) => `Ga ${s.id.toUpperCase()} · ${s.title}`)} /> : journeyOpen ? (
-            <JourneyPanel catalog={catalog} sessions={learner.sessions} focusTrack={learner.focusTrack} preselect={params.get('journey')} onStarted={(v) => (setJourneyOpen(false), setView(v))} />
-          ) : (
-            <div className="pointer-events-auto">
-              <Button variant="primary" onClick={() => setJourneyOpen(true)}>
-                🚆 Bắt đầu hành trình tập trung
-              </Button>
-            </div>
-          )}
+          {active && <FocusHud stationNames={route.map((s) => `Ga ${s.id.toUpperCase()} · ${s.title}`)} />}
+          {!active && journeyOpen && <JourneyPanel catalog={catalog} sessions={learner.sessions} focusTrack={learner.focusTrack} preselect={params.get('journey')} onStarted={(v) => (setJourneyOpen(false), setView(v))} />}
           {view.mode === 'review' && <FishingPanel catalog={catalog} dueCount={learner.dueCount} onClose={() => setView(w.defaultView)} />}
           {info && <PlacePanel info={info} onClose={() => setSelected(null)} />}
         </div>
+        {notice && (
+          <p role="status" className="pointer-events-auto absolute left-1/2 top-3 w-[min(32rem,calc(100%-1.5rem))] -translate-x-1/2 rounded-xl border border-rule bg-paper/95 px-3 py-2 text-center font-sans text-xs shadow-lg">
+            {notice} <button type="button" onClick={() => setNotice(null)} className="ml-1 underline">Đóng</button>
+          </p>
+        )}
+        <ViewDock views={w.views} current={view.id} onPick={setView} />
       </div>
     </div>
   )

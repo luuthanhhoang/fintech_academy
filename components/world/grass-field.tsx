@@ -10,15 +10,15 @@ import { NOISE_GLSL } from './glsl'
 
 const RADIUS = 38
 
-/** One clump: five curved, tapered blades of height 1. */
+/** One clump: three curved, tapered blades of height 1 (kept light: tens of thousands are drawn). */
 function clump() {
   return mergeGeometries(
-    [0, 1.26, 2.51, 3.77, 5.03].map((rot, k) => {
-      const levels = 4
+    [0, 2.09, 4.19].map((rot, k) => {
+      const levels = 3
       const pos: number[] = []
       for (let i = 0; i < levels; i++) {
         const t = i / (levels - 1)
-        const w = 0.045 * (1 - t) + 0.003
+        const w = 0.06 * (1 - t) + 0.004
         const bend = t * t * 0.22
         pos.push(-w, t, bend, w, t, bend)
       }

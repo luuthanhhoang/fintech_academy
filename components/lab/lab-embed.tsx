@@ -12,7 +12,7 @@ export function LabEmbed({ lab }: { lab: Lab }) {
   return (
     <figure className="my-8 rounded-xl border border-rule p-4 font-sans">
       <figcaption className="flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-wider text-ink-3">Code lab (Python)</span>
+        <span className="text-xs text-ink-3">Code lab (Python)</span>
         <span className="font-medium">{lab.title.vi}</span>
         <Link href={`/labs/${lab.id}/`} className="ml-auto text-xs text-accent underline">
           Mở trang lab

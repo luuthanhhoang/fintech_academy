@@ -57,7 +57,7 @@ export function QuizItemCard({ item, lessonId, context, index, onGraded, explain
 
   return (
     <article className="rounded-lg border border-rule bg-paper p-4 font-sans">
-      <p className="text-xs uppercase tracking-wider text-ink-3">
+      <p className="text-xs text-ink-3">
         {index !== undefined && `Câu ${index + 1} · `}
         {TYPE_LABEL[item.type]}
       </p>

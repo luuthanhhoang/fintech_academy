@@ -64,7 +64,7 @@ export function Map2D({ terrain, layout, health, names, onSelect }: { terrain: T
       })}
       {layout.landmarks.map((l) => (
         <Hit key={l.landmark.id} id={selectionId('landmark', l.landmark.id)} label={l.landmark.title} onSelect={onSelect}>
-          <rect x={l.position[0] - 8} y={l.position[2] - 8} width={16} height={16} transform={`rotate(45 ${l.position[0]} ${l.position[2]})`} fill="#3b4cc0" stroke="#fff" strokeWidth={2} />
+          <rect x={l.position[0] - 8} y={l.position[2] - 8} width={16} height={16} transform={`rotate(45 ${l.position[0]} ${l.position[2]})`} fill="#1d6a73" stroke="#fff" strokeWidth={2} />
         </Hit>
       ))}
       {layout.features.map((f) => (
@@ -92,7 +92,7 @@ export function Map2D({ terrain, layout, health, names, onSelect }: { terrain: T
 const LEGEND: { swatch: React.ReactNode; label: string }[] = [
   { swatch: <rect x={2} y={4} width={12} height={8} fill="#5fc046" stroke="#3a3328" />, label: 'Ruộng: xanh = nhớ tốt, vàng úa = cần ôn, nâu = chưa học' },
   { swatch: <rect x={4} y={4} width={8} height={8} fill="#ffd36b" stroke="#3a3328" />, label: 'Nhà sáng đèn = khái niệm đã thành thạo' },
-  { swatch: <rect x={4} y={4} width={8} height={8} transform="rotate(45 8 8)" fill="#3b4cc0" />, label: 'Công trình: mô phỏng, lab, case, tình huống' },
+  { swatch: <rect x={4} y={4} width={8} height={8} transform="rotate(45 8 8)" fill="#1d6a73" />, label: 'Công trình: mô phỏng, lab, case, tình huống' },
   { swatch: <circle cx={8} cy={8} r={5} fill="#ffd36b" stroke="#2b2b2b" />, label: 'Người dẫn đường (gia sư AI)' },
   { swatch: <circle cx={8} cy={8} r={5} fill="#fbfaf6" stroke="#1d1c1a" strokeWidth={2} />, label: 'Ga tàu = một chặng lộ trình' },
 ]

@@ -9,7 +9,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Design tokens: "scientific notebook" — paper, ink, one indigo accent. */
+/* Design tokens: paper and ink for reading; river teal is the interface accent, lantern amber marks focus and lit windows (the village palette). */
 :root {
   --paper: #fbfaf6;
   --paper-2: #f3f1ea;
@@ -17,8 +17,10 @@
   --ink: #1d1c1a;
   --ink-2: #4a4740;
   --ink-3: #78736a;
-  --accent: #3b4cc0;
-  --accent-soft: #e6e8f8;
+  --accent: #1d6a73;
+  --accent-soft: #e0efef;
+  --lantern: #b87a12;
+  --lantern-soft: #f8eed6;
   --good: #2f7a4f;
   --good-soft: #e3f1e8;
   --warn: #9a5b12;
@@ -40,8 +42,10 @@
   --ink: #ece8dd;
   --ink-2: #c4bfb2;
   --ink-3: #8f8a7e;
-  --accent: #9aa6ff;
-  --accent-soft: #272b48;
+  --accent: #6ec3c9;
+  --accent-soft: #1a3235;
+  --lantern: #e8b04a;
+  --lantern-soft: #3a2e16;
   --good: #7cc79a;
   --good-soft: #1f3327;
   --warn: #e0a85c;
@@ -64,6 +68,8 @@
   --color-ink-3: var(--ink-3);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-lantern: var(--lantern);
+  --color-lantern-soft: var(--lantern-soft);
   --color-good: var(--good);
   --color-good-soft: var(--good-soft);
   --color-warn: var(--warn);

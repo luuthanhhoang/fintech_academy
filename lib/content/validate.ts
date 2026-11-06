@@ -1,4 +1,5 @@
 /** Cross-reference validation of a loaded content bundle. Returns issues; the build fails on any error. */
+import { isNavGroup } from './schema/config'
 import { findFigures } from './figures'
 import { findCycles } from './graph'
 import { extractExpressions, extractProse, extractRefs, parseMdx } from './mdx-ast'
@@ -221,7 +222,11 @@ export function validateContent(b: ContentBundle, opts: ValidateOptions): Issue[
     checkLessonSourcing(l, new Set(b.concepts.map((c) => c.id)), new Set(Object.keys(b.config.site.callouts)), push)
   }
   checkPlanned(b, push)
-  for (const n of b.config.site.nav) if (!opts.iconKeys.includes(n.icon)) push(`nav:${n.href}`, `icon "${n.icon}" chưa có`)
+  for (const n of b.config.site.nav) {
+    for (const x of isNavGroup(n) ? [n, ...n.items] : [n]) {
+      if (!opts.iconKeys.includes(x.icon)) push(`nav:${'href' in x ? x.href : x.label}`, `icon "${x.icon}" chưa có`)
+    }
+  }
   for (const sc of b.config.shortcuts) {
     if (!opts.shortcutActions.includes(sc.action)) push(`shortcut:${sc.keys}`, `action "${sc.action}" chưa có`)
     if (sc.action === 'go' && !sc.href) push(`shortcut:${sc.keys}`, 'action "go" cần href')

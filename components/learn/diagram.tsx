@@ -33,7 +33,7 @@ export function DiagramView({ diagram }: { diagram: Diagram }) {
   return (
     <figure className="my-8 rounded-xl border border-rule bg-paper font-sans" aria-label={diagram.title}>
       <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="text-xs uppercase tracking-wider text-ink-3">Sơ đồ</span>
+        <span className="text-xs text-ink-3">Sơ đồ</span>
         <span className="font-medium">{diagram.title}</span>
         <span className="ml-auto"><WhyLink method="dual-coding" /></span>
       </figcaption>

@@ -19,6 +19,10 @@ export const QualityPresetSchema = z.strictObject({
   clouds: z.number().int().nonnegative(),
   /** Fraction of scattered trees/shrubs to render. */
   vegetation: Unit,
+  /** Fraction of villagers to simulate (each is dozens of draw calls, so this matters most on weak GPUs). */
+  people: Unit,
+  /** Re-render the shadow map every N frames (the light moves slowly; higher = cheaper). */
+  shadowEvery: z.number().int().min(1).max(12),
 })
 export type QualityPreset = z.infer<typeof QualityPresetSchema>
 

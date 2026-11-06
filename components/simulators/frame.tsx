@@ -24,7 +24,7 @@ export function SimulatorFrame({ meta, syntheticLabel, initial, embedded = false
   return (
     <figure className="my-8 rounded-xl border border-rule bg-paper font-sans">
       <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="text-xs uppercase tracking-wider text-ink-3">Mô phỏng</span>
+        <span className="text-xs text-ink-3">Mô phỏng</span>
         <span className="font-medium">{meta.title.vi}</span>
         <span className="text-sm text-ink-3">({meta.title.en})</span>
         {meta.dataKind === 'synthetic' && <SyntheticBadge label={syntheticLabel} note={meta.syntheticNote} />}

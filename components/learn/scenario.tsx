@@ -27,7 +27,7 @@ export function ScenarioPlayer({ scenario, embedded = false }: { scenario: Scena
   return (
     <figure className="my-8 rounded-xl border border-rule bg-paper font-sans">
       <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="text-xs uppercase tracking-wider text-ink-3">Tình huống nhập vai</span>
+        <span className="text-xs text-ink-3">Tình huống nhập vai</span>
         <span className="font-medium">{scenario.title.vi}</span>
         <span className="rounded border border-warn bg-warn-soft px-1.5 py-0.5 text-[0.7rem] text-warn" title={scenario.hypotheticalNote}>◇ Tình huống giả định</span>
         {embedded && <Link href={`/scenarios/${scenario.id}/`} className="ml-auto text-xs text-accent underline">Mở toàn trang</Link>}

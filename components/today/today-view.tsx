@@ -38,7 +38,7 @@ export function TodayView({ catalog }: { catalog: Catalog }) {
           <ProgressBar value={done / blocks.length} label="Tiến độ hôm nay" />
         </div>
         <FocusPicker catalog={catalog} />
-        <LinkButton href={`/village/?journey=${catalog.config.focus.journeys[0]?.id ?? ''}`}>🚆 Học theo chặng ở Làng học</LinkButton>
+        <LinkButton href={`/?journey=${catalog.config.focus.journeys[0]?.id ?? ''}`}>🚆 Học theo chặng ở Làng học</LinkButton>
       </div>
       <ol className="space-y-5">
         {blocks.map((b, i) => {

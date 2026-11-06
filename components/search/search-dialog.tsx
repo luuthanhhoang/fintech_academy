@@ -98,7 +98,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                 onClick={() => go(h)}
                 className={`w-full rounded-md px-3 py-2 text-left ${i === active ? 'bg-accent-soft' : ''}`}
               >
-                <span className="text-[0.7rem] uppercase tracking-wider text-ink-3">{cfg?.kindLabels[h.kind] ?? h.kind}</span>
+                <span className="text-[0.7rem] text-ink-3">{cfg?.kindLabels[h.kind] ?? h.kind}</span>
                 <span className="block font-medium">
                   {h.title} {h.titleEn && <span className="text-sm font-normal text-ink-3">· {h.titleEn}</span>}
                 </span>

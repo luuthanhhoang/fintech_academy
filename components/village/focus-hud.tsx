@@ -17,7 +17,7 @@ export function FocusHud({ stationNames }: { stationNames: string[] }) {
   const next = stationNames[active.segment + 1]
   return (
     <Panel className="w-full sm:w-80">
-      <p className="text-[11px] uppercase tracking-wide text-ink-3">
+      <p className="text-[11px] text-ink-3">
         {active.phase === 'focus' ? `Chặng ${active.segment + 1}/${active.segments} — tàu đang chạy` : 'Dừng ga — giờ nghỉ'}
       </p>
       <p className="num font-serif text-4xl font-semibold" aria-live="off">

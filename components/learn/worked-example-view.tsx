@@ -52,7 +52,7 @@ export function WorkedExampleView({ id, conceptId, title, problem, steps, takeaw
   return (
     <figure className="my-8 rounded-xl border border-rule bg-paper font-sans">
       <figcaption className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-        <span className="text-xs uppercase tracking-wider text-ink-3">Ví dụ mẫu từng bước</span>
+        <span className="text-xs text-ink-3">Ví dụ mẫu từng bước</span>
         <span className="font-medium">{title}</span>
         <span className="ml-auto"><WhyLink method="worked-examples" /></span>
       </figcaption>

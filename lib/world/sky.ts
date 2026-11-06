@@ -9,8 +9,8 @@ export const SYNODIC_MONTH = 29.530588853
 /** Reference new moon: 2000-01-06 18:14 UTC (Julian day 2451550.26). */
 const NEW_MOON_JD = 2451550.26
 
-export type TimeOfDay = 'auto' | 'dawn' | 'day' | 'dusk' | 'night'
-const PRESET_HOURS: Record<Exclude<TimeOfDay, 'auto'>, number> = { dawn: 6.2, day: 12.5, dusk: 17.9, night: 22.5 }
+export type TimeOfDay = 'auto' | 'dawn' | 'day' | 'golden' | 'dusk' | 'night'
+const PRESET_HOURS: Record<Exclude<TimeOfDay, 'auto'>, number> = { dawn: 6.2, day: 12.5, golden: 16.6, dusk: 17.9, night: 22.5 }
 
 export function julianDay(d: Date): number {
   return d.getTime() / 86_400_000 + 2440587.5

@@ -39,7 +39,7 @@ export function lessonComponents(lesson: Lesson, bundle: ContentBundle) {
       if (!cs) return missing('Case', id)
       return (
         <Link href={`/cases/${cs.id}/`} className="my-6 block rounded-lg border border-rule p-4 font-sans hover:bg-paper-2">
-          <span className="text-xs uppercase tracking-wider text-ink-3">Case study · {cs.period}</span>
+          <span className="text-xs text-ink-3">Case study · {cs.period}</span>
           <span className="block font-medium">{cs.title.vi}</span>
           <span className="block text-sm text-ink-2">{cs.summary}</span>
         </Link>

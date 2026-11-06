@@ -46,7 +46,7 @@ Thành phần MDX được phép: `Simulator`, `Lab`, `Case`, `Quiz`, `Fact`, `C
 Mỗi bài bắt buộc có `pretest` (id quiz để đoán trước khi đọc, không tính điểm) và `applications` (bài tập áp dụng vào công việc dev).
 Phương pháp học và bằng chứng nằm ở `content/config/methods.yaml`; luyện tập xen kẽ cấu hình ở `content/config/practice.yaml`.
 
-## Làng học 3D & tập trung theo chặng (`/village`)
+## Làng học 3D & tập trung theo chặng (trang chủ `/`)
 
 Lộ trình được vẽ thành một ngôi làng 3D (three.js / react-three-fiber), **sinh tự động từ nội dung**:
 mỗi chặng là một ga trên tuyến tàu, mỗi khái niệm là một ngôi nhà + thửa ruộng, mỗi simulator/lab/case/tình huống là một công trình.
@@ -66,8 +66,10 @@ mỗi chặng là một ga trên tuyến tàu, mỗi khái niệm là một ngô
 - Thời tiết là lựa chọn không khí học, không phải dự báo. Nhạc và âm thanh môi trường được **tổng hợp tại chỗ** (Web Audio) — không dùng bản thu của ai.
 - Không có WebGL → bản đồ 2D (SVG) cùng bố cục, điều hướng được bằng bàn phím.
 - Đồ hoạ: ánh sáng môi trường HDRI (Poly Haven, CC0, qua `@pmndrs/assets`), bầu trời shader theo giờ, mây thể tích, hậu kỳ
-  (AO, bloom, tone mapping ACES, chỉnh màu theo `content/world/graphics.yaml`), nước có độ sâu/bọt/phản chiếu, thảm cỏ bám camera,
+  (AO, bloom, tone mapping neutral, chỉnh màu theo `content/world/graphics.yaml`), nước có độ sâu/bọt/phản chiếu, thảm cỏ bám camera,
   cây/nhà/người dựng thủ tục (nhà mái ngói cong, nón lá, đòn gánh, trâu, vịt, chim, đom đóm). Texture vữa/ngói/gạch/gỗ sinh bằng code.
+- Giao diện: làng 3D là trang chủ (HUD: nhiệm vụ hôm nay, góc ngắm, tuỳ chỉnh); điều hướng theo nhóm lấy từ `site.yaml → nav`; bài học 3 cột (chặng · nội dung · mục lục).
+- Hiệu năng: cây có LOD 3 mức theo khoảng cách, dân làng và công trình chỉ dựng chi tiết khi ở gần, bóng đổ cập nhật theo nhịp, tự hạ mức đồ hoạ khi FPS thấp (`?quality=` để ghim mức); số liệu kết xuất ở `window.__village`.
 - Mức đồ hoạ Cao/Vừa/Thấp (dữ liệu trong `graphics.yaml`, nhớ theo thiết bị; `?quality=thap` để ép mức).
 
 | Muốn thêm/sửa | File |

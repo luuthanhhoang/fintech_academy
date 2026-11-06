@@ -1,6 +1,6 @@
 'use client'
 
-import { Bloom, BrightnessContrast, DepthOfField, EffectComposer, HueSaturation, N8AO, SMAA, ToneMapping, Vignette } from '@react-three/postprocessing'
+import { Bloom, BrightnessContrast, DepthOfField, EffectComposer, HueSaturation, N8AO, SMAA, Sharpness, ToneMapping, Vignette } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
 import type { JSX } from 'react'
 import type { QualityPreset } from '@/lib/content/schema/graphics'
@@ -15,12 +15,13 @@ export function PostFX({ quality, look, focus }: { quality: QualityPreset; look:
   const effects = [
     quality.ao && <N8AO key="ao" aoRadius={3} distanceFalloff={1.2} intensity={2.2} quality={quality.id === 'cao' ? 'medium' : 'performance'} halfRes={quality.id !== 'cao'} color="#1a1410" />,
     quality.dof && focus && <DepthOfField key="dof" target={focus} focalLength={0.05} bokehScale={2.2} worldFocusRange={30} />,
-    quality.bloom && <Bloom key="bloom" mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={0.75} radius={0.75} />,
-    <ToneMapping key="tm" mode={ToneMappingMode.ACES_FILMIC} />,
+    quality.bloom && <Bloom key="bloom" mipmapBlur luminanceThreshold={1.1} luminanceSmoothing={0.2} intensity={0.55} radius={0.7} />,
+    <ToneMapping key="tm" mode={ToneMappingMode.NEUTRAL} />,
     <HueSaturation key="hs" saturation={look.saturation} />,
     <BrightnessContrast key="bc" contrast={look.contrast} />,
-    <Vignette key="vig" offset={0.28} darkness={0.42} />,
+    <Vignette key="vig" offset={0.3} darkness={0.3} />,
     <SMAA key="smaa" />,
+    <Sharpness key="sharp" sharpness={0.35} radius={1} />,
   ].filter((e): e is JSX.Element => Boolean(e))
   return (
     <EffectComposer multisampling={0} enableNormalPass={false}>

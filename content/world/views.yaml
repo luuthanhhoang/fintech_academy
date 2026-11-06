@@ -6,8 +6,8 @@ views:
     description: "Bay quanh làng, bấm vào ga, nhà, công trình để mở bài học và mô phỏng."
     mode: explore
     anchor: { kind: overview }
-    eye: [380, 330, 520]
-    look: [0, 0, 0]
+    eye: [260, 120, 360]
+    look: [60, 0, 40]
   - id: tren-tau
     title: "Ngồi trong toa tàu"
     description: "Tàu chạy theo thời gian tập trung; ngoài cửa sổ là ruộng, sông, biển."

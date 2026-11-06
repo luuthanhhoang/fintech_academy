@@ -1,6 +1,9 @@
 'use client'
 
 import type { ThreeEvent } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
+import { useRef, useState } from 'react'
+import * as THREE from 'three'
 import type { Region } from '@/lib/content/schema/world'
 import { isWorldModelKey } from '@/lib/registry/keys'
 import type { PlacedLandmark, Pos, Station, WorldLayout } from '@/lib/world/layout'
@@ -8,11 +11,13 @@ import { WORLD_MODELS } from './models/registry'
 import { Box, Post, Roof } from './models/parts'
 import { Lighthouse, Pier, Porch } from './models/scenery'
 import { Label } from './label-portal'
+import { useLabelVisible } from './label-declutter'
 import { selectionId, type SelectionId } from './scene-types'
 
 function StationModel({ station, night, label, onSelect }: { station: Station; night: boolean; label: boolean; onSelect: (id: SelectionId) => void }) {
   const [x, y, z] = station.position
   const rot = Math.atan2(station.tangent[0], station.tangent[1])
+  const labelOk = useLabelVisible(`station:${station.id}`)
   const click = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
     onSelect(selectionId('station', station.id))
@@ -27,7 +32,7 @@ function StationModel({ station, night, label, onSelect }: { station: Station; n
         </group>
         {night && <pointLight position={[0, 3.6, 0]} intensity={14} distance={22} color="#ffcf8a" />}
       </group>
-      {label && (
+      {label && labelOk && (
         <Label position={[4, 8, 0]} center zIndexRange={[10, 0]}>
           <button type="button" onClick={() => onSelect(selectionId('station', station.id))} className="pointer-events-auto whitespace-nowrap rounded-full border border-rule bg-paper/90 px-2 py-0.5 font-sans text-[11px] text-ink shadow-sm">
             {station.id.toUpperCase()}
@@ -39,9 +44,29 @@ function StationModel({ station, night, label, onSelect }: { station: Station; n
   )
 }
 
+/** Beyond this distance a landmark is drawn as one cheap block instead of dozens of small meshes. */
+const DETAIL_RANGE = 240
+const proxyGeometry = new THREE.BoxGeometry(1, 1, 1)
+const proxyBody = new THREE.MeshStandardMaterial({ color: '#cbbfa8', roughness: 0.9 })
+const proxyRoof = new THREE.MeshStandardMaterial({ color: '#9a5a44', roughness: 0.85 })
+
+/** True while the camera is within `range` (with hysteresis, checked a few times a second — not every frame). */
+function useNear(at: [number, number, number], range: number) {
+  const [near, setNear] = useState(false)
+  const t = useRef(0)
+  useFrame(({ camera, clock }) => {
+    if (clock.elapsedTime - t.current < 0.35) return
+    t.current = clock.elapsedTime
+    const d = Math.hypot(camera.position.x - at[0], camera.position.z - at[2])
+    setNear((was) => (was ? d < range * 1.12 : d < range))
+  })
+  return near
+}
+
 function LandmarkModel({ placed, regions, night, onSelect }: { placed: PlacedLandmark; regions: Region[]; night: boolean; onSelect: (id: SelectionId) => void }) {
   const region = regions.find((r) => r.id === placed.regionId)
   const key = placed.landmark.model
+  const near = useNear(placed.position, DETAIL_RANGE)
   if (!isWorldModelKey(key)) return null
   const Model = WORLD_MODELS[key]
   return (
@@ -53,7 +78,14 @@ function LandmarkModel({ placed, regions, night, onSelect }: { placed: PlacedLan
         onSelect(selectionId('landmark', placed.landmark.id))
       }}
     >
-      <Model night={night} wall={region?.palette.wall[0] ?? '#e6d9bd'} roof={region?.palette.roof[0] ?? '#a8543a'} />
+      {near ? (
+        <Model night={night} wall={region?.palette.wall[0] ?? '#e6d9bd'} roof={region?.palette.roof[0] ?? '#a8543a'} />
+      ) : (
+        <group>
+          <mesh geometry={proxyGeometry} material={proxyBody} position={[0, 4, 0]} scale={[11, 8, 9]} />
+          <mesh geometry={proxyGeometry} material={proxyRoof} position={[0, 9, 0]} scale={[12.5, 2, 10.5]} />
+        </group>
+      )}
     </group>
   )
 }

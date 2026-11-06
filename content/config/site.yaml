@@ -10,17 +10,28 @@ callouts:
   story: { label: "Tình huống mở đầu", disclaimer: "Tình huống minh hoạ (giả định), dựng để đặt vấn đề — không phải sự kiện có thật." }
   field: { label: "Ghi chép thực chiến", disclaimer: "Góc nhìn của người viết (Claude), tổng hợp từ thực hành kỹ thuật phổ biến — kinh nghiệm để cân nhắc, không phải số liệu hay sự kiện có thật." }
 nav:
-  - { href: "/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
-  - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", mobile: true }
-  - { href: "/village/", label: "Làng học", en: "Village", icon: "tree", mobile: true }
-  - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", mobile: true }
-  - { href: "/practice/", label: "Luyện tập", en: "Practice", icon: "shuffle" }
-  - { href: "/scenarios/", label: "Tình huống", en: "Scenarios", icon: "route" }
-  - { href: "/simulators/", label: "Mô phỏng", en: "Simulators", icon: "chart" }
-  - { href: "/labs/", label: "Code lab", en: "Labs", icon: "code" }
-  - { href: "/cases/", label: "Case study", en: "Case studies", icon: "alert" }
+  - { href: "/", label: "Làng học", en: "Village", icon: "tree", mobile: true }
+  - { href: "/today/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
+  - label: "Học"
+    icon: "map"
+    mobile: true
+    items:
+      - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", desc: "Ba lộ trình, từng chặng và đồ thị khái niệm" }
+      - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", desc: "Thẻ đến hạn theo lịch FSRS" }
+      - { href: "/practice/", label: "Luyện tập", en: "Practice", icon: "shuffle", desc: "Câu hỏi trộn từ nhiều khái niệm" }
+      - { href: "/method/", label: "Phương pháp học", en: "Method", icon: "book", desc: "Bằng chứng đứng sau từng khối học" }
+  - label: "Thực hành"
+    icon: "code"
+    mobile: true
+    items:
+      - { href: "/simulators/", label: "Mô phỏng", en: "Simulators", icon: "chart", desc: "Kéo tham số, thấy kết quả" }
+      - { href: "/labs/", label: "Code lab", en: "Labs", icon: "code", desc: "Viết Python chạy ngay trong trình duyệt" }
+      - { href: "/cases/", label: "Case study", en: "Case studies", icon: "alert", desc: "Sự cố thật từ nguồn chính thống" }
+      - { href: "/scenarios/", label: "Tình huống", en: "Scenarios", icon: "route", desc: "Nhập vai ra quyết định" }
   - { href: "/tutor/", label: "Gia sư AI", en: "AI tutor", icon: "spark", mobile: true }
-  - { href: "/stats/", label: "Thống kê", en: "Stats", icon: "pulse", mobile: true }
-  - { href: "/settings/", label: "Cài đặt", en: "Settings", icon: "gear" }
-  - { href: "/method/", label: "Phương pháp học", en: "Method", icon: "book" }
-  - { href: "/about/", label: "Giới thiệu", en: "About", icon: "info" }
+  - { href: "/stats/", label: "Thống kê", en: "Stats", icon: "pulse" }
+  - label: "Khác"
+    icon: "gear"
+    items:
+      - { href: "/settings/", label: "Cài đặt", en: "Settings", icon: "gear" }
+      - { href: "/about/", label: "Giới thiệu", en: "About", icon: "info" }

@@ -24,7 +24,7 @@ regions:
     biome: highland
     plot: tea
     railSpan: [0.02, 0.32]
-    palette: { ground: "#6f8f4e", roof: ["#6f8090", "#93705a", "#677a6e"], wall: ["#d9d2c3", "#cbbfa8", "#e4ddd0"] }
+    palette: { ground: "#78a652", roof: ["#7a96ae", "#b8704a", "#5f9a88"], wall: ["#d9d2c3", "#cbbfa8", "#e4ddd0"] }
   - id: pho-fullstack
     track: web
     title: "Phố Fullstack"
@@ -36,7 +36,7 @@ regions:
     biome: lowland
     plot: tea
     railSpan: [0.35, 0.63]
-    palette: { ground: "#86a35c", roof: ["#5d6670", "#7b5b4a", "#4e5a66"], wall: ["#d8b98c", "#c9a27a", "#e2cfa8"] }
+    palette: { ground: "#88b858", roof: ["#7a8fa6", "#c0623f", "#6a8aa0"], wall: ["#d8b98c", "#c9a27a", "#e2cfa8"] }
   - id: dong-bang-fintech
     track: fintech
     title: "Đồng bằng Fintech"
@@ -48,7 +48,7 @@ regions:
     biome: lowland
     plot: paddy
     railSpan: [0.66, 0.98]
-    palette: { ground: "#7fa257", roof: ["#c8673f", "#b9583a", "#d27c4b"], wall: ["#efe6d2", "#e6d9bd", "#f3ecdc"] }
+    palette: { ground: "#82b256", roof: ["#d4603c", "#dc7440", "#c85438"], wall: ["#efe6d2", "#e6d9bd", "#f3ecdc"] }
 peaks:
   - { id: dinh-transformer, name: "Đỉnh Transformer", at: [-300, -440], height: 150, radius: 150 }
   - { id: dinh-harness, name: "Đỉnh Harness", at: [-10, -480], height: 112, radius: 125 }
@@ -93,14 +93,14 @@ vegetation:
     highland: [{ kind: pine, weight: 8 }, { kind: broadleaf, weight: 2 }]
     coast: [{ kind: palm, weight: 3 }, { kind: broadleaf, weight: 1 }]
   leaves:
-    broadleaf: ["#5e9138", "#6c9d3e", "#557f33", "#7aa847"]
-    pine: ["#365f3c", "#3e6a42", "#325838"]
-    palm: ["#5c8f35", "#6b9c3c"]
-    bamboo: ["#7fa046", "#6f9440"]
-    areca: ["#5f9038", "#4f7f30"]
-    banana: ["#6fa23c", "#82b246"]
-    flowering: ["#d9532f", "#e2703c", "#e597b5"]
-    shrub: ["#5b8a3a", "#6a9640", "#527d35"]
+    broadleaf: ["#5ea23e", "#6db046", "#54963a", "#7ec04c"]
+    pine: ["#2f7a4e", "#368858", "#2a6e44"]
+    palm: ["#62a83c", "#72b845"]
+    bamboo: ["#88b848", "#76a842"]
+    areca: ["#64a43c", "#559834"]
+    banana: ["#78b840", "#88c648"]
+    flowering: ["#e8805a", "#eea060", "#e898b8"]
+    shrub: ["#5ca03c", "#6aac42", "#509236"]
     rock: ["#8a867c", "#7a776f", "#9a958a"]
 village: { lotSpacing: 15, lotsPerRow: 4, offsetFromRail: 16 }
 people:

@@ -2,7 +2,7 @@
 
 import { OrbitControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef, type ComponentRef } from 'react'
+import { useEffect, useRef, useState, type ComponentRef } from 'react'
 import * as THREE from 'three'
 import type { WorldView } from '@/lib/content/schema/world'
 import type { Pos } from '@/lib/world/layout'
@@ -15,6 +15,8 @@ const UP = new THREE.Vector3(0, 1, 0)
 export function CameraRig({ view, anchor, focus, zoom = 48 }: { view: WorldView; anchor: Pos | 'train'; focus: Pos | null; zoom?: number }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const { camera } = useThree()
+  // The overview drifts slowly like an establishing shot until the viewer takes control.
+  const [touched, setTouched] = useState(false)
   const fly = useRef<{ eye: THREE.Vector3; look: THREE.Vector3; left: number } | null>(null)
 
   useEffect(() => {
@@ -54,6 +56,9 @@ export function CameraRig({ view, anchor, focus, zoom = 48 }: { view: WorldView;
     <OrbitControls
       ref={controls}
       makeDefault
+      autoRotate={view.anchor.kind === 'overview' && focus === null && !touched}
+      autoRotateSpeed={0.35}
+      onStart={() => setTouched(true)}
       enableDamping
       dampingFactor={0.08}
       maxPolarAngle={overview ? 1.42 : 1.55}

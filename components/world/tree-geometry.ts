@@ -26,8 +26,11 @@ function at(g: G, x: number, y: number, z: number, rx = 0, ry = 0, rz = 0, s: [n
 }
 
 /** Lumpy blob: icosphere displaced along its normal by noise. */
+/** Detail levels dropped for the level being built (0 = nearest/most detailed). */
+let detailDrop = 0
+
 function blob(r: number, detail: number, amp: number, seed: number): G {
-  const raw = new THREE.IcosahedronGeometry(r, detail)
+  const raw = new THREE.IcosahedronGeometry(r, Math.max(0, detail - detailDrop))
   raw.deleteAttribute('normal')
   raw.deleteAttribute('uv')
   // Weld vertices so displacement keeps the surface closed and normals come out smooth.
@@ -148,13 +151,19 @@ const build: Record<TreeKind, () => { trunk: G; crown: G }> = {
   }),
 }
 
-const cache = new Map<TreeKind, { trunk: G; crown: G }>()
+const cache = new Map<string, { trunk: G; crown: G }>()
 
-export function treeGeometry(kind: TreeKind): { trunk: G; crown: G } {
-  const hit = cache.get(kind)
+/** Number of level-of-detail steps: 0 = full, 1 = one subdivision less, 2 = lowest. */
+export const TREE_LODS = 3
+
+export function treeGeometry(kind: TreeKind, lod = 0): { trunk: G; crown: G } {
+  const key = `${kind}:${lod}`
+  const hit = cache.get(key)
   if (hit) return hit
+  detailDrop = lod
   const g = build[kind]()
-  cache.set(kind, g)
+  detailDrop = 0
+  cache.set(key, g)
   return g
 }
 

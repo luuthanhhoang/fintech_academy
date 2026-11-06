@@ -1,8 +1,20 @@
-import type { Metadata } from 'next'
-import { VillageEntry } from '@/components/village/village-entry'
+'use client'
 
-export const metadata: Metadata = { title: 'Làng học', description: 'Lộ trình học thành một ngôi làng 3D: tập trung theo chặng, ôn tập bên ao, công trình là mô phỏng và case.' }
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect } from 'react'
 
-export default function VillagePage() {
-  return <VillageEntry />
+/** Old URL (/village/?…) kept so existing links and bookmarks still land in the village (now the home page). */
+function Redirect() {
+  const router = useRouter()
+  const q = useSearchParams().toString()
+  useEffect(() => router.replace(q ? `/?${q}` : '/'), [router, q])
+  return <p className="p-6 text-sm text-ink-3">Đang chuyển tới làng học…</p>
+}
+
+export default function VillageRedirect() {
+  return (
+    <Suspense>
+      <Redirect />
+    </Suspense>
+  )
 }

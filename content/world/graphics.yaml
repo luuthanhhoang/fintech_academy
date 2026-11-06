@@ -1,18 +1,18 @@
 # Chỉ đạo mỹ thuật + mức chất lượng của làng 3D. Màu và ánh sáng là lựa chọn thẩm mỹ (không phải số liệu thực tế).
-defaultQuality: cao
+defaultQuality: vua
 lightQuality: vua
 quality:
-  - { id: cao, label: "Cao (máy mạnh)", dpr: [1, 2], shadowMapSize: 4096, grass: 70000, flowers: 5000, ao: true, bloom: true, dof: true, clouds: 22, vegetation: 1 }
-  - { id: vua, label: "Vừa", dpr: [1, 1.5], shadowMapSize: 2048, grass: 30000, flowers: 2200, ao: false, bloom: true, dof: false, clouds: 14, vegetation: 0.8 }
-  - { id: thap, label: "Thấp (máy yếu / pin)", dpr: [1, 1], shadowMapSize: 1024, grass: 0, flowers: 600, ao: false, bloom: true, dof: false, clouds: 8, vegetation: 0.55 }
+  - { id: cao, label: "Cao (máy mạnh)", dpr: [1, 2], shadowMapSize: 4096, grass: 40000, flowers: 3000, ao: true, bloom: true, dof: true, clouds: 22, vegetation: 1, people: 1, shadowEvery: 2 }
+  - { id: vua, label: "Vừa", dpr: [1, 1.5], shadowMapSize: 2048, grass: 16000, flowers: 1500, ao: false, bloom: true, dof: false, clouds: 14, vegetation: 0.75, people: 0.5, shadowEvery: 3 }
+  - { id: thap, label: "Thấp (máy yếu / pin)", dpr: [1, 1], shadowMapSize: 1024, grass: 0, flowers: 600, ao: false, bloom: true, dof: false, clouds: 6, vegetation: 0.5, people: 0.25, shadowEvery: 5 }
 looks:
   - { id: night, hdri: night, envIntensity: 0.7, exposure: 1.3, sun: "#9fb6ff", sunIntensity: 0.6, zenith: "#081230", horizon: "#2a3c64", ground: "#1c2638", fog: "#1d2a48", saturation: -0.1, contrast: 0.08 }
-  - { id: dawn, hdri: sunrise, envIntensity: 0.45, exposure: 1.0, sun: "#ffc08a", sunIntensity: 2.0, zenith: "#4f6fb0", horizon: "#f6c79a", ground: "#5a4a3a", fog: "#e9c3a6", saturation: 0.08, contrast: 0.05 }
-  - { id: day, hdri: park, envIntensity: 0.5, exposure: 0.95, sun: "#fff1dc", sunIntensity: 2.6, zenith: "#3f7ed6", horizon: "#cfe3f2", ground: "#6b7a55", fog: "#c9dceb", saturation: 0.14, contrast: 0.06 }
-  - { id: dusk, hdri: sunset, envIntensity: 0.45, exposure: 1.0, sun: "#ff9a5a", sunIntensity: 1.9, zenith: "#3a4f8c", horizon: "#f5a46b", ground: "#4a3a32", fog: "#e7a17e", saturation: 0.12, contrast: 0.08 }
-grass: { base: "#4a7a2c", tip: "#a9cf62", dry: "#c9b866", height: 0.65, patchRadius: 55 }
+  - { id: dawn, hdri: sunrise, envIntensity: 0.6, exposure: 1.05, sun: "#ffc890", sunIntensity: 2.5, zenith: "#4a74c4", horizon: "#ffd2a0", ground: "#7a6a4a", fog: "#f0cfae", saturation: 0.16, contrast: 0.1 }
+  - { id: day, hdri: park, envIntensity: 0.7, exposure: 1.04, sun: "#fff3dc", sunIntensity: 2.9, zenith: "#3984e0", horizon: "#d2e8f8", ground: "#759a58", fog: "#d0e5f2", saturation: 0.16, contrast: 0.1 }
+  - { id: dusk, hdri: sunset, envIntensity: 0.6, exposure: 1.05, sun: "#ffa05a", sunIntensity: 2.3, zenith: "#3a56a8", horizon: "#ffae70", ground: "#6a5238", fog: "#f2b08a", saturation: 0.16, contrast: 0.1 }
+grass: { base: "#4a8a2e", tip: "#a8d466", dry: "#d0bf6c", height: 0.65, patchRadius: 55 }
 flowers: ["#f2f2ee", "#f4d03f", "#e86f8e", "#b48ee8", "#ff8a3d"]
-water: { shallow: "#5fb3a8", deep: "#14485e", foam: "#f4f8f6", clarity: 3.2 }
+water: { shallow: "#46cdc4", deep: "#0f72a0", foam: "#f4f8f6", clarity: 3.2 }
 credits:
   - { what: "Bản đồ môi trường HDRI (ánh sáng, phản chiếu)", author: "Poly Haven, đóng gói bởi @pmndrs/assets", license: "CC0 1.0", url: "https://polyhaven.com/hdris" }
   - { what: "Texture mây", author: "@pmndrs/assets", license: "CC0 1.0", url: "https://github.com/pmndrs/assets" }

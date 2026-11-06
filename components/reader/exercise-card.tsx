@@ -21,7 +21,7 @@ export function ExerciseCard(props: {
   const done = useLiveQuery(() => db().practiceLogs.where('refId').equals(props.id).count(), [props.id])
   return (
     <article className="rounded-lg border border-rule p-4 font-sans">
-      <p className="text-xs uppercase tracking-wider text-ink-3">Bài tập {props.index + 1}</p>
+      <p className="text-xs text-ink-3">Bài tập {props.index + 1}</p>
       <div className="prose-notebook mt-1 text-base [&>p]:my-1">{props.prompt}</div>
       <div className="mt-3 flex flex-wrap gap-2">
         {props.hint && (

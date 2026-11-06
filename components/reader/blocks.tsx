@@ -16,7 +16,7 @@ export function Callout({ kind = 'note', title, children }: { kind?: string; tit
   const c = labels[kind] ?? labels.note
   return (
     <aside className={`my-6 rounded-r-md border-l-4 px-4 py-3 font-sans text-[0.95rem] ${STYLE[kind] ?? STYLE.note}`}>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-2">
+      <p className="mb-1 text-xs font-semibold text-ink-2">
         {c?.label}
         {title ? ` · ${title}` : ''}
       </p>
@@ -26,10 +26,10 @@ export function Callout({ kind = 'note', title, children }: { kind?: string; tit
   )
 }
 
-/** Margin note on wide screens, inline aside on narrow screens. */
+/** Side remark, always inline: the lesson now has a right rail, so a floating margin note would overlap it. */
 export function Sidenote({ children }: { children: ReactNode }) {
   return (
-    <span className="my-2 block border-l-2 border-rule pl-3 font-sans text-sm text-ink-3 xl:float-right xl:clear-right xl:-mr-64 xl:w-56 xl:border-0 xl:pl-0">
+    <span className="my-2 block border-l-2 border-rule pl-3 font-sans text-sm text-ink-3">
       {children}
     </span>
   )

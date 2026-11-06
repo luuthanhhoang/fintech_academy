@@ -11,7 +11,7 @@ export function PlacePanel({ info, onClose }: { info: PlaceInfo; onClose: () => 
   const state = info.health ? CONCEPT_STATES.find((s) => s.id === info.health?.state) : null
   return (
     <Panel title={info.title} onClose={onClose} className="w-full sm:w-80">
-      <p className="text-[11px] uppercase tracking-wide text-ink-3">
+      <p className="text-[11px] text-ink-3">
         {info.kind}
         {info.subtitle ? ` · ${info.subtitle}` : ''}
       </p>

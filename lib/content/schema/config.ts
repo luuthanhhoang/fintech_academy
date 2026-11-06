@@ -1,13 +1,28 @@
 import { z } from 'zod'
 import { IdSchema } from './common'
 
-export const NavItemSchema = z.strictObject({
+export const NavLinkSchema = z.strictObject({
   href: z.string().startsWith('/'),
   label: z.string().min(1),
   en: z.string().min(1),
   icon: z.string().min(1),
+  /** One-line hint shown under the label in dropdown menus. */
+  desc: z.string().min(1).optional(),
+  /** Shown as a tab in the bottom bar on small screens. */
   mobile: z.boolean().default(false),
 })
+export const NavGroupSchema = z.strictObject({
+  label: z.string().min(1),
+  icon: z.string().min(1),
+  items: z.array(NavLinkSchema).min(2),
+  mobile: z.boolean().default(false),
+})
+/** A top-level entry is a link or a dropdown group of links. */
+export const NavItemSchema = z.union([NavLinkSchema, NavGroupSchema])
+export type NavLink = z.infer<typeof NavLinkSchema>
+export type NavGroup = z.infer<typeof NavGroupSchema>
+export type NavItem = z.infer<typeof NavItemSchema>
+export const isNavGroup = (n: NavItem): n is NavGroup => 'items' in n
 
 export const SiteConfigSchema = z.strictObject({
   name: z.string().min(1),

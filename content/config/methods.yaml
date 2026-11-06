@@ -19,7 +19,7 @@ methods:
     sourceIds: [dunlosky-2013, ts-fsrs]
     features:
       - { label: "Ôn tập (FSRS)", href: "/review/" }
-      - { label: "Hôm nay", href: "/" }
+      - { label: "Hôm nay", href: "/today/" }
   - id: pretesting
     name: { vi: "Đoán trước khi học", en: "Pretesting" }
     summary: "Mỗi bài mở đầu bằng 1–2 câu bạn trả lời khi chưa học. Câu đoán không tính điểm; cuối bài bạn gặp lại chúng."
@@ -61,7 +61,7 @@ methods:
     sourceIds: [dunlosky-2013, schwonke-worked-example]
     features:
       - { label: "Tự giải thích cuối bài", href: "/lessons/f0-time-value/" }
-      - { label: "Hôm nay", href: "/" }
+      - { label: "Hôm nay", href: "/today/" }
   - id: scenario-practice
     name: { vi: "Tình huống nhập vai", en: "Scenario-based practice" }
     summary: "Ra quyết định trong một tình huống kỹ thuật giả định, thấy hệ quả và phân tích — luyện phán đoán chứ không chỉ nhớ định nghĩa."
@@ -77,7 +77,7 @@ methods:
     caveat: "Bằng chứng mạnh nhất là cho ghi nhớ danh sách; làng học là một gợi ý không gian, không thay được việc tự kiểm tra và ôn ngắt quãng."
     sourceIds: [dresler-2017]
     features:
-      - { label: "Làng học", href: "/village/" }
+      - { label: "Làng học", href: "/" }
   - id: timed-breaks
     name: { vi: "Học theo chặng có giờ nghỉ cố định", en: "Systematic breaks" }
     summary: "Bấm giờ theo chặng (ví dụ 24 phút học, 6 phút nghỉ). Tàu chỉ chạy khi bạn tập trung; dừng ga là nghỉ."
@@ -85,4 +85,4 @@ methods:
     caveat: "Một nghiên cứu với 87 sinh viên; không có độ dài chặng nào tối ưu cho mọi người — hãy tự chỉnh."
     sourceIds: [biwer-2023]
     features:
-      - { label: "Hành trình tập trung", href: "/village/" }
+      - { label: "Hành trình tập trung", href: "/" }

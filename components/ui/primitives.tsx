@@ -29,7 +29,7 @@ export function Card({ children, className = '', as: As = 'section' }: { childre
 }
 
 export function Eyebrow({ children }: { children: ReactNode }) {
-  return <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-3">{children}</p>
+  return <p className="text-xs font-medium text-ink-3">{children}</p>
 }
 
 export function PageTitle({ eyebrow, title, en, lead }: { eyebrow?: string; title: string; en?: string; lead?: ReactNode }) {
