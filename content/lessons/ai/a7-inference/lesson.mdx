@@ -1,0 +1,96 @@
+---
+id: a7-inference
+track: ai
+stage: a7
+order: 0
+title: { vi: "Inference nhanh và rẻ: lượng tử hoá, KV cache, speculative decoding", en: "Fast and cheap inference: quantization, KV cache, speculative decoding" }
+summary: "Sinh văn bản là lặp: mỗi token mới cần một lượt chạy mô hình. Ba kỹ thuật cốt lõi: lượng tử hoá giảm số bit mỗi trọng số để mô hình nhỏ và nhanh hơn; KV cache lưu key/value của các token đã xử lý để không tính lại; speculative decoding để mô hình nhỏ đoán trước vài token và mô hình lớn kiểm tra cùng lúc, cho cùng phân phối đầu ra nhưng ít lượt chạy mô hình lớn hơn."
+concepts: [quantization, kv-cache, speculative-decoding]
+estMinutes: 45
+whyQuestion: "Mô hình 7 tỉ tham số không vừa GPU 12 GB của bạn, và khi vừa thì sinh chậm dần theo độ dài hội thoại. Hai vấn đề đó đến từ đâu và giải bằng gì?"
+facts:
+  - id: spec-speedup
+    text: "Kết quả speculative decoding trên T5-XXL theo tóm tắt bài báo"
+    value: "nhanh hơn khoảng 2–3 lần so với cài đặt T5X chuẩn, với đầu ra giống hệt"
+    sourceId: leviathan-spec-2023
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Lượng tử hoá"
+    dev: "Nén có mất mát (như JPEG cho trọng số)"
+    explanation: "Đổi một chút chính xác lấy bộ nhớ và băng thông; phải đo chất lượng sau nén."
+  - finance: "KV cache"
+    dev: "Memoization các phép tính trên tiền tố đã thấy"
+    explanation: "Token cũ không đổi, nên key/value của chúng tính một lần, dùng lại cho mọi token sau."
+  - finance: "Speculative decoding"
+    dev: "Branch prediction / thực thi suy đoán trong CPU"
+    explanation: "Đoán nhanh rồi xác minh; đoán đúng thì lời, đoán sai thì bỏ phần sai — kết quả cuối không đổi."
+pretest: [q-a7i-memory, q-a7i-spec]
+applications:
+  - id: app-a7i-bench
+    title: "Đo lượng tử hoá trên máy của bạn"
+    context: "Bạn có một mô hình mở nhỏ và một công cụ chạy inference cục bộ hỗ trợ nhiều mức lượng tử hoá."
+    task: "Chạy cùng mô hình ở 16-bit, 8-bit và 4-bit; ghi bộ nhớ dùng, token/giây khi sinh, và điểm trên một bộ eval nhỏ (chặng A5) cho việc bạn quan tâm; thử độ dài ngữ cảnh khác nhau để thấy ảnh hưởng của KV cache lên bộ nhớ."
+    deliverable: "Bảng (mức bit, bộ nhớ, token/giây, điểm eval, độ dài ngữ cảnh) và nhận xét đánh đổi."
+sources: [leviathan-spec-2023, vaswani-2017, dettmers-qlora-2023, kwon-vllm-2023]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho một backend dev vì sao sinh token bị giới hạn bởi bộ nhớ, và ba kỹ thuật trong bài giúp gì."
+  rubric:
+    - { id: quant, criterion: "Lượng tử hoá: ít bit hơn mỗi trọng số → bộ nhớ nhỏ hơn, đọc nhanh hơn; cần đo chất lượng" }
+    - { id: kv, criterion: "KV cache: lưu key/value token cũ; bộ nhớ tăng tuyến tính theo độ dài × số request" }
+    - { id: spec, criterion: "Speculative: mô hình nhỏ đề xuất, lớn kiểm tra song song; giữ nguyên phân phối đầu ra" }
+    - { id: bound, criterion: "Sinh từng token thường bị giới hạn bởi việc đọc trọng số/bộ nhớ hơn là phép tính" }
+---
+
+<Callout kind="story" title="Vì sao nó chậm dần?">
+Một kỹ sư chạy mô hình mở trên GPU của công ty cho trợ lý nội bộ. Câu trả lời đầu tiên nhanh; sau nửa tiếng hội thoại dài, mỗi câu chậm hơn và có lúc tràn bộ nhớ. Không có gì "rò rỉ" — chỉ là mỗi token trong lịch sử hội thoại chiếm một phần bộ nhớ GPU cho suốt quá trình sinh.
+</Callout>
+
+## Sinh token là một vòng lặp
+
+Mô hình decoder (chặng A1) sinh **từng token**: chạy mô hình → lấy token → nối vào → chạy tiếp. Hai pha:
+
+- **Prefill**: xử lý toàn bộ prompt một lần — nhiều phép tính song song.
+- **Decode**: mỗi bước chỉ thêm một token — mỗi bước phải đọc **toàn bộ trọng số** từ bộ nhớ GPU nhưng làm ít phép tính, nên thường bị giới hạn bởi **băng thông bộ nhớ**.
+
+Hệ quả: giảm số byte phải đọc (lượng tử hoá) hoặc giảm số lượt decode của mô hình lớn (speculative decoding) đều trực tiếp tăng tốc.
+
+## Lượng tử hoá
+
+Trọng số thường lưu 16-bit (2 byte). Lượng tử hoá biểu diễn chúng bằng ít bit hơn — 8-bit, 4-bit — kèm hệ số tỉ lệ cho từng nhóm trọng số.
+
+Bộ nhớ trọng số ≈ số tham số × số bit / 8. Mô hình 7 tỉ tham số: 16-bit ≈ 14 GB; 8-bit ≈ 7 GB; 4-bit ≈ 3,5 GB (chưa tính KV cache và bộ nhớ phụ).
+
+- **Lợi**: vừa GPU nhỏ hơn, đọc ít byte hơn mỗi bước decode.
+- **Mất**: sai số làm tròn có thể làm giảm chất lượng, khác nhau theo mô hình, phương pháp và tác vụ — **đo bằng bộ eval của bạn**, không suy từ con số của người khác.
+- Kiểu dữ liệu 4-bit NF4 trong QLoRA (bài trước) là một ví dụ thiết kế riêng cho phân phối trọng số.
+
+<Quiz id="q-a7i-memory" />
+
+## KV cache
+
+Trong attention (chặng A1), mỗi token tạo **query, key, value**. Khi sinh token mới, nó cần key và value của **mọi token trước**. Key/value của token cũ không đổi, nên lưu lại thay vì tính lại — đó là **KV cache**.
+
+Kích thước KV cache cho một chuỗi ≈ 2 (K và V) × số lớp × số chiều key/value mỗi lớp × số token × số byte. Nó **tăng tuyến tính theo độ dài ngữ cảnh và số request chạy cùng lúc** — đúng câu chuyện đầu bài. Các kiến trúc mới giảm nó bằng cách cho nhiều đầu attention dùng chung key/value; hệ thống phục vụ quản lý nó theo trang (bài sau).
+
+Liên hệ chặng A2: **prompt caching** của nhà cung cấp API về bản chất là tái sử dụng kết quả xử lý của một tiền tố prompt giống hệt giữa các request.
+
+<Quiz id="q-a7i-kv" />
+
+## Speculative decoding
+
+**Speculative decoding** (Leviathan, Kalman và Matias, ICML 2023):
+
+1. Mô hình **nháp** nhỏ, nhanh đoán trước γ token.
+2. Mô hình **đích** lớn chạy **một lượt** trên cả γ token để tính xác suất của chúng song song.
+3. Chấp nhận các token đầu đúng theo một quy tắc lấy mẫu từ chối; ở chỗ đầu tiên bị từ chối, lấy mẫu lại từ phân phối đã điều chỉnh rồi lặp.
+
+Quy tắc chấp nhận được thiết kế để **phân phối đầu ra giống hệt** khi chỉ dùng mô hình đích — không đổi kết quả, chỉ đổi tốc độ. Tốc độ phụ thuộc mô hình nháp đoán trúng bao nhiêu. Bài báo báo cáo: <Fact id="spec-speedup" />.
+
+<Quiz id="q-a7i-spec" />
+
+<Callout kind="field" title="Đo token/giây ở cả hai pha">
+Khi so cấu hình inference, tôi tách hai số: thời gian tới token đầu tiên (chủ yếu là prefill, tăng theo độ dài prompt) và token/giây khi decode. Một thay đổi có thể cải thiện số này mà làm xấu số kia. Người dùng chat cảm nhận cả hai; job xử lý hàng loạt chỉ quan tâm tổng thông lượng. Báo một con số "nhanh hơn X%" mà không nói pha nào thì gần như vô nghĩa.
+</Callout>

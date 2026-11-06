@@ -1,0 +1,87 @@
+---
+id: a5-eval-ops
+track: ai
+stage: a5
+order: 1
+title: { vi: "Eval trong vận hành: hồi quy, offline và online", en: "Evals in operation: regression, offline and online" }
+summary: "Bộ eval chỉ có giá trị khi chạy đều đặn. Offline: chạy bộ eval cố định trên mỗi thay đổi prompt, mô hình hay harness, chặn phát hành khi điểm tụt quá ngưỡng — có tính tới độ dao động ngẫu nhiên. Online: theo dõi tín hiệu trên lưu lượng thật, lấy mẫu để chấm, và đưa lỗi thật ngược về bộ eval offline."
+concepts: [online-offline-eval, prompt-regression]
+estMinutes: 35
+whyQuestion: "Nhà cung cấp ra mô hình mới, rẻ hơn và 'tốt hơn trên benchmark'. Làm sao biết đổi sang có an toàn cho sản phẩm của bạn trong một buổi chiều?"
+devMapping:
+  - finance: "Eval hồi quy prompt"
+    dev: "Test suite chạy trong CI cho mỗi pull request"
+    explanation: "Prompt, cấu hình mô hình và định nghĩa công cụ là code — đổi là phải chạy lại test."
+  - finance: "Eval online"
+    dev: "Monitoring + canary + A/B test"
+    explanation: "Offline không bao giờ phủ hết đầu vào thật; online bắt cái offline bỏ sót."
+  - finance: "Độ dao động giữa các lần chạy"
+    dev: "Test flaky — phải đo phân phối, không đo một lần"
+    explanation: "Đầu ra mô hình không tất định, nên điểm eval có sai số; so sánh phải vượt được sai số đó."
+pretest: [q-a5o-model-swap, q-a5o-noise]
+applications:
+  - id: app-a5o-ci
+    title: "Đưa eval vào CI"
+    context: "Bạn đã có bộ eval (bài trước) và repo chứa prompt dưới dạng file."
+    task: "Viết job CI chạy eval khi file prompt, cấu hình mô hình hoặc định nghĩa công cụ thay đổi; lưu điểm của nhánh chính làm mốc; chạy mỗi ví dụ vài lần để ước lượng dao động; fail job khi một tiêu chí tụt quá ngưỡng; in bảng các ví dụ đổi từ PASS sang FAIL."
+    deliverable: "Cấu hình CI + báo cáo so sánh mẫu trên một pull request thử."
+sources: [claude-develop-tests, anthropic-agent-evals]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả vòng đời một thay đổi prompt từ lúc sửa tới lúc chạy trên toàn bộ người dùng, và eval ở mỗi bước."
+  rubric:
+    - { id: trigger, criterion: "Mọi thay đổi prompt/mô hình/công cụ đều kích hoạt chạy lại bộ eval offline" }
+    - { id: noise, criterion: "Tính tới dao động: chạy nhiều lần, so khác biệt với sai số trước khi kết luận" }
+    - { id: gate, criterion: "Có ngưỡng chặn phát hành và xem lại từng ví dụ đổi PASS→FAIL" }
+    - { id: online, criterion: "Phát hành dần, theo dõi tín hiệu online, lấy mẫu chấm và đưa lỗi thật về bộ offline" }
+---
+
+<Callout kind="story" title="Bản sửa một dòng">
+Một kỹ sư thêm câu "Trả lời ngắn gọn hơn" vào system prompt của trợ lý nội bộ, thấy ổn trên vài câu, merge. Một tuần sau mới phát hiện các câu trả lời về quy trình hoàn tiền giờ bỏ mất bước cuối. Không có bước nào trong quy trình phát hành chạy lại bộ eval — vì "chỉ sửa một dòng prompt".
+</Callout>
+
+## Prompt là code
+
+Mọi thứ quyết định hành vi hệ thống — system prompt, mẫu prompt, phiên bản mô hình, tham số, định nghĩa công cụ, cách chia đoạn RAG — nên nằm trong repo, có phiên bản, và **mỗi thay đổi kích hoạt chạy lại eval**. Đây là kiểm thử hồi quy: không hỏi "bản mới có tốt không" mà hỏi "bản mới có làm hỏng thứ đang chạy tốt không".
+
+<Quiz id="q-a5o-model-swap" />
+
+## Offline: cổng chặn trước phát hành
+
+Một vòng offline điển hình:
+
+1. Chạy bộ eval cố định trên **bản hiện tại** (mốc) và **bản mới**.
+2. So sánh **theo từng tiêu chí**, không chỉ điểm tổng.
+3. Liệt kê ví dụ **đổi từ PASS sang FAIL** và đọc chúng — điểm tổng có thể giữ nguyên trong khi một nhóm ca quan trọng hỏng.
+4. Chặn phát hành nếu tiêu chí quan trọng tụt quá ngưỡng.
+
+Với agent, bài viết của Anthropic về eval cho agent nhấn mạnh việc **đọc transcript**, không chỉ nhìn điểm: điểm cho biết có hỏng, transcript cho biết hỏng vì sao.
+
+## Dao động: đừng đọc nhầm nhiễu thành tiến bộ
+
+Đầu ra mô hình không tất định, nên cùng một bộ eval chạy hai lần có thể cho hai điểm khác nhau. Trước khi kết luận "bản mới tốt hơn 2 điểm":
+
+- Chạy mỗi ví dụ **nhiều lần** và xem tỉ lệ đạt từng ví dụ.
+- Ước lượng sai số: với tỉ lệ đạt p trên n ví dụ, sai số chuẩn xấp xỉ √(p(1−p)/n). Khác biệt nhỏ hơn vài lần sai số chuẩn rất có thể chỉ là nhiễu.
+- Bộ eval nhỏ chỉ phát hiện được khác biệt lớn — muốn phân biệt khác biệt nhỏ thì cần nhiều ví dụ hơn.
+
+<Quiz id="q-a5o-noise" />
+
+## Online: những gì offline không thấy
+
+Bộ offline phản ánh những gì bạn *đã nghĩ tới*. Lưu lượng thật luôn có thứ mới. Các lớp theo dõi online:
+
+- **Tín hiệu ngầm**: người dùng hỏi lại, sửa câu trả lời, bỏ dở, chuyển sang người thật.
+- **Tín hiệu tường minh**: nút thích/không thích, báo lỗi.
+- **Chấm mẫu**: lấy ngẫu nhiên một phần nhỏ hội thoại thật (đã che dữ liệu nhạy cảm) cho giám khảo LLM đã hiệu chuẩn chấm theo rubric offline.
+- **Chỉ số vận hành**: độ trễ, chi phí, tỉ lệ lỗi gọi công cụ, tỉ lệ đầu ra sai định dạng.
+- **Phát hành dần / A/B**: cho bản mới một phần lưu lượng, so tín hiệu với bản cũ trước khi mở rộng.
+
+Vòng khép kín: lỗi tìm thấy online → thành ví dụ mới trong bộ offline → lần sau CI bắt được.
+
+<Quiz id="q-a5o-loop" />
+
+<Callout kind="field" title="Chia bộ eval thành tầng">
+Tôi giữ hai tầng: một bộ nhỏ (vài chục ca quan trọng nhất, chấm bằng code là chính) chạy trên mỗi pull request trong vài phút, và một bộ lớn chạy hằng đêm hoặc trước khi đổi mô hình. Bộ nhỏ để không ai lười chạy; bộ lớn để đủ ví dụ mà phân biệt được khác biệt nhỏ. Bộ nào cũng có "ca vàng" — những lỗi từng lọt ra production — và không ca vàng nào được phép đỏ.
+</Callout>

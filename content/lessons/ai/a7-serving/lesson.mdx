@@ -1,0 +1,91 @@
+---
+id: a7-serving
+track: ai
+stage: a7
+order: 1
+title: { vi: "Phục vụ mô hình ở quy mô lớn: batching, PagedAttention, hạ tầng", en: "Serving models at scale: batching, PagedAttention, infrastructure" }
+summary: "Một GPU phục vụ một request mỗi lần thì phần lớn thời gian bị bỏ phí. Gộp request (batching) tăng thông lượng; continuous batching thêm/bớt request ở từng bước sinh thay vì chờ cả lô xong; PagedAttention quản lý KV cache theo trang để nhét được nhiều request hơn. Quanh đó là hạ tầng: hàng đợi, autoscaling, định tuyến, giới hạn và giám sát theo độ trễ phân vị."
+concepts: [batching-throughput, serving-infrastructure]
+estMinutes: 40
+whyQuestion: "GPU báo dùng 30% nhưng request vẫn xếp hàng dài. Tài nguyên đang đi đâu, và tăng thông lượng thì độ trễ của từng người dùng ra sao?"
+facts:
+  - id: vllm-throughput
+    text: "Kết quả của vLLM (PagedAttention) theo tóm tắt bài báo, so với các hệ thống phục vụ hàng đầu năm 2023 như FasterTransformer và Orca"
+    value: "thông lượng tăng 2–4 lần ở cùng mức độ trễ; lãng phí bộ nhớ KV cache gần bằng 0"
+    sourceId: kwon-vllm-2023
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Batching"
+    dev: "Gom nhiều truy vấn vào một lượt I/O"
+    explanation: "Như gửi một câu SQL lấy nhiều hàng thay vì N câu: chi phí cố định mỗi lượt (đọc trọng số) chia cho nhiều request."
+  - finance: "PagedAttention"
+    dev: "Bộ nhớ ảo phân trang của hệ điều hành"
+    explanation: "KV cache cấp theo khối nhỏ không cần liền kề, nên không phải giữ chỗ cho độ dài tối đa."
+  - finance: "Độ trễ p95/p99"
+    dev: "SLO theo phân vị như mọi dịch vụ web"
+    explanation: "Trung bình che giấu những người dùng chờ lâu nhất."
+pretest: [q-a7s-batch, q-a7s-p95]
+applications:
+  - id: app-a7s-loadtest
+    title: "Load test một máy chủ inference"
+    context: "Bạn có một máy chủ inference mã nguồn mở có continuous batching chạy một mô hình nhỏ."
+    task: "Viết script gửi request với mức đồng thời tăng dần (1, 4, 16, 64) dùng prompt có độ dài thật; ghi thời gian tới token đầu, token/giây mỗi request, tổng token/giây, p50/p95; tìm mức đồng thời mà p95 vượt ngưỡng bạn đặt ra."
+    deliverable: "Biểu đồ thông lượng–độ trễ và mức đồng thời khuyến nghị kèm lý do."
+sources: [kwon-vllm-2023, claude-batch-processing, claude-streaming]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho đội vận hành cách một máy chủ inference hiện đại tăng thông lượng, và họ nên giám sát gì."
+  rubric:
+    - { id: batch, criterion: "Batching chia chi phí đọc trọng số cho nhiều request; continuous batching chèn request mới ở từng bước" }
+    - { id: paged, criterion: "PagedAttention cấp KV cache theo khối, giảm lãng phí, tăng số request cùng lúc" }
+    - { id: tradeoff, criterion: "Thông lượng tăng có thể làm tăng độ trễ từng request; đặt SLO theo phân vị" }
+    - { id: infra, criterion: "Hàng đợi, giới hạn, autoscaling theo hàng đợi/KV cache, định tuyến, giám sát TTFT, token/giây, lỗi" }
+---
+
+<Callout kind="story" title="GPU rảnh mà khách vẫn chờ">
+Một nhóm tự host mô hình, mỗi worker xử lý một request tới khi sinh xong rồi mới nhận request tiếp. Bảng điều khiển cho thấy GPU dùng rất thấp, hàng đợi thì dài. Thêm GPU giúp được một chút với hoá đơn gấp đôi. Vấn đề không nằm ở số GPU mà ở việc mỗi bước sinh chỉ phục vụ đúng một người.
+</Callout>
+
+## Vì sao cần batching
+
+Bài trước: bước decode đọc toàn bộ trọng số để sinh **một** token. Nếu cùng lượt đọc đó sinh token cho **nhiều request** thì chi phí đọc được chia đều — thông lượng tăng gần như miễn phí cho tới khi phép tính hoặc bộ nhớ trở thành giới hạn.
+
+- **Static batching**: gom một lô, chạy tới khi request dài nhất xong. Request ngắn xong sớm phải "ngồi chờ"; request mới phải đợi cả lô.
+- **Continuous batching** (batching ở mức từng bước): sau mỗi bước sinh, request nào xong thì rời lô, request mới vào ngay. GPU luôn bận với việc có ích.
+
+<Quiz id="q-a7s-batch" />
+
+## KV cache quyết định cỡ lô
+
+Số request chạy cùng lúc bị giới hạn bởi **bộ nhớ KV cache** (bài trước). Cách cũ giữ một vùng liền kề cho độ dài tối đa của mỗi request — phần lớn bỏ trống và phân mảnh.
+
+**PagedAttention** (Kwon và cộng sự, SOSP 2023 — hệ thống vLLM) mượn ý tưởng **bộ nhớ ảo phân trang**: KV cache chia thành các khối nhỏ cố định, cấp khi cần, không cần liền kề; các request có chung tiền tố có thể **dùng chung khối**. Theo bài báo: <Fact id="vllm-throughput" />. Đó là số so với các hệ thống năm 2023; các máy chủ inference ngày nay phần lớn đã áp dụng ý tưởng tương tự.
+
+## Thông lượng và độ trễ là đánh đổi
+
+Lô lớn hơn → tổng token/giây tăng, nhưng mỗi bước chậm hơn chút và request mới có thể chờ. Hai loại việc cần cấu hình khác nhau:
+
+| | Tương tác (chat) | Hàng loạt (offline) |
+|---|---|---|
+| Ưu tiên | Thời gian tới token đầu, token/giây mỗi người | Tổng thông lượng, chi phí |
+| Kỹ thuật | Streaming, giới hạn cỡ lô, ưu tiên | Lô lớn, chạy giờ thấp điểm |
+| Với API nhà cung cấp | Streaming (chặng A2) | Batch API (chặng A2) |
+
+Giám sát theo **phân vị** (p50, p95, p99), không theo trung bình.
+
+<Quiz id="q-a7s-p95" />
+
+## Hạ tầng quanh mô hình
+
+- **Hàng đợi và giới hạn**: giới hạn theo người dùng/khách hàng, từ chối sớm khi quá tải thay vì để mọi người cùng chậm.
+- **Autoscaling**: tín hiệu tốt hơn % dùng GPU là độ dài hàng đợi, mức dùng KV cache, p95 độ trễ. Khởi động một máy chủ mới phải nạp trọng số — tính thời gian đó vào kế hoạch.
+- **Định tuyến**: request có cùng tiền tố (cùng system prompt) về cùng máy để tận dụng cache tiền tố; việc dễ sang mô hình nhỏ, việc khó sang mô hình lớn.
+- **Giám sát**: thời gian tới token đầu, token/giây, tỉ lệ lỗi, độ dài đầu vào/đầu ra, chi phí mỗi request — và chất lượng (eval online, chặng A5).
+
+<Quiz id="q-a7s-autoscale" />
+
+<Callout kind="field" title="Tự host hay dùng API: tính đủ chi phí">
+Khi được hỏi có nên tự host, tôi lập bảng gồm cả những dòng hay bị quên: GPU chạy không tải giờ thấp điểm, thời gian kỹ sư vận hành và nâng cấp, chi phí đánh giá lại khi đổi mô hình, dự phòng khi một máy hỏng. So với giá API theo token cho cùng khối lượng — và nhớ rằng nhà cung cấp đã có sẵn batching, caching, batch API. Tự host thường đáng khi khối lượng lớn và ổn định, có yêu cầu dữ liệu không rời hạ tầng, hoặc cần một mô hình tuỳ biến mà API không có.
+</Callout>

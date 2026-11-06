@@ -1,0 +1,30 @@
+items:
+  - id: q-a7i-memory
+    type: numeric
+    conceptId: quantization
+    prompt: "Mô hình 13 tỉ tham số lượng tử hoá 4-bit. Bộ nhớ chỉ cho trọng số xấp xỉ bao nhiêu GB (1 GB = 10⁹ byte)?"
+    answer: 6.5
+    tolerance: { kind: abs, value: 0.05 }
+    unit: "GB"
+    explanation: "13 × 10⁹ × 4 / 8 = 6,5 × 10⁹ byte = 6,5 GB, chưa tính KV cache và bộ nhớ phụ."
+  - id: q-a7i-kv
+    type: mcq
+    conceptId: kv-cache
+    prompt: "Điều nào làm KV cache của một máy chủ phục vụ tăng lên? (chọn tất cả)"
+    options:
+      - { id: a, text: "Hội thoại dài hơn" }
+      - { id: b, text: "Nhiều request chạy đồng thời hơn" }
+      - { id: c, text: "Lượng tử hoá trọng số xuống 4-bit" }
+      - { id: d, text: "Mô hình có nhiều lớp hơn" }
+    correct: [a, b, d]
+    explanation: "KV cache ∝ số lớp × độ dài × số request; lượng tử hoá trọng số giảm bộ nhớ trọng số, không làm KV cache tăng."
+  - id: q-a7i-spec
+    type: mcq
+    conceptId: speculative-decoding
+    prompt: "Với speculative decoding theo đúng thuật toán, chất lượng đầu ra so với chỉ dùng mô hình lớn thế nào?"
+    options:
+      - { id: a, text: "Kém hơn một chút vì một phần token do mô hình nhỏ sinh" }
+      - { id: b, text: "Cùng phân phối đầu ra; chỉ tốc độ thay đổi, tuỳ mô hình nháp đoán trúng bao nhiêu" }
+      - { id: c, text: "Tốt hơn vì kết hợp hai mô hình" }
+    correct: [b]
+    explanation: "Quy tắc chấp nhận/lấy mẫu lại đảm bảo phân phối giống hệt mô hình đích."

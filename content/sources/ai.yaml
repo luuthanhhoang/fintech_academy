@@ -173,3 +173,56 @@ sources:
     url: https://doi.org/10.1109/TPAMI.2018.2889473
     publisher: Malkov & Yashunin / IEEE
     accessed: 2026-11-06
+  - id: claude-develop-tests
+    title: Define success criteria and build evaluations
+    url: https://platform.claude.com/docs/en/test-and-evaluate/develop-tests
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+    note: Nguyên tắc eval (sát việc thật, tự động hoá, ưu tiên số lượng) và so sánh chấm bằng code / người / LLM.
+  - id: zheng-judge-2023
+    title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena — NeurIPS 2023"
+    url: https://neurips.cc/virtual/2023/poster/73434
+    publisher: Zheng et al. / NeurIPS
+    accessed: 2026-11-06
+    note: Giám khảo LLM mạnh đạt mức đồng thuận với người trên 80% (ngang mức đồng thuận giữa người với người); nêu các thiên kiến như vị trí, độ dài.
+  - id: hu-lora-2022
+    title: "LoRA: Low-Rank Adaptation of Large Language Models — ICLR 2022"
+    url: https://mlanthology.org/iclr/2022/hu2022iclr-lora/
+    publisher: Hu et al. / ICLR
+    accessed: 2026-11-06
+  - id: dettmers-qlora-2023
+    title: "QLoRA: Efficient Finetuning of Quantized LLMs — NeurIPS 2023"
+    url: https://nips.cc/virtual/2023/oral/73855
+    publisher: Dettmers, Pagnoni, Holtzman & Zettlemoyer / NeurIPS
+    accessed: 2026-11-06
+  - id: rafailov-dpo-2023
+    title: "Direct Preference Optimization: Your Language Model is Secretly a Reward Model — NeurIPS 2023"
+    url: https://proceedings.neurips.cc/paper_files/paper/2023/hash/a85b405ed65c6477a4fe8302b5e06ce7-Abstract.html
+    publisher: Rafailov et al. / NeurIPS
+    accessed: 2026-11-06
+  - id: hinton-distill-2015
+    title: "Distilling the Knowledge in a Neural Network"
+    url: https://arxiv.org/abs/1503.02531
+    publisher: Hinton, Vinyals & Dean / arXiv
+    accessed: 2026-11-06
+  - id: kwon-vllm-2023
+    title: "Efficient Memory Management for Large Language Model Serving with PagedAttention — SOSP 2023"
+    url: https://doi.org/10.1145/3600006.3613165
+    publisher: Kwon et al. / ACM SOSP
+    accessed: 2026-11-06
+    note: vLLM; số liệu so với các hệ thống phục vụ thời điểm 2023.
+  - id: leviathan-spec-2023
+    title: "Fast Inference from Transformers via Speculative Decoding — ICML 2023"
+    url: https://proceedings.mlr.press/v202/leviathan23a.html
+    publisher: Leviathan, Kalman & Matias / PMLR
+    accessed: 2026-11-06
+  - id: greshake-2023
+    title: "Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection — AISec 2023"
+    url: https://arxiv.org/abs/2302.12173
+    publisher: Greshake et al. / ACM AISec
+    accessed: 2026-11-06
+  - id: claude-mitigate-jailbreaks
+    title: Mitigate jailbreaks and prompt injections
+    url: https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06

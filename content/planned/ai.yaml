@@ -1,10 +1,2 @@
 track: ai
-lessons:
-  - { id: "a5-evals", stage: "a5", order: 0, title: { vi: "Dựng bộ eval", en: "Building evals" }, concepts: [eval-datasets, llm-as-judge] }
-  - { id: "a5-eval-ops", stage: "a5", order: 1, title: { vi: "Eval trong vận hành", en: "Evals in operation" }, concepts: [online-offline-eval, prompt-regression] }
-  - { id: "a6-finetuning", stage: "a6", order: 0, title: { vi: "Khi nào nên fine-tune", en: "When to fine-tune" }, concepts: [supervised-finetuning, preference-tuning] }
-  - { id: "a6-efficient-ft", stage: "a6", order: 1, title: { vi: "LoRA và chưng cất", en: "LoRA and distillation" }, concepts: [lora-peft, distillation] }
-  - { id: "a7-inference", stage: "a7", order: 0, title: { vi: "Inference nhanh và rẻ", en: "Fast and cheap inference" }, concepts: [quantization, kv-cache, speculative-decoding] }
-  - { id: "a7-serving", stage: "a7", order: 1, title: { vi: "Phục vụ mô hình ở quy mô lớn", en: "Serving models at scale" }, concepts: [batching-throughput, serving-infrastructure] }
-  - { id: "a8-attacks", stage: "a8", order: 0, title: { vi: "Prompt injection và jailbreak", en: "Prompt injection and jailbreaks" }, concepts: [prompt-injection, jailbreaks] }
-  - { id: "a8-defense", stage: "a8", order: 1, title: { vi: "Guardrail, quyền riêng tư và red teaming", en: "Guardrails, privacy and red teaming" }, concepts: [guardrails, data-privacy-llm, red-teaming] }
+lessons: []

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a5o-gate
+    conceptId: prompt-regression
+    prompt: "Bản prompt mới: điểm tổng 86% (bản cũ 85%), nhưng tiêu chí 'giữ đủ mã đơn hàng' tụt từ 97% xuống 88% trên 200 ví dụ. Có nên phát hành không? Lập luận bằng sai số."
+    hint: "Tính sai số chuẩn cho tiêu chí đó; so với mức tụt 9 điểm."
+    solution: "Không. Với p ≈ 0,9 và n = 200, sai số chuẩn ≈ √(0,9 × 0,1 / 200) ≈ 2,1 điểm %; mức tụt 9 điểm vượt xa nhiễu. Tăng 1 điểm tổng nằm trong nhiễu. Bước tiếp: đọc các ví dụ đổi PASS→FAIL ở tiêu chí mã đơn hàng, sửa prompt, chạy lại."
+  - id: ex-a5o-online
+    conceptId: online-offline-eval
+    prompt: "Thiết kế kế hoạch phát hành dần cho bản prompt mới của chatbot hỗ trợ: các bước, tín hiệu theo dõi và điều kiện quay lui."
+    hint: "Phần trăm lưu lượng tăng dần; tín hiệu ngầm, chấm mẫu, chỉ số vận hành."
+    solution: "Bước 1: offline đạt cổng. Bước 2: 5% lưu lượng trong một khoảng thời gian đủ số hội thoại; so với nhóm bản cũ: tỉ lệ hỏi lại, chuyển người thật, bỏ dở; chấm mẫu bằng giám khảo đã hiệu chuẩn; độ trễ, chi phí, lỗi định dạng. Bước 3: nếu không tệ hơn, mở 25% rồi 100%. Quay lui khi bất kỳ tín hiệu chính nào tệ hơn rõ rệt so với nhóm đối chứng hoặc có lỗi nghiêm trọng. Mọi lỗi tìm thấy thêm vào bộ eval offline."

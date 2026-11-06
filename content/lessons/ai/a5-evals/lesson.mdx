@@ -1,0 +1,110 @@
+---
+id: a5-evals
+track: ai
+stage: a5
+order: 0
+title: { vi: "Dựng bộ eval: dữ liệu, tiêu chí và giám khảo", en: "Building evals: datasets, criteria and graders" }
+summary: "Eval là bộ ví dụ đại diện kèm tiêu chí chấm, chạy tự động, để biết một thay đổi prompt hay mô hình làm hệ thống tốt lên hay xấu đi. Bắt đầu từ tiêu chí thành công đo được; ưu tiên chấm bằng code, dùng LLM chấm theo rubric khi cần phán đoán, và hiệu chuẩn giám khảo LLM với chấm của người trước khi tin nó."
+concepts: [eval-datasets, llm-as-judge]
+estMinutes: 40
+whyQuestion: "Bạn sửa prompt và thấy 'có vẻ tốt hơn' trên 5 câu thử tay. Bằng chứng đó có đủ để đưa lên production không — và nếu không, cần gì?"
+facts:
+  - id: judge-agreement
+    text: "Mức đồng thuận giữa giám khảo GPT-4 và người chấm trong nghiên cứu MT-Bench / Chatbot Arena"
+    value: "trên 80%, ngang mức đồng thuận giữa người với người"
+    sourceId: zheng-judge-2023
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Bộ eval"
+    dev: "Bộ test hồi quy cho hành vi xác suất"
+    explanation: "Giống unit test nhưng chấm điểm theo tỉ lệ đạt trên nhiều ví dụ thay vì đạt/trượt từng ca."
+  - finance: "Rubric"
+    dev: "Đặc tả kiểm thử viết bằng lời"
+    explanation: "Biến 'câu trả lời tốt' thành các tiêu chí cụ thể, kiểm được, để người và máy chấm nhất quán."
+  - finance: "Giám khảo LLM"
+    dev: "Một bộ kiểm tra có sai số — cần đo độ chính xác của chính nó"
+    explanation: "Như một classifier: phải đo đồng thuận với nhãn của người trước khi dùng để ra quyết định."
+pretest: [q-a5e-five, q-a5e-grader]
+applications:
+  - id: app-a5e-first-eval
+    title: "Bộ eval đầu tiên cho một tính năng LLM của bạn"
+    context: "Bạn có một tính năng LLM đang chạy (tóm tắt ticket, phân loại email, trả lời FAQ...)."
+    task: "Viết 3–5 tiêu chí thành công đo được; gom 50–100 ví dụ từ dữ liệu thật (có ca khó và ca biên); với mỗi tiêu chí chọn cách chấm (code / LLM / người); viết rubric cho giám khảo LLM; tự chấm tay 30 ví dụ và đo tỉ lệ đồng thuận với giám khảo."
+    deliverable: "Bộ dữ liệu + script chạy eval in ra điểm theo từng tiêu chí + báo cáo đồng thuận giám khảo–người."
+sources: [claude-develop-tests, zheng-judge-2023, anthropic-agent-evals]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho đồng nghiệp cách dựng một bộ eval từ đầu, và vì sao không được tin ngay điểm của giám khảo LLM."
+  rubric:
+    - { id: criteria, criterion: "Bắt đầu từ tiêu chí thành công cụ thể, đo được, gắn với mục tiêu sản phẩm" }
+    - { id: data, criterion: "Dữ liệu đại diện việc thật, có ca biên; ưu tiên số lượng ví dụ chấm tự động" }
+    - { id: grader, criterion: "Chọn cách chấm: code khi được, LLM theo rubric khi cần phán đoán, người khi bắt buộc" }
+    - { id: calibrate, criterion: "Hiệu chuẩn giám khảo LLM với nhãn của người và biết các thiên kiến (vị trí, độ dài, tự ưu ái)" }
+---
+
+<Callout kind="story" title="Năm câu thử tay">
+Một nhóm sửa prompt tóm tắt ticket hỗ trợ, thử 5 ticket, cả nhóm gật gù "rõ ràng hay hơn". Hai ngày sau phát hành, bộ phận hỗ trợ báo tóm tắt mới hay bỏ sót mã đơn hàng — thứ chưa từng xuất hiện trong 5 ticket thử. Không ai biết bản cũ có làm tốt hơn ở điểm đó không, vì không có con số nào để so.
+</Callout>
+
+## Eval là gì
+
+Một bộ eval gồm ba thứ: **dữ liệu** (đầu vào đại diện), **tiêu chí** (thế nào là đạt), và **cách chấm** (ai/cái gì quyết định đạt hay không). Chạy tự động trên mỗi thay đổi, nó cho bạn một con số để so — thay cho cảm giác.
+
+<Quiz id="q-a5e-five" />
+
+## Bắt đầu từ tiêu chí thành công
+
+Tài liệu Anthropic về xây eval yêu cầu tiêu chí phải **cụ thể**, **đo được**, **khả thi** và **liên quan** tới sản phẩm. "Tóm tắt tốt" không phải tiêu chí; "giữ đủ mã đơn hàng, tên khách và yêu cầu chính; không quá 80 từ; không thêm thông tin không có trong ticket" là tiêu chí. Thường cần nhiều tiêu chí cùng lúc (chính xác, giọng điệu, độ dài, độ trễ, chi phí).
+
+## Dữ liệu: sát việc thật, nhiều hơn là đẹp hơn
+
+Nguyên tắc từ cùng tài liệu: thiết kế ví dụ **sát phân bố việc thật**, có cả **ca biên** (đầu vào rỗng, quá dài, mơ hồ, sai định dạng, cố tình lừa); **tự động hoá** chấm khi có thể; và **ưu tiên số lượng hơn chất lượng** — nhiều ví dụ chấm tự động hơi thô thường có ích hơn vài ví dụ chấm tay thật kỹ.
+
+Nguồn ví dụ tốt nhất là log thật (đã che dữ liệu nhạy cảm). Mỗi lỗi người dùng báo về → thêm vào bộ eval, như thêm test cho bug.
+
+## Ba cách chấm
+
+| Cách chấm | Ưu | Nhược | Dùng khi |
+|---|---|---|---|
+| **Code** (khớp chính xác, regex, parse JSON, kiểm số) | Nhanh, tin cậy, rẻ | Thiếu sắc thái | Đáp án có dạng xác định |
+| **LLM theo rubric** | Nhanh, linh hoạt, mở rộng được | Có sai số, phải kiểm độ tin cậy trước | Cần phán đoán (đúng ý, giọng, đầy đủ) |
+| **Người** | Linh hoạt, chất lượng cao nhất | Chậm, đắt | Hiệu chuẩn, ca khó; tránh nếu có thể |
+
+Anthropic khuyên: chọn cách chấm nhanh, tin cậy nhất mà vẫn đo được điều cần đo; với LLM, *kiểm độ tin cậy trước rồi mới mở rộng*.
+
+<Quiz id="q-a5e-grader" />
+
+## LLM làm giám khảo
+
+Nghiên cứu *Judging LLM-as-a-Judge* (Zheng và cộng sự, NeurIPS 2023) đo được: <Fact id="judge-agreement" />. Cùng bài báo chỉ ra các thiên kiến cần biết:
+
+- **Thiên vị vị trí**: khi so hai câu trả lời, giám khảo có xu hướng chọn câu đứng ở một vị trí nhất định → chấm hai lần đảo thứ tự.
+- **Thiên vị độ dài**: câu dài, nhiều chữ dễ được chấm cao hơn dù không tốt hơn.
+- **Tự ưu ái**: mô hình có thể ưu ái câu trả lời do chính nó viết.
+- **Giới hạn ở toán/suy luận**: giám khảo có thể chấm sai bài toán mà chính nó không giải đúng → đưa đáp án tham chiếu vào prompt chấm.
+
+Cách viết prompt chấm theo hướng dẫn Anthropic: **rubric chi tiết, rõ ràng**; yêu cầu đầu ra **cụ thể** (đạt/không đạt, hoặc thang 1–5) để dễ tổng hợp; **cho mô hình suy luận trước** khi cho điểm.
+
+```text
+<rubric>
+Câu trả lời ĐẠT khi: (1) có đủ mã đơn hàng xuất hiện trong ticket,
+(2) không chứa thông tin không có trong ticket, (3) không quá 80 từ.
+</rubric>
+<ticket>...</ticket>
+<summary>...</summary>
+Suy nghĩ từng tiêu chí, rồi trả lời trong thẻ <verdict> bằng PASS hoặc FAIL.
+```
+
+<Quiz id="q-a5e-bias" />
+
+## Hiệu chuẩn giám khảo
+
+Trước khi tin điểm giám khảo: tự chấm tay một mẫu (vài chục ví dụ), chạy giám khảo trên cùng mẫu, đo **tỉ lệ đồng thuận**; đọc kỹ các ca bất đồng để sửa rubric. Lặp tới khi đồng thuận đủ cao cho quyết định bạn cần đưa ra. Mức 80% trong bài báo là trên bộ dữ liệu của họ — của bạn phải tự đo.
+
+<Quiz id="q-a5e-agree" />
+
+<Callout kind="field" title="Một tiêu chí, một giám khảo">
+Tôi tránh nhồi mọi tiêu chí vào một lời chấm "cho điểm 1–10 tổng thể": điểm tổng thể khó hiệu chuẩn và không nói lỗi ở đâu. Tách mỗi tiêu chí thành một kiểm tra riêng — cái nào làm bằng code được thì làm bằng code (độ dài, có mã đơn hàng không), phần còn lại mỗi tiêu chí một câu hỏi PASS/FAIL cho giám khảo. Khi điểm tụt, tôi biết ngay tụt ở tiêu chí nào.
+</Callout>

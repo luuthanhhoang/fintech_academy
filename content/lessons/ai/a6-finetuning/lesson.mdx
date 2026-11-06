@@ -1,0 +1,102 @@
+---
+id: a6-finetuning
+track: ai
+stage: a6
+order: 0
+title: { vi: "Khi nào nên fine-tune: SFT và tinh chỉnh theo sở thích", en: "When to fine-tune: SFT and preference tuning" }
+summary: "Fine-tuning thay đổi trọng số mô hình bằng dữ liệu của bạn. SFT dạy mô hình bắt chước cặp đầu vào–đầu ra mẫu; tinh chỉnh theo sở thích (RLHF, DPO) dạy mô hình chọn câu trả lời người ta thích hơn trong một cặp. Fine-tuning giỏi thay đổi hình thức và hành vi lặp lại, kém trong việc nạp kiến thức mới hay thay đổi thường xuyên — thử prompt, ví dụ mẫu và RAG trước, có bộ eval rồi mới fine-tune."
+concepts: [supervised-finetuning, preference-tuning]
+estMinutes: 40
+whyQuestion: "Sếp muốn 'fine-tune mô hình trên toàn bộ tài liệu công ty để nó biết hết'. Đó có phải cách đúng — và nếu không thì fine-tuning hợp với bài toán nào?"
+facts:
+  - id: instructgpt-preference-ft
+    text: "Kết quả đánh giá của người trong nghiên cứu InstructGPT (SFT + RLHF) trên phân phối prompt của họ"
+    value: "InstructGPT 1,3 tỉ tham số được ưa thích hơn GPT-3 175 tỉ tham số"
+    sourceId: ouyang-2022
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Prompt / few-shot"
+    dev: "Cấu hình lúc chạy"
+    explanation: "Đổi ngay, không cần huấn luyện, dễ quay lui."
+  - finance: "Fine-tuning"
+    dev: "Biên dịch hành vi vào trong binary"
+    explanation: "Chạy gọn hơn (prompt ngắn hơn) nhưng mỗi lần đổi phải huấn luyện lại, đánh giá lại, phát hành lại."
+  - finance: "Dữ liệu sở thích"
+    dev: "Code review: không viết lại từ đầu, chỉ chọn bản tốt hơn"
+    explanation: "So sánh hai câu trả lời dễ và nhất quán hơn viết câu trả lời hoàn hảo."
+pretest: [q-a6f-knowledge, q-a6f-dpo]
+applications:
+  - id: app-a6f-decision
+    title: "Phiếu quyết định: prompt, RAG hay fine-tune"
+    context: "Một tính năng LLM trong công việc của bạn đang có vấn đề chất lượng."
+    task: "Phân loại vấn đề (thiếu kiến thức, sai định dạng, sai giọng, không theo quy tắc, quá chậm/đắt); liệt kê cách đã thử (prompt, ví dụ mẫu, RAG) và điểm eval của mỗi cách; nếu đề xuất fine-tune: nguồn dữ liệu huấn luyện, số ví dụ ước tính, cách tách tập eval, chi phí duy trì khi mô hình nền đổi phiên bản."
+    deliverable: "Một trang quyết định có số đo của các phương án đã thử."
+sources: [ouyang-2022, rafailov-dpo-2023, claude-prompting-best-practices]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích khác biệt giữa SFT, RLHF và DPO, và khi nào bạn không fine-tune."
+  rubric:
+    - { id: sft, criterion: "SFT: huấn luyện tiếp trên cặp đầu vào–đầu ra mẫu, mô hình học bắt chước đầu ra" }
+    - { id: pref, criterion: "Sở thích: dữ liệu là cặp câu tốt/kém; RLHF qua mô hình thưởng + học tăng cường, DPO tối ưu trực tiếp trên cặp" }
+    - { id: when, criterion: "Fine-tune hợp với hình thức/hành vi lặp lại; kiến thức mới hay thay đổi nên dùng RAG" }
+    - { id: eval, criterion: "Cần bộ eval và tập kiểm tra tách riêng trước khi fine-tune; tính chi phí duy trì" }
+---
+
+<Callout kind="story" title="Mô hình 'biết hết' tài liệu">
+Một nhóm fine-tune mô hình trên toàn bộ wiki nội bộ. Mô hình nói đúng giọng công ty, dùng đúng thuật ngữ — rồi tự tin trả lời sai mức phụ cấp vừa đổi tháng trước, vì wiki đã cập nhật nhưng trọng số thì không. Muốn sửa phải huấn luyện lại. Một hệ thống RAG chỉ cần lập chỉ mục lại trang wiki đó.
+</Callout>
+
+## Fine-tuning làm gì
+
+Mô hình nền đã học dự đoán token tiếp theo trên lượng văn bản khổng lồ (chặng A1). **Fine-tuning** là huấn luyện tiếp, trên dữ liệu nhỏ hơn nhiều của bạn, để điều chỉnh hành vi. Hai họ chính:
+
+- **SFT (fine-tuning có giám sát)**: dữ liệu là cặp *đầu vào → đầu ra mong muốn*; mô hình học tăng xác suất của đầu ra mẫu. Thường chỉ tính loss trên phần đầu ra, không trên prompt.
+- **Tinh chỉnh theo sở thích**: dữ liệu là *một đầu vào + hai câu trả lời, câu nào được ưa hơn*; mô hình học nghiêng về câu được ưa.
+
+## Khi nào nên — và không nên
+
+| Vấn đề | Thường giải bằng |
+|---|---|
+| Thiếu kiến thức, kiến thức hay thay đổi, cần trích dẫn | RAG (chặng A3) |
+| Sai định dạng đầu ra | Structured outputs, ví dụ mẫu (chặng A2) |
+| Không theo quy tắc, giọng chưa đúng | Prompt rõ hơn, ví dụ mẫu |
+| Hành vi đúng nhưng cần prompt rất dài, lặp lại trên lượng lớn request; muốn mô hình nhỏ hơn làm được việc hẹp | Fine-tuning / chưng cất (bài sau) |
+
+Lý do kiến thức đi với RAG: kiến thức trong trọng số không cập nhật được nếu không huấn luyện lại, không trích dẫn được nguồn, và mô hình vẫn có thể bịa (bài ảo giác). Fine-tuning mạnh nhất ở **hình thức và hành vi** — làm một việc hẹp theo một kiểu nhất quán.
+
+Điều kiện tiên quyết: **bộ eval** (chặng A5) và **tập kiểm tra tách riêng** không dùng để huấn luyện. Không có hai thứ đó thì không biết fine-tune có giúp không.
+
+<Quiz id="q-a6f-knowledge" />
+
+## Dữ liệu SFT
+
+```jsonl
+{"messages": [{"role": "user", "content": "Ticket: ..."}, {"role": "assistant", "content": "Mã đơn: ...; Vấn đề: ...; Đề xuất: ..."}]}
+```
+
+- **Chất lượng hơn số lượng thô**: mô hình bắt chước cả lỗi trong ví dụ.
+- **Phủ phân bố thật**, có ca biên — như bộ eval.
+- **Nhất quán**: cùng loại đầu vào, cùng kiểu đầu ra.
+- Định dạng dữ liệu cụ thể tuỳ nhà cung cấp/thư viện — đọc tài liệu của công cụ bạn dùng.
+
+## Tinh chỉnh theo sở thích: RLHF và DPO
+
+**InstructGPT** (Ouyang và cộng sự, NeurIPS 2022) làm theo ba bước: SFT trên minh hoạ của người → huấn luyện **mô hình thưởng** từ việc người xếp hạng các đầu ra → tối ưu mô hình bằng **học tăng cường** (RLHF) theo mô hình thưởng. Kết quả đáng nhớ: <Fact id="instructgpt-preference-ft" /> — hậu huấn luyện đúng cách có thể quan trọng hơn kích thước.
+
+**DPO** (Rafailov và cộng sự, NeurIPS 2023) cho thấy có thể bỏ mô hình thưởng riêng và vòng học tăng cường: tối ưu trực tiếp một hàm loss phân loại trên các cặp (câu được ưa, câu bị loại), so với một mô hình tham chiếu cố định. Các tác giả mô tả DPO ổn định, hiệu quả, nhẹ về tính toán và không cần lấy mẫu từ mô hình trong lúc huấn luyện.
+
+<Quiz id="q-a6f-dpo" />
+
+## Cái giá phải trả
+
+- **Duy trì**: mô hình nền ra phiên bản mới → dữ liệu còn đó nhưng phải huấn luyện và đánh giá lại.
+- **Quên bớt**: tối ưu mạnh cho việc hẹp có thể làm kém khả năng khác — eval phải đo cả những việc ngoài phạm vi fine-tune.
+- **Dữ liệu nhạy cảm**: thứ gì vào dữ liệu huấn luyện có thể bị mô hình tái hiện; che trước khi huấn luyện (chặng A8).
+
+<Quiz id="q-a6f-holdout" />
+
+<Callout kind="field" title="Thứ tự tôi thử">
+Tôi gần như luôn đi theo thứ tự: prompt rõ ràng → thêm ví dụ mẫu → RAG nếu là chuyện kiến thức → mô hình mạnh hơn → và chỉ khi đã có số đo của tất cả các bước trên mới tính tới fine-tune. Lý do không phải fine-tune kém, mà vì mỗi bước trước rẻ hơn, nhanh hơn và quay lui được ngay. Bộ ví dụ gom được trong quá trình đó cũng chính là dữ liệu SFT nếu cuối cùng cần đến.
+</Callout>

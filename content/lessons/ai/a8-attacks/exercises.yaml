@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a8a-map
+    conceptId: prompt-injection
+    prompt: "Agent hỗ trợ lập trình đọc issue GitHub công khai, đọc repo, chạy lệnh shell và tạo pull request. Liệt kê các đường vào injection và hành động nguy hiểm nhất nếu bị lừa."
+    hint: "Ai viết được nội dung agent đọc? Agent làm được gì?"
+    solution: "Đường vào: nội dung issue và comment (người lạ viết được), file trong repo (README, comment code, file cấu hình từ dependency), output lệnh shell, trang web tài liệu được tải. Hành động nguy hiểm: chạy lệnh đọc biến môi trường/khoá rồi gửi ra mạng; sửa CI hoặc thêm dependency độc; tạo PR chứa backdoor; xoá dữ liệu. Tổ hợp cần cắt: nội dung từ issue công khai + quyền đọc bí mật + quyền mạng/push."
+  - id: ex-a8a-jailbreak
+    conceptId: jailbreaks
+    prompt: "Chatbot của bạn chặn yêu cầu bằng danh sách từ khoá cấm. Giải thích vì sao cách này yếu và nêu hướng thay thế."
+    hint: "Diễn đạt lại, ngôn ngữ khác, chia nhỏ."
+    solution: "Từ khoá cố định bị vượt bằng diễn đạt lại, viết sai chính tả, ngôn ngữ khác, mã hoá hoặc chia yêu cầu thành nhiều bước vô hại. Hướng thay thế: phân loại theo ý định bằng một mô hình nhẹ có đầu ra cấu trúc; system prompt nêu rõ ranh giới và cách từ chối; theo dõi người dùng lặp lại hành vi vượt rào; giám sát đầu ra; và kiểm thử bằng bộ red team được cập nhật liên tục."

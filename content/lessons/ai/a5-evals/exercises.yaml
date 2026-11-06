@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a5e-criteria
+    conceptId: eval-datasets
+    prompt: "Viết lại tiêu chí 'chatbot trả lời khách hàng lịch sự và đúng' thành 4 tiêu chí đo được, và ghi cách chấm cho mỗi tiêu chí."
+    hint: "Tách 'đúng' và 'lịch sự'; cái nào kiểm được bằng code?"
+    solution: "(1) Mọi chính sách/con số nêu ra khớp tài liệu chính sách — LLM theo rubric kèm tài liệu tham chiếu. (2) Khi không có thông tin, trả lời 'không biết' và chuyển người thật thay vì bịa — chấm trên bộ câu hỏi không có đáp án, LLM PASS/FAIL. (3) Không chứa từ ngữ trong danh sách cấm, không quá 150 từ — code. (4) Giọng điệu lịch sự theo hướng dẫn thương hiệu — LLM theo rubric, hiệu chuẩn với 30 mẫu chấm tay."
+  - id: ex-a5e-judge
+    conceptId: llm-as-judge
+    prompt: "Giám khảo LLM của bạn chấm câu trả lời dài cao hơn hẳn câu ngắn, kể cả khi câu ngắn đúng hơn theo nhãn của người. Phân tích và đề xuất cách sửa."
+    hint: "Thiên kiến nào? Rubric nói gì về độ dài?"
+    solution: "Đây là thiên vị độ dài. Sửa: (1) rubric ghi rõ độ dài không phải tiêu chí, thông tin thừa là điểm trừ; (2) tách thành các câu hỏi PASS/FAIL theo từng tiêu chí thay vì điểm tổng; (3) đưa đáp án tham chiếu vào prompt; (4) đo lại đồng thuận với nhãn người trên mẫu có cả câu ngắn đúng và câu dài sai, xác nhận độ lệch đã giảm."

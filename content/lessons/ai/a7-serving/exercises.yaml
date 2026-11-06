@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a7s-capacity
+    conceptId: batching-throughput
+    prompt: "GPU có 80 GB; trọng số chiếm 16 GB; dành 8 GB cho bộ nhớ phụ. Mỗi request trung bình cần 1,2 GB KV cache. Cấp theo kiểu giữ chỗ cho độ dài tối đa thì mỗi request giữ 4 GB. Mỗi cách phục vụ được tối đa bao nhiêu request cùng lúc?"
+    hint: "Bộ nhớ còn lại cho KV cache chia cho mức mỗi request."
+    solution: "Còn lại 80 − 16 − 8 = 56 GB. Giữ chỗ tối đa: 56 / 4 = 14 request. Cấp theo nhu cầu (kiểu phân trang): 56 / 1,2 ≈ 46 request. Đây là lý do quản lý KV cache theo trang tăng mạnh thông lượng: cùng phần cứng, nhiều request hơn trong lô."
+  - id: ex-a7s-design
+    conceptId: serving-infrastructure
+    prompt: "Thiết kế hạ tầng cho hệ thống vừa có chat cho nhân viên (giờ hành chính) vừa có job tóm tắt hàng nghìn tài liệu mỗi đêm."
+    hint: "Tách luồng; tín hiệu scale; định tuyến; giám sát."
+    solution: "Hai luồng: (1) tương tác — streaming, giới hạn cỡ lô để giữ p95 thời gian tới token đầu, giới hạn theo người dùng, autoscale theo hàng đợi/p95, giữ tối thiểu một số máy trong giờ hành chính; (2) hàng loạt — hàng đợi riêng, lô lớn, chạy ban đêm trên chính các máy rảnh, hoặc dùng batch API của nhà cung cấp. Định tuyến: request cùng system prompt về cùng máy để tận dụng cache tiền tố. Giám sát: thời gian tới token đầu, token/giây, lỗi, chi phí mỗi tài liệu, và eval online lấy mẫu."

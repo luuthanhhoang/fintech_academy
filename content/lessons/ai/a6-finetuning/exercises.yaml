@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a6f-diagnose
+    conceptId: supervised-finetuning
+    prompt: "Với từng vấn đề sau, chọn giải pháp đầu tiên nên thử và giải thích: (1) mô hình không biết chính sách bảo hành mới; (2) đầu ra đôi khi không phải JSON hợp lệ; (3) prompt dài 6.000 token gồm 40 ví dụ, chạy 5 triệu request/tháng, chất lượng đã đạt."
+    hint: "Kiến thức / định dạng / chi phí của hành vi đã đúng."
+    solution: "(1) RAG hoặc đưa tài liệu chính sách vào prompt — kiến thức thay đổi, cần trích dẫn. (2) Structured outputs/strict tool use — ràng buộc định dạng ở tầng giải mã, không cần huấn luyện. (3) Ứng viên fine-tuning (hoặc trước đó là prompt caching): hành vi đã đúng và ổn định, 40 ví dụ chính là dữ liệu khởi đầu; fine-tune một mô hình nhỏ để bỏ phần ví dụ khỏi prompt, so điểm eval và chi phí trước khi chuyển."
+  - id: ex-a6f-pairs
+    conceptId: preference-tuning
+    prompt: "Bạn muốn trợ lý hỗ trợ khách hàng bớt dài dòng và luôn đề xuất bước tiếp theo. Mô tả cách thu thập dữ liệu sở thích và cách kiểm tra kết quả."
+    hint: "Một prompt, hai câu trả lời; ai chọn; đo gì."
+    solution: "Lấy prompt thật (đã che dữ liệu); sinh hai câu trả lời cho mỗi prompt (từ mô hình hiện tại với cài đặt khác nhau); người chấm theo hướng dẫn rõ ràng (ngắn gọn, có bước tiếp theo, không sai thông tin) chọn câu tốt hơn — đo đồng thuận giữa người chấm trên một mẫu. Huấn luyện DPO trên các cặp. Kiểm tra: trên tập tách riêng đo độ dài trung bình, tỉ lệ có bước tiếp theo, tỉ lệ đúng thông tin; và bộ eval chung để chắc không suy giảm ở việc khác."

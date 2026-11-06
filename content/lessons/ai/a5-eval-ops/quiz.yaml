@@ -1,0 +1,30 @@
+items:
+  - id: q-a5o-model-swap
+    type: mcq
+    conceptId: prompt-regression
+    prompt: "Bạn định đổi sang phiên bản mô hình mới. Việc nào nên làm trước khi đổi cho mọi người dùng?"
+    options:
+      - { id: a, text: "Tin vào điểm benchmark công khai của mô hình mới" }
+      - { id: b, text: "Chạy bộ eval của chính sản phẩm trên cả mô hình cũ và mới, so theo từng tiêu chí và đọc các ca PASS→FAIL" }
+      - { id: c, text: "Thử vài câu bằng tay" }
+    correct: [b]
+    explanation: "Benchmark công khai đo việc khác việc của bạn; chỉ bộ eval của sản phẩm trả lời được câu hỏi 'có hỏng gì không'."
+  - id: q-a5o-noise
+    type: numeric
+    conceptId: prompt-regression
+    prompt: "Bộ eval 100 ví dụ, tỉ lệ đạt p = 0,8. Sai số chuẩn xấp xỉ √(p(1−p)/n) là bao nhiêu điểm phần trăm?"
+    answer: 4
+    tolerance: { kind: abs, value: 0.1 }
+    unit: "điểm %"
+    explanation: "√(0,8 × 0,2 / 100) = √0,0016 = 0,04 = 4 điểm %. Một chênh lệch 2 điểm giữa hai bản rất có thể chỉ là nhiễu."
+  - id: q-a5o-loop
+    type: mcq
+    conceptId: online-offline-eval
+    prompt: "Tín hiệu online nào cho thấy câu trả lời có thể không giải quyết được vấn đề, dù người dùng không bấm 'không thích'? (chọn tất cả)"
+    options:
+      - { id: a, text: "Người dùng hỏi lại cùng câu hỏi bằng cách diễn đạt khác" }
+      - { id: b, text: "Người dùng chuyển sang chat với nhân viên ngay sau câu trả lời" }
+      - { id: c, text: "Độ trễ phản hồi thấp" }
+      - { id: d, text: "Người dùng bỏ dở cuộc hội thoại giữa chừng" }
+    correct: [a, b, d]
+    explanation: "Hỏi lại, chuyển người thật, bỏ dở là tín hiệu ngầm của thất bại; độ trễ thấp là chỉ số vận hành, không nói về chất lượng."

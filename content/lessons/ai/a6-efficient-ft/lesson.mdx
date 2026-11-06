@@ -1,0 +1,101 @@
+---
+id: a6-efficient-ft
+track: ai
+stage: a6
+order: 1
+title: { vi: "Fine-tune tiết kiệm: LoRA, QLoRA và chưng cất", en: "Efficient fine-tuning: LoRA, QLoRA and distillation" }
+summary: "Fine-tune toàn bộ tham số của mô hình lớn tốn bộ nhớ và lưu trữ khổng lồ. LoRA đóng băng trọng số gốc và chỉ học hai ma trận hạng thấp cộng vào; QLoRA làm điều đó trên mô hình gốc đã lượng tử hoá 4-bit. Chưng cất đi hướng khác: huấn luyện một mô hình nhỏ bắt chước đầu ra của mô hình lớn để chạy rẻ hơn."
+concepts: [lora-peft, distillation]
+estMinutes: 40
+whyQuestion: "Muốn có 10 biến thể mô hình cho 10 khách hàng, mỗi bản fine-tune đầy đủ nặng hàng chục GB. Có cách nào mà mỗi biến thể chỉ là một file nhỏ?"
+facts:
+  - id: lora-reduction
+    text: "Kết quả LoRA so với fine-tune đầy đủ GPT-3 175B bằng Adam, theo tóm tắt bài báo"
+    value: "số tham số cần huấn luyện giảm khoảng 10.000 lần, bộ nhớ GPU giảm khoảng 3 lần; không tăng độ trễ suy luận"
+    sourceId: hu-lora-2022
+    asOf: 2026-11-06
+    status: verified
+  - id: qlora-65b
+    text: "Kết quả QLoRA theo tóm tắt bài báo"
+    value: "fine-tune mô hình 65 tỉ tham số trên một GPU 48 GB mà vẫn giữ hiệu năng của fine-tune 16-bit đầy đủ"
+    sourceId: dettmers-qlora-2023
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "LoRA adapter"
+    dev: "Bản vá (patch/diff) nhỏ áp lên một binary lớn dùng chung"
+    explanation: "Mô hình gốc giữ nguyên; mỗi khách hàng một adapter vài MB, nạp/tháo theo request."
+  - finance: "Hạng r của LoRA"
+    dev: "Núm vặn dung lượng của bản vá"
+    explanation: "r lớn hơn: học được nhiều hơn, tốn tham số hơn — chọn bằng eval."
+  - finance: "Chưng cất"
+    dev: "Dùng hệ thống đắt để tạo nhãn huấn luyện cho hệ thống rẻ"
+    explanation: "Như cache kết quả của một dịch vụ chậm thành một mô hình nhanh, chỉ đúng trong phạm vi việc đã dạy."
+pretest: [q-a6e-params, q-a6e-distill]
+applications:
+  - id: app-a6e-adapter
+    title: "Một mô hình nền, nhiều adapter"
+    context: "Bạn cần mô hình phân loại ticket cho nhiều phòng ban với nhãn khác nhau."
+    task: "Chọn một mô hình mở nhỏ; fine-tune bằng LoRA một adapter cho mỗi phòng ban với cùng cấu hình; so sánh điểm eval từng adapter với prompt few-shot trên mô hình gốc; ghi kích thước file adapter, thời gian và bộ nhớ huấn luyện; thử hai giá trị hạng r và chọn theo eval."
+    deliverable: "Bảng so sánh (điểm, kích thước adapter, bộ nhớ, thời gian) và khuyến nghị cấu hình."
+sources: [hu-lora-2022, dettmers-qlora-2023, hinton-distill-2015]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao LoRA giảm mạnh số tham số cần học, QLoRA thêm gì, và chưng cất khác LoRA ở đâu."
+  rubric:
+    - { id: lowrank, criterion: "LoRA đóng băng W, học ΔW = B·A với hạng r nhỏ; số tham số 2·d·r thay vì d²" }
+    - { id: merge, criterion: "Adapter có thể gộp vào trọng số khi suy luận nên không thêm độ trễ; hoặc giữ riêng để đổi theo khách hàng" }
+    - { id: qlora, criterion: "QLoRA: mô hình gốc lượng tử hoá 4-bit, đóng băng; gradient đi qua nó vào adapter LoRA" }
+    - { id: distill, criterion: "Chưng cất: mô hình nhỏ học bắt chước đầu ra (phân phối/văn bản) của mô hình lớn; tạo mô hình mới nhỏ hơn" }
+---
+
+<Callout kind="story" title="Mười bản sao 30 GB">
+Một startup fine-tune đầy đủ một mô hình mở cho mỗi khách hàng doanh nghiệp. Tới khách hàng thứ mười, ổ lưu trữ có mười bản mô hình gần như giống hệt nhau, mỗi bản phải chiếm trọn bộ nhớ GPU riêng khi phục vụ. Phần khác nhau thật sự giữa các bản chỉ là một phần rất nhỏ của tổng tham số.
+</Callout>
+
+## Vì sao fine-tune đầy đủ đắt
+
+Fine-tune đầy đủ cập nhật **mọi** tham số. Ngoài trọng số, bộ tối ưu như Adam còn giữ thêm trạng thái cho từng tham số, cộng với gradient — bộ nhớ huấn luyện lớn hơn nhiều lần kích thước mô hình. Và kết quả là một bản sao đầy đủ mới cho mỗi lần fine-tune.
+
+## LoRA: học một bản vá hạng thấp
+
+**LoRA** (Hu và cộng sự, ICLR 2022) dựa trên giả thuyết: thay đổi cần thiết khi thích ứng mô hình có **hạng thấp**. Với một ma trận trọng số W kích thước d × k:
+
+- **Đóng băng** W.
+- Học hai ma trận nhỏ **B** (d × r) và **A** (r × k) với r rất nhỏ (ví dụ 4, 8, 16).
+- Đầu ra của lớp: W·x + B·A·x.
+
+Số tham số cần học cho ma trận đó là r·(d + k) thay vì d·k. Theo bài báo: <Fact id="lora-reduction" />. Không tăng độ trễ vì khi triển khai có thể **gộp** B·A vào W — hoặc giữ adapter riêng để đổi theo từng khách hàng trên cùng một mô hình nền.
+
+<Quiz id="q-a6e-params" />
+
+Các phương pháp chỉ huấn luyện một phần nhỏ tham số như vậy gọi chung là **PEFT** (parameter-efficient fine-tuning); LoRA là phương pháp phổ biến nhất.
+
+## QLoRA: thêm lượng tử hoá
+
+**QLoRA** (Dettmers và cộng sự, NeurIPS 2023) lượng tử hoá mô hình gốc đã đóng băng xuống **4-bit**, rồi cho gradient đi ngược qua nó vào các adapter LoRA. Bài báo giới thiệu kiểu dữ liệu NF4, lượng tử hoá kép và bộ tối ưu phân trang để giảm bộ nhớ. Kết quả theo tóm tắt: <Fact id="qlora-65b" />. Lượng tử hoá được bàn kỹ hơn ở chặng A7.
+
+<Quiz id="q-a6e-qlora" />
+
+## Chưng cất: mô hình nhỏ học từ mô hình lớn
+
+**Chưng cất tri thức** (Hinton, Vinyals và Dean, 2015) huấn luyện mô hình nhỏ ("học trò") bắt chước mô hình lớn ("thầy"). Ý tưởng gốc: thay vì chỉ học nhãn đúng, học trò học **phân phối xác suất mềm** của thầy (làm mềm bằng nhiệt độ) — phân phối này chứa thông tin như "lớp nào gần giống lớp nào".
+
+Trong ứng dụng LLM, dạng thực dụng hay gặp: dùng mô hình lớn sinh **đầu ra mẫu** cho một việc hẹp, rồi SFT một mô hình nhỏ trên đó. Lưu ý:
+
+- Học trò chỉ giỏi **trong phạm vi** việc đã dạy; ngoài đó nó vẫn là mô hình nhỏ.
+- Lỗi của thầy được chép sang trò — lọc dữ liệu bằng bộ eval/giám khảo trước khi huấn luyện.
+- Kiểm tra điều khoản sử dụng của nhà cung cấp mô hình thầy về việc dùng đầu ra để huấn luyện mô hình khác.
+
+| | LoRA / QLoRA | Chưng cất |
+|---|---|---|
+| Mô hình chạy khi suy luận | Mô hình gốc (cùng cỡ) + adapter | Mô hình nhỏ hơn mới |
+| Mục tiêu chính | Giảm chi phí *huấn luyện* và lưu trữ | Giảm chi phí *suy luận* |
+| Dữ liệu | Dữ liệu SFT/sở thích của bạn | Đầu ra của mô hình thầy |
+
+<Quiz id="q-a6e-distill" />
+
+<Callout kind="field" title="Chọn r và lớp áp LoRA bằng eval, không bằng truyền miệng">
+Tôi thấy nhiều cấu hình LoRA được chép từ blog này sang blog khác (r bao nhiêu, áp vào lớp nào). Cách của tôi: giữ cố định dữ liệu và bộ eval, thử hai–ba giá trị r và hai lựa chọn lớp, ghi điểm cùng bộ nhớ và thời gian. Khi hai cấu hình cho điểm ngang nhau trong sai số, chọn cái nhỏ hơn. Tốn thêm một buổi, đỡ cả tháng đoán.
+</Callout>

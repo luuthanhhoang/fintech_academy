@@ -1,0 +1,31 @@
+items:
+  - id: q-a7s-batch
+    type: mcq
+    conceptId: batching-throughput
+    prompt: "Lô gồm 4 request cần sinh 20, 30, 40 và 400 token. Với static batching, điều gì xảy ra mà continuous batching tránh được?"
+    options:
+      - { id: a, text: "Ba request ngắn xong sớm nhưng chỗ của chúng trong lô bỏ trống cho tới khi request 400 token xong; request mới phải chờ" }
+      - { id: b, text: "Request dài bị cắt ở 40 token" }
+      - { id: c, text: "Không khác gì nhau" }
+    correct: [a]
+    explanation: "Continuous batching cho request xong rời lô và request mới vào ngay ở bước tiếp theo."
+  - id: q-a7s-p95
+    type: mcq
+    conceptId: batching-throughput
+    prompt: "Sau khi tăng cỡ lô tối đa, tổng token/giây tăng 60% và độ trễ trung bình chỉ tăng nhẹ, nhưng p99 thời gian tới token đầu tăng gấp ba. Nhận định nào đúng?"
+    options:
+      - { id: a, text: "Thành công tuyệt đối, trung bình mới quan trọng" }
+      - { id: b, text: "Một nhóm người dùng chat đang chờ lâu hơn nhiều; nếu SLO tương tác dựa trên p99 thì cấu hình này vi phạm — có thể tách luồng tương tác và hàng loạt" }
+      - { id: c, text: "Phải giảm thông lượng về như cũ" }
+    correct: [b]
+    explanation: "Phân vị cao cho thấy trải nghiệm tệ nhất; tách luồng theo loại việc cho phép tối ưu từng mục tiêu."
+  - id: q-a7s-autoscale
+    type: mcq
+    conceptId: serving-infrastructure
+    prompt: "Tín hiệu nào phù hợp nhất để autoscaling một máy chủ inference LLM?"
+    options:
+      - { id: a, text: "Chỉ % dùng CPU" }
+      - { id: b, text: "Độ dài hàng đợi, mức dùng KV cache và p95 độ trễ" }
+      - { id: c, text: "Số dòng log mỗi phút" }
+    correct: [b]
+    explanation: "Các tín hiệu này phản ánh trực tiếp sức chứa còn lại và trải nghiệm người dùng."

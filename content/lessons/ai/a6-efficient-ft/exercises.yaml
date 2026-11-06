@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a6e-storage
+    conceptId: lora-peft
+    prompt: "Mô hình có 32 lớp; mỗi lớp áp LoRA vào 4 ma trận 4.096 × 4.096, hạng r = 16. Tính tổng tham số adapter và kích thước file nếu mỗi tham số lưu 2 byte (lấy 1 MB = 10⁶ byte)."
+    hint: "Mỗi ma trận: r·(d + k). Nhân số ma trận và số lớp."
+    solution: "Mỗi ma trận: 16 × 8.192 = 131.072. Mỗi lớp: × 4 = 524.288. 32 lớp: 16.777.216 tham số ≈ 16,8 triệu. × 2 byte ≈ 33,6 MB — nhỏ hơn rất nhiều so với mô hình gốc, nên mười khách hàng là mười file vài chục MB trên cùng một mô hình nền."
+  - id: ex-a6e-plan
+    conceptId: distillation
+    prompt: "Lập kế hoạch chưng cất một mô hình lớn sang mô hình nhỏ cho việc trích xuất thông tin hoá đơn, gồm dữ liệu, lọc, huấn luyện và tiêu chí chuyển đổi."
+    hint: "Đầu vào thật; lọc bằng eval; tập kiểm tra tách riêng; so chi phí."
+    solution: "Dữ liệu: vài nghìn hoá đơn thật đã che thông tin nhạy cảm; mô hình lớn sinh JSON trích xuất. Lọc: kiểm tra schema bằng code, đối chiếu tổng tiền = tổng dòng, giữ lại mẫu đạt. Tách tập kiểm tra có nhãn người. Huấn luyện: SFT (có thể bằng LoRA) mô hình nhỏ. Tiêu chí chuyển: điểm trên tập kiểm tra không kém mô hình lớn quá ngưỡng đã định ở từng trường quan trọng, và chi phí/độ trễ giảm đủ để bù; kiểm tra điều khoản sử dụng của nhà cung cấp mô hình thầy."

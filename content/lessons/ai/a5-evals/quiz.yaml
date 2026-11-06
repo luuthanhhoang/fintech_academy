@@ -1,0 +1,40 @@
+items:
+  - id: q-a5e-five
+    type: mcq
+    conceptId: eval-datasets
+    prompt: "Trong câu chuyện đầu bài, vấn đề cốt lõi khi thử 5 ticket bằng tay là gì? (chọn tất cả)"
+    options:
+      - { id: a, text: "5 ví dụ quá ít và không phủ ca quan trọng (ticket có mã đơn hàng)" }
+      - { id: b, text: "Không có tiêu chí cụ thể, chỉ có cảm giác 'hay hơn'" }
+      - { id: c, text: "Không có con số của bản cũ để so sánh" }
+      - { id: d, text: "Lẽ ra nên dùng mô hình lớn hơn" }
+    correct: [a, b, c]
+    explanation: "Eval cần dữ liệu đại diện, tiêu chí đo được và chạy được trên cả bản cũ lẫn bản mới để so."
+  - id: q-a5e-grader
+    type: mcq
+    conceptId: eval-datasets
+    prompt: "Tiêu chí 'đầu ra là JSON hợp lệ có trường order_id khớp với ticket' nên chấm bằng gì?"
+    options:
+      - { id: a, text: "Code: parse JSON và so sánh order_id" }
+      - { id: b, text: "Giám khảo LLM với rubric" }
+      - { id: c, text: "Người chấm" }
+    correct: [a]
+    explanation: "Đáp án có dạng xác định → chấm bằng code: nhanh, tin cậy, không tốn tiền."
+  - id: q-a5e-bias
+    type: mcq
+    conceptId: llm-as-judge
+    prompt: "Bạn cho giám khảo LLM so sánh hai câu trả lời A (đứng trước) và B. Cách nào giảm thiên vị vị trí?"
+    options:
+      - { id: a, text: "Chấm hai lần với thứ tự đảo ngược; chỉ tính thắng khi cả hai lần nhất quán" }
+      - { id: b, text: "Luôn đặt câu trả lời của mô hình mới ở trước" }
+      - { id: c, text: "Yêu cầu giám khảo trả lời thật nhanh, không suy luận" }
+    correct: [a]
+    explanation: "Đảo thứ tự loại bỏ ảnh hưởng của vị trí; kết quả mâu thuẫn được coi là hoà."
+  - id: q-a5e-agree
+    type: numeric
+    conceptId: llm-as-judge
+    prompt: "Bạn chấm tay 40 ví dụ PASS/FAIL. Giám khảo LLM cho cùng kết luận ở 34 ví dụ. Tỉ lệ đồng thuận là bao nhiêu phần trăm?"
+    answer: 85
+    tolerance: { kind: abs, value: 0.5 }
+    unit: "%"
+    explanation: "34 / 40 = 0,85 = 85%. Tiếp theo: đọc 6 ca bất đồng để sửa rubric."

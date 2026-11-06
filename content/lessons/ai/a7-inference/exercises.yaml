@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a7i-kvsize
+    conceptId: kv-cache
+    prompt: "Một mô hình có 32 lớp, mỗi lớp key/value có 1.024 chiều (sau khi chia sẻ đầu attention), lưu 16-bit. Tính KV cache cho một chuỗi 8.000 token, và cho 16 chuỗi như vậy chạy cùng lúc (1 GB = 10⁹ byte)."
+    hint: "2 × lớp × chiều × token × byte."
+    solution: "2 × 32 × 1.024 × 8.000 × 2 byte = 1.048.576.000 byte ≈ 1,05 GB cho một chuỗi. 16 chuỗi ≈ 16,8 GB — có thể lớn hơn cả trọng số của mô hình đã lượng tử hoá. Vì thế quản lý KV cache quyết định số request phục vụ được cùng lúc."
+  - id: ex-a7i-choose
+    conceptId: speculative-decoding
+    prompt: "Bạn phục vụ mô hình lớn cho trợ lý viết code; người dùng phàn nàn chậm khi sinh đoạn code dài. Đề xuất và cách kiểm chứng."
+    hint: "Pha nào chậm? Mô hình nháp nào đoán trúng tốt với code?"
+    solution: "Đo trước: thời gian tới token đầu và token/giây khi decode — phàn nàn về đoạn dài gợi ý decode là nút thắt. Đề xuất: speculative decoding với một mô hình nháp cùng họ, nhỏ hơn (code thường dễ đoán nên tỉ lệ chấp nhận có thể cao); cân nhắc lượng tử hoá nếu chất lượng giữ được. Kiểm chứng: đo token/giây và tỉ lệ token nháp được chấp nhận trên prompt thật; chạy bộ eval để xác nhận chất lượng (với speculative đúng thuật toán, phân phối đầu ra không đổi; với lượng tử hoá thì phải đo)."

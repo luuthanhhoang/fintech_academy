@@ -1,0 +1,28 @@
+items:
+  - id: q-a6e-params
+    type: numeric
+    conceptId: lora-peft
+    prompt: "Một ma trận trọng số 4.096 × 4.096. LoRA với hạng r = 8 cần học bao nhiêu tham số cho ma trận này?"
+    answer: 65536
+    tolerance: { kind: abs, value: 0 }
+    explanation: "r·(d + k) = 8 × (4.096 + 4.096) = 65.536, so với 4.096 × 4.096 = 16.777.216 khi fine-tune đầy đủ (ít hơn 256 lần)."
+  - id: q-a6e-qlora
+    type: mcq
+    conceptId: lora-peft
+    prompt: "Trong QLoRA, phần nào được lượng tử hoá 4-bit và phần nào được huấn luyện?"
+    options:
+      - { id: a, text: "Mô hình gốc được lượng tử hoá 4-bit và đóng băng; chỉ các adapter LoRA được huấn luyện" }
+      - { id: b, text: "Adapter LoRA được lượng tử hoá 4-bit; mô hình gốc được huấn luyện" }
+      - { id: c, text: "Cả hai được huấn luyện ở 4-bit" }
+    correct: [a]
+    explanation: "Lượng tử hoá phần lớn (mô hình gốc, đóng băng) để tiết kiệm bộ nhớ; phần học được (adapter) nhỏ."
+  - id: q-a6e-distill
+    type: mcq
+    conceptId: distillation
+    prompt: "Mục tiêu chính của bạn là giảm chi phí và độ trễ mỗi request ở production cho một việc hẹp. Hướng nào nhắm đúng mục tiêu?"
+    options:
+      - { id: a, text: "LoRA trên mô hình lớn đang dùng" }
+      - { id: b, text: "Chưng cất sang một mô hình nhỏ hơn rồi đo eval trên việc hẹp đó" }
+      - { id: c, text: "QLoRA để huấn luyện rẻ hơn" }
+    correct: [b]
+    explanation: "LoRA/QLoRA giảm chi phí huấn luyện nhưng khi chạy vẫn là mô hình cỡ cũ; chưng cất tạo mô hình nhỏ hơn để chạy."

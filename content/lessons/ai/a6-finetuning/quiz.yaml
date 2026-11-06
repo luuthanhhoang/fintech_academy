@@ -1,0 +1,31 @@
+items:
+  - id: q-a6f-knowledge
+    type: mcq
+    conceptId: supervised-finetuning
+    prompt: "Bài toán nào hợp với fine-tuning nhất?"
+    options:
+      - { id: a, text: "Chatbot trả lời theo bảng giá thay đổi hằng tuần" }
+      - { id: b, text: "Phân loại hàng triệu ticket mỗi ngày vào 20 nhãn cố định theo một kiểu nhất quán, muốn dùng mô hình nhỏ và prompt ngắn để giảm chi phí" }
+      - { id: c, text: "Trả lời câu hỏi về tài liệu pháp lý kèm trích dẫn điều khoản" }
+    correct: [b]
+    explanation: "Việc hẹp, lặp lại, nhãn ổn định, khối lượng lớn: hợp fine-tuning. Kiến thức thay đổi và cần trích dẫn: hợp RAG."
+  - id: q-a6f-dpo
+    type: mcq
+    conceptId: preference-tuning
+    prompt: "So với quy trình RLHF kiểu InstructGPT, DPO bỏ được bước nào?"
+    options:
+      - { id: a, text: "Thu thập dữ liệu so sánh cặp câu trả lời" }
+      - { id: b, text: "Huấn luyện mô hình thưởng riêng và vòng học tăng cường lấy mẫu từ mô hình" }
+      - { id: c, text: "Cần một mô hình tham chiếu" }
+    correct: [b]
+    explanation: "DPO vẫn cần dữ liệu cặp và một mô hình tham chiếu, nhưng tối ưu trực tiếp bằng loss phân loại trên cặp."
+  - id: q-a6f-holdout
+    type: mcq
+    conceptId: supervised-finetuning
+    prompt: "Bạn có 2.000 ví dụ. Cách đánh giá mô hình fine-tune nào đáng tin?"
+    options:
+      - { id: a, text: "Huấn luyện trên cả 2.000 rồi đo trên chính 2.000 ví dụ đó" }
+      - { id: b, text: "Tách trước một tập kiểm tra không bao giờ dùng để huấn luyện; đo cả trên tập đó và trên bộ eval chung cho các việc ngoài phạm vi" }
+      - { id: c, text: "Hỏi thử vài câu sau khi huấn luyện" }
+    correct: [b]
+    explanation: "Đo trên dữ liệu đã huấn luyện chỉ đo khả năng thuộc lòng; cần tập tách riêng và đo cả suy giảm ở việc khác."

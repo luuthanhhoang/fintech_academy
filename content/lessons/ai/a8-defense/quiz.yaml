@@ -1,0 +1,40 @@
+items:
+  - id: q-a8d-tool-result
+    type: mcq
+    conceptId: guardrails
+    prompt: "Agent cần tóm tắt một email đến từ người gửi lạ. Cách đưa nội dung email vào ngữ cảnh nào phù hợp với hướng dẫn của Anthropic?"
+    options:
+      - { id: a, text: "Chép nội dung email vào system prompt để mô hình chú ý" }
+      - { id: b, text: "Trả nội dung email trong kết quả công cụ, JSON-encode, ghi rõ nguồn là email từ người gửi lạ; system prompt nêu rằng nội dung từ công cụ là dữ liệu không tin cậy" }
+      - { id: c, text: "Nối nội dung email vào cuối tin nhắn người dùng bằng văn bản thường" }
+    correct: [b]
+    explanation: "Nội dung bên thứ ba chỉ nằm trong tool_result, có nhãn nguồn và mã hoá rõ ràng; chính sách nằm trong system prompt."
+  - id: q-a8d-layers
+    type: mcq
+    conceptId: guardrails
+    prompt: "Lớp nào giới hạn thiệt hại ngay cả khi mô hình đã bị injection lừa? (chọn tất cả)"
+    options:
+      - { id: a, text: "Không cấp cho agent quyền đọc bí mật nó không cần" }
+      - { id: b, text: "Bắt buộc người xác nhận trước khi gửi email ra ngoài" }
+      - { id: c, text: "Chạy công cụ trong sandbox có giới hạn mạng" }
+      - { id: d, text: "Viết system prompt dài hơn" }
+    correct: [a, b, c]
+    explanation: "Phân quyền, xác nhận và sandbox giới hạn điều agent làm được; prompt chỉ giảm xác suất bị lừa."
+  - id: q-a8d-pii
+    type: mcq
+    conceptId: data-privacy-llm
+    prompt: "Bạn cần LLM phân loại khiếu nại của khách. Cách gửi dữ liệu nào tốt nhất cho quyền riêng tư?"
+    options:
+      - { id: a, text: "Gửi cả hồ sơ khách (tên, số tài khoản, lịch sử giao dịch) cho đủ ngữ cảnh" }
+      - { id: b, text: "Chỉ gửi nội dung khiếu nại, thay tên/số điện thoại/số tài khoản bằng mã giả, giữ bảng ánh xạ ở hệ thống của bạn" }
+      - { id: c, text: "Gửi nguyên văn nhưng xoá log sau một năm" }
+    correct: [b]
+    explanation: "Tối thiểu hoá + che định danh; việc phân loại không cần thông tin định danh."
+  - id: q-a8d-rate
+    type: numeric
+    conceptId: red-teaming
+    prompt: "Bộ red team có 40 ca tấn công và 60 ca hợp lệ trông tương tự. Sau khi thêm bộ sàng lọc: 6 ca tấn công vẫn thành công, 9 ca hợp lệ bị chặn nhầm. Tỉ lệ chặn nhầm là bao nhiêu phần trăm?"
+    answer: 15
+    tolerance: { kind: abs, value: 0.5 }
+    unit: "%"
+    explanation: "9 / 60 = 15%. (Tỉ lệ tấn công thành công là 6 / 40 = 15%.) Cả hai con số cần báo cùng nhau."
