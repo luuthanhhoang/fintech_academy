@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f6c-cost
+    conceptId: fraud-detection-ml
+    prompt: "Trên 100.000 giao dịch (200 gian lận), hai ngưỡng: A gắn cờ 1.000, bắt 150 gian lận; B gắn cờ 400, bắt 120. Chi phí bỏ sót một vụ 5 triệu, chi phí báo nhầm 50.000 đ (giả định). Ngưỡng nào tổng chi phí thấp hơn?"
+    hint: "Bỏ sót = 200 − bắt được; báo nhầm = gắn cờ − bắt được."
+    solution: "A: bỏ sót 50 × 5 triệu = 250 triệu; báo nhầm 850 × 50.000 = 42,5 triệu; tổng 292,5 triệu. B: bỏ sót 80 × 5 triệu = 400 triệu; báo nhầm 280 × 50.000 = 14 triệu; tổng 414 triệu. A rẻ hơn — nếu đội xử lý được 1.000 cảnh báo; nếu không, phải tính thêm chi phí cảnh báo bị bỏ không xem."
+  - id: ex-f6c-calib
+    conceptId: credit-scoring-ml
+    prompt: "Bạn chia khách thành 5 nhóm theo PD dự đoán (2%, 4%, 6%, 8%, 10%); tỉ lệ vỡ nợ thực tế sau 12 tháng là 1%, 2%, 3%, 4%, 5%. Mô hình xếp hạng thế nào, hiệu chuẩn thế nào, và hệ quả cho định giá?"
+    hint: "Thứ tự đúng, mức thì sai."
+    solution: "Xếp hạng tốt (vỡ nợ tăng dần theo nhóm) nhưng hiệu chuẩn kém: dự đoán gấp đôi thực tế. Dùng PD này để định giá sẽ đặt lãi suất quá cao, mất khách tốt; dùng để dự phòng sẽ dự phòng thừa. Sửa: hiệu chuẩn lại (ví dụ ánh xạ điểm → PD trên dữ liệu gần đây đã đủ thời gian quan sát), kiểm tra định kỳ."

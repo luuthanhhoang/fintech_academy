@@ -1,0 +1,98 @@
+---
+id: f6-model-risk
+track: fintech
+stage: f6
+order: 2
+title: { vi: "Quản trị rủi ro mô hình, giải thích và công bằng", en: "Model risk management, explainability and fairness" }
+summary: "Mô hình có thể sai, hoặc đúng nhưng bị dùng sai — đó là rủi ro mô hình. Hướng dẫn SR 11-7 đặt khung: danh mục mô hình, kiểm định độc lập và 'phản biện hiệu quả', giám sát liên tục, tài liệu đầy đủ. Với mô hình ảnh hưởng tới khách hàng, còn hai yêu cầu: giải thích được (vì sao khách bị từ chối) và công bằng (không bất lợi một cách vô căn cứ cho một nhóm). Đó là việc kỹ thuật có đo lường, không phải khẩu hiệu."
+concepts: [model-risk-management, explainability-fairness]
+estMinutes: 50
+whyQuestion: "Mô hình chấm điểm tín dụng của bạn không dùng giới tính hay độ tuổi. Như vậy đã đủ để nói nó công bằng chưa?"
+facts:
+  - id: sr117-date
+    text: "Hướng dẫn giám sát về quản trị rủi ro mô hình SR 11-7 của Fed và OCC được ban hành ngày"
+    value: "04/04/2011"
+    sourceId: fed-sr-11-7
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Danh mục mô hình (model inventory)"
+    dev: "Service catalog có chủ sở hữu, mức độ quan trọng, phụ thuộc"
+    explanation: "Không quản trị được thứ không biết là đang tồn tại — kể cả bảng tính và quy tắc 'không ai coi là mô hình'."
+  - finance: "Kiểm định độc lập"
+    dev: "Code review bởi người không viết code, cộng kiểm thử bởi đội khác"
+    explanation: "Người phát triển khó thấy giả định của chính mình; người kiểm định cần quyền và năng lực để buộc thay đổi."
+  - finance: "Giám sát trôi dạt"
+    dev: "Cảnh báo khi phân phối đầu vào/đầu ra lệch khỏi lúc huấn luyện"
+    explanation: "Mô hình không hỏng đột ngột như service; nó xấu dần khi thế giới thay đổi."
+pretest: [q-f6m-proxy, q-f6m-psi]
+applications:
+  - id: app-f6m-card
+    title: "Hồ sơ mô hình và báo cáo công bằng"
+    context: "Mô hình chấm điểm tín dụng ở bài trước (dữ liệu tổng hợp hoặc công khai có nguồn)."
+    task: "Viết hồ sơ mô hình (mục đích, dữ liệu, nhãn, giới hạn đã biết, cách không nên dùng); tính PSI giữa dữ liệu huấn luyện và dữ liệu gần đây cho điểm số và 3 đặc trưng chính; tính tỉ lệ duyệt và tỉ lệ vỡ nợ theo nhóm (nếu dữ liệu có thuộc tính nhóm hợp pháp để phân tích); sinh lý do từ chối chính cho 5 hồ sơ bằng giá trị đóng góp của đặc trưng; liệt kê đặc trưng có thể là biến đại diện cho thuộc tính được bảo vệ."
+    deliverable: "Hồ sơ mô hình + bảng giám sát + báo cáo công bằng + mẫu lý do từ chối."
+sources: [fed-sr-11-7, lundberg-shap-2017, eu-ai-act-2024, cfpb-circular-2022-03]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả vòng đời quản trị một mô hình tín dụng từ phát triển tới giám sát, và cách bạn kiểm tra giải thích và công bằng."
+  rubric:
+    - { id: risk, criterion: "Rủi ro mô hình: mô hình sai hoặc bị dùng sai; quản lý bằng danh mục, phân hạng, tài liệu" }
+    - { id: validation, criterion: "Kiểm định độc lập: tính hợp lý của thiết kế, giám sát liên tục, phân tích kết quả; phản biện hiệu quả có thẩm quyền" }
+    - { id: explain, criterion: "Giải thích cục bộ (vì sao hồ sơ này) và tổng thể; lý do từ chối cụ thể, chính xác" }
+    - { id: fair, criterion: "Bỏ thuộc tính được bảo vệ không đủ (biến đại diện); đo kết quả theo nhóm; nêu đánh đổi và quyết định có người chịu trách nhiệm" }
+---
+
+<Callout kind="story" title="Mô hình không thấy mùa dịch">
+Một mô hình chấm điểm giả định được huấn luyện trên ba năm kinh tế ổn định. Rồi thu nhập của một nhóm ngành giảm mạnh trong vài tháng. Điểm số không đổi nhiều, vì đặc trưng chính là lịch sử trả nợ — vẫn đẹp cho tới khi không còn đẹp nữa. Khi tỉ lệ vỡ nợ thực tế tăng, khoảng cách với dự đoán đã kéo dài nhiều tháng. Không có cảnh báo nào, vì không có ai giám sát.
+</Callout>
+
+## Rủi ro mô hình
+
+<Fact id="sr117-date" />. SR 11-7 định nghĩa mô hình là **phương pháp định lượng** áp dụng lý thuyết và giả định thống kê, kinh tế, tài chính hay toán học để biến dữ liệu đầu vào thành **ước lượng định lượng** — kể cả khi đầu vào một phần là phán đoán chuyên gia. Rủi ro mô hình đến từ hai nguồn: **mô hình sai** (giả định, dữ liệu, cài đặt) và **dùng sai** (ngoài phạm vi thiết kế).
+
+Ba trụ cột quản trị:
+
+- **Danh mục mô hình**: mọi mô hình (kể cả bảng tính, quy tắc chấm điểm, hệ thống LLM dùng để chấm/xếp loại) có chủ sở hữu, mục đích, mức độ quan trọng.
+- **Kiểm định**: tập hợp quy trình kiểm tra mô hình hoạt động như kỳ vọng theo mục tiêu thiết kế và cách dùng — gồm đánh giá tính hợp lý của thiết kế, **giám sát liên tục** và **phân tích kết quả** (so dự đoán với thực tế).
+- **Phản biện hiệu quả**: phân tích phê phán bởi người khách quan, đủ hiểu biết, có thể chỉ ra giới hạn và **buộc thay đổi** — dựa trên động cơ, năng lực và ảnh hưởng; tách khỏi đội phát triển.
+
+<Quiz id="q-f6m-inventory" />
+
+## Giám sát trôi dạt
+
+Mô hình xấu dần khi dữ liệu đầu vào thay đổi (câu chuyện đầu bài). Một chỉ số phổ biến trong ngành là **PSI** (population stability index) so phân phối một biến giữa lúc huấn luyện và hiện tại:
+
+PSI = Σ (tỉ lệ hiện tại − tỉ lệ gốc) × ln(tỉ lệ hiện tại / tỉ lệ gốc), cộng qua các nhóm (bin).
+
+Các ngưỡng diễn giải thường gặp là quy ước thực hành, không phải chuẩn quy định — mỗi tổ chức tự đặt và ghi lại. Cùng với PSI: so **PD dự đoán với tỉ lệ vỡ nợ thực tế** theo vintage (phân tích kết quả).
+
+<WorkedExample id="we-psi" />
+
+<Quiz id="q-f6m-psi" />
+
+## Giải thích được
+
+Hai cấp độ:
+
+- **Tổng thể**: đặc trưng nào quan trọng, tác động theo chiều nào — kiểm tra tính hợp lý (thu nhập cao hơn mà điểm thấp hơn là dấu hiệu lỗi).
+- **Cục bộ**: vì sao **hồ sơ này** nhận điểm này. SHAP (Lundberg và Lee, NeurIPS 2017) gán cho mỗi đặc trưng một giá trị đóng góp vào dự đoán dựa trên giá trị Shapley, hợp nhất nhiều phương pháp giải thích cộng tính trước đó.
+
+Ở Mỹ, khi từ chối tín dụng phải nêu **lý do chính, cụ thể, chính xác** — CFPB nhấn mạnh rằng dùng thuật toán phức tạp không miễn trừ nghĩa vụ này (Circular 2022-03). Giá trị đóng góp lớn nhất theo chiều bất lợi là điểm xuất phát, nhưng phải dịch sang lý do khách hiểu và hành động được, và kiểm chứng với người làm nghiệp vụ.
+
+## Công bằng
+
+Bỏ các thuộc tính được bảo vệ (giới tính, tuổi, dân tộc...) khỏi đầu vào **không đủ**: các đặc trưng khác có thể là **biến đại diện** (mã bưu chính, loại thiết bị, giờ giao dịch). Cách làm có đo lường:
+
+- **Đo kết quả theo nhóm** (khi có dữ liệu nhóm được phép dùng để phân tích): tỉ lệ duyệt, tỉ lệ vỡ nợ trong nhóm được duyệt, sai số hiệu chuẩn theo nhóm.
+- Các định nghĩa công bằng khác nhau (tỉ lệ duyệt ngang nhau, hiệu chuẩn ngang nhau, tỉ lệ bỏ sót ngang nhau...) **thường không thể thoả mãn đồng thời** — phải chọn, ghi lại lý do, có người chịu trách nhiệm.
+- Rà soát từng đặc trưng: có lý do kinh doanh chính đáng không, có phải biến đại diện không.
+
+Ở EU, Đạo luật AI (Quy định 2024/1689) xếp hệ thống AI đánh giá tín nhiệm hoặc chấm điểm tín dụng cá nhân vào nhóm **rủi ro cao** (ngoại trừ hệ thống phát hiện gian lận tài chính), kèm các nghĩa vụ quản trị dữ liệu, tài liệu, giám sát của con người. Mốc áp dụng đang có thông tin điều chỉnh — kiểm tra văn bản hiện hành.
+
+<Quiz id="q-f6m-proxy" />
+
+<Callout kind="field" title="Hồ sơ mô hình viết trước, không phải sau">
+Tôi yêu cầu đội viết hồ sơ mô hình (mục đích, nhãn, dữ liệu, giới hạn, cách không được dùng) ngay khi bắt đầu dự án, không phải trước buổi kiểm định. Viết trước buộc mọi người thống nhất "vỡ nợ" là gì và mô hình sẽ không được dùng cho việc gì — hai câu hỏi mà nếu để tới cuối, câu trả lời thường là "những gì mô hình đang làm được".
+</Callout>

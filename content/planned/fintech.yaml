@@ -1,5 +1,2 @@
 track: fintech
-lessons:
-  - { id: "f6-credit-fraud-ml", stage: "f6", order: 0, title: { vi: "ML cho tín dụng và gian lận", en: "ML for credit and fraud" }, concepts: [credit-scoring-ml, fraud-detection-ml] }
-  - { id: "f6-llm-finance", stage: "f6", order: 1, title: { vi: "LLM trong tài chính", en: "LLMs in finance" }, concepts: [llm-in-finance] }
-  - { id: "f6-model-risk", stage: "f6", order: 2, title: { vi: "Quản trị rủi ro mô hình, giải thích và công bằng", en: "Model risk, explainability and fairness" }, concepts: [model-risk-management, explainability-fairness] }
+lessons: []

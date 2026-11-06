@@ -1,0 +1,31 @@
+sources:
+  - id: fed-sr-11-7
+    title: "SR 11-7: Supervisory Guidance on Model Risk Management (04/04/2011)"
+    url: https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm
+    publisher: Board of Governors of the Federal Reserve System & OCC
+    accessed: 2026-11-06
+    note: Định nghĩa mô hình (phương pháp định lượng biến dữ liệu đầu vào thành ước lượng định lượng, kể cả khi đầu vào là phán đoán chuyên gia), nguyên tắc 'phản biện hiệu quả' (effective challenge) và kiểm định mô hình. Kiểm tra qua trích đoạn kết quả tìm kiếm (trang Fed và nguồn thứ cấp).
+  - id: cfpb-circular-2022-03
+    title: "Consumer Financial Protection Circular 2022-03: Adverse action notification requirements in connection with credit decisions based on complex algorithms"
+    url: https://www.consumerfinance.gov/compliance/circulars/circular-2022-03-adverse-action-notification-requirements-in-connection-with-credit-decisions-based-on-complex-algorithms/
+    publisher: Consumer Financial Protection Bureau
+    accessed: 2026-11-06
+    note: "Ban hành 26/05/2022: ECOA/Regulation B không cho phép dùng thuật toán phức tạp nếu điều đó khiến bên cho vay không nêu được lý do cụ thể, chính xác khi từ chối tín dụng. Tình trạng hiệu lực hiện nay của circular chưa kiểm chứng (CFPB rút nhiều hướng dẫn năm 2025) — needs_verification; nghĩa vụ nêu lý do trong Regulation B vẫn là quy định."
+  - id: eu-ai-act-2024
+    title: "Regulation (EU) 2024/1689 (Artificial Intelligence Act) — Annex III"
+    url: https://eur-lex.europa.eu/eli/reg/2024/1689/oj
+    publisher: European Parliament and Council (EUR-Lex)
+    accessed: 2026-11-06
+    note: Phụ lục III xếp hệ thống AI đánh giá tín nhiệm/chấm điểm tín dụng cá nhân vào nhóm rủi ro cao, ngoại trừ hệ thống dùng để phát hiện gian lận tài chính. Mốc áp dụng nghĩa vụ cho nhóm này đang có thông tin hoãn — needs_verification, bài không nêu ngày.
+  - id: lundberg-shap-2017
+    title: "A Unified Approach to Interpreting Model Predictions — NeurIPS 2017"
+    url: https://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions
+    publisher: Scott M. Lundberg & Su-In Lee / NeurIPS
+    accessed: 2026-11-06
+    note: SHAP — giá trị Shapley cho từng đặc trưng của một dự đoán; hợp nhất nhiều phương pháp giải thích cộng tính.
+  - id: saito-pr-2015
+    title: "The Precision-Recall Plot Is More Informative than the ROC Plot When Evaluating Binary Classifiers on Imbalanced Datasets — PLOS ONE 10(3): e0118432"
+    url: https://doi.org/10.1371/journal.pone.0118432
+    publisher: Takaya Saito & Marc Rehmsmeier / PLOS ONE (2015)
+    accessed: 2026-11-06
+    note: Trên dữ liệu mất cân bằng, ROC có thể gây hiểu nhầm; đường precision–recall phản ánh hiệu năng tốt hơn.

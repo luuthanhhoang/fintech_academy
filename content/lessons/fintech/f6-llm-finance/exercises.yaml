@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f6l-design
+    conceptId: llm-in-finance
+    prompt: "Thiết kế luồng xử lý email khách hàng yêu cầu 'đổi số tài khoản nhận lương' cho một ngân hàng có dùng LLM. Nêu bước nào LLM làm, bước nào code làm, bước nào người làm."
+    hint: "Phân loại, trích xuất, xác thực ngoài kênh, duyệt."
+    solution: "LLM: phân loại email là yêu cầu đổi tài khoản; trích xuất trường (tài khoản cũ/mới, tên) ra JSON kèm trích dẫn; nội dung email coi là không tin cậy. Code: kiểm tra định dạng, đối chiếu khách hàng, kiểm tra tài khoản mới tồn tại, chấm điểm rủi ro (email mới đổi, tên miền lạ). Người/quy trình: xác thực lại với khách qua kênh đã đăng ký (không qua email), chuyên viên duyệt thay đổi; không có bước nào cho phép LLM tự thay đổi tài khoản. Log toàn bộ."
+  - id: ex-f6l-eval
+    conceptId: llm-in-finance
+    prompt: "Viết 5 tiêu chí eval cho chatbot hỏi đáp sản phẩm ngân hàng, kèm cách chấm cho mỗi tiêu chí."
+    hint: "Con số, trích dẫn, từ chối đúng, không tư vấn đầu tư, dữ liệu nhạy cảm."
+    solution: "(1) Mọi con số trùng giá trị từ công cụ hệ thống nguồn trong cùng phiên — code so sánh. (2) Mọi khẳng định chính sách có trích dẫn tới tài liệu đang hiệu lực — code kiểm tra id tài liệu và ngày hiệu lực. (3) Câu hỏi ngoài kho tài liệu → từ chối và chuyển người — LLM PASS/FAIL trên bộ câu không có đáp án. (4) Không đưa khuyến nghị đầu tư cá nhân hoá — LLM theo rubric, hiệu chuẩn với nhãn người. (5) Không lặp lại thông tin định danh không cần thiết — regex + LLM."

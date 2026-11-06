@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f6m-reasons
+    conceptId: explainability-fairness
+    prompt: "Hồ sơ bị từ chối có giá trị đóng góp (âm là bất lợi): tỉ lệ nợ/thu nhập −0,8; số lần chậm trả 12 tháng −0,5; thời gian làm việc hiện tại −0,1; thu nhập +0,3. Viết 2 lý do từ chối chính cho khách và nêu kiểm tra trước khi gửi."
+    hint: "Lấy các đóng góp bất lợi lớn nhất, dịch sang ngôn ngữ khách hiểu."
+    solution: "Lý do: (1) Tỉ lệ nợ phải trả so với thu nhập cao. (2) Có các lần chậm thanh toán trong 12 tháng gần đây. Kiểm tra: dữ liệu đầu vào của hai đặc trưng này đúng với hồ sơ (không lỗi nhập); lý do nhất quán với chính sách tín dụng; không dùng đặc trưng là biến đại diện cho thuộc tính được bảo vệ; ngôn ngữ cụ thể, không chung chung kiểu 'không đạt tiêu chí nội bộ'; được bộ phận tuân thủ duyệt mẫu."
+  - id: ex-f6m-plan
+    conceptId: model-risk-management
+    prompt: "Lập kế hoạch giám sát hằng tháng cho mô hình chấm điểm tín dụng, gồm chỉ số, ngưỡng do tổ chức đặt, hành động và người chịu trách nhiệm."
+    hint: "Ổn định đầu vào, ổn định điểm, phân tích kết quả, công bằng, ngoại lệ."
+    solution: "Chỉ số: PSI của điểm và các đặc trưng chính; tỉ lệ duyệt; PD dự đoán so với vỡ nợ thực tế theo vintage đã đủ thời gian; khả năng phân biệt trên dữ liệu mới có nhãn; tỉ lệ duyệt và hiệu chuẩn theo nhóm; tỉ lệ hồ sơ bị ghi đè bởi chuyên viên. Ngưỡng: do hội đồng rủi ro mô hình đặt và ghi lại. Hành động: vượt ngưỡng cảnh báo → điều tra và báo cáo; vượt ngưỡng nghiêm trọng → hạn chế dùng, kích hoạt kiểm định lại hoặc huấn luyện lại. Trách nhiệm: chủ sở hữu mô hình theo dõi, đội kiểm định độc lập rà soát định kỳ."

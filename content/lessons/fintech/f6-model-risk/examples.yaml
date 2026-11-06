@@ -1,0 +1,20 @@
+examples:
+  - id: we-psi
+    title: "Tính PSI cho phân phối điểm"
+    conceptId: model-risk-management
+    problem: "Dữ liệu tổng hợp (mô phỏng): tỉ lệ hồ sơ theo 3 nhóm điểm lúc huấn luyện 30% / 40% / 30%; tháng này 20% / 40% / 40%."
+    steps:
+      - text: "Nhóm 1: (0,2 − 0,3) × ln(0,2/0,3) = (−0,1) × (−0,4055) ≈ 0,04055."
+      - text: "Nhóm 2: (0,4 − 0,4) × ln(1) = 0."
+      - text: "Nhóm 3: (0,4 − 0,3) × ln(0,4/0,3) = 0,1 × 0,2877 ≈ 0,02877."
+        faded: true
+        prompt: "Đóng góp của nhóm 3 bằng bao nhiêu? (5 chữ số thập phân)"
+        answer: 0.02877
+        tolerance: { kind: abs, value: 0.00002 }
+      - text: "PSI ≈ 0,04055 + 0 + 0,02877 ≈ 0,0693."
+        faded: true
+        prompt: "PSI bằng bao nhiêu? (4 chữ số thập phân)"
+        answer: 0.0693
+        tolerance: { kind: abs, value: 0.0002 }
+      - text: "Mỗi số hạng đều không âm; PSI càng lớn, phân phối càng lệch. Diễn giải theo ngưỡng tổ chức đã đặt và luôn kèm phân tích kết quả thực tế."
+    takeaway: "PSI phát hiện dữ liệu thay đổi trước khi nhãn vỡ nợ kịp về — cảnh báo sớm, không phải kết luận."

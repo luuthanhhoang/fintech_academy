@@ -48,6 +48,10 @@ const EXPECTED: Record<string, number[]> = {
   'we-multiple-tests': [(1 - 0.95 ** 20) * 100, (1 - 0.95 ** 100) * 100],
   // Single-factor model: β = Cov/Var, α = excess return − β × market excess return.
   'we-beta-alpha': [0.027 / 0.0225, (0.15 - (0.027 / 0.0225) * 0.12) * 100],
+  // Confusion matrix on imbalanced data: accuracy, precision, recall.
+  'we-fraud-pr': [((50000 - 400 - 20 + 80) / 50000) * 100, (80 / 400) * 100, (80 / 100) * 100],
+  // Population stability index: Σ (actual − expected) × ln(actual / expected).
+  'we-psi': [0.1 * Math.log(0.4 / 0.3), -0.1 * Math.log(0.2 / 0.3) + 0.1 * Math.log(0.4 / 0.3)],
 }
 
 describe('worked examples match the tested libraries', () => {

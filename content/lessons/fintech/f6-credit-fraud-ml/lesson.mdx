@@ -1,0 +1,86 @@
+---
+id: f6-credit-fraud-ml
+track: fintech
+stage: f6
+order: 0
+title: { vi: "ML cho tín dụng và phát hiện gian lận", en: "ML for credit scoring and fraud detection" }
+summary: "Hai bài toán ML kinh điển của fintech có bẫy riêng. Chấm điểm tín dụng: định nghĩa nhãn vỡ nợ và khung thời gian, chống rò rỉ dữ liệu, chỉ có nhãn của người được duyệt, và điểm phải hiệu chuẩn thành xác suất để dùng cho giá và hạn mức. Phát hiện gian lận: dữ liệu cực kỳ mất cân bằng nên độ chính xác (accuracy) vô nghĩa, nhãn đến trễ hàng tuần, kẻ gian thích nghi, và quyết định phải đưa ra trong vài trăm mili giây theo chi phí của từng loại sai."
+concepts: [credit-scoring-ml, fraud-detection-ml]
+estMinutes: 50
+whyQuestion: "Mô hình gian lận của bạn đạt accuracy 99,8%. Sếp vui. Bạn có nên vui không, nếu tỉ lệ giao dịch gian lận là 0,2%?"
+devMapping:
+  - finance: "Rò rỉ nhãn (target leakage)"
+    dev: "Đặc trưng chỉ có sau khi biết kết quả"
+    explanation: "Như dự đoán sự cố bằng 'số ticket hỗ trợ trong tuần' — ticket tăng vì sự cố đã xảy ra."
+  - finance: "Nhãn trễ"
+    dev: "Feedback loop dài"
+    explanation: "Tranh chấp thẻ có thể đến sau nhiều tuần; đánh giá mô hình trên dữ liệu gần đây thiếu nhãn sẽ đánh giá sai."
+  - finance: "Ngưỡng theo chi phí"
+    dev: "Chọn ngưỡng cảnh báo theo chi phí báo nhầm và bỏ sót"
+    explanation: "Không có ngưỡng 'đúng' chung; ngưỡng tối ưu phụ thuộc chi phí mỗi loại sai và năng lực xử lý thủ công."
+pretest: [q-f6c-accuracy, q-f6c-leak]
+applications:
+  - id: app-f6c-fraud
+    title: "Đánh giá mô hình gian lận theo chi phí"
+    context: "Bộ dữ liệu giao dịch gian lận công khai (ghi nguồn và giấy phép) hoặc dữ liệu tổng hợp dán nhãn mô phỏng."
+    task: "Chia dữ liệu theo thời gian (không xáo trộn ngẫu nhiên); huấn luyện một mô hình đơn giản; vẽ đường precision–recall; định nghĩa chi phí bỏ sót và chi phí báo nhầm (ghi rõ là giả định); chọn ngưỡng tối thiểu hoá tổng chi phí trong giới hạn số cảnh báo đội xử lý được mỗi ngày; báo cáo kết quả trên giai đoạn kiểm tra sau cùng."
+    deliverable: "Notebook + đường PR + bảng chi phí theo ngưỡng + ngưỡng đề xuất kèm giả định."
+sources: [saito-pr-2015, bcbs-basel2-2004, cfpb-circular-2022-03]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Nêu các bẫy chính khi xây mô hình chấm điểm tín dụng và mô hình gian lận, và cách đánh giá đúng mỗi loại."
+  rubric:
+    - { id: label, criterion: "Tín dụng: định nghĩa vỡ nợ + khung thời gian; chia theo thời gian; chống rò rỉ; thiên lệch chỉ có nhãn của người được duyệt" }
+    - { id: calib, criterion: "Điểm phải hiệu chuẩn thành PD dùng được cho giá/hạn mức; giám sát trôi dạt dữ liệu" }
+    - { id: imbalance, criterion: "Gian lận: mất cân bằng nặng → dùng precision/recall/PR thay accuracy/ROC; ngưỡng theo chi phí và năng lực xử lý" }
+    - { id: delay, criterion: "Nhãn trễ và kẻ gian thích nghi → đánh giá trên dữ liệu đã đủ thời gian có nhãn, huấn luyện lại, giám sát liên tục" }
+---
+
+<Callout kind="story" title="99,8% accuracy">
+Một đội giả định báo cáo mô hình gian lận đạt accuracy 99,8%. Một kỹ sư mới thử một "mô hình" chỉ có một dòng: `return "không gian lận"`. Accuracy: 99,8%. Mô hình thật bắt được bao nhiêu vụ gian lận? Không ai đã đo.
+</Callout>
+
+## Chấm điểm tín dụng
+
+Mục tiêu: ước lượng **PD** (bài rủi ro tín dụng) cho người nộp đơn.
+
+**Định nghĩa nhãn**: "vỡ nợ" là gì (quá hạn trên bao nhiêu ngày?) trong **khung thời gian** nào sau giải ngân (12 tháng?). Đổi định nghĩa là đổi bài toán.
+
+**Chống rò rỉ**: đặc trưng chỉ được dùng thông tin **có tại thời điểm nộp đơn** (bài backtest: dữ liệu theo thời điểm). Rò rỉ điển hình: "số lần bị nhắc nợ", "trạng thái tài khoản hiện tại" lấy ở thời điểm huấn luyện thay vì thời điểm nộp đơn.
+
+**Chia theo thời gian**: huấn luyện trên các tháng cũ, kiểm tra trên các tháng mới hơn — giống cách mô hình sẽ được dùng.
+
+**Chỉ có nhãn của người được duyệt**: không biết người bị từ chối sẽ trả nợ ra sao → mô hình học trên một mẫu lệch. Các cách xử lý (suy luận cho nhóm bị từ chối, thử nghiệm có kiểm soát với hạn mức nhỏ) đều có giả định riêng — ghi rõ.
+
+**Hiệu chuẩn**: điểm dùng cho giá và hạn mức phải là **xác suất** đúng: trong nhóm được dự đoán PD 5%, khoảng 5% thực sự vỡ nợ. Mô hình xếp hạng tốt chưa chắc đã hiệu chuẩn tốt.
+
+**Giải thích lý do từ chối**: ở Mỹ, CFPB nhấn mạnh (Circular 2022-03) rằng dùng thuật toán phức tạp không miễn trừ nghĩa vụ nêu **lý do cụ thể, chính xác** khi từ chối tín dụng. Bài sau bàn về giải thích và công bằng.
+
+<Quiz id="q-f6c-leak" />
+
+## Phát hiện gian lận
+
+**Mất cân bằng nặng**: gian lận chiếm phần rất nhỏ giao dịch. Accuracy vô nghĩa (câu chuyện đầu bài). Dùng:
+
+- **Precision**: trong số bị gắn cờ, bao nhiêu là gian lận thật.
+- **Recall**: trong số gian lận thật, bắt được bao nhiêu.
+- Saito và Rehmsmeier (PLOS ONE, 2015) chỉ ra trên dữ liệu mất cân bằng, đường **precision–recall** phản ánh hiệu năng tốt hơn đường ROC, vốn có thể gây hiểu nhầm.
+
+<WorkedExample id="we-fraud-pr" />
+
+<Quiz id="q-f6c-accuracy" />
+
+**Ngưỡng theo chi phí**: bỏ sót một vụ gian lận mất số tiền giao dịch; báo nhầm làm phiền khách thật, mất doanh thu, tốn công xử lý. Ngưỡng tối ưu tối thiểu hoá tổng chi phí — và bị giới hạn bởi **số cảnh báo đội có thể xem mỗi ngày**.
+
+**Nhãn trễ**: tranh chấp thẻ có thể đến sau nhiều tuần (bài thẻ). Đánh giá trên giao dịch tuần trước sẽ thấy "ít gian lận" chỉ vì nhãn chưa về.
+
+**Kẻ gian thích nghi**: khi mô hình chặn được một kiểu, kiểu khác xuất hiện. Cần huấn luyện lại định kỳ, giám sát phân phối điểm và tỉ lệ cảnh báo, kết hợp quy tắc và mô hình, đặc trưng theo mạng lưới (thiết bị, tài khoản nhận dùng chung — bài KYC/AML).
+
+**Thời gian thực**: quyết định trước khi giao dịch đi (bài thanh toán tức thì), nên đặc trưng phải tính được trong vài chục mili giây.
+
+<Quiz id="q-f6c-threshold" />
+
+<Callout kind="field" title="Đánh giá theo đúng cách mô hình sẽ được dùng">
+Kiểm tra đầu tiên tôi làm với mọi mô hình tài chính: tập kiểm tra có được cắt theo thời gian không, và có bao gồm đủ thời gian để nhãn "chín" không. Hai lỗi này — xáo trộn ngẫu nhiên và đánh giá trên dữ liệu chưa có nhãn đầy đủ — làm phần lớn những con số đẹp tôi từng thấy trong buổi demo biến mất khi lên production.
+</Callout>

@@ -1,0 +1,32 @@
+items:
+  - id: q-f6c-accuracy
+    type: mcq
+    conceptId: fraud-detection-ml
+    prompt: "Tỉ lệ gian lận 0,2%. Chỉ số nào nên dùng để đánh giá mô hình? (chọn tất cả)"
+    options:
+      - { id: a, text: "Accuracy" }
+      - { id: b, text: "Precision và recall ở ngưỡng vận hành" }
+      - { id: c, text: "Đường precision–recall" }
+      - { id: d, text: "Tổng chi phí kỳ vọng (bỏ sót + báo nhầm) theo ngưỡng" }
+    correct: [b, c, d]
+    explanation: "Mô hình 'luôn nói không gian lận' đạt accuracy 99,8%; các chỉ số còn lại phản ánh khả năng bắt gian lận và chi phí thật."
+  - id: q-f6c-leak
+    type: mcq
+    conceptId: credit-scoring-ml
+    prompt: "Đặc trưng nào gây rò rỉ nhãn trong mô hình chấm điểm tín dụng lúc nộp đơn?"
+    options:
+      - { id: a, text: "Thu nhập khai báo trong đơn" }
+      - { id: b, text: "Số lần nhân viên thu nợ gọi điện cho khách trong 6 tháng sau giải ngân" }
+      - { id: c, text: "Lịch sử tín dụng tại thời điểm nộp đơn" }
+    correct: [b]
+    explanation: "Cuộc gọi thu nợ xảy ra sau giải ngân và vì khách đã chậm trả — thông tin từ tương lai."
+  - id: q-f6c-threshold
+    type: mcq
+    conceptId: fraud-detection-ml
+    prompt: "Đội chống gian lận xử lý tối đa 500 cảnh báo/ngày. Ở ngưỡng hiện tại mô hình sinh 3.000 cảnh báo/ngày với precision 10%. Hướng đúng là gì?"
+    options:
+      - { id: a, text: "Giữ nguyên ngưỡng, để cảnh báo tồn đọng" }
+      - { id: b, text: "Nâng ngưỡng (hoặc ưu tiên theo điểm và số tiền) để số cảnh báo khớp năng lực, đo recall bị mất, và cân nhắc tự động chặn ở vùng điểm rất cao" }
+      - { id: c, text: "Tắt mô hình" }
+    correct: [b]
+    explanation: "Ngưỡng phải tính tới năng lực xử lý; cảnh báo không ai xem tương đương không có cảnh báo."

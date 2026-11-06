@@ -1,0 +1,32 @@
+items:
+  - id: q-f6l-rate
+    type: mcq
+    conceptId: llm-in-finance
+    prompt: "Cách nào để chatbot trả lời đúng lãi suất tiết kiệm hiện hành?"
+    options:
+      - { id: a, text: "Fine-tune mô hình trên biểu lãi suất mỗi tháng" }
+      - { id: b, text: "Chatbot gọi công cụ lấy lãi suất từ hệ thống nguồn kèm ngày hiệu lực, rồi soạn câu trả lời quanh giá trị đó" }
+      - { id: c, text: "Ghi lãi suất vào system prompt và cập nhật khi nhớ ra" }
+    correct: [b]
+    explanation: "Giá trị động phải đến từ hệ thống nguồn; trọng số và prompt tĩnh sẽ lỗi thời."
+  - id: q-f6l-where
+    type: mcq
+    conceptId: llm-in-finance
+    prompt: "Ứng dụng nào phù hợp nhất để triển khai LLM sớm trong một ngân hàng, với rủi ro kiểm soát được?"
+    options:
+      - { id: a, text: "LLM tự duyệt khoản vay tiêu dùng" }
+      - { id: b, text: "LLM tóm tắt hồ sơ cảnh báo AML và trích dẫn giao dịch liên quan để chuyên viên ra quyết định nhanh hơn" }
+      - { id: c, text: "LLM tự chuyển tiền theo yêu cầu trong email của khách" }
+    correct: [b]
+    explanation: "LLM hỗ trợ người có thẩm quyền, có trích dẫn để kiểm; quyết định có hậu quả vẫn do người."
+  - id: q-f6l-governance
+    type: mcq
+    conceptId: llm-in-finance
+    prompt: "Đội đổi phiên bản mô hình nền cho hệ thống trích xuất hoá đơn. Bước nào cần làm trước khi đưa vào vận hành? (chọn tất cả)"
+    options:
+      - { id: a, text: "Chạy bộ eval trích xuất theo từng trường, so với phiên bản cũ" }
+      - { id: b, text: "Cập nhật tài liệu mô hình (phiên bản, giới hạn đã biết)" }
+      - { id: c, text: "Phát hành từng phần và giám sát tỉ lệ trường bị gắn cờ" }
+      - { id: d, text: "Không cần gì vì nhà cung cấp nói mô hình mới tốt hơn" }
+    correct: [a, b, c]
+    explanation: "Thay đổi mô hình là thay đổi hệ thống; kiểm định bằng eval của chính bạn, tài liệu hoá, phát hành có giám sát."

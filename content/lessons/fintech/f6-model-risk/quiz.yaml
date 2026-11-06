@@ -1,0 +1,30 @@
+items:
+  - id: q-f6m-proxy
+    type: mcq
+    conceptId: explainability-fairness
+    prompt: "Mô hình không dùng thuộc tính được bảo vệ nào. Kiểm tra nào vẫn cần làm để đánh giá công bằng? (chọn tất cả)"
+    options:
+      - { id: a, text: "Đo tỉ lệ duyệt và sai số hiệu chuẩn theo nhóm (khi có dữ liệu được phép dùng để phân tích)" }
+      - { id: b, text: "Rà soát đặc trưng có thể là biến đại diện (khu vực, thiết bị...)" }
+      - { id: c, text: "Ghi lại định nghĩa công bằng được chọn và lý do" }
+      - { id: d, text: "Không cần gì vì đã bỏ thuộc tính được bảo vệ" }
+    correct: [a, b, c]
+    explanation: "Biến đại diện có thể tái tạo thông tin bị bỏ; chỉ đo kết quả theo nhóm mới biết."
+  - id: q-f6m-psi
+    type: numeric
+    conceptId: model-risk-management
+    prompt: "Hai nhóm điểm: lúc huấn luyện 50% / 50%, hiện tại 70% / 30%. Tính PSI = Σ (hiện tại − gốc) × ln(hiện tại / gốc). (3 chữ số thập phân)"
+    answer: 0.17
+    tolerance: { kind: abs, value: 0.002 }
+    explanation: "(0,7 − 0,5) × ln(1,4) + (0,3 − 0,5) × ln(0,6) = 0,2 × 0,3365 + (−0,2) × (−0,5108) ≈ 0,0673 + 0,1022 = 0,1695 ≈ 0,170."
+  - id: q-f6m-inventory
+    type: mcq
+    conceptId: model-risk-management
+    prompt: "Theo cách SR 11-7 định nghĩa mô hình, thứ nào nên có trong danh mục mô hình? (chọn tất cả)"
+    options:
+      - { id: a, text: "Bảng tính ước lượng dự phòng rủi ro tín dụng dùng giả định của chuyên gia" }
+      - { id: b, text: "Mô hình ML chấm điểm gian lận" }
+      - { id: c, text: "Hệ thống LLM dùng để xếp loại mức rủi ro của hồ sơ" }
+      - { id: d, text: "Trang web giới thiệu sản phẩm" }
+    correct: [a, b, c]
+    explanation: "Phương pháp định lượng biến đầu vào (kể cả phán đoán chuyên gia) thành ước lượng định lượng đều là mô hình."
