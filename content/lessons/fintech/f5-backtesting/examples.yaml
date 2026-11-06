@@ -1,0 +1,21 @@
+examples:
+  - id: we-multiple-tests
+    title: "Thử nhiều lần làm 'phát hiện' dễ đến mức nào"
+    conceptId: backtesting
+    problem: "Mỗi chiến lược vô dụng có xác suất 5% vượt ngưỡng ý nghĩa do ngẫu nhiên; các lần thử coi như độc lập. Tính xác suất có ít nhất một 'phát hiện' khi thử 1, 20 và 100 chiến lược."
+    steps:
+      - text: "P(ít nhất một) = 1 − 0,95ⁿ. Với n = 1: 5%."
+      - text: "n = 20: 1 − 0,95²⁰ ≈ 64,2%."
+        faded: true
+        prompt: "Với 20 lần thử, xác suất bằng bao nhiêu %? (1 chữ số thập phân)"
+        answer: 64.2
+        tolerance: { kind: abs, value: 0.05 }
+        unit: "%"
+      - text: "n = 100: 1 − 0,95¹⁰⁰ ≈ 99,4%."
+        faded: true
+        prompt: "Với 100 lần thử, xác suất bằng bao nhiêu %? (1 chữ số thập phân)"
+        answer: 99.4
+        tolerance: { kind: abs, value: 0.05 }
+        unit: "%"
+      - text: "Các lần thử trong thực tế tương quan với nhau nên con số chính xác khác, nhưng hướng thì không đổi: càng thử nhiều, ngưỡng càng phải cao."
+    takeaway: "Kết quả backtest không đi kèm số lần thử thì không đánh giá được."

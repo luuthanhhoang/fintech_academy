@@ -1,0 +1,30 @@
+items:
+  - id: q-f5b-lookahead
+    type: mcq
+    conceptId: backtesting
+    prompt: "Trường hợp nào là thiên lệch nhìn trước? (chọn tất cả)"
+    options:
+      - { id: a, text: "Dùng lợi nhuận quý 4 cho quyết định ngày 31/12, trong khi báo cáo công bố cuối tháng 2 năm sau" }
+      - { id: b, text: "Chuẩn hoá đặc trưng bằng trung bình và độ lệch chuẩn tính trên toàn bộ 10 năm dữ liệu" }
+      - { id: c, text: "Quyết định mua bằng giá đóng cửa hôm qua và khớp ở giá mở cửa hôm nay" }
+      - { id: d, text: "Dùng giá đóng cửa hôm nay để quyết định và khớp ở giá mở cửa của chính hôm nay" }
+    correct: [a, b, d]
+    explanation: "(c) chỉ dùng thông tin đã biết trước thời điểm khớp; các phương án kia dùng thông tin từ tương lai."
+  - id: q-f5b-trials
+    type: numeric
+    conceptId: backtesting
+    prompt: "Thử 20 chiến lược vô dụng, độc lập; mỗi cái có 5% xác suất trông 'có ý nghĩa' do ngẫu nhiên. Xác suất có ít nhất một chiến lược 'có ý nghĩa' là bao nhiêu phần trăm? (làm tròn số nguyên)"
+    answer: 64
+    tolerance: { kind: abs, value: 0.5 }
+    unit: "%"
+    explanation: "1 − 0,95²⁰ ≈ 1 − 0,358 = 0,642 ≈ 64%."
+  - id: q-f5b-robust
+    type: mcq
+    conceptId: backtesting
+    prompt: "Chiến lược có Sharpe 2,1 với cửa sổ trung bình động 47 ngày, nhưng Sharpe gần 0 với cửa sổ 45 và 50 ngày. Đánh giá nào hợp lý?"
+    options:
+      - { id: a, text: "47 là con số kỳ diệu, nên giao dịch ngay" }
+      - { id: b, text: "Kết quả không bền với tham số lân cận — dấu hiệu mạnh của overfitting" }
+      - { id: c, text: "Cần thêm nhiều tham số hơn" }
+    correct: [b]
+    explanation: "Hiệu ứng thật thường không biến mất khi tham số dịch nhẹ."

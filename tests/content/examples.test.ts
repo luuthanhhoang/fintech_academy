@@ -42,6 +42,12 @@ const EXPECTED: Record<string, number[]> = {
   'we-credit-el': [0.08 * 0.8 * 200, ((0.01 * 0.4 * 500 + 0.03 * 0.5 * 300 + 0.08 * 0.8 * 200) / 1000) * 100],
   // Allocation: floor each share, remainder to largest fractional part; total preserved.
   'we-allocate': [100000 - 3 * Math.floor(100000 / 3), 3 * Math.floor(100000 / 3) + (100000 - 3 * Math.floor(100000 / 3))],
+  // Log returns add over time: Σ ln(P_t/P_t−1) = ln(P_T/P_0).
+  'we-log-returns': [Math.log(1.1) + Math.log(0.9) + Math.log(1.1), (Math.exp(Math.log(1.1) + Math.log(0.9) + Math.log(1.1)) - 1) * 100],
+  // Multiple testing: P(at least one false discovery) = 1 − 0.95^n.
+  'we-multiple-tests': [(1 - 0.95 ** 20) * 100, (1 - 0.95 ** 100) * 100],
+  // Single-factor model: β = Cov/Var, α = excess return − β × market excess return.
+  'we-beta-alpha': [0.027 / 0.0225, (0.15 - (0.027 / 0.0225) * 0.12) * 100],
 }
 
 describe('worked examples match the tested libraries', () => {

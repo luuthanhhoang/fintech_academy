@@ -1,8 +1,5 @@
 track: fintech
 lessons:
-  - { id: "f5-returns", stage: "f5", order: 0, title: { vi: "Thống kê lợi suất và chuỗi thời gian", en: "Return statistics and time series" }, concepts: [returns-statistics, time-series-basics] }
-  - { id: "f5-backtesting", stage: "f5", order: 1, title: { vi: "Backtest không tự lừa mình", en: "Backtesting without fooling yourself" }, concepts: [backtesting] }
-  - { id: "f5-factors-mc", stage: "f5", order: 2, title: { vi: "Mô hình nhân tố và Monte Carlo", en: "Factor models and Monte Carlo" }, concepts: [factor-models, monte-carlo] }
   - { id: "f6-credit-fraud-ml", stage: "f6", order: 0, title: { vi: "ML cho tín dụng và gian lận", en: "ML for credit and fraud" }, concepts: [credit-scoring-ml, fraud-detection-ml] }
   - { id: "f6-llm-finance", stage: "f6", order: 1, title: { vi: "LLM trong tài chính", en: "LLMs in finance" }, concepts: [llm-in-finance] }
   - { id: "f6-model-risk", stage: "f6", order: 2, title: { vi: "Quản trị rủi ro mô hình, giải thích và công bằng", en: "Model risk, explainability and fairness" }, concepts: [model-risk-management, explainability-fairness] }

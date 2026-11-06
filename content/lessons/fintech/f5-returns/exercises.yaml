@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f5r-geo
+    conceptId: returns-statistics
+    prompt: "Lợi suất 4 năm: +20%, −10%, +15%, −5%. Tính trung bình cộng, trung bình hình học (lợi suất kép hằng năm) và giải thích chênh lệch."
+    hint: "Hình học = (tích (1 + r))^(1/4) − 1."
+    solution: "Trung bình cộng = (20 − 10 + 15 − 5)/4 = 5%. Tích = 1,2 × 0,9 × 1,15 × 0,95 = 1,17990; mũ 1/4 ≈ 1,0422 → khoảng 4,22%/năm. Hình học nhỏ hơn cộng; chênh lệch tăng theo độ biến động (xấp xỉ một nửa phương sai). Lợi suất nhà đầu tư thực nhận theo thời gian là hình học."
+  - id: ex-f5r-tails
+    conceptId: returns-statistics
+    prompt: "Trên 5.000 ngày, với phân phối chuẩn, xác suất một ngày lỗ vượt 3σ khoảng 0,135%. Bạn đếm được 35 ngày như vậy. So sánh và rút ra kết luận cho mô hình rủi ro."
+    hint: "Số kỳ vọng = 5.000 × 0,00135."
+    solution: "Kỳ vọng theo chuẩn ≈ 6,75 ngày; quan sát 35 ngày, gấp khoảng 5 lần. Đuôi trái dày hơn chuẩn: VaR/ES tham số chuẩn sẽ đánh giá thấp rủi ro; dùng phương pháp lịch sử, phân phối đuôi dày, hoặc kịch bản căng thẳng, và kiểm định ngược."

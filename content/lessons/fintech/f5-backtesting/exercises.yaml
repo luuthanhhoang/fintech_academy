@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f5b-costs
+    conceptId: backtesting
+    prompt: "Chiến lược giả định có lợi suất gộp 12%/năm trước chi phí, quay vòng danh mục 20 lần/năm (mỗi lần mua và bán toàn bộ). Chi phí mỗi lượt một chiều (phí + nửa chênh lệch + trượt giá) là 0,15%. Lợi suất sau chi phí là bao nhiêu?"
+    hint: "Mỗi lần quay vòng = 2 lượt một chiều."
+    solution: "Chi phí/năm ≈ 20 × 2 × 0,15% = 6%. Lợi suất sau chi phí ≈ 12% − 6% = 6% (xấp xỉ, bỏ qua tác động kép). Nếu chi phí thực là 0,3%/lượt, lợi suất về 0. Chiến lược quay vòng cao cực kỳ nhạy với giả định chi phí."
+  - id: ex-f5b-survivor
+    conceptId: backtesting
+    prompt: "Bạn backtest chiến lược 'mua cổ phiếu giảm mạnh nhất tháng trước' trên các mã đang niêm yết hôm nay. Giải thích vì sao kết quả có thể thiên lệch nặng và cách sửa."
+    hint: "Ai bị loại khỏi dữ liệu?"
+    solution: "Những mã giảm mạnh rồi tiếp tục giảm tới phá sản/huỷ niêm yết không còn trong danh sách hôm nay, nên backtest chỉ thấy các mã giảm rồi hồi phục — đúng nhóm làm chiến lược trông tốt. Sửa: dùng dữ liệu theo thời điểm gồm toàn bộ mã niêm yết tại từng ngày, kèm lợi suất lúc huỷ niêm yết; nếu không có, ghi rõ hạn chế và không kết luận."

@@ -1,0 +1,84 @@
+---
+id: f5-backtesting
+track: fintech
+stage: f5
+order: 1
+title: { vi: "Backtest không tự lừa mình", en: "Backtesting without fooling yourself" }
+summary: "Backtest chạy một chiến lược trên dữ liệu quá khứ. Nó dễ cho kết quả đẹp giả vì: dùng thông tin chưa có tại thời điểm quyết định (nhìn trước), chỉ dùng tài sản còn tồn tại (sống sót), thử rất nhiều cấu hình rồi chọn cái đẹp nhất (overfitting), và bỏ qua chi phí giao dịch. Cách tự vệ: dữ liệu theo thời điểm, giữ riêng dữ liệu kiểm tra, đếm và báo cáo số lần thử, đặt ngưỡng thống kê cao hơn, và mô hình hoá chi phí thật."
+concepts: [backtesting]
+estMinutes: 45
+whyQuestion: "Bạn thử 200 biến thể chiến lược, chọn ra một cái có Sharpe 2,1 trên 10 năm dữ liệu. Đó là bằng chứng chiến lược tốt — hay bằng chứng bạn đã thử 200 lần?"
+facts:
+  - id: hlz-threshold
+    text: "Ngưỡng thống kê Harvey, Liu và Zhu (2016) đề xuất cho một nhân tố mới, do mức độ khai phá dữ liệu trong ngành"
+    value: "thống kê t lớn hơn 3,0 (thay vì khoảng 2,0 thông thường)"
+    sourceId: harvey-liu-zhu-2016
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Thiên lệch nhìn trước"
+    dev: "Rò rỉ dữ liệu (data leakage) giữa tập train và test"
+    explanation: "Đặc trưng dùng thông tin từ tương lai — mô hình 'giỏi' trong test, vô dụng khi chạy thật."
+  - finance: "Overfitting do thử nhiều"
+    dev: "p-hacking / tinh chỉnh trên tập test"
+    explanation: "Mỗi lần nhìn kết quả test rồi chỉnh, tập test biến thành tập train."
+  - finance: "Dữ liệu theo thời điểm (point-in-time)"
+    dev: "Bitemporal data: giá trị và thời điểm nó được biết"
+    explanation: "Báo cáo tài chính quý 4 công bố tháng 2 năm sau — không được dùng nó cho quyết định ngày 31/12."
+pretest: [q-f5b-lookahead, q-f5b-trials]
+applications:
+  - id: app-f5b-protocol
+    title: "Giao thức backtest có kiểm soát"
+    context: "Một ý tưởng chiến lược đơn giản trên dữ liệu công khai (ghi nguồn) — mục đích là học phương pháp, không phải tìm chiến lược để giao dịch."
+    task: "Viết giao thức trước khi chạy: giả thuyết, dữ liệu theo thời điểm, vũ trụ tài sản gồm cả mã đã huỷ niêm yết (nếu có dữ liệu; nếu không, ghi rõ hạn chế), mô hình chi phí, giai đoạn train/validation/holdout; ghi lại mọi cấu hình đã thử; chạy holdout đúng một lần ở cuối; báo cáo kết quả kèm số lần thử."
+    deliverable: "Tài liệu giao thức + nhật ký thử nghiệm + báo cáo holdout."
+sources: [bailey-backtest-2014, bailey-pbo-2017, harvey-liu-zhu-2016]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Liệt kê các cách một backtest tự lừa mình và biện pháp chống từng cách."
+  rubric:
+    - { id: lookahead, criterion: "Nhìn trước: chỉ dùng dữ liệu đã biết tại thời điểm quyết định (point-in-time, độ trễ công bố)" }
+    - { id: survivor, criterion: "Sống sót: vũ trụ tài sản phải gồm cả tài sản đã huỷ niêm yết/phá sản" }
+    - { id: overfit, criterion: "Overfitting: đếm số lần thử, giữ holdout chạy một lần, ngưỡng thống kê cao hơn, ước lượng xác suất overfitting" }
+    - { id: costs, criterion: "Chi phí: phí, thuế, chênh lệch mua–bán, trượt giá theo khối lượng; độ trễ thực thi" }
+---
+
+<Callout kind="story" title="Sharpe 2,1">
+Một nhà phân tích giả định thử 200 tổ hợp tham số cho chiến lược giao cắt trung bình động, chọn tổ hợp có Sharpe cao nhất trên 10 năm, và trình bày biểu đồ lợi nhuận đẹp. Không ai hỏi có bao nhiêu tổ hợp đã bị bỏ đi. Sáu tháng chạy thật, chiến lược đi ngang rồi lỗ — đúng như những gì 199 tổ hợp còn lại đã làm trong backtest.
+</Callout>
+
+## Bốn cách tự lừa phổ biến
+
+**1. Nhìn trước (look-ahead)**: dùng thông tin chưa có tại thời điểm quyết định. Ví dụ: dùng giá đóng cửa hôm nay để quyết định mua ở giá mở cửa hôm nay; dùng số liệu báo cáo tài chính trước ngày công bố; chuẩn hoá đặc trưng bằng trung bình của **toàn bộ** chuỗi.
+
+**2. Sống sót (survivorship)**: chỉ backtest trên các mã **còn niêm yết hôm nay** — bỏ mất những công ty đã phá sản, bị huỷ niêm yết. Kết quả thiên về lạc quan.
+
+**3. Overfitting do thử nhiều**: Bailey, Borwein, López de Prado và Zhu (Notices of the AMS, 2014) chỉ ra rằng chỉ cần thử một số lượng cấu hình vừa phải là đã có thể tạo ra một backtest ấn tượng do ngẫu nhiên, và càng thử nhiều thì khả năng backtest bị overfit càng cao — trong khi số lần thử hiếm khi được công bố. Bài tiếp theo của nhóm (Journal of Computational Finance, 2017) đề xuất cách **ước lượng xác suất overfitting** của backtest.
+
+**4. Bỏ qua chi phí**: phí, thuế, **chênh lệch mua–bán**, **trượt giá** khi khối lượng lớn đi sâu vào sổ lệnh (bài cấu trúc thị trường), độ trễ thực thi. Chiến lược giao dịch nhiều có thể từ lãi thành lỗ khi tính chi phí thật.
+
+<Quiz id="q-f5b-lookahead" />
+
+## Vì sao thử nhiều lại nguy hiểm
+
+Nếu mỗi chiến lược vô dụng có xác suất 5% trông "có ý nghĩa thống kê" do ngẫu nhiên, thử 20 chiến lược độc lập thì xác suất có ít nhất một cái "có ý nghĩa" là 1 − 0,95²⁰ ≈ 64%. Với cả một ngành cùng khai phá một bộ dữ liệu, Harvey, Liu và Zhu (Review of Financial Studies, 2016) đề xuất: <Fact id="hlz-threshold" />.
+
+<WorkedExample id="we-multiple-tests" />
+
+<Quiz id="q-f5b-trials" />
+
+## Giao thức chống tự lừa
+
+- **Viết giả thuyết trước**, lý do kinh tế cho việc chiến lược nên hiệu quả.
+- **Dữ liệu theo thời điểm**: mỗi giá trị kèm thời điểm nó được biết.
+- **Chia thời gian**: train → validation (walk-forward, cửa sổ trượt) → **holdout** chạy **đúng một lần** cuối cùng.
+- **Ghi nhật ký mọi lần thử**; báo cáo số lần thử cùng kết quả.
+- **Mô hình chi phí** bảo thủ; kiểm tra độ nhạy theo chi phí.
+- **Kiểm tra độ bền**: tham số lân cận có cho kết quả tương tự không? Kết quả chỉ đẹp ở đúng một điểm là dấu hiệu overfit.
+
+<Quiz id="q-f5b-robust" />
+
+<Callout kind="field" title="Holdout là tài nguyên dùng một lần">
+Quy tắc tôi giữ chặt nhất: tập holdout chỉ được mở khi mọi quyết định đã chốt, và chỉ mở một lần. Ngay khi ai đó nhìn kết quả holdout rồi "chỉnh nhẹ một tham số", holdout đã thành dữ liệu train và cần một holdout mới — thường là chờ dữ liệu tương lai. Nghe chậm, nhưng rẻ hơn rất nhiều so với phát hiện điều đó bằng tiền thật.
+</Callout>

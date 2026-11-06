@@ -1,0 +1,93 @@
+---
+id: f5-returns
+track: fintech
+stage: f5
+order: 0
+title: { vi: "Thống kê lợi suất và chuỗi thời gian", en: "Return statistics and time series" }
+summary: "Phân tích định lượng làm việc với lợi suất, không với giá: giá không dừng, lợi suất gần dừng hơn. Lợi suất đơn cộng được theo tài sản trong danh mục, lợi suất log cộng được theo thời gian. Độ biến động quy về năm bằng căn bậc hai thời gian chỉ đúng khi lợi suất độc lập. Lợi suất tài chính thực tế có đuôi dày và biến động theo cụm — giả định phân phối chuẩn sẽ đánh giá thấp những ngày tệ nhất."
+concepts: [returns-statistics, time-series-basics]
+estMinutes: 45
+whyQuestion: "Cổ phiếu tăng 50% rồi giảm 50%. Bạn hoà vốn không? Và nếu độ biến động ngày là 1%, độ biến động năm có phải là 1% × 252 không?"
+devMapping:
+  - finance: "Lợi suất log"
+    dev: "Làm việc trong không gian log để phép nhân thành phép cộng"
+    explanation: "Tích của các hệ số tăng trưởng thành tổng các log — dễ cộng dồn, lấy trung bình theo thời gian."
+  - finance: "Tính dừng"
+    dev: "Phân phối của metric không trôi theo thời gian"
+    explanation: "Mô hình học trên dữ liệu không dừng (như giá) giống đặt ngưỡng cảnh báo cố định cho một metric đang tăng trưởng."
+  - finance: "Biến động theo cụm"
+    dev: "Sự cố đến theo đợt"
+    explanation: "Ngày biến động mạnh thường kéo theo ngày biến động mạnh — như tải cao kéo theo lỗi dồn dập."
+pretest: [q-f5r-halves, q-f5r-annual]
+applications:
+  - id: app-f5r-notebook
+    title: "Notebook 'sự thật cách điệu' trên dữ liệu thật"
+    context: "Chuỗi giá đóng cửa công khai của một chỉ số hoặc cổ phiếu (ghi nguồn và ngày tải)."
+    task: "Tính lợi suất ngày đơn và log; trung bình, độ lệch chuẩn, quy năm (nêu giả định); độ nhọn (kurtosis) so với chuẩn; đếm số ngày vượt 3 độ lệch chuẩn so với kỳ vọng của phân phối chuẩn; tự tương quan của lợi suất và của giá trị tuyệt đối lợi suất ở vài độ trễ; viết nhận xét chỉ dựa trên số đã tính."
+    deliverable: "Notebook + bảng số + nhận xét, kèm nguồn dữ liệu."
+labs: [portfolio-math]
+sources: [cont-stylized-2001, openstax-finance]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích lợi suất đơn và log, cách quy năm độ biến động, và vì sao giả định chuẩn nguy hiểm."
+  rubric:
+    - { id: types, criterion: "Lợi suất đơn cộng theo tài sản (danh mục); lợi suất log cộng theo thời gian; log = ln(1 + đơn)" }
+    - { id: annualize, criterion: "σ năm ≈ σ ngày × √(số ngày) với giả định độc lập, cùng phân phối" }
+    - { id: tails, criterion: "Đuôi dày: biến động cực đoan xảy ra thường hơn phân phối chuẩn dự đoán" }
+    - { id: ts, criterion: "Giá không dừng; lợi suất ít tự tương quan nhưng độ lớn lợi suất có tự tương quan (biến động theo cụm)" }
+---
+
+<Callout kind="story" title="Mô hình 'mười nghìn năm mới có một lần'">
+Một mô hình rủi ro giả định giả định lợi suất ngày phân phối chuẩn. Theo mô hình, một ngày giảm 5 lần độ lệch chuẩn gần như không bao giờ xảy ra trong lịch sử loài người. Đội phân tích tải dữ liệu 20 năm của một chỉ số và đếm được vài ngày như thế. Mô hình không sai về toán; giả định của nó sai về thế giới.
+</Callout>
+
+## Lợi suất đơn và lợi suất log
+
+- **Lợi suất đơn**: r = P₁/P₀ − 1.
+- **Lợi suất log**: ℓ = ln(P₁/P₀) = ln(1 + r).
+
+Hai tính chất cần nhớ:
+
+- Lợi suất **đơn** cộng được **theo tài sản**: lợi suất danh mục = tổng có trọng số các lợi suất đơn (bài danh mục).
+- Lợi suất **log** cộng được **theo thời gian**: log của cả kỳ = tổng log của từng ngày.
+
+Tăng 50% rồi giảm 50%: 1,5 × 0,5 = 0,75 → **lỗ 25%**. Trung bình cộng lợi suất đơn (0%) không phải lợi suất bạn nhận được; trung bình hình học mới phải.
+
+<Quiz id="q-f5r-halves" />
+
+<WorkedExample id="we-log-returns" />
+
+## Độ biến động và quy năm
+
+Độ lệch chuẩn của lợi suất là **độ biến động**. Nếu lợi suất các ngày **độc lập và cùng phân phối**, phương sai cộng theo thời gian, nên:
+
+σ_năm ≈ σ_ngày × √N (N là số ngày giao dịch trong năm theo quy ước bạn dùng).
+
+Giả định độc lập không hoàn toàn đúng (xem dưới) — con số quy năm là xấp xỉ, ghi rõ quy ước.
+
+<Quiz id="q-f5r-annual" />
+
+## Lợi suất thực tế không "chuẩn"
+
+Cont (Quantitative Finance, 2001) tổng hợp các tính chất thống kê lặp lại của lợi suất trên nhiều thị trường ("sự thật cách điệu"), gồm tính chất phân phối, đuôi và biến động cực đoan, phụ thuộc tuyến tính và phi tuyến theo thời gian — và chỉ ra chúng làm mất hiệu lực nhiều phương pháp thống kê thông dụng. Các tính chất hay được nhắc tới:
+
+- **Đuôi dày**: biến động cực đoan xảy ra thường hơn nhiều so với phân phối chuẩn.
+- **Lợi suất ít tự tương quan**: lợi suất hôm nay gần như không dự báo tuyến tính được lợi suất ngày mai.
+- **Biến động theo cụm**: **độ lớn** lợi suất có tự tương quan — ngày biến động mạnh hay đi liền nhau.
+
+Bạn không cần tin bài này: notebook ở phần Áp dụng cho bạn tự đo trên dữ liệu thật.
+
+<Quiz id="q-f5r-cluster" />
+
+## Tính dừng
+
+Chuỗi **dừng** có phân phối (trung bình, phương sai, tự tương quan) không đổi theo thời gian. **Giá** không dừng — nó trôi; hồi quy giá của hai tài sản trôi cùng chiều dễ cho tương quan "giả". **Lợi suất** gần dừng hơn, nên mô hình hoá trên lợi suất. Biến động theo cụm có nghĩa phương sai cũng thay đổi theo thời gian — cửa sổ dữ liệu bạn chọn ảnh hưởng mạnh tới con số (bài VaR).
+
+Thực hành tính trung bình, phương sai, hiệp phương sai không dùng thư viện:
+
+<Lab id="portfolio-math" />
+
+<Callout kind="field" title="Ghi quy ước ngay cạnh con số">
+Rất nhiều tranh luận "độ biến động bao nhiêu" thực ra là hai người dùng hai quy ước: lợi suất đơn hay log, ngày lịch hay ngày giao dịch, cửa sổ 1 năm hay 5 năm, có trừ trung bình không. Tôi luôn ghi quy ước ngay dưới mỗi con số trong báo cáo. Nó tốn một dòng và tiết kiệm cả buổi họp.
+</Callout>

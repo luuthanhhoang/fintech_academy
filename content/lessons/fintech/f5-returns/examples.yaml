@@ -1,0 +1,20 @@
+examples:
+  - id: we-log-returns
+    title: "Lợi suất log cộng theo thời gian"
+    conceptId: returns-statistics
+    problem: "Dữ liệu tổng hợp (mô phỏng): giá 100 → 110 → 99 → 108,9 qua ba ngày. Tính lợi suất đơn và log từng ngày, rồi lợi suất cả kỳ."
+    steps:
+      - text: "Lợi suất đơn: +10%; −10%; +10%. Tổng các lợi suất đơn = +10%, nhưng giá cuối 108,9 tức +8,9%."
+      - text: "Lợi suất log ngày 1 = ln(1,1) ≈ 0,09531; ngày 2 = ln(0,9) ≈ −0,10536; ngày 3 = ln(1,1) ≈ 0,09531."
+      - text: "Tổng log = 0,09531 − 0,10536 + 0,09531 ≈ 0,08526."
+        faded: true
+        prompt: "Tổng lợi suất log ba ngày bằng bao nhiêu? (5 chữ số thập phân)"
+        answer: 0.08526
+        tolerance: { kind: abs, value: 0.00002 }
+      - text: "Đổi về lợi suất đơn cả kỳ: e^0,08526 − 1 ≈ 8,9%, khớp 108,9/100 − 1."
+        faded: true
+        prompt: "Lợi suất đơn cả kỳ bằng bao nhiêu %? (1 chữ số thập phân)"
+        answer: 8.9
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+    takeaway: "Cộng lợi suất đơn theo thời gian cho kết quả sai; cộng lợi suất log rồi đổi lại thì đúng."

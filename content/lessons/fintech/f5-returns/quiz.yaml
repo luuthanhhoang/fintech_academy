@@ -1,0 +1,27 @@
+items:
+  - id: q-f5r-halves
+    type: numeric
+    conceptId: returns-statistics
+    prompt: "Một tài sản tăng 50% rồi giảm 50%. Lợi suất cả kỳ là bao nhiêu phần trăm?"
+    answer: -25
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "1,5 × 0,5 − 1 = −0,25. Trung bình cộng của +50% và −50% là 0%, nhưng không phải lợi suất thực nhận."
+  - id: q-f5r-annual
+    type: numeric
+    conceptId: returns-statistics
+    prompt: "Độ lệch chuẩn lợi suất ngày là 1%. Với 252 ngày giao dịch và giả định độc lập, độ biến động năm xấp xỉ bao nhiêu phần trăm? (1 chữ số thập phân)"
+    answer: 15.9
+    tolerance: { kind: abs, value: 0.05 }
+    unit: "%"
+    explanation: "1% × √252 ≈ 1% × 15,87 ≈ 15,9%, không phải 252%."
+  - id: q-f5r-cluster
+    type: mcq
+    conceptId: time-series-basics
+    prompt: "Bạn đo được tự tương quan của lợi suất ngày gần 0, nhưng tự tương quan của |lợi suất| dương rõ rệt ở nhiều độ trễ. Điều đó gợi ý gì?"
+    options:
+      - { id: a, text: "Dự báo được hướng giá ngày mai" }
+      - { id: b, text: "Hướng khó dự báo, nhưng mức biến động có tính kéo dài (biến động theo cụm)" }
+      - { id: c, text: "Lợi suất độc lập hoàn toàn" }
+    correct: [b]
+    explanation: "Không tự tương quan tuyến tính không có nghĩa là độc lập; độ lớn biến động có nhớ."

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f5f-decompose
+    conceptId: factor-models
+    prompt: "Danh mục có β thị trường 0,9 và độ biến động năm 18%; thị trường có độ biến động 15%. Ước lượng phần phương sai của danh mục giải thích được bởi thị trường (R²) trong mô hình một nhân tố."
+    hint: "Phương sai hệ thống = β² × σ_m²."
+    solution: "Phương sai hệ thống = 0,81 × 0,0225 = 0,018225; phương sai tổng = 0,0324. R² ≈ 0,018225 / 0,0324 ≈ 56%. Phần còn lại (~44%) là rủi ro riêng (hoặc từ các nhân tố khác chưa đưa vào) — có thể giảm bằng đa dạng hoá nếu thật sự là rủi ro riêng."
+  - id: ex-f5f-mc-code
+    conceptId: monte-carlo
+    prompt: "Phác thảo hàm Monte Carlo ước lượng xác suất danh mục 1 tỉ giảm quá 20% trong một năm, với lợi suất tháng giả định, tái lập được và có báo cáo sai số."
+    hint: "Seed, vòng lặp kịch bản, tích lợi suất tháng, đếm, sai số nhị thức."
+    solution: "Khởi tạo bộ sinh có seed; với mỗi kịch bản i trong N: giá trị = 1; lặp 12 tháng: rút lợi suất tháng r từ phân phối giả định, giá trị ×= (1 + r); nếu giá trị cuối < 0,8 thì đếm. p̂ = đếm / N; sai số chuẩn ≈ √(p̂(1 − p̂)/N). Báo cáo p̂ ± 2 × sai số, seed, N và giả định phân phối; chạy lại với giả định đuôi dày để so."

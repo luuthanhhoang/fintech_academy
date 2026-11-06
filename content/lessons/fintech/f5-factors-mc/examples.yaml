@@ -1,0 +1,20 @@
+examples:
+  - id: we-beta-alpha
+    title: "Ước lượng beta và alpha từ dữ liệu (giả định)"
+    conceptId: factor-models
+    problem: "Dữ liệu tổng hợp (mô phỏng): hiệp phương sai giữa lợi suất vượt của quỹ và của thị trường là 0,0270 (theo năm); phương sai lợi suất vượt của thị trường là 0,0225. Năm qua lợi suất vượt của thị trường là 12%, của quỹ là 15%."
+    steps:
+      - text: "β = Cov / Var = 0,0270 / 0,0225 = 1,2."
+        faded: true
+        prompt: "β bằng bao nhiêu?"
+        answer: 1.2
+        tolerance: { kind: abs, value: 0.001 }
+      - text: "Lợi suất vượt kỳ vọng do beta = 1,2 × 12% = 14,4%."
+      - text: "α = 15% − 14,4% = 0,6 điểm %."
+        faded: true
+        prompt: "Alpha bằng bao nhiêu điểm %?"
+        answer: 0.6
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "điểm %"
+      - text: "Một năm dữ liệu với nhiễu riêng lớn thì 0,6 điểm khó phân biệt với 0 — cần nhiều năm và kiểm định thống kê."
+    takeaway: "Phần lớn 'vượt trội' của quỹ là phần thưởng cho beta; alpha thật nhỏ và khó đo."

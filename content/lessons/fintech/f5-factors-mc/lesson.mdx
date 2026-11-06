@@ -1,0 +1,96 @@
+---
+id: f5-factors-mc
+track: fintech
+stage: f5
+order: 2
+title: { vi: "Mô hình nhân tố và mô phỏng Monte Carlo", en: "Factor models and Monte Carlo simulation" }
+summary: "Mô hình nhân tố giải thích lợi suất của nhiều tài sản bằng một số ít nguồn rủi ro chung: thị trường (beta), quy mô, giá trị... Phần không giải thích được là rủi ro riêng, đa dạng hoá được. Monte Carlo trả lời câu hỏi 'phân phối kết quả trông thế nào' bằng cách mô phỏng thật nhiều kịch bản ngẫu nhiên từ một mô hình; độ chính xác tăng chậm, theo căn bậc hai số kịch bản, và kết quả chỉ tốt bằng mô hình sinh ra kịch bản."
+concepts: [factor-models, monte-carlo]
+estMinutes: 45
+whyQuestion: "Quỹ của bạn lãi 18% năm nay trong khi thị trường lãi 15%. Đó là tài năng — hay chỉ là quỹ có beta cao hơn 1 trong một năm thị trường tăng?"
+devMapping:
+  - finance: "Mô hình nhân tố"
+    dev: "Giảm chiều dữ liệu: biểu diễn nhiều chuỗi bằng vài thành phần chung"
+    explanation: "Như mô tả tải của hàng trăm service bằng vài yếu tố (giờ trong ngày, chiến dịch marketing) cộng nhiễu riêng."
+  - finance: "Alpha"
+    dev: "Phần dư sau khi đã trừ mọi yếu tố giải thích được"
+    explanation: "Cải thiện thật của một bản tối ưu là phần còn lại sau khi đã trừ ảnh hưởng của tải chung."
+  - finance: "Monte Carlo"
+    dev: "Fuzzing / load test ngẫu nhiên có seed"
+    explanation: "Sinh rất nhiều đầu vào ngẫu nhiên từ một phân phối giả định để xem phân phối đầu ra; tái lập được nhờ seed."
+pretest: [q-f5f-beta, q-f5f-mc-error]
+applications:
+  - id: app-f5f-mc
+    title: "Mô phỏng Monte Carlo cho kế hoạch tiết kiệm"
+    context: "Một kế hoạch đóng góp hằng tháng vào danh mục trong nhiều năm (tham số giả định, dán nhãn mô phỏng)."
+    task: "Viết mô phỏng có seed: lợi suất tháng lấy từ một phân phối giả định (thử cả chuẩn và một phân phối đuôi dày hoặc bootstrap từ dữ liệu lịch sử có nguồn); chạy N kịch bản; báo cáo phân vị 5%, 50%, 95% của giá trị cuối kỳ và xác suất không đạt mục tiêu; vẽ sai số của ước lượng theo N; so kết quả giữa hai giả định phân phối."
+    deliverable: "Notebook + biểu đồ phân vị + bảng so sánh giả định + ghi chú hạn chế."
+simulators: [portfolio]
+sources: [fama-french-1993, glasserman-mc-2003, markowitz-1952]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích mô hình nhân tố, alpha và beta; rồi giải thích Monte Carlo làm gì và giới hạn của nó."
+  rubric:
+    - { id: factor, criterion: "Lợi suất = alpha + Σ beta × nhân tố + phần riêng; beta đo độ nhạy với nhân tố" }
+    - { id: alpha, criterion: "Đánh giá hiệu quả phải trừ phần do phơi nhiễm nhân tố; alpha là phần dư" }
+    - { id: mc, criterion: "Monte Carlo: sinh nhiều kịch bản từ mô hình, ước lượng phân phối/xác suất; dùng seed để tái lập" }
+    - { id: limits, criterion: "Sai số giảm theo 1/√N; kết quả phụ thuộc giả định mô hình (phân phối, tương quan)" }
+---
+
+<Callout kind="story" title="Ngôi sao của năm tăng giá">
+Một quỹ giả định đứng đầu bảng xếp hạng năm thị trường tăng mạnh, rồi đứng gần cuối năm thị trường giảm. Phân tích sau đó cho thấy quỹ không có chiến lược đặc biệt nào: nó chỉ đơn giản nắm nhiều cổ phiếu nhạy với thị trường hơn mức trung bình. Lợi nhuận "vượt trội" là phần thưởng cho rủi ro đã chịu, không phải kỹ năng.
+</Callout>
+
+## Mô hình một nhân tố: beta
+
+R_i − r_f = α_i + β_i × (R_thị trường − r_f) + ε_i
+
+- **β (beta)**: độ nhạy của tài sản với thị trường. β = Cov(R_i, R_m) / Var(R_m). β = 1,2 → thị trường lên 1%, tài sản lên trung bình 1,2%.
+- **α (alpha)**: lợi suất vượt sau khi đã trừ phần giải thích bằng thị trường.
+- **ε**: rủi ro riêng — đa dạng hoá được (bài danh mục).
+
+Quay lại câu hỏi đầu bài: với β = 1,2, thị trường lãi 15% trên lãi suất phi rủi ro 3%, lợi suất kỳ vọng do beta là 3% + 1,2 × 12% = 17,4%. Quỹ lãi 18% → alpha chỉ khoảng 0,6 điểm, chưa trừ phí và chưa xét nhiễu.
+
+<WorkedExample id="we-beta-alpha" />
+
+<Quiz id="q-f5f-beta" />
+
+## Nhiều nhân tố
+
+Fama và French (Journal of Financial Economics, 1993) xác định ba nhân tố chung cho lợi suất cổ phiếu — **thị trường**, **quy mô** công ty và **tỉ số giá trị sổ sách trên giá thị trường** — cùng hai nhân tố kỳ hạn cho trái phiếu. Mỗi nhân tố được dựng như một danh mục mua–bán (ví dụ nhỏ trừ lớn). Từ đó, nhiều nhân tố khác được đề xuất — và bài backtest đã cho thấy vì sao phải đòi hỏi bằng chứng thống kê cao hơn cho mỗi nhân tố mới.
+
+Ứng dụng kỹ thuật:
+
+- **Phân rã rủi ro**: danh mục chịu bao nhiêu rủi ro từ thị trường, từ ngành, từ phong cách.
+- **Đánh giá hiệu quả**: alpha sau khi trừ các phơi nhiễm nhân tố.
+- **Ước lượng hiệp phương sai** ổn định hơn: với N tài sản, ước lượng vài beta mỗi tài sản thay vì N(N−1)/2 tương quan.
+
+<Quiz id="q-f5f-ff" />
+
+## Monte Carlo
+
+Khi không có công thức đóng cho phân phối kết quả — danh mục phức tạp, dòng tiền phụ thuộc đường đi, sản phẩm phái sinh — ta **mô phỏng**:
+
+1. Chọn mô hình sinh kịch bản (phân phối lợi suất, tương quan, cú sốc).
+2. Sinh N kịch bản bằng bộ sinh số ngẫu nhiên **có seed**.
+3. Tính kết quả cho mỗi kịch bản.
+4. Ước lượng thống kê: trung bình, phân vị, xác suất vượt ngưỡng.
+
+Sai số chuẩn của ước lượng trung bình ≈ σ / √N (giáo trình chuẩn của Glasserman, 2003): muốn sai số giảm một nửa phải tăng **gấp bốn** số kịch bản. Các kỹ thuật giảm phương sai giúp đạt cùng độ chính xác với ít kịch bản hơn.
+
+<Quiz id="q-f5f-mc-error" />
+
+Thử mô phỏng: simulator dưới đây sinh lợi suất tổng hợp có seed cố định và vẽ đám mây danh mục ngẫu nhiên.
+
+<Simulator id="portfolio" />
+
+## Giới hạn
+
+- **Rác vào, rác ra**: Monte Carlo trên phân phối chuẩn kế thừa mọi vấn đề đuôi dày (bài lợi suất).
+- **Tương quan không ổn định**: trong khủng hoảng, tương quan giữa tài sản thường tăng — mô phỏng với tương quan bình thường đánh giá thấp rủi ro cùng giảm.
+- **Độ chính xác giả**: hiển thị kết quả với 4 chữ số thập phân không làm giả định chính xác hơn.
+
+<Callout kind="field" title="Luôn chạy hai giả định">
+Tôi không trình bày kết quả Monte Carlo với một giả định duy nhất. Tối thiểu là hai: giả định "bình thường" và một giả định căng thẳng hơn (đuôi dày hơn, tương quan cao hơn, hoặc bootstrap từ giai đoạn khủng hoảng có nguồn). Khoảng cách giữa hai kết quả cho người đọc cảm nhận về rủi ro mô hình — thứ mà một biểu đồ phân vị đẹp đơn lẻ che mất.
+</Callout>

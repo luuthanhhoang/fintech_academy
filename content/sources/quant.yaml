@@ -1,0 +1,37 @@
+sources:
+  - id: cont-stylized-2001
+    title: "Empirical properties of asset returns: stylized facts and statistical issues — Quantitative Finance 1(2), 223–236 (2001)"
+    url: https://doi.org/10.1080/713665670
+    publisher: Rama Cont / Taylor & Francis
+    accessed: 2026-11-06
+    note: Tổng hợp các 'sự thật cách điệu' về lợi suất (phân phối, đuôi, phụ thuộc tuyến tính và phi tuyến theo thời gian). Bản đầy đủ có phí; nội dung chi tiết đối chiếu qua tóm tắt và bài kiểm tra lại năm 2023 (Ratliff-Crain và cộng sự).
+  - id: fama-french-1993
+    title: "Common risk factors in the returns on stocks and bonds — Journal of Financial Economics 33, 3–56 (1993)"
+    url: https://doi.org/10.1016/0304-405X(93)90023-5
+    publisher: Eugene F. Fama & Kenneth R. French / Elsevier
+    accessed: 2026-11-06
+    note: Ba nhân tố cổ phiếu (thị trường, quy mô, giá trị sổ sách/giá thị trường) và hai nhân tố kỳ hạn trái phiếu. Kiểm tra qua tóm tắt và trích đoạn.
+  - id: bailey-backtest-2014
+    title: "Pseudo-Mathematics and Financial Charlatanism: The Effects of Backtest Overfitting on Out-of-Sample Performance — Notices of the AMS 61(5), 458–471 (2014)"
+    url: https://scholarworks.wmich.edu/math_pubs/40/
+    publisher: Bailey, Borwein, López de Prado & Zhu
+    accessed: 2026-11-06
+    note: Càng thử nhiều cấu hình chiến lược, xác suất backtest đẹp do overfitting càng cao; số lần thử hiếm khi được công bố.
+  - id: bailey-pbo-2017
+    title: "The Probability of Backtest Overfitting — Journal of Computational Finance (2017)"
+    url: https://www.risk.net/journal-of-computational-finance/2471206/the-probability-of-backtest-overfitting
+    publisher: Bailey, Borwein, López de Prado & Zhu / Risk.net
+    accessed: 2026-11-06
+    note: Khung ước lượng xác suất overfitting (PBO) bằng kiểm định chéo đối xứng tổ hợp (CSCV).
+  - id: harvey-liu-zhu-2016
+    title: ". . . and the Cross-Section of Expected Returns — Review of Financial Studies 29(1), 5–68 (2016)"
+    url: https://www.nber.org/papers/w20592
+    publisher: Harvey, Liu & Zhu / NBER (working paper 20592)
+    accessed: 2026-11-06
+    note: Do khai phá dữ liệu rộng rãi, nhân tố mới cần thống kê t lớn hơn 3,0 thay vì ngưỡng thông thường khoảng 2,0.
+  - id: glasserman-mc-2003
+    title: "Monte Carlo Methods in Financial Engineering"
+    url: https://doi.org/10.1007/978-0-387-21617-1
+    publisher: Paul Glasserman / Springer (2003)
+    accessed: 2026-11-06
+    note: Giáo trình chuẩn về mô phỏng Monte Carlo trong tài chính; sai số giảm theo căn bậc hai số mẫu, kỹ thuật giảm phương sai.
