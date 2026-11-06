@@ -203,7 +203,7 @@ export function SkyAndLight({ sky, shadowMapSize, shadowEvery }: { sky: SkyState
         shadow-bias={-0.0003}
         shadow-normalBias={0.04}
       />
-      <hemisphereLight args={[srgb(look.horizon), srgb(look.ground), 0.32 + overcast * 0.35]} />
+      <hemisphereLight args={[srgb(look.horizon), srgb(look.ground), 0.25 + 0.4 * daylight + overcast * 0.35]} />
       <ambientLight ref={flashLight} intensity={0} color="#dfe8ff" />
     </>
   )

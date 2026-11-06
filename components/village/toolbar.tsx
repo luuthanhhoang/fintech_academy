@@ -49,6 +49,16 @@ export function Toolbar(p: ToolbarProps) {
       <details className="mt-1 text-[11px] text-ink-3">
         <summary className="cursor-pointer">Nguồn tài nguyên đồ hoạ</summary>
         <ul className="mt-1 space-y-0.5">
+          <li>
+            {p.world.assets.credit.what} — {p.world.assets.credit.author} ({p.world.assets.credit.license}){' '}
+            <a href={p.world.assets.credit.url} target="_blank" rel="noreferrer" className="underline">
+              nguồn
+            </a>{' '}
+            ·{' '}
+            <a href={p.world.assets.credit.notice} target="_blank" rel="noreferrer" className="underline">
+              danh sách & giấy phép
+            </a>
+          </li>
           {p.world.graphics.credits.map((c) => (
             <li key={c.url}>
               {c.what} — {c.author} ({c.license}){' '}

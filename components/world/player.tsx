@@ -1,15 +1,16 @@
 'use client'
 
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import type { Action, ModelAsset } from '@/lib/content/schema/assets'
 import type { WorldMap } from '@/lib/content/schema/world'
 import type { HeightGrid } from '@/lib/world/grid'
 import type { Pos, WorldLayout } from '@/lib/world/layout'
 import { bridgeDeck } from '@/lib/world/roads'
 import type { Terrain } from '@/lib/world/terrain'
 import { CircleGrid, collidersFor, insideAny, nearestReachable, rayGround, stepWalk, type Reachable, type WalkState } from '@/lib/world/walk'
-import { Person, pose, type Look } from './person'
+import { Character } from './assets/character'
 import { playerPose, walkInput, walkWorld } from './walk-state'
 
 const UP = new THREE.Vector3(0, 1, 0)
@@ -26,6 +27,8 @@ export interface PlayerProps {
   player: WorldMap['player']
   spawn: Pos
   reachables: Reachable[]
+  /** Your character model (assets.yaml cast.player). */
+  model: ModelAsset
   onNear: (r: Reachable | null) => void
 }
 
@@ -78,16 +81,17 @@ function intent(camera: THREE.Camera, s: WalkState) {
 }
 
 /** You: a villager you steer with keys, clicks or the joystick; reports the nearest place you can enter. */
-export function Player({ terrain, grid, layout, player, spawn, reachables, onNear }: PlayerProps) {
+export function Player({ terrain, grid, layout, player, spawn, reachables, model, onNear }: PlayerProps) {
   const body = useRef<THREE.Group>(null)
-  const joints = useRef<(THREE.Object3D | null)[]>([])
+  const [action, setAction] = useState<Action>('idle')
+  const [clipSpeed, setClipSpeed] = useState(1)
+  const anim = useRef<{ action: Action; speed: number }>({ action: 'idle', speed: 1 })
   const marker = useRef<THREE.Mesh>(null)
   const arrow = useRef<THREE.Mesh>(null)
   const env = useMemo(
     () => ({ terrain, player, grid: new CircleGrid(collidersFor(layout)), deck: (x: number, z: number) => bridgeDeck(layout.road, x, z) }),
     [terrain, player, layout],
   )
-  const look: Look = useMemo(() => ({ ...player.look, long: false, carry: false, height: 1.7 }), [player.look])
   const state = useRef<WalkState>({ x: spawn[0], z: spawn[2], y: spawn[1], yaw: 0, speed: 0, swimming: false })
   const moved = useRef(0)
   const near = useRef<{ id: string | null; left: number; item: Reachable | null }>({ id: null, left: 0, item: null })
@@ -127,9 +131,15 @@ export function Player({ terrain, grid, layout, player, spawn, reachables, onNea
     if (g) {
       g.position.set(next.x, next.y, next.z)
       g.rotation.y = next.yaw
-      const stride = Math.min(1, next.speed / player.walkSpeed)
-      const phase = clock.elapsedTime * (next.speed > player.walkSpeed * 1.2 ? 11 : 7.5)
-      pose(joints.current, phase, next.swimming ? 0.6 : stride, clock.elapsedTime)
+      // Pick the clip from the ground speed, and play it at a rate that keeps feet from sliding.
+      const run = next.speed > player.walkSpeed * 1.25
+      const act: Action = next.speed < 0.25 ? 'idle' : run ? 'run' : 'walk'
+      const rate = act === 'idle' ? 1 : Math.round((next.speed / (run ? player.runSpeed : player.walkSpeed)) * 10) / 10
+      if (act !== anim.current.action || Math.abs(rate - anim.current.speed) > 0.15) {
+        anim.current = { action: act, speed: rate }
+        setAction(act)
+        setClipSpeed(Math.max(0.4, rate))
+      }
     }
     const m = marker.current
     if (m) {
@@ -166,7 +176,9 @@ export function Player({ terrain, grid, layout, player, spawn, reachables, onNea
   return (
     <>
       <group ref={body}>
-        <Person look={look} joints={joints} />
+        <Suspense fallback={null}>
+          <Character model={model} action={action} speed={clipSpeed} />
+        </Suspense>
       </group>
       <mesh ref={marker} rotation-x={-Math.PI / 2} visible={false}>
         <ringGeometry args={[0.35, 0.55, 32]} />

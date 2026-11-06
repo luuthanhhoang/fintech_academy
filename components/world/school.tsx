@@ -2,13 +2,12 @@
 
 import type { ThreeEvent } from '@react-three/fiber'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
+import { Suspense, useRef } from 'react'
 import type * as THREE from 'three'
-import type { WorldMap } from '@/lib/content/schema/world'
-import { mulberry32 } from '@/lib/finance/random'
+import type { Action, ModelAsset } from '@/lib/content/schema/assets'
 import type { Civic } from '@/lib/world/layout'
 import { Box, Post, Roof, Window } from './models/parts'
-import { Person, pose, type Look } from './person'
+import { Character } from './assets/character'
 import { selectionId, type SelectionId } from './scene-types'
 
 /** Kids are animated only within this distance of the camera. */
@@ -16,9 +15,11 @@ const SEE_KIDS = 150
 
 type Play = 'tag' | 'jump' | 'swing'
 
-function Kid({ look, play, seed, active }: { look: Look; play: Play; seed: number; active: boolean }) {
+/** What each kind of play looks like: clip, and how the child moves around the yard. */
+const PLAY_ACTION: Record<Play, Action> = { tag: 'run', jump: 'idle', swing: 'sit' }
+
+function Kid({ model, scale, play, seed, active }: { model: ModelAsset; scale: number; play: Play; seed: number; active: boolean }) {
   const g = useRef<THREE.Group>(null)
-  const joints = useRef<(THREE.Object3D | null)[]>([])
   useFrame(({ clock, camera }) => {
     const el = g.current
     if (!el) return
@@ -27,27 +28,26 @@ function Kid({ look, play, seed, active }: { look: Look; play: Play; seed: numbe
     if (!el.visible) return
     const t = clock.elapsedTime + seed
     if (play === 'tag') {
-      // Chasing round the yard: a circle with a wobble, running stride.
+      // Chasing round the yard: a circle with a wobble.
       const a = t * 0.9 + seed
       const r = 4.5 + Math.sin(t * 0.7 + seed) * 1.2
       el.position.set(Math.cos(a) * r, 0, 6 + Math.sin(a) * r)
-      el.rotation.y = -a
-      pose(joints.current, t * 12, 1, t)
+      el.rotation.set(0, -a, 0)
     } else if (play === 'jump') {
       el.position.set(-4 + (seed % 3) * 1.4, Math.abs(Math.sin(t * 5)) * 0.35, 9)
-      el.rotation.y = seed
-      pose(joints.current, 0, 0, t)
+      el.rotation.set(0, seed, 0)
     } else {
-      // On a swing: pendulum around the top bar.
+      // On a swing: pendulum under the top bar.
       const a = Math.sin(t * 1.8) * 0.6
-      el.position.set(6.2 + (seed % 2) * 1.4, 2.6 - Math.cos(a) * 2.1, 9.5 + Math.sin(a) * 2.1)
+      el.position.set(6.2 + (seed % 2) * 1.4, 2.0 - Math.cos(a) * 1.6, 9.5 + Math.sin(a) * 1.6)
       el.rotation.set(a, Math.PI, 0)
-      pose(joints.current, 0, 0, t)
     }
   })
   return (
     <group ref={g}>
-      <Person look={look} joints={joints} />
+      <Suspense fallback={null}>
+        <Character model={model} action={PLAY_ACTION[play]} scale={scale} active={active} />
+      </Suspense>
     </group>
   )
 }
@@ -91,7 +91,7 @@ function Flag() {
 }
 
 /** The region's school: a two-storey yellow schoolhouse, a flag, a yard and children playing by day. */
-function School({ school, looks, daylight, night, onSelect }: { school: Civic; looks: Look[]; daylight: number; night: boolean; onSelect: (id: SelectionId) => void }) {
+function School({ school, kids, kidScale, kidCount, daylight, night, onSelect }: { school: Civic; kids: ModelAsset[]; kidScale: number; kidCount: number; daylight: number; night: boolean; onSelect: (id: SelectionId) => void }) {
   const click = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
     onSelect(selectionId('school', school.regionId))
@@ -109,23 +109,26 @@ function School({ school, looks, daylight, night, onSelect }: { school: Civic; l
       </group>
       <Flag />
       <Playground />
-      {looks.map((look, i) => <Kid key={i} look={look} play={plays[i % plays.length]!} seed={i * 1.7 + 0.3} active={daylight > 0.3} />)}
+      {Array.from({ length: kidCount }, (_, i) => (
+        <Kid key={i} model={kids[i % kids.length]!} scale={kidScale} play={plays[i % plays.length]!} seed={i * 1.7 + 0.3} active={daylight > 0.3} />
+      ))}
     </group>
   )
 }
 
-export function Schools({ schools, map, daylight, night, onSelect }: { schools: Civic[]; map: WorldMap; daylight: number; night: boolean; onSelect: (id: SelectionId) => void }) {
-  const looks = useMemo(() => {
-    const rand = mulberry32(map.seed + 31)
-    const at = <T,>(arr: readonly T[]) => arr[Math.floor(rand() * arr.length)]!
-    return Array.from({ length: map.civic.kids }, () => ({
-      skin: at(map.people.skin), cloth: at(map.people.clothes), pants: at(map.people.clothes), hair: at(map.people.hair),
-      hat: false, long: rand() < 0.4, carry: false, height: 1.05 + rand() * 0.25,
-    }))
-  }, [map])
+export function Schools({ schools, kids, kidScale, kidCount, daylight, night, onSelect }: {
+  schools: Civic[]
+  kids: ModelAsset[]
+  kidScale: number
+  /** Children per schoolyard (map.yaml civic.kids). */
+  kidCount: number
+  daylight: number
+  night: boolean
+  onSelect: (id: SelectionId) => void
+}) {
   return (
     <group>
-      {schools.map((s) => <School key={s.regionId} school={s} looks={looks} daylight={daylight} night={night} onSelect={onSelect} />)}
+      {schools.map((s) => <School key={s.regionId} school={s} kids={kids} kidScale={kidScale} kidCount={kidCount} daylight={daylight} night={night} onSelect={onSelect} />)}
     </group>
   )
 }

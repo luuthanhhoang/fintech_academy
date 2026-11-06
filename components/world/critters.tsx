@@ -1,26 +1,28 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import type { Action, ModelAsset } from '@/lib/content/schema/assets'
 import type { WorldMap } from '@/lib/content/schema/world'
 import { mulberry32 } from '@/lib/finance/random'
 import type { HeightGrid } from '@/lib/world/grid'
 import type { Lot } from '@/lib/world/layout'
+import { Character } from './assets/character'
+import { Label } from './label-portal'
 import { playerPose } from './walk-state'
 
 const angleTo = (from: number, to: number) => Math.atan2(Math.sin(to - from), Math.cos(to - from))
 /** Small animals are simulated only within this distance of the camera. */
 const SIM_RANGE = 160
 
-/** Your dog: trots after you, sits when you stop, wags its tail. */
-export function Companion({ grid, map }: { grid: HeightGrid; map: WorldMap }) {
+/** Your dog: trots after you, gallops to catch up, sits (showing its name) when you stop. */
+export function Companion({ grid, map, model }: { grid: HeightGrid; map: WorldMap; model: ModelAsset }) {
   const g = useRef<THREE.Group>(null)
-  const tail = useRef<THREE.Mesh>(null)
-  const legs = useRef<(THREE.Mesh | null)[]>([])
-  const s = useRef({ x: 0, z: 0, yaw: 0, still: 0, placed: false })
+  const s = useRef({ x: 0, z: 0, yaw: 0, still: 0, speed: 0, placed: false, action: 'idle' as Action })
+  const [action, setAction] = useState<Action>('idle')
   const c = map.player.companion
-  useFrame(({ clock }, dt) => {
+  useFrame((_, dt) => {
     const el = g.current
     if (!el || !playerPose.active) return
     const st = s.current
@@ -33,63 +35,31 @@ export function Companion({ grid, map }: { grid: HeightGrid; map: WorldMap }) {
     const dx = gx - st.x
     const dz = gz - st.z
     const d = Math.hypot(dx, dz)
-    const speed = d > 0.4 ? Math.min(d * 2.2, 12) : 0
-    if (speed > 0) {
-      st.x += (dx / d) * speed * dt
-      st.z += (dz / d) * speed * dt
+    st.speed = d > 0.4 ? Math.min(d * 2.2, 12) : 0
+    if (st.speed > 0) {
+      st.x += (dx / d) * st.speed * dt
+      st.z += (dz / d) * st.speed * dt
       st.yaw += angleTo(st.yaw, Math.atan2(dx, dz)) * Math.min(1, dt * 8)
       st.still = 0
     } else st.still += dt
-    const t = clock.elapsedTime
-    const sit = st.still > 2.5
-    el.position.set(st.x, grid.at(st.x, st.z) + (speed > 0 ? Math.abs(Math.sin(t * 14)) * 0.05 : 0), st.z)
-    el.rotation.set(sit ? -0.35 : 0, st.yaw, 0)
-    if (tail.current) tail.current.rotation.z = Math.sin(t * (sit ? 9 : 14)) * 0.6
-    legs.current.forEach((l, i) => {
-      if (l) l.rotation.x = speed > 0 ? Math.sin(t * 14 + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI / 2 : 0)) * 0.7 : 0
-    })
+    el.position.set(st.x, grid.at(st.x, st.z), st.z)
+    el.rotation.y = st.yaw
+    const next: Action = st.speed > 4 ? 'run' : st.speed > 0.2 ? 'walk' : st.still > 2.5 ? 'sit' : 'idle'
+    if (next !== st.action) {
+      st.action = next
+      setAction(next)
+    }
   })
-  const coat = <meshStandardMaterial color={c.coat} roughness={0.85} />
   return (
     <group ref={g}>
-      <mesh position={[0, 0.5, 0]} rotation-x={Math.PI / 2} castShadow>
-        <capsuleGeometry args={[0.2, 0.55, 4, 10]} />
-        {coat}
-      </mesh>
-      <mesh position={[0, 0.48, 0.08]} scale={[0.85, 0.7, 1.1]}>
-        <sphereGeometry args={[0.2, 10, 8]} />
-        <meshStandardMaterial color={c.patch} roughness={0.9} />
-      </mesh>
-      <group position={[0, 0.78, 0.45]}>
-        <mesh castShadow>
-          <sphereGeometry args={[0.17, 12, 10]} />
-          {coat}
-        </mesh>
-        <mesh position={[0, -0.04, 0.17]} scale={[0.7, 0.6, 1]}>
-          <sphereGeometry args={[0.1, 10, 8]} />
-          <meshStandardMaterial color={c.patch} />
-        </mesh>
-        <mesh position={[0, -0.02, 0.27]}>
-          <sphereGeometry args={[0.035, 8, 6]} />
-          <meshStandardMaterial color="#1b1512" />
-        </mesh>
-        {[-1, 1].map((k) => (
-          <mesh key={k} position={[k * 0.11, 0.14, -0.02]} rotation-z={k * -0.4}>
-            <coneGeometry args={[0.06, 0.16, 4]} />
-            {coat}
-          </mesh>
-        ))}
-      </group>
-      {[[-0.12, 0.3], [0.12, 0.3], [-0.12, -0.3], [0.12, -0.3]].map(([x, z], i) => (
-        <mesh key={i} ref={(el) => void (legs.current[i] = el)} position={[x!, 0.3, z!]}>
-          <cylinderGeometry args={[0.045, 0.04, 0.42, 6]} />
-          {coat}
-        </mesh>
-      ))}
-      <mesh ref={tail} position={[0, 0.62, -0.42]} rotation-x={-0.7}>
-        <cylinderGeometry args={[0.03, 0.05, 0.35, 6]} />
-        {coat}
-      </mesh>
+      <Suspense fallback={null}>
+        <Character model={model} action={action} />
+      </Suspense>
+      {action === 'sit' && (
+        <Label position={[0, 1.1, 0]} center zIndexRange={[15, 5]}>
+          <span className="pointer-events-none whitespace-nowrap rounded-full bg-paper/90 px-2 py-0.5 font-sans text-[11px] text-ink shadow">🐕 {c.name}</span>
+        </Label>
+      )}
     </group>
   )
 }

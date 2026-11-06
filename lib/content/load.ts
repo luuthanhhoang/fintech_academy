@@ -19,6 +19,7 @@ import { SimulatorSchema } from './schema/simulator'
 import { SourceFileSchema } from './schema/source'
 import { TrackSchema } from './schema/track'
 import { GraphicsSchema } from './schema/graphics'
+import { AssetsFileSchema } from './schema/assets'
 import { FocusConfigSchema, LandmarksFileSchema, MapSchema, MusicFileSchema, ViewsFileSchema, WeatherFileSchema, type WorldBundle } from './schema/world'
 import type { ContentBundle, Lesson } from './types'
 
@@ -108,6 +109,7 @@ function loadWorld(dir: string, root: string): WorldBundle {
   return {
     map: yamlFile(MapSchema, at('map.yaml'), root),
     graphics: yamlFile(GraphicsSchema, at('graphics.yaml'), root),
+    assets: yamlFile(AssetsFileSchema, at('assets.yaml'), root),
     landmarks: marks.landmarks,
     guides: marks.guides,
     views: views.views,

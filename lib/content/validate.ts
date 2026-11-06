@@ -25,6 +25,8 @@ export interface ValidateOptions {
   musicLayerKeys: readonly string[]
   hdriKeys: readonly string[]
   treeKinds: readonly string[]
+  /** Reads a model file's clips and materials (node scripts/tests); without it file checks are skipped. */
+  readModel?: (file: string) => { clips: string[]; materials: string[] } | null
 }
 
 type Push = (where: string, message: string) => void

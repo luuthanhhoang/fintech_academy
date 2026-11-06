@@ -1,10 +1,11 @@
 import { loadContent, ContentLoadError } from '../lib/content/load'
 import { validateContent } from '../lib/content/validate'
+import { modelReader } from '../lib/content/model-reader'
 import { VALIDATE_OPTIONS } from '../lib/registry/validate-options'
 
 try {
   const bundle = loadContent()
-  const issues = validateContent(bundle, VALIDATE_OPTIONS)
+  const issues = validateContent(bundle, { ...VALIDATE_OPTIONS, readModel: modelReader() })
   if (issues.length > 0) {
     console.error(`✗ Nội dung có ${issues.length} lỗi:`)
     for (const i of issues) console.error(`  - [${i.where}] ${i.message}`)
@@ -13,7 +14,7 @@ try {
   console.log(
     `✓ Nội dung hợp lệ: ${bundle.concepts.length} khái niệm, ${bundle.lessons.length} bài, ${bundle.planned.length} planned, ` +
       `${bundle.simulators.length} simulator, ${bundle.labs.length} lab, ${bundle.cases.length} case, ${bundle.scenarios.length} tình huống, ` +
-      `${bundle.lessons.reduce((a, l) => a + l.examples.length, 0)} ví dụ từng bước, ${bundle.lessons.reduce((a, l) => a + l.diagrams.length, 0)} sơ đồ, ${bundle.sources.length} nguồn, ${bundle.world.landmarks.length} công trình làng, ${bundle.world.views.length} góc ngắm`,
+      `${bundle.lessons.reduce((a, l) => a + l.examples.length, 0)} ví dụ từng bước, ${bundle.lessons.reduce((a, l) => a + l.diagrams.length, 0)} sơ đồ, ${bundle.sources.length} nguồn, ${bundle.world.landmarks.length} công trình làng, ${bundle.world.views.length} góc ngắm, ${bundle.world.assets.models.length} mô hình 3D`,
   )
 } catch (e) {
   if (e instanceof ContentLoadError) {

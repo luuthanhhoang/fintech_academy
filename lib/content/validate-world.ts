@@ -1,5 +1,6 @@
 /** Validation of the learning village: map geometry, landmark coverage, guides, views, weather, music, focus. */
 import type { ContentBundle } from './types'
+import { validateAssets } from './validate-assets'
 import type { ValidateOptions } from './validate'
 
 type Push = (where: string, message: string) => void
@@ -43,7 +44,6 @@ function checkMap(b: ContentBundle, push: Push) {
     inside('world:rail', p)
     if (p[1] > m.coast.z - m.coast.beach) push('world:rail', `điểm ray [${p.join(', ')}] nằm dưới biển hoặc bãi cát`)
   }
-  for (const c of [...m.people.skin, ...m.people.clothes, ...m.people.hair]) if (!HEX.test(c)) push('world:people', `màu "${c}" phải dạng #rrggbb`)
   dupes(push, 'world', [...m.regions.map((r) => r.id), ...m.peaks.map((p) => p.id), ...m.lakes.map((l) => l.id), ...m.rivers.map((r) => r.id), ...m.features.map((f) => f.id)])
 }
 
@@ -157,4 +157,5 @@ export function validateWorld(b: ContentBundle, opts: ValidateOptions, push: Pus
   checkLandmarks(b, opts, push)
   checkAtmosphere(b, opts, push)
   checkFocus(b, push)
+  validateAssets(b, opts, push)
 }

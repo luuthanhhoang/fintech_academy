@@ -1,0 +1,89 @@
+# Mô hình 3D của làng: file .glb CC0 trong public/models (Kenney, Quaternius — xem public/models/NOTICE.txt).
+# `size` là kích thước thật (m) để quy đổi tỉ lệ; `clips` là tên hoạt ảnh trong file cho từng hành động.
+# Script build (scripts/check-models.ts) kiểm tra file tồn tại, đúng định dạng glTF và có đủ các clip khai báo.
+credit:
+  what: "Mô hình 3D: nhân vật, động vật, cây, đá, xe, nhà phố, đồ vật"
+  author: "Kenney (kenney.nl) và Quaternius (quaternius.com)"
+  license: "CC0 1.0"
+  url: "https://kenney.nl/assets/mini-characters"
+  notice: "/models/NOTICE.txt"
+models:
+  # Nhân vật (Kenney Mini Characters) — cùng bộ hoạt ảnh.
+  - { id: nam-a, file: mini_male_a.glb, size: { axis: height, metres: 1.7 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nam-b, file: mini_male_b.glb, size: { axis: height, metres: 1.68 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nam-c, file: mini_male_c.glb, size: { axis: height, metres: 1.72 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nam-d, file: mini_male_d.glb, size: { axis: height, metres: 1.66 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nam-e, file: mini_male_e.glb, size: { axis: height, metres: 1.74 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nam-f, file: mini_male_f.glb, size: { axis: height, metres: 1.7 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-a, file: mini_female_a.glb, size: { axis: height, metres: 1.6 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-b, file: mini_female_b.glb, size: { axis: height, metres: 1.58 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-c, file: mini_female_c.glb, size: { axis: height, metres: 1.62 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-d, file: mini_female_d.glb, size: { axis: height, metres: 1.6 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-e, file: mini_female_e.glb, size: { axis: height, metres: 1.56 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  - { id: nu-f, file: mini_female_f.glb, size: { axis: height, metres: 1.63 }, clips: { idle: idle, walk: walk, run: sprint, sit: sit, wave: emote-yes } }
+  # Động vật (Quaternius).
+  - { id: cho-shiba, file: shiba.glb, size: { axis: length, metres: 0.85 }, clips: { idle: Idle, walk: Walk, run: Gallop, sit: Idle_2, eat: Eating } }
+  - { id: nai, file: deer.glb, size: { axis: height, metres: 1.5 }, clips: { idle: Idle, walk: Walk, run: Gallop, eat: Eating } }
+  - { id: cao, file: fox.glb, size: { axis: length, metres: 0.9 }, clips: { idle: Idle, walk: Walk, run: Gallop, eat: Eating } }
+  # Xe (Kenney Car Kit).
+  - { id: xe-buyt, file: van.glb, size: { axis: length, metres: 6.4 } }
+  - { id: taxi, file: taxi.glb, size: { axis: length, metres: 4.4 } }
+  - { id: xe-con, file: sedan.glb, size: { axis: length, metres: 4.6 } }
+  - { id: xe-tai, file: truck.glb, size: { axis: length, metres: 6.2 } }
+  - { id: xe-giao-hang, file: delivery_van.glb, size: { axis: length, metres: 5.2 } }
+  - { id: may-cay, file: tractor.glb, size: { axis: length, metres: 3.8 } }
+  # Cây, bụi, đá (Kenney Nature Kit) — lá và mặt đá tô theo bảng màu trong map.yaml.
+  - { id: cay-soi, file: tree_oak.glb, size: { axis: height, metres: 7.5 }, paint: [leafsGreen] }
+  - { id: cay-tan-tron, file: tree_fat.glb, size: { axis: height, metres: 6.5 }, paint: [leafsGreen] }
+  - { id: cay-la-do, file: tree_autumn.glb, size: { axis: height, metres: 7 }, paint: [leafsFall] }
+  - { id: thong, file: tree_pine.glb, size: { axis: height, metres: 10 }, paint: [leafsDark] }
+  - { id: thong-cao, file: tree_pine_tall.glb, size: { axis: height, metres: 13 }, paint: [leafsDark] }
+  - { id: thong-toi, file: tree_dark.glb, size: { axis: height, metres: 9 }, paint: [leafsDark] }
+  - { id: dua, file: tree_palm.glb, size: { axis: height, metres: 9 }, paint: [leafsGreen] }
+  - { id: bui, file: bush.glb, size: { axis: height, metres: 1.1 }, paint: [grass] }
+  - { id: bui-lon, file: bush_large.glb, size: { axis: height, metres: 1.7 }, paint: [grass] }
+  - { id: da-lon, file: rock_large.glb, size: { axis: height, metres: 2.2 }, paint: [dirt] }
+  - { id: da-nho, file: rock_small.glb, size: { axis: height, metres: 0.8 }, paint: [dirt] }
+  - { id: da-cao, file: rock_tall.glb, size: { axis: height, metres: 3.2 }, paint: [dirt] }
+  # Nhà phố (Kenney City Kit Commercial).
+  - { id: pho-a, file: building_a.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-b, file: building_b.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-c, file: building_c.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-d, file: building_d.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-e, file: building_e.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-f, file: building_f.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-g, file: building_g.glb, size: { axis: height, metres: 9 } }
+  - { id: pho-h, file: building_h.glb, size: { axis: height, metres: 9 } }
+  # Đồ vật.
+  - { id: hang-rao, file: fence.glb, size: { axis: length, metres: 2 } }
+  - { id: thung-go, file: barrel.glb, size: { axis: height, metres: 1 } }
+  - { id: chong-thung, file: barrels.glb, size: { axis: height, metres: 1.1 } }
+  - { id: hom-hang, file: crate.glb, size: { axis: height, metres: 0.9 } }
+  - { id: lua-trai, file: campfire.glb, size: { axis: length, metres: 1.3 } }
+  - { id: leu, file: tent.glb, size: { axis: height, metres: 2.2 } }
+cast:
+  player: nam-a
+  villagers: [nam-b, nam-c, nam-d, nam-e, nam-f, nu-a, nu-b, nu-c, nu-d, nu-e, nu-f]
+  kids: [nam-c, nam-e, nu-b, nu-d, nu-f, nam-f]
+  kidScale: 0.66
+  guides: [nu-a, nam-d]
+  companion: cho-shiba
+  wildlife:
+    - { model: nai, count: 12, biome: highland }
+    - { model: cao, count: 8, biome: lowland }
+  bus: xe-buyt
+  traffic: [taxi, xe-con, xe-tai, xe-giao-hang]
+  trafficCount: 6
+  tractor: may-cay
+  tractors: 4
+  town: { region: pho-fullstack, models: [pho-a, pho-b, pho-c, pho-d, pho-e, pho-f, pho-g, pho-h] }
+  fence: hang-rao
+  stationGoods: [thung-go, chong-thung, hom-hang]
+  camp: { feature: leu-ho-vector, models: [leu, lua-trai] }
+vegetation:
+  broadleaf: [cay-soi, cay-tan-tron]
+  flowering: [cay-la-do]
+  pine: [thong, thong-cao, thong-toi]
+  palm: [dua]
+  shrub: [bui, bui-lon]
+  rock: [da-lon, da-nho, da-cao]

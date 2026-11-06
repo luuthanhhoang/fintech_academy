@@ -5,6 +5,7 @@
  */
 import { z } from 'zod'
 import { IdSchema } from './common'
+import type { AssetsFile } from './assets'
 import type { Graphics } from './graphics'
 
 export const Vec2Schema = z.tuple([z.number(), z.number()])
@@ -49,7 +50,7 @@ export const MapSchema = z.strictObject({
   lakes: z.array(z.strictObject({ id: IdSchema, name: z.string().min(1), kind: z.enum(['pond', 'lake']), center: Vec2Schema, radius: z.number().positive(), depth: z.number().positive() })),
   rail: z.strictObject({ name: z.string().min(1), points: z.array(Vec2Schema).min(2), width: z.number().positive() }),
   /** Scenery anchors that views can sit at (porch, lighthouse, pier...). */
-  features: z.array(z.strictObject({ id: IdSchema, kind: z.enum(['lighthouse', 'porch', 'pier', 'bench']), name: z.string().min(1), at: Vec2Schema })),
+  features: z.array(z.strictObject({ id: IdSchema, kind: z.enum(['lighthouse', 'porch', 'pier', 'bench', 'camp']), name: z.string().min(1), at: Vec2Schema })),
   vegetation: z.strictObject({
     trees: z.number().int().nonnegative(),
     shrubs: z.number().int().nonnegative(),
@@ -72,9 +73,6 @@ export const MapSchema = z.strictObject({
   people: z.strictObject({
     count: z.number().int().nonnegative(),
     walkSpeed: z.number().positive(),
-    skin: z.array(z.string()).min(1),
-    clothes: z.array(z.string()).min(1),
-    hair: z.array(z.string()).min(1),
     /** Villagers stop and talk when you come this close (m). */
     talkRadius: z.number().positive(),
     /**
@@ -93,9 +91,8 @@ export const MapSchema = z.strictObject({
     interactRadius: z.number().positive(),
     /** Zoom limits of the follow camera (its starting offset is the walk view's eye/look, relative to you). */
     camera: z.strictObject({ minDistance: z.number().positive(), maxDistance: z.number().positive() }),
-    look: z.strictObject({ skin: z.string(), cloth: z.string(), pants: z.string(), hair: z.string(), hat: z.boolean() }),
-    /** A dog that trots after you. */
-    companion: z.strictObject({ name: z.string().min(1), coat: z.string(), patch: z.string(), follow: z.number().positive() }),
+    /** A dog that trots after you (its model: assets.yaml cast.companion); `follow` = distance it keeps (m). */
+    companion: z.strictObject({ name: z.string().min(1), follow: z.number().positive() }),
   }),
   /** A road running beside the whole rail line (bridges where it crosses water), with a bus and one stop per region. */
   road: z.strictObject({
@@ -252,6 +249,7 @@ export type FocusConfig = z.infer<typeof FocusConfigSchema>
 export interface WorldBundle {
   map: WorldMap
   graphics: Graphics
+  assets: AssetsFile
   landmarks: Landmark[]
   guides: Guide[]
   views: WorldView[]

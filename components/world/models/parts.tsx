@@ -43,7 +43,7 @@ export function Window({ at, size, night, rotY = 0 }: { at: V3; size: [number, n
   return (
     <mesh position={at} rotation-y={rotY}>
       <planeGeometry args={size} />
-      <meshStandardMaterial color={night ? '#ffd27a' : '#2b3236'} emissive={night ? '#ffb347' : '#000000'} emissiveIntensity={night ? 2 : 0} roughness={0.55} envMapIntensity={0.4} />
+      <meshStandardMaterial color={night ? '#ffd27a' : '#3a434a'} emissive={night ? '#ffb347' : '#000000'} emissiveIntensity={night ? 2 : 0} roughness={0.4} envMapIntensity={0.08} />
     </mesh>
   )
 }

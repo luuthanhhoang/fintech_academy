@@ -2,11 +2,13 @@
 
 import type { ThreeEvent } from '@react-three/fiber'
 import { useFrame } from '@react-three/fiber'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { Suspense, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import type { ModelAsset } from '@/lib/content/schema/assets'
 import type { WorldMap } from '@/lib/content/schema/world'
 import type { Civic } from '@/lib/world/layout'
 import { bridgeSpans, busAt, type Road } from '@/lib/world/roads'
+import { StaticModel } from './assets/static-model'
 import { Box, Post, Roof } from './models/parts'
 import { selectionId, type SelectionId } from './scene-types'
 
@@ -98,10 +100,9 @@ function Instances({ matrices, color }: { matrices: THREE.Matrix4[]; color: stri
   )
 }
 
-/** A small bus shuttling between the regions' stops (timetable from lib/world/roads). */
-function Bus({ road, stops, map, night }: { road: Road; stops: number[]; map: WorldMap; night: boolean }) {
+/** The bus shuttling between the regions' stops (timetable from lib/world/roads). */
+function Bus({ road, stops, map, model, night }: { road: Road; stops: number[]; map: WorldMap; model: ModelAsset; night: boolean }) {
   const g = useRef<THREE.Group>(null)
-  const wheels = useRef<THREE.Group>(null)
   useFrame(({ clock }) => {
     const b = busAt(stops, road.line.length, map.road.busSpeed, map.road.busDwell, clock.elapsedTime + 40)
     const [x, z] = road.line.at(b.t)
@@ -111,26 +112,15 @@ function Bus({ road, stops, map, night }: { road: Road; stops: number[]; map: Wo
     const lx = x - tz * side * road.width * 0.22
     const lz = z + tx * side * road.width * 0.22
     if (!g.current) return
-    g.current.position.set(lx, road.deckAt(b.t) + 0.07, lz)
+    g.current.position.set(lx, road.deckAt(b.t) + 0.05, lz)
     g.current.rotation.y = Math.atan2(tx * side, tz * side)
-    if (wheels.current && !b.waiting) wheels.current.children.forEach((w) => (w.rotation.x += 0.2))
   })
-  const body = map.road.busColor
   return (
     <group ref={g}>
-      <Box at={[0, 1.45, 0]} size={[2.3, 2.1, 7.2]} color={body} />
-      <Box at={[0, 2.62, 0]} size={[2.2, 0.22, 7]} color="#f4efe4" />
-      {[-1.16, 1.16].map((x) => <Box key={x} at={[x, 1.85, -0.2]} size={[0.04, 0.8, 5.6]} color={night ? '#ffe2a0' : '#2c3e4f'} />)}
-      <Box at={[0, 1.85, 3.61]} size={[2, 0.9, 0.04]} color={night ? '#ffe2a0' : '#2c3e4f'} />
-      {night && <pointLight position={[0, 1.2, 4.6]} intensity={10} distance={18} color="#fff1c8" />}
-      <group ref={wheels}>
-        {[[-1.05, 2.4], [1.05, 2.4], [-1.05, -2.4], [1.05, -2.4]].map(([x, z]) => (
-          <mesh key={`${x}${z}`} position={[x!, 0.45, z!]} rotation-z={Math.PI / 2}>
-            <cylinderGeometry args={[0.45, 0.45, 0.3, 14]} />
-            <meshStandardMaterial color="#222" roughness={0.9} />
-          </mesh>
-        ))}
-      </group>
+      <Suspense fallback={null}>
+        <StaticModel model={model} />
+      </Suspense>
+      {night && <pointLight position={[0, 1.2, 3.8]} intensity={10} distance={18} color="#fff1c8" />}
     </group>
   )
 }
@@ -152,7 +142,7 @@ function BusStop({ stop, onSelect }: { stop: Civic; onSelect: (id: SelectionId) 
 }
 
 /** Road, bridges, bus stops and the bus. */
-export function Roads({ road, busStops, map, night, onSelect }: { road: Road; busStops: Civic[]; map: WorldMap; night: boolean; onSelect: (id: SelectionId) => void }) {
+export function Roads({ road, busStops, map, bus, night, onSelect }: { road: Road; busStops: Civic[]; map: WorldMap; bus: ModelAsset; night: boolean; onSelect: (id: SelectionId) => void }) {
   const geometry = useMemo(() => roadGeometry(road), [road])
   const parts = useMemo(() => bridgeParts(road), [road])
   const stops = useMemo(() => busStops.map((s) => s.t), [busStops])
@@ -164,7 +154,7 @@ export function Roads({ road, busStops, map, night, onSelect }: { road: Road; bu
       <Instances matrices={parts.posts} color="#7a5a3a" />
       <Instances matrices={parts.piers} color="#8d877c" />
       {busStops.map((s) => <BusStop key={s.regionId} stop={s} onSelect={onSelect} />)}
-      {stops.length > 1 && <Bus road={road} stops={stops} map={map} night={night} />}
+      {stops.length > 1 && <Bus road={road} stops={stops} map={map} model={bus} night={night} />}
     </group>
   )
 }

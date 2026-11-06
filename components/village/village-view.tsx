@@ -169,7 +169,7 @@ export function VillageView({ catalog }: { catalog: Catalog }) {
       <div className="relative h-[calc(100dvh-var(--topbar)-3.75rem)] w-full overflow-hidden bg-[#0d1424] lg:h-[calc(100dvh-var(--topbar))]">
         {mode === '3d' && webgl ? (
           <VillageCanvas
-            terrain={world.terrain} grid={world.grid} pathMask={world.pathMask} pathRes={world.pathRes} graphics={w.graphics} quality={quality} flowers={flowers} grassMask={world.grassMask} grassRes={world.grassRes}
+            assets={w.assets} terrain={world.terrain} grid={world.grid} pathMask={world.pathMask} pathRes={world.pathRes} graphics={w.graphics} quality={quality} flowers={flowers} grassMask={world.grassMask} grassRes={world.grassRes}
             layout={world.layout} regions={w.map.regions} health={learner.health} plants={learner.plants}
             weather={scene.weather} sky={scene.sky} view={view} anchor={anchor} selected={selectedAt} fishCount={Math.min(30, learner.dueCount)}
             getTrainT={getTrainT} onSelect={setSelected} onStrike={(d) => void audio.thunder(d)} onPerfDecline={pinned ? undefined : stepDown}
