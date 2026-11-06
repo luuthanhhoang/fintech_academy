@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a3p-rrf
+    conceptId: hybrid-retrieval
+    prompt: "Ba đoạn A, B, C. Thứ hạng BM25: A=1, B=2, C=10. Thứ hạng vector: A=8, B=1, C=2. Tính điểm RRF (k = 60) và thứ tự cuối cùng."
+    hint: "Điểm = 1/(60 + hạng BM25) + 1/(60 + hạng vector)."
+    solution: "A: 1/61 + 1/68 ≈ 0,01639 + 0,01471 = 0,03110. B: 1/62 + 1/61 ≈ 0,01613 + 0,01639 = 0,03252. C: 1/70 + 1/62 ≈ 0,01429 + 0,01613 = 0,03042. Thứ tự: B > A > C. B đứng đầu vì tốt ở cả hai danh sách — đúng tinh thần của RRF."
+  - id: ex-a3p-debug
+    conceptId: reranking
+    prompt: "Log cho thấy với câu hỏi X: đoạn đúng đứng hạng 37 sau truy xuất lai (lấy top 50), nhưng không nằm trong 5 đoạn sau rerank; câu trả lời sai. Phân tích và đề xuất bước tiếp theo."
+    hint: "Lỗi nằm ở khâu nào? Đo gì trên toàn bộ bộ câu hỏi?"
+    solution: "Truy xuất đã tìm thấy (recall@50 đạt), nên lỗi ở rerank hoặc k sau rerank quá nhỏ. Bước tiếp: đo recall@5 sau rerank trên toàn bộ bộ câu hỏi; thử tăng lên 8–10 đoạn; xem đoạn đúng có thiếu ngữ cảnh khiến reranker chấm thấp không (bổ sung ngữ cảnh đoạn); thử reranker khác. Không sửa prompt vì đoạn đúng chưa từng tới tay mô hình."

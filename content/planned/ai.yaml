@@ -1,15 +1,5 @@
 track: ai
 lessons:
-  - { id: "a0-python-math", stage: "a0", order: 0, title: { vi: "Python và toán cho AI", en: "Python and math for AI" }, concepts: [python-for-ai, linear-algebra-ml, probability-ml] }
-  - { id: "a0-ml-nn", stage: "a0", order: 1, title: { vi: "Từ học máy đến mạng nơ-ron", en: "From ML to neural networks" }, concepts: [ml-basics, neural-networks] }
-  - { id: "a1-tokens-context", stage: "a1", order: 0, title: { vi: "Token và cửa sổ ngữ cảnh", en: "Tokens and context windows" }, concepts: [tokenization, context-window] }
-  - { id: "a1-transformer", stage: "a1", order: 1, title: { vi: "Transformer hoạt động thế nào", en: "How transformers work" }, concepts: [transformer-attention, pretraining-objective] }
-  - { id: "a1-decoding-hallucination", stage: "a1", order: 2, title: { vi: "Giải mã và ảo giác", en: "Decoding and hallucination" }, concepts: [sampling-decoding, hallucination] }
-  - { id: "a2-first-calls", stage: "a2", order: 0, title: { vi: "Gọi API đầu tiên và viết prompt", en: "First API calls and prompting" }, concepts: [messages-api, prompt-engineering] }
-  - { id: "a2-structured-tools", stage: "a2", order: 1, title: { vi: "Structured output và tool calling", en: "Structured output and tool calling" }, concepts: [structured-output, tool-calling] }
-  - { id: "a2-production", stage: "a2", order: 2, title: { vi: "Streaming, caching và chi phí", en: "Streaming, caching and cost" }, concepts: [streaming, prompt-caching, cost-latency] }
-  - { id: "a3-retrieval", stage: "a3", order: 0, title: { vi: "Embedding và tìm kiếm vector", en: "Embeddings and vector search" }, concepts: [embeddings, vector-search] }
-  - { id: "a3-rag-pipeline", stage: "a3", order: 1, title: { vi: "Dựng pipeline RAG", en: "Building a RAG pipeline" }, concepts: [chunking, hybrid-retrieval, reranking, rag-grounding] }
   - { id: "a5-evals", stage: "a5", order: 0, title: { vi: "Dựng bộ eval", en: "Building evals" }, concepts: [eval-datasets, llm-as-judge] }
   - { id: "a5-eval-ops", stage: "a5", order: 1, title: { vi: "Eval trong vận hành", en: "Evals in operation" }, concepts: [online-offline-eval, prompt-regression] }
   - { id: "a6-finetuning", stage: "a6", order: 0, title: { vi: "Khi nào nên fine-tune", en: "When to fine-tune" }, concepts: [supervised-finetuning, preference-tuning] }

@@ -1,0 +1,42 @@
+items:
+  - id: q-a1t-stateless
+    type: mcq
+    conceptId: context-window
+    prompt: "Ứng dụng chat của bạn gọi API mô hình mỗi lượt. Làm sao mô hình 'nhớ' được tin nhắn từ 5 lượt trước?"
+    options:
+      - { id: a, text: "Mô hình tự lưu hội thoại theo user trên server" }
+      - { id: b, text: "Ứng dụng gửi lại lịch sử hội thoại (hoặc bản tóm tắt) trong mỗi request" }
+      - { id: c, text: "Mô hình được huấn luyện lại sau mỗi lượt" }
+    correct: [b]
+    explanation: "API mô hình không có trạng thái giữa các lần gọi. Trí nhớ hội thoại là do ứng dụng gửi lại — nên mỗi lượt càng về sau càng tốn token."
+  - id: q-a1t-count
+    type: mcq
+    conceptId: tokenization
+    prompt: "Vì sao chi phí nên ước lượng bằng token đo thật thay vì số từ?"
+    options:
+      - { id: a, text: "Vì một từ luôn bằng đúng một token" }
+      - { id: b, text: "Vì số token mỗi từ thay đổi theo ngôn ngữ và loại nội dung (từ hiếm, số, mã bị cắt thành nhiều mảnh), và giá tính theo token" }
+      - { id: c, text: "Vì token chỉ tính cho đầu ra" }
+    correct: [b]
+    explanation: "Tokenizer dưới-từ cắt từ hiếm, chuỗi số và văn bản ít gặp thành nhiều mảnh; giá và giới hạn đều theo token, cả đầu vào lẫn đầu ra."
+  - id: q-a1t-middle
+    type: mcq
+    conceptId: context-window
+    prompt: "Theo nghiên cứu 'Lost in the Middle', khi nào mô hình dễ bỏ sót thông tin liên quan trong ngữ cảnh dài nhất?"
+    options:
+      - { id: a, text: "Khi thông tin nằm ở giữa ngữ cảnh" }
+      - { id: b, text: "Khi thông tin nằm ở đầu ngữ cảnh" }
+      - { id: c, text: "Vị trí không ảnh hưởng" }
+    correct: [a]
+    explanation: "Nghiên cứu ghi nhận hiệu năng giảm khi thông tin liên quan nằm ở giữa ngữ cảnh dài, kể cả với mô hình ngữ cảnh dài."
+  - id: q-a1t-window
+    type: mcq
+    conceptId: context-window
+    prompt: "Những thứ nào chiếm chỗ trong cửa sổ ngữ cảnh của một request? (chọn tất cả)"
+    options:
+      - { id: a, text: "System prompt" }
+      - { id: b, text: "Định nghĩa công cụ (tools)" }
+      - { id: c, text: "Kết quả công cụ và lịch sử hội thoại gửi kèm" }
+      - { id: d, text: "Câu trả lời mô hình sinh ra trong lượt đó" }
+    correct: [a, b, c, d]
+    explanation: "Tất cả đều tính vào cửa sổ ngữ cảnh — kể cả đầu ra và định nghĩa công cụ."

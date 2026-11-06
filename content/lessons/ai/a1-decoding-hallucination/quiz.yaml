@@ -1,0 +1,42 @@
+items:
+  - id: q-a1d-temp
+    type: mcq
+    conceptId: sampling-decoding
+    prompt: "Top-p (nucleus) sampling với p = 0,9 làm gì ở mỗi bước?"
+    options:
+      - { id: a, text: "Luôn chọn token có xác suất cao nhất" }
+      - { id: b, text: "Bốc thăm trong nhóm nhỏ nhất các token có tổng xác suất ≥ 0,9, bỏ phần đuôi xác suất thấp" }
+      - { id: c, text: "Bốc thăm trong đúng 90 token đầu tiên" }
+    correct: [b]
+    explanation: "Kích thước nhóm co giãn theo độ chắc chắn của mô hình ở từng bước; phần đuôi xác suất thấp bị loại."
+  - id: q-a1d-cause
+    type: mcq
+    conceptId: hallucination
+    prompt: "Đặt temperature = 0 có loại bỏ được ảo giác không?"
+    options:
+      - { id: a, text: "Có, vì mô hình luôn chọn câu trả lời đúng nhất" }
+      - { id: b, text: "Không — nó chỉ chọn token xác suất cao nhất; nếu câu trả lời sai có xác suất cao, mô hình sẽ sai một cách nhất quán" }
+      - { id: c, text: "Có, nhưng chỉ với tiếng Anh" }
+    correct: [b]
+    explanation: "Temperature thay đổi cách chọn trong phân phối, không thêm hiểu biết. Ảo giác cần xử lý bằng grounding, cho phép 'không biết' và kiểm chứng."
+  - id: q-a1d-fix
+    type: mcq
+    conceptId: hallucination
+    prompt: "Biện pháp nào giảm rủi ro ảo giác cho trợ lý trả lời về hợp đồng nội bộ? (chọn tất cả)"
+    options:
+      - { id: a, text: "Truy xuất điều khoản liên quan và yêu cầu trả lời chỉ dựa trên đó, kèm trích dẫn" }
+      - { id: b, text: "Kiểm tra tự động trích dẫn có thật trong văn bản hợp đồng" }
+      - { id: c, text: "Cho phép và không phạt câu trả lời 'không tìm thấy trong tài liệu'" }
+      - { id: d, text: "Tăng temperature để mô hình sáng tạo hơn" }
+    correct: [a, b, c]
+    explanation: "Grounding, kiểm chứng tự động và cho phép từ chối giảm rủi ro; tăng temperature chỉ làm đầu ra đa dạng hơn."
+  - id: q-a1d-greedy
+    type: mcq
+    conceptId: sampling-decoding
+    prompt: "Theo lập luận của Holtzman và cộng sự, vấn đề của việc luôn chọn token xác suất cao nhất khi sinh văn bản mở là gì?"
+    options:
+      - { id: a, text: "Văn bản dễ lặp lại và kém tự nhiên" }
+      - { id: b, text: "Văn bản luôn sai ngữ pháp" }
+      - { id: c, text: "Tốn nhiều token hơn" }
+    correct: [a]
+    explanation: "Cực đại hoá xác suất là mục tiêu giải mã kém cho văn bản mở: dẫn tới lặp và nhạt. Nucleus sampling là thoả hiệp được đề xuất."

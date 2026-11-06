@@ -1,0 +1,110 @@
+---
+id: a2-first-calls
+track: ai
+stage: a2
+order: 0
+title: { vi: "Gọi API đầu tiên và viết prompt như viết đặc tả", en: "First API calls, and writing prompts like specs" }
+summary: "Một lần gọi Messages API gồm model, max_tokens, system prompt và danh sách message xen kẽ user/assistant; phản hồi có các khối nội dung, stop_reason và usage. API không trạng thái. Viết prompt tốt giống viết đặc tả cho một đồng nghiệp giỏi nhưng chưa biết gì về dự án: rõ ràng, có ngữ cảnh và lý do, có ví dụ, có cấu trúc."
+concepts: [messages-api, prompt-engineering]
+estMinutes: 40
+whyQuestion: "Cùng một mô hình, prompt của đồng nghiệp cho kết quả ổn định còn prompt của bạn lúc đúng lúc sai. Khác nhau ở đâu — và làm sao biết prompt mới thật sự tốt hơn chứ không phải may?"
+devMapping:
+  - finance: "System prompt"
+    dev: "Cấu hình và hợp đồng của cả phiên: vai trò, quy tắc, định dạng"
+    explanation: "Áp dụng từ lượt đầu; nội dung từng lượt đặt trong message của user."
+  - finance: "stop_reason"
+    dev: "Lý do kết thúc — như exit code"
+    explanation: "end_turn là xong bình thường; max_tokens là bị cắt giữa chừng; tool_use là mô hình muốn gọi công cụ; refusal là từ chối. Code phải xử lý từng trường hợp."
+  - finance: "Prompt"
+    dev: "Đặc tả + test case (ví dụ) gửi cho một người thực thi rất giỏi nhưng thiếu ngữ cảnh"
+    explanation: "Mọi thứ bạn không viết ra, mô hình phải đoán."
+pretest: [q-a2f-stop, q-a2f-doc-order]
+applications:
+  - id: app-a2f-prompt-file
+    title: "Đưa prompt vào quản lý như code"
+    context: "Prompt của tính năng đang nằm rải rác trong code dưới dạng chuỗi ghép."
+    task: "Tách prompt ra file riêng có phiên bản; cấu trúc bằng thẻ (chỉ dẫn, ngữ cảnh, ví dụ, đầu vào); thêm 3–5 ví dụ đa dạng; viết bộ 20 đầu vào mẫu kèm tiêu chí đạt và chạy lại mỗi khi sửa prompt; log stop_reason và usage của mọi lần gọi."
+    deliverable: "File prompt có phiên bản + bộ kiểm tra hồi quy chạy được bằng một lệnh."
+sources: [claude-messages-api, claude-prompting-best-practices, claude-context-windows]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Viết lại một prompt mơ hồ ('Tóm tắt email này') thành prompt chất lượng cho sản phẩm, và giải thích từng thay đổi."
+  rubric:
+    - { id: clear, criterion: "Nói rõ mục đích, người đọc, độ dài, định dạng đầu ra" }
+    - { id: why, criterion: "Giải thích lý do của các yêu cầu, không chỉ ra lệnh" }
+    - { id: struct, criterion: "Tách chỉ dẫn, ví dụ, đầu vào bằng thẻ; tài liệu dài đặt trước câu hỏi" }
+    - { id: test, criterion: "Có bộ đầu vào mẫu để kiểm tra thay vì thử vài lần bằng mắt" }
+---
+
+<Callout kind="story" title="Câu trả lời bị cắt ngang">
+Một dịch vụ dùng LLM để sinh báo cáo tuần chạy ổn ba tháng. Rồi có tuần báo cáo dài hơn thường lệ, và khách nhận về văn bản dừng giữa một câu. Code chỉ lấy `content[0].text` và gửi đi — không ai kiểm tra rằng `stop_reason` là `max_tokens`, tức là mô hình chưa viết xong.
+</Callout>
+
+## Giải phẫu một lần gọi
+
+```bash
+curl https://api.anthropic.com/v1/messages \
+  -H "x-api-key: $ANTHROPIC_API_KEY" \
+  -H "anthropic-version: 2026-10-21" \
+  -H "content-type: application/json" \
+  -d '{
+    "model": "claude-opus-5-5",
+    "max_tokens": 1024,
+    "system": "Bạn là trợ lý viết báo cáo tuần cho đội vận hành.",
+    "messages": [
+      {"role": "user", "content": "Tóm tắt các sự cố tuần này: ..."}
+    ]
+  }'
+```
+
+- **model**: chọn mô hình — đánh đổi chất lượng, tốc độ, chi phí (bài sau).
+- **max_tokens**: trần số token đầu ra của lượt này; vượt thì bị cắt.
+- **system**: chỉ dẫn áp dụng từ đầu phiên — vai trò, quy tắc, định dạng.
+- **messages**: danh sách message xen kẽ `user` / `assistant`. Nội dung có thể là chuỗi hoặc nhiều **khối** (văn bản, ảnh, tài liệu, kết quả công cụ).
+
+Phản hồi có `content` (danh sách khối), **`stop_reason`** và **`usage`** (số token vào/ra — chính là hoá đơn của bạn). Các giá trị `stop_reason` cần xử lý: `end_turn` (xong bình thường), `max_tokens` (bị cắt), `tool_use` (mô hình muốn gọi công cụ — bài sau), `refusal` (từ chối).
+
+<Quiz id="q-a2f-stop" />
+
+Tài liệu Anthropic nhấn mạnh: **Messages API không có trạng thái** — bạn luôn gửi toàn bộ lịch sử hội thoại (đã gặp ở bài token và ngữ cảnh). Hai thay đổi gần đây cũng đáng biết để không làm theo hướng dẫn cũ: các mô hình mới không còn nhận `temperature`/`top_p`/`top_k`, và kỹ thuật "prefill" (viết sẵn đầu câu trả lời của assistant) không còn được hỗ trợ trên các mô hình mới — thay bằng structured outputs hoặc chỉ dẫn trong system prompt.
+
+## Viết prompt như viết đặc tả
+
+Hướng dẫn chính thức của Anthropic về viết prompt có vài nguyên tắc mà kỹ sư nào cũng nên thuộc:
+
+1. **Rõ ràng và trực tiếp.** Nói cụ thể đầu ra bạn muốn. Muốn mô hình làm nhiều hơn mức tối thiểu thì yêu cầu rõ, đừng trông nó tự suy ra.
+2. **Cho ngữ cảnh và lý do.** "Không dùng dấu chấm lửng vì văn bản sẽ được đọc bằng giọng nói" tốt hơn "KHÔNG dùng dấu chấm lửng" — mô hình tổng quát hoá từ lý do.
+3. **Dùng ví dụ (few-shot).** Ví dụ là cách đáng tin cậy nhất để định hướng định dạng, giọng điệu, cấu trúc. Hướng dẫn khuyên vài ví dụ (khoảng 3–5), **đa dạng**, **liên quan** tới việc thật, và bọc trong thẻ `<example>` để tách khỏi chỉ dẫn.
+4. **Cấu trúc bằng thẻ XML.** Tách chỉ dẫn, ngữ cảnh, ví dụ, đầu vào: `<instructions>`, `<context>`, `<input>`… giảm hiểu nhầm khi prompt dài.
+5. **Tài liệu dài đặt lên đầu.** Đặt tài liệu và dữ liệu dài **ở đầu prompt, trước câu hỏi và chỉ dẫn** — hướng dẫn cho biết cách này cải thiện chất lượng trên mọi mô hình. Với nhiều tài liệu, bọc mỗi tài liệu trong thẻ kèm nguồn.
+6. **Bám vào trích dẫn.** Với tài liệu dài, yêu cầu mô hình **trích các đoạn liên quan trước**, rồi mới làm nhiệm vụ dựa trên các trích đoạn đó.
+
+<Quiz id="q-a2f-doc-order" />
+
+```text
+<documents>
+  <document><source>so-tay-nhan-su.md</source><document_content>...</document_content></document>
+</documents>
+
+<instructions>
+Trả lời câu hỏi của nhân viên CHỈ dựa trên tài liệu ở trên.
+Trước tiên trích nguyên văn các đoạn liên quan vào thẻ <quotes>.
+Nếu tài liệu không có thông tin, trả lời "Không tìm thấy trong sổ tay" —
+nhân viên sẽ hỏi phòng nhân sự, nên một câu trả lời đoán sai gây hại hơn là không trả lời.
+</instructions>
+
+<question>Tôi được nghỉ phép bao nhiêu ngày khi có con nhỏ ốm?</question>
+```
+
+<Callout kind="field" title="Prompt là code — đối xử với nó như code">
+Prompt của tôi nằm trong **file riêng có phiên bản**, không phải chuỗi ghép giữa code. Mỗi lần sửa, tôi chạy lại một **bộ đầu vào mẫu** (vài chục ca, gồm cả ca khó và ca nên từ chối) và so kết quả — thử vài lần bằng mắt rồi kết luận "tốt hơn" là cách nhanh nhất để đưa lỗi lên production. Và tôi **log `stop_reason` với `usage` của mọi lần gọi**: hai trường đó phát hiện câu trả lời bị cắt và chi phí bất thường trước khi khách phát hiện.
+</Callout>
+
+<Quiz id="q-a2f-why" />
+
+## Tóm tắt
+
+- Một lần gọi = model + max_tokens + system + messages; đọc `stop_reason` và `usage` ở mọi phản hồi.
+- API không trạng thái; đọc tài liệu hiện hành vì tham số và kỹ thuật thay đổi theo thế hệ mô hình.
+- Prompt tốt = rõ ràng + có lý do + ví dụ đa dạng + cấu trúc thẻ + tài liệu dài đặt trước + có bộ kiểm tra hồi quy.

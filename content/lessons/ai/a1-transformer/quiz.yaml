@@ -1,0 +1,41 @@
+items:
+  - id: q-a1x-objective
+    type: mcq
+    conceptId: pretraining-objective
+    prompt: "Mục tiêu tiền huấn luyện của một mô hình ngôn ngữ sinh văn bản là gì?"
+    options:
+      - { id: a, text: "Phân loại câu đúng/sai" }
+      - { id: b, text: "Đoán token tiếp theo, tối thiểu hoá cross-entropy trên kho văn bản lớn" }
+      - { id: c, text: "Ghi nhớ nguyên văn mọi tài liệu" }
+    correct: [b]
+    explanation: "Một mục tiêu đơn giản ở quy mô rất lớn buộc mô hình nắm ngữ pháp, kiến thức và mẫu suy luận phổ biến."
+  - id: q-a1x-attn
+    type: mcq
+    conceptId: transformer-attention
+    prompt: "Trong scaled dot-product attention, vì sao chia Q·Kᵀ cho √d?"
+    options:
+      - { id: a, text: "Để giá trị không quá lớn khi số chiều lớn, tránh softmax bão hoà (gradient quá nhỏ)" }
+      - { id: b, text: "Để kết quả luôn nằm giữa 0 và 1" }
+      - { id: c, text: "Để giảm số tham số" }
+    correct: [a]
+    explanation: "Tích vô hướng lớn dần theo số chiều; chia √d giữ giá trị ở mức vừa phải để softmax không dồn gần hết vào một vị trí."
+  - id: q-a1x-cost
+    type: mcq
+    conceptId: transformer-attention
+    prompt: "Khi độ dài chuỗi tăng gấp đôi, chi phí tính các điểm attention (mỗi token so với mọi token) tăng khoảng bao nhiêu lần?"
+    options:
+      - { id: a, text: "2 lần" }
+      - { id: b, text: "4 lần" }
+      - { id: c, text: "Không đổi" }
+    correct: [b]
+    explanation: "Số cặp token tăng theo bình phương độ dài: (2n)² = 4n²."
+  - id: q-a1x-mask
+    type: mcq
+    conceptId: transformer-attention
+    prompt: "Causal mask trong mô hình sinh văn bản làm gì?"
+    options:
+      - { id: a, text: "Che các token nhạy cảm khỏi đầu ra" }
+      - { id: b, text: "Chặn mỗi token nhìn các token phía sau nó, để việc đoán token tiếp theo không 'nhìn trộm' đáp án" }
+      - { id: c, text: "Bỏ ngẫu nhiên một số token khi huấn luyện" }
+    correct: [b]
+    explanation: "Nhờ mask, một lần chạy học được việc đoán token tiếp theo ở mọi vị trí cùng lúc mà không rò đáp án."

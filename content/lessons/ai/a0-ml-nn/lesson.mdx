@@ -1,0 +1,100 @@
+---
+id: a0-ml-nn
+track: ai
+stage: a0
+order: 1
+title: { vi: "Từ học máy đến mạng nơ-ron: mô hình học bằng cách sửa sai", en: "From machine learning to neural networks: learning by correcting mistakes" }
+summary: "Học máy là tìm tham số làm hàm mất mát nhỏ trên dữ liệu chưa thấy. Bài này đi qua vòng huấn luyện (dự đoán → đo sai → gradient → cập nhật), vì sao phải tách tập huấn luyện/kiểm thử, overfitting trông thế nào, và mạng nơ-ron chỉ là nhiều lớp tuyến tính xen hàm phi tuyến được huấn luyện bằng lan truyền ngược."
+concepts: [ml-basics, neural-networks]
+estMinutes: 40
+whyQuestion: "Mô hình đạt 99% độ chính xác trong notebook, lên production chỉ còn 70%. Điều gì thường đã xảy ra, và lẽ ra phải đo khác đi thế nào?"
+devMapping:
+  - finance: "Hàm mất mát (loss)"
+    dev: "Một con số đo 'sai bao nhiêu' — giống metric lỗi bạn muốn kéo xuống"
+    explanation: "Huấn luyện là tối ưu con số này; chọn sai loss là tối ưu sai mục tiêu."
+  - finance: "Tập kiểm thử (test set)"
+    dev: "Bộ test không được nhìn khi viết code"
+    explanation: "Nếu bạn chỉnh mô hình theo kết quả trên tập kiểm thử, nó không còn đo được khả năng tổng quát nữa — giống viết code chỉ để qua đúng các test đã biết."
+  - finance: "Lan truyền ngược (backprop)"
+    dev: "Quy tắc chuỗi áp dụng tự động qua đồ thị tính toán"
+    explanation: "Framework (PyTorch…) ghi lại các phép tính lúc chạy xuôi rồi tính gradient ngược lại cho mọi tham số."
+pretest: [q-a0n-split, q-a0n-overfit]
+applications:
+  - id: app-a0n-baseline
+    title: "Baseline trước, mô hình sau"
+    context: "Đội bạn muốn 'dùng AI' để phân loại ticket hỗ trợ hoặc phát hiện giao dịch bất thường."
+    task: "Trước khi huấn luyện gì: chia dữ liệu train/validation/test theo thời gian (dữ liệu mới nhất làm test), dựng một baseline cực đơn giản (luật thủ công hoặc hồi quy logistic), ghi metric trên validation. Chỉ giữ mô hình phức tạp hơn nếu nó thắng baseline rõ ràng trên validation, và chỉ nhìn test một lần ở cuối."
+    deliverable: "Bảng metric baseline vs mô hình, cách chia dữ liệu, và lý do chọn."
+sources: [goodfellow-dlbook, rumelhart-1986]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả một vòng huấn luyện từ đầu tới cuối và giải thích vì sao cần tập validation tách khỏi tập test."
+  rubric:
+    - { id: loop, criterion: "Dự đoán → tính loss → tính gradient → cập nhật tham số theo hướng giảm loss, lặp nhiều lần" }
+    - { id: lr, criterion: "Learning rate quyết định bước nhảy; quá lớn dao động, quá nhỏ chậm" }
+    - { id: split, criterion: "Validation để chọn mô hình/siêu tham số; test chỉ dùng một lần để ước lượng hiệu năng thật" }
+    - { id: overfit, criterion: "Overfitting: loss train giảm nhưng loss validation tăng" }
+---
+
+<Callout kind="story" title="99% trong notebook">
+Một đội dựng mô hình phát hiện gian lận đạt 99% độ chính xác. Khi soát lại: chỉ khoảng 1% giao dịch là gian lận, nên một "mô hình" luôn trả lời "không gian lận" cũng được 99%. Thêm nữa, họ chia dữ liệu ngẫu nhiên nên giao dịch của cùng một khách nằm ở cả tập huấn luyện lẫn tập kiểm thử — mô hình học thuộc khách hàng chứ không học dấu hiệu gian lận.
+</Callout>
+
+## Học máy là gì, nói theo kiểu kỹ sư
+
+Thay vì viết luật, bạn chọn một **họ hàm có tham số** (ví dụ `y = w·x + b`) rồi để dữ liệu chọn tham số. "Học" nghĩa là: tìm tham số làm **hàm mất mát** nhỏ — và quan trọng hơn, nhỏ trên **dữ liệu chưa từng thấy**.
+
+Ba lựa chọn quyết định mọi thứ:
+
+1. **Dữ liệu**: đầu vào và nhãn (đáp án) có đại diện cho thứ sẽ gặp ở production không?
+2. **Mô hình**: họ hàm đủ "mạnh" để biểu diễn quy luật, nhưng không mạnh tới mức học thuộc nhiễu.
+3. **Hàm mất mát**: đo đúng thứ bạn quan tâm. Hồi quy hay dùng sai số bình phương; phân loại hay dùng cross-entropy (đã gặp ở bài trước).
+
+## Vòng huấn luyện: gradient descent
+
+```text
+lặp nhiều lần:
+  1. dự đoán trên một lô dữ liệu (batch)
+  2. tính loss so với nhãn
+  3. tính gradient: loss thay đổi thế nào khi nhích từng tham số
+  4. cập nhật: tham số ← tham số − learning_rate × gradient
+```
+
+**Gradient** chỉ hướng làm loss **tăng** nhanh nhất; đi ngược hướng đó thì loss giảm. **Learning rate** là độ dài bước: quá lớn thì loss nhảy loạn hoặc nổ; quá nhỏ thì học rất chậm. Dùng từng lô nhỏ thay vì toàn bộ dữ liệu mỗi bước gọi là *stochastic / mini-batch gradient descent* — rẻ hơn mỗi bước và nhiễu của nó còn giúp thoát vài điểm tối ưu kém.
+
+<Quiz id="q-a0n-update" />
+
+## Tổng quát hoá: train, validation, test
+
+- **Train**: dùng để cập nhật tham số.
+- **Validation**: dùng để **chọn** — kiến trúc, siêu tham số, khi nào dừng huấn luyện.
+- **Test**: chỉ nhìn **một lần cuối** để ước lượng hiệu năng thật.
+
+Mỗi lần bạn chỉnh theo kết quả của một tập, tập đó bị "rò" vào mô hình. Đó là lý do cần tách validation khỏi test.
+
+<Quiz id="q-a0n-split" />
+
+**Overfitting**: mô hình học thuộc cả nhiễu của tập train — loss train vẫn giảm nhưng loss validation bắt đầu tăng. Cách chống: thêm dữ liệu, mô hình nhỏ hơn hoặc có điều chuẩn (regularization), dừng sớm khi validation xấu đi. **Underfitting** là ngược lại: cả hai loss đều cao — mô hình quá yếu hoặc chưa học đủ.
+
+<Quiz id="q-a0n-overfit" />
+
+<Callout kind="field" title="Ba kiểu rò rỉ dữ liệu tôi từng thấy làm đẹp số liệu">
+**Chia ngẫu nhiên dữ liệu theo thời gian**: dự đoán hôm qua bằng thông tin của ngày mai — với dữ liệu tài chính hay log, luôn chia theo thời gian. **Cùng một thực thể ở hai phía**: cùng khách hàng, cùng tài liệu bị cắt đôi — chia theo nhóm (khách, tài liệu), không theo dòng. **Đặc trưng chứa đáp án**: cột "đã hoàn tiền" khi dự đoán gian lận. Nếu metric tốt bất ngờ, giả định có rò rỉ trước khi ăn mừng.
+</Callout>
+
+Và luôn so với **baseline**: luật đơn giản nhất, hoặc "luôn trả lời lớp phổ biến nhất". Với dữ liệu lệch như gian lận, dùng precision/recall thay vì độ chính xác.
+
+## Mạng nơ-ron: xếp lớp tuyến tính và phi tuyến
+
+Một **lớp** là `h = f(W x + b)`: nhân ma trận (bài trước) rồi qua **hàm kích hoạt phi tuyến** `f` (ví dụ ReLU: `max(0, x)`). Không có `f`, xếp bao nhiêu lớp tuyến tính cũng chỉ bằng một lớp tuyến tính. Có `f`, nhiều lớp biểu diễn được những quan hệ phức tạp.
+
+Huấn luyện mạng nhiều lớp cần gradient cho **mọi** trọng số. **Lan truyền ngược** (backpropagation) tính chúng hiệu quả bằng quy tắc chuỗi, đi ngược từ loss về đầu vào. Bài báo năm 1986 của Rumelhart, Hinton và Williams trên *Nature* phổ biến phương pháp này cho mạng có **lớp ẩn**, và cho thấy các đơn vị ẩn tự học được những đặc trưng hữu ích của bài toán.
+
+<Quiz id="q-a0n-linear" />
+
+Ngày nay bạn hầu như không tự viết backprop: framework ghi lại đồ thị tính toán khi chạy xuôi và tự tính gradient (automatic differentiation). Việc của kỹ sư là chọn dữ liệu, kiến trúc, loss, và **đo cho đúng**.
+
+<Callout kind="field" title="Khi loss không giảm, kiểm tra theo thứ tự này">
+1) Cho mô hình học thuộc **một batch nhỏ** — nếu loss không về gần 0 thì có bug (sai nhãn, sai shape, quên gọi bước cập nhật). 2) Giảm learning rate 10 lần. 3) Kiểm tra dữ liệu đầu vào đã chuẩn hoá chưa. 4) Chỉ sau đó mới nghĩ tới kiến trúc. Phần lớn "mô hình không học" là bug pipeline, không phải toán.
+</Callout>

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a1x-attention
+    conceptId: transformer-attention
+    prompt: "Một token có query q = (1, 0). Ba token trước nó có key k₁ = (1, 0), k₂ = (0, 1), k₃ = (1, 1) và value v₁ = 10, v₂ = 20, v₃ = 30. Bỏ qua phép chia √d. Tính trọng số attention và đầu ra (làm tròn 1 chữ số)."
+    hint: "Điểm = q·kᵢ, rồi softmax, rồi trung bình có trọng số các value."
+    solution: "Điểm = (1, 0, 1). Softmax: e¹, e⁰, e¹ ≈ 2,72; 1; 2,72, tổng ≈ 6,44 → trọng số ≈ (0,42; 0,16; 0,42). Đầu ra ≈ 0,42×10 + 0,16×20 + 0,42×30 ≈ 4,2 + 3,1 + 12,7 ≈ 20,0. Token này 'chú ý' đều vào token 1 và 3 vì key của chúng cùng hướng với query."
+  - id: ex-a1x-base
+    conceptId: pretraining-objective
+    prompt: "Giải thích câu chuyện đầu bài: vì sao mô hình gốc trả lời câu hỏi bằng một danh sách câu hỏi khác, và hai giai đoạn hậu huấn luyện trong nghiên cứu InstructGPT sửa điều đó ra sao?"
+    hint: "Trên internet, một câu hỏi đố thường được theo sau bởi gì?"
+    solution: "Mô hình gốc chỉ học viết tiếp văn bản theo phân phối huấn luyện; một câu hỏi đố thường nằm trong danh sách câu đố, nên viết tiếp danh sách là 'hợp lý'. Hậu huấn luyện: (1) fine-tune có giám sát trên cặp chỉ dẫn–câu trả lời mẫu do người viết, dạy định dạng 'được hỏi thì trả lời'; (2) RLHF trên xếp hạng của người để ưu tiên câu trả lời hữu ích, trung thực hơn."

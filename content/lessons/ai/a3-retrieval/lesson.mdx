@@ -1,0 +1,91 @@
+---
+id: a3-retrieval
+track: ai
+stage: a3
+order: 0
+title: { vi: "Embedding và tìm kiếm vector: tìm theo nghĩa, không chỉ theo chữ", en: "Embeddings and vector search: finding by meaning, not just words" }
+summary: "Embedding biến văn bản thành vector sao cho văn bản gần nghĩa có vector gần nhau; tìm kiếm vector là tìm láng giềng gần nhất trong không gian đó. Bài này dạy cách chọn mô hình embedding, vì sao truy vấn và tài liệu nên được nhúng khác nhau, chỉ mục láng giềng gần đúng (ANN) đổi một chút độ chính xác lấy tốc độ, và cách đo xem truy xuất có thật sự tìm đúng."
+concepts: [embeddings, vector-search]
+estMinutes: 40
+whyQuestion: "Nhân viên gõ 'nghỉ khi con ốm' nhưng sổ tay viết 'chế độ chăm sóc con dưới 7 tuổi bị bệnh'. Tìm kiếm từ khoá trả về không có gì. Embedding giải quyết điều này ra sao — và nó thất bại ở đâu?"
+facts:
+  - id: anthropic-no-embedding
+    text: "Theo tài liệu Anthropic về embeddings"
+    value: "Anthropic không cung cấp mô hình embedding riêng; tài liệu giới thiệu một nhà cung cấp và khuyên tự đánh giá nhiều nhà cung cấp cho trường hợp của bạn"
+    sourceId: claude-embeddings
+    asOf: 2026-11-06
+    status: verified
+  - id: embedding-quantization
+    text: "Lượng tử hoá embedding từ số thực 32-bit theo tài liệu embeddings"
+    value: "sang số nguyên 8-bit giảm lưu trữ 4 lần, sang nhị phân 1-bit giảm 32 lần (đánh đổi một phần độ chính xác)"
+    sourceId: claude-embeddings
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Embedding"
+    dev: "Hàm hash giữ nghĩa: văn bản gần nghĩa → vector gần nhau"
+    explanation: "Khác hash thường (thay một chữ là ra kết quả khác hẳn), embedding thay đổi mượt theo nghĩa."
+  - finance: "Chỉ mục ANN"
+    dev: "Index của database vector — đổi một chút recall lấy tốc độ"
+    explanation: "Như index B-tree cho truy vấn khoảng, nhưng cho bài toán 'k vector gần nhất'; kết quả là gần đúng, có tham số điều chỉnh."
+  - finance: "Recall@k"
+    dev: "Tỉ lệ câu hỏi mà tài liệu đúng nằm trong k kết quả đầu"
+    explanation: "Chỉ số đầu tiên phải đo cho mọi hệ thống truy xuất, trước khi nhìn tới câu trả lời của LLM."
+pretest: [q-a3r-meaning, q-a3r-same-model]
+applications:
+  - id: app-a3r-eval
+    title: "Bộ đo truy xuất trước khi dựng RAG"
+    context: "Đội bạn chuẩn bị dựng hỏi đáp trên tài liệu nội bộ."
+    task: "Thu 50 câu hỏi thật kèm đoạn tài liệu đúng (nhờ người dùng thật hoặc từ ticket cũ). Nhúng tài liệu và câu hỏi bằng 2 mô hình embedding khác nhau; đo recall@5 và recall@20 cho từng mô hình, kèm độ trễ và chi phí; xem tay 10 ca thất bại để hiểu vì sao."
+    deliverable: "Bảng so sánh mô hình embedding trên dữ liệu của chính bạn + danh sách kiểu câu hỏi thất bại."
+sources: [claude-embeddings, hnsw-2020, goodfellow-dlbook]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho đồng nghiệp backend cách một câu hỏi tìm được đoạn tài liệu liên quan qua tìm kiếm vector, và hai cách nó có thể thất bại."
+  rubric:
+    - { id: embed, criterion: "Nhúng tài liệu (một lần, lúc lập chỉ mục) và câu hỏi (mỗi lần hỏi) bằng cùng một mô hình" }
+    - { id: sim, criterion: "Tìm k vector gần nhất theo cosine/tích vô hướng, thường qua chỉ mục ANN" }
+    - { id: fail, criterion: "Thất bại khi cần khớp chính xác (mã, tên riêng, số) hoặc khi mô hình không hợp miền dữ liệu" }
+    - { id: measure, criterion: "Đo recall@k trên bộ câu hỏi thật" }
+---
+
+<Callout kind="story" title="Tìm 'mã lỗi E-4012', ra bài về tâm lý khách hàng">
+Một đội chuyển công cụ tìm kiếm tài liệu hỗ trợ từ từ khoá sang embedding. Câu hỏi diễn đạt tự nhiên tốt lên thấy rõ. Nhưng khi kỹ thuật viên gõ đúng mã lỗi "E-4012", kết quả đầu là một bài viết chung chung về "xử lý khách hàng khó chịu" — vì với mô hình embedding, một chuỗi mã ít nghĩa và gần với mọi thứ một chút.
+</Callout>
+
+## Embedding: tọa độ của nghĩa
+
+Một **mô hình embedding** nhận văn bản, trả về một vector số thực (thường vài trăm tới vài nghìn chiều). Mô hình được huấn luyện để văn bản **gần nghĩa** có vector **gần nhau** — đo bằng cosine hoặc tích vô hướng (bài A0). Nhờ vậy "nghỉ khi con ốm" có thể nằm gần "chế độ chăm sóc con bị bệnh" dù không chung từ nào.
+
+Chọn mô hình embedding — tài liệu Anthropic gợi ý cân nhắc: dữ liệu huấn luyện của mô hình có **hợp miền** của bạn không (pháp lý, tài chính, code, tiếng Việt), **độ trễ và chi phí** ở quy mô production, và khả năng **tuỳ biến**. Lưu ý: <Fact id="anthropic-no-embedding" />. Đừng chọn theo bảng xếp hạng chung — đo trên dữ liệu của bạn.
+
+Hai thực hành thường bị bỏ qua:
+
+- **Cùng một mô hình cho tài liệu và câu hỏi.** Vector của hai mô hình khác nhau sống ở hai không gian khác nhau, so với nhau là vô nghĩa. Đổi mô hình là phải nhúng lại toàn bộ kho.
+- **Phân biệt truy vấn và tài liệu** khi mô hình hỗ trợ: nhiều mô hình nhận tham số kiểu `input_type = query | document` và thêm chỉ dẫn khác nhau trước khi nhúng — câu hỏi ngắn và đoạn tài liệu dài vốn khác nhau về hình thức.
+
+<Quiz id="q-a3r-same-model" />
+
+## Tìm kiếm vector: k láng giềng gần nhất
+
+Lúc **lập chỉ mục**: nhúng mọi đoạn tài liệu, lưu vector kèm metadata (nguồn, tiêu đề, ngày). Lúc **hỏi**: nhúng câu hỏi, tìm **k** vector gần nhất.
+
+So sánh với mọi vector (tìm chính xác) chậm dần khi kho lớn. **Chỉ mục ANN** (approximate nearest neighbor) đổi một chút độ chính xác lấy tốc độ. Một thuật toán phổ biến là **HNSW** (Malkov & Yashunin, IEEE TPAMI): dựng nhiều tầng đồ thị lân cận, tìm từ tầng thưa xuống tầng dày, đạt độ phức tạp tăng theo logarit kích thước kho. Các tham số của chỉ mục điều chỉnh đánh đổi giữa recall, tốc độ và bộ nhớ.
+
+<Quiz id="q-a3r-ann" />
+
+Bộ nhớ cũng là chi phí: hàng triệu vector nghìn chiều tốn nhiều RAM. Một kỹ thuật là lượng tử hoá: <Fact id="embedding-quantization" />.
+
+## Khi embedding thất bại
+
+- **Khớp chính xác**: mã lỗi, mã sản phẩm, số hợp đồng, tên riêng hiếm — từ khoá (BM25) thường thắng. Đây là lý do của **truy xuất lai** (bài sau).
+- **Lệch miền**: mô hình chung có thể không phân biệt được hai thuật ngữ chuyên ngành gần nhau.
+- **Câu hỏi phủ định / điều kiện**: "chính sách KHÔNG áp dụng cho nhân viên thử việc" và câu khẳng định ngược lại có thể có vector rất gần nhau.
+- **Đoạn quá dài hoặc quá ngắn**: vector của một đoạn dài là "trung bình" của nhiều ý; đoạn quá ngắn thiếu ngữ cảnh. Chia đoạn là chủ đề của bài sau.
+
+<Quiz id="q-a3r-meaning" />
+
+<Callout kind="field" title="Đo truy xuất trước, đánh giá câu trả lời sau">
+Khi một hệ thống hỏi đáp trả lời sai, câu hỏi đầu tiên của tôi là: **đoạn đúng có nằm trong những gì được đưa cho mô hình không?** Nếu không, sửa prompt là vô ích. Vì vậy tôi luôn có một bộ vài chục câu hỏi thật kèm đoạn đúng, và đo **recall@k** mỗi khi đổi mô hình embedding, cách chia đoạn hay tham số chỉ mục. Đó là cái test đơn vị của truy xuất.
+</Callout>

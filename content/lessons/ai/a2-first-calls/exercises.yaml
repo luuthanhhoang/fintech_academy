@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a2f-rewrite
+    conceptId: prompt-engineering
+    prompt: "Viết lại prompt 'Phân loại ticket này.' thành prompt dùng cho sản phẩm phân loại ticket hỗ trợ vào 4 nhóm: thanh toán, đăng nhập, lỗi sản phẩm, khác."
+    hint: "Mục đích, nhãn và định nghĩa nhãn, ví dụ, xử lý trường hợp mơ hồ, định dạng đầu ra."
+    solution: "Ví dụ: system nêu vai trò và lý do ('kết quả dùng để chuyển ticket tới đúng đội, chuyển sai làm khách chờ lâu'); `<labels>` định nghĩa từng nhóm kèm dấu hiệu nhận biết và ranh giới (ví dụ 'không nhận được OTP' thuộc đăng nhập, không phải lỗi sản phẩm); `<examples>` 4–5 ví dụ đa dạng kể cả ca mơ hồ; quy tắc 'nếu thuộc nhiều nhóm, chọn nhóm cần xử lý trước; nếu không chắc chọn khác'; đầu ra theo schema cố định (dùng structured outputs — bài sau); ticket đặt trong `<ticket>`. Kèm bộ 30 ticket có nhãn để đo trước/sau."
+  - id: ex-a2f-stop
+    conceptId: messages-api
+    prompt: "Viết giả mã xử lý phản hồi của Messages API cho dịch vụ báo cáo tuần trong câu chuyện đầu bài, bao phủ mọi stop_reason đã học."
+    hint: "end_turn, max_tokens, refusal, tool_use."
+    solution: "switch stop_reason: end_turn → kiểm tra định dạng rồi gửi; max_tokens → không gửi, ghi log, thử lại với max_tokens lớn hơn hoặc chia báo cáo thành nhiều phần, nếu vẫn bị cắt thì báo lỗi cho người vận hành; refusal → không gửi, ghi log kèm chi tiết, chuyển người xem; tool_use → không áp dụng nếu không khai báo công cụ, coi là lỗi cấu hình. Mọi nhánh đều log usage để theo dõi chi phí."

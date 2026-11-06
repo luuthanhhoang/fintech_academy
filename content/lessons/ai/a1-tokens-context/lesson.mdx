@@ -1,0 +1,87 @@
+---
+id: a1-tokens-context
+track: ai
+stage: a1
+order: 0
+title: { vi: "Token và cửa sổ ngữ cảnh: đơn vị tính tiền và trí nhớ làm việc của mô hình", en: "Tokens and the context window: the unit of cost and the model's working memory" }
+summary: "Mô hình không đọc chữ mà đọc token — mảnh dưới-từ do bộ tách token sinh ra. Số token quyết định chi phí, độ trễ và giới hạn mỗi lần gọi. Cửa sổ ngữ cảnh là toàn bộ những gì mô hình 'thấy' trong một lượt: system prompt, lịch sử, công cụ, tài liệu và cả câu trả lời. Lớn hơn không tự động tốt hơn."
+concepts: [tokenization, context-window]
+estMinutes: 35
+whyQuestion: "Cùng một nội dung, bản tiếng Việt tốn token hơn bản tiếng Anh; nhét cả tài liệu 300 trang vào prompt thì mô hình bỏ sót chi tiết ở giữa. Hai hiện tượng này đến từ đâu, và kỹ sư nên làm gì với chúng?"
+facts:
+  - id: claude-1m-context
+    text: "Kích thước cửa sổ ngữ cảnh của các mô hình Claude thế hệ hiện tại theo tài liệu Anthropic"
+    value: "1 triệu token; mỗi request sinh tối đa 128 nghìn token đầu ra"
+    sourceId: claude-context-windows
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Token"
+    dev: "Đơn vị đo giống byte trong băng thông: tính tiền, giới hạn, độ trễ đều theo nó"
+    explanation: "Ước lượng chi phí và giới hạn phải tính bằng token, không bằng ký tự hay số từ."
+  - finance: "Cửa sổ ngữ cảnh"
+    dev: "RAM của một lần gọi — không phải ổ cứng"
+    explanation: "Mô hình chỉ 'biết' những gì nằm trong request đó cộng kiến thức đã học khi huấn luyện; không có trạng thái giữa các lần gọi trừ khi bạn gửi lại."
+  - finance: "Context rot"
+    dev: "Bộ đệm càng đầy, tìm đúng thứ càng khó"
+    explanation: "Thêm token không liên quan làm giảm khả năng nhớ lại chi tiết; chọn lọc nội dung quan trọng ngang với dung lượng."
+pretest: [q-a1t-stateless, q-a1t-count]
+applications:
+  - id: app-a1t-budget
+    title: "Ngân sách token cho một tính năng"
+    context: "Bạn sắp ra mắt tính năng 'tóm tắt hội thoại hỗ trợ khách hàng' dùng LLM."
+    task: "Lấy 20 hội thoại thật (đã ẩn danh), đếm token đầu vào/đầu ra bằng API đếm token của nhà cung cấp, tính phân vị 50/95, nhân với giá hiện hành để ra chi phí mỗi tháng ở lưu lượng dự kiến; đặt giới hạn cắt bớt hoặc tóm tắt khi hội thoại vượt ngưỡng."
+    deliverable: "Bảng token p50/p95, chi phí ước tính, và quy tắc xử lý hội thoại quá dài."
+sources: [sennrich-bpe-2016, claude-context-windows, liu-lost-middle-2024, anthropic-context-engineering]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho một PM vì sao 'cứ nhét hết tài liệu vào prompt cho chắc' vừa tốn tiền vừa có thể làm câu trả lời kém đi."
+  rubric:
+    - { id: cost, criterion: "Chi phí và độ trễ tăng theo số token đầu vào, ở mọi lần gọi" }
+    - { id: window, criterion: "Mọi thứ (system, lịch sử, công cụ, đầu ra) cùng chia một cửa sổ có giới hạn" }
+    - { id: rot, criterion: "Độ chính xác nhớ lại giảm khi ngữ cảnh dài/nhiễu; thông tin ở giữa dễ bị bỏ sót" }
+    - { id: fix, criterion: "Giải pháp: chọn lọc/truy xuất đoạn liên quan, đặt thông tin quan trọng ở vị trí rõ ràng" }
+---
+
+<Callout kind="story" title="Hoá đơn tháng đầu tiên">
+Một đội ra mắt chatbot nội bộ, mỗi lượt hỏi gửi kèm toàn bộ sổ tay nhân sự cho "chắc ăn". Tuần đầu ít người dùng nên không ai để ý. Cuối tháng hoá đơn API gấp nhiều lần dự toán, còn nhân viên than bot hay trả lời sai mục nghỉ phép — mục nằm ngay giữa cuốn sổ tay.
+</Callout>
+
+## Token: mô hình không đọc chữ
+
+Trước khi vào mô hình, văn bản đi qua **bộ tách token** (tokenizer), biến chuỗi ký tự thành dãy số nguyên — mỗi số là một **token** trong từ vựng cố định. Token thường là **mảnh dưới-từ**: một từ phổ biến có thể là một token, từ hiếm bị cắt thành nhiều mảnh.
+
+Ý tưởng dùng đơn vị dưới-từ được Sennrich, Haddow và Birch đưa vào dịch máy nơ-ron năm 2016, dựa trên **byte pair encoding (BPE)**: bắt đầu từ ký tự, lặp lại việc gộp cặp xuất hiện nhiều nhất thành một đơn vị mới. Nhờ vậy từ vựng có kích thước cố định mà vẫn biểu diễn được mọi từ, kể cả từ chưa từng thấy — chỉ là tốn nhiều token hơn.
+
+Hệ quả thực tế:
+
+- **Ngôn ngữ ít dữ liệu hơn trong tập huấn luyện bộ tách token thường tốn nhiều token hơn** cho cùng một ý. Tiếng Việt có dấu thường bị cắt vụn hơn tiếng Anh — đo bằng API đếm token, đừng đoán.
+- **Số, mã, chuỗi ngẫu nhiên** (UUID, base64) rất tốn token và mô hình xử lý từng mảnh — một lý do mô hình đôi khi đếm ký tự hay làm toán trên chuỗi số kém.
+- **Giá, giới hạn, độ trễ đều tính bằng token**, không bằng ký tự.
+
+<Quiz id="q-a1t-count" />
+
+## Cửa sổ ngữ cảnh: trí nhớ làm việc của một lần gọi
+
+Theo tài liệu Anthropic, cửa sổ ngữ cảnh là toàn bộ văn bản mô hình tham chiếu khi sinh câu trả lời, **gồm cả chính câu trả lời**. Tất cả đều tính vào: system prompt, mọi message (kể cả kết quả công cụ, ảnh, tài liệu), định nghĩa công cụ, và đầu ra (kể cả phần suy nghĩ mở rộng). Với các mô hình Claude hiện tại: <Fact id="claude-1m-context" />.
+
+Điều quan trọng nhất với kỹ sư: **mô hình không có trạng thái giữa các lần gọi API**. "Nhớ" cuộc hội thoại nghĩa là ứng dụng **gửi lại** lịch sử mỗi lượt. Lịch sử càng dài, mỗi lượt càng tốn và càng chậm.
+
+<Quiz id="q-a1t-stateless" />
+
+## Lớn hơn không tự động tốt hơn
+
+Tài liệu Anthropic gọi hiện tượng này là **context rot**: khi số token tăng, độ chính xác và khả năng nhớ lại giảm. Nghiên cứu *Lost in the Middle* (Liu và cộng sự, TACL 2024) đo trên bài hỏi đáp nhiều tài liệu và truy xuất khoá–giá trị: hiệu năng giảm khi thông tin liên quan nằm **ở giữa** một ngữ cảnh dài, kể cả với mô hình được thiết kế cho ngữ cảnh dài.
+
+<Quiz id="q-a1t-middle" />
+
+<Callout kind="field" title="Quy tắc ngữ cảnh tôi áp dụng cho mọi tính năng LLM">
+**Gửi ít nhất có thể, nhưng đủ**: lấy đúng đoạn liên quan (truy xuất — chặng A3) thay vì cả tài liệu. **Đặt chỉ dẫn và câu hỏi rõ ràng**, tài liệu dài thì bọc trong thẻ và đặt câu hỏi sau tài liệu. **Đo bằng token thật**, theo phân vị 95, không theo trung bình — hội thoại dài nhất mới làm vỡ ngân sách. **Có chính sách khi đầy**: cắt lịch sử cũ, tóm tắt, hoặc bắt đầu phiên mới. Agent chạy lâu cần cả chiến lược nén ngữ cảnh — bạn sẽ gặp ở chặng A4.
+</Callout>
+
+## Tóm tắt
+
+- Token là đơn vị của mô hình: chi phí, giới hạn, độ trễ đều tính theo nó; đo bằng API đếm token.
+- Cửa sổ ngữ cảnh chứa mọi thứ của một lượt, kể cả câu trả lời; mô hình không nhớ gì giữa các lần gọi.
+- Ngữ cảnh dài và nhiễu làm giảm chất lượng; chọn lọc quan trọng không kém dung lượng.

@@ -1,0 +1,114 @@
+---
+id: a2-production
+track: ai
+stage: a2
+order: 2
+title: { vi: "Streaming, prompt caching và chi phí: đưa LLM lên production mà không cháy ngân sách", en: "Streaming, prompt caching and cost: shipping LLMs without burning the budget" }
+summary: "Ba đòn bẩy vận hành: streaming để người dùng thấy chữ ngay thay vì chờ cả câu trả lời; prompt caching để không trả tiền đầy đủ cho cùng một tiền tố prompt mỗi lần gọi; và xử lý theo lô cho việc không cần trả lời ngay. Kèm cách ước lượng chi phí và độ trễ theo token, và chọn mô hình theo việc."
+concepts: [streaming, prompt-caching, cost-latency]
+estMinutes: 40
+whyQuestion: "Tính năng tóm tắt tài liệu của bạn mất 20 giây mới hiện chữ và hoá đơn tháng tăng gấp ba khi lưu lượng tăng gấp đôi. Đâu là đòn bẩy rẻ nhất cho từng vấn đề?"
+facts:
+  - id: cache-ttl
+    text: "Thời gian sống mặc định của prompt cache theo tài liệu Anthropic"
+    value: "5 phút, được làm mới miễn phí mỗi lần dùng; có tuỳ chọn 1 giờ với phí cao hơn"
+    sourceId: claude-prompt-caching
+    asOf: 2026-11-06
+    status: verified
+  - id: cache-prices
+    text: "Giá token cache so với giá token đầu vào thường theo tài liệu Anthropic"
+    value: "ghi cache 5 phút: 1,25×; ghi cache 1 giờ: 2×; đọc cache: 0,1× (một số model mới thấp hơn nữa: 0,05× hoặc 0,025×)"
+    sourceId: claude-prompt-caching
+    asOf: 2026-11-06
+    status: verified
+  - id: cache-min
+    text: "Độ dài tối thiểu để cache được với các model Claude thế hệ hiện tại"
+    value: "512 token (một số model cũ cần 1.024–4.096 token); ngắn hơn thì không cache và không báo lỗi"
+    sourceId: claude-prompt-caching
+    asOf: 2026-11-06
+    status: verified
+  - id: batch-discount
+    text: "Message Batches API theo tài liệu Anthropic"
+    value: "tính 50% giá API thường; đa số lô xong trong vòng 1 giờ, lô hết hạn nếu chưa xong sau 24 giờ"
+    sourceId: claude-batch-processing
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Streaming (SSE)"
+    dev: "Server-sent events: nhận từng mảnh câu trả lời khi nó được sinh"
+    explanation: "Không làm mô hình nhanh hơn, nhưng thời gian tới chữ đầu tiên ngắn lại — người dùng cảm nhận nhanh hơn rất nhiều."
+  - finance: "Prompt caching"
+    dev: "Cache theo tiền tố — giống CDN cho phần đầu prompt không đổi"
+    explanation: "Phần tiền tố giống hệt (công cụ, system, tài liệu) được tính rẻ và xử lý nhanh ở các lần gọi sau trong thời gian sống của cache."
+  - finance: "Batch API"
+    dev: "Hàng đợi công việc không đồng bộ"
+    explanation: "Đổi độ trễ lấy giá: phù hợp việc chạy đêm, đánh giá, xử lý dữ liệu hàng loạt."
+pretest: [q-a2p-stream, q-a2p-prefix]
+applications:
+  - id: app-a2p-cost-review
+    title: "Rà chi phí và độ trễ của một tính năng LLM đang chạy"
+    context: "Bạn có một tính năng LLM đã lên production và log có usage của từng lần gọi."
+    task: "Tính token vào/ra p50/p95 theo loại request; tìm phần tiền tố lặp lại giữa các lần gọi và sắp xếp prompt để nó đứng đầu, bật cache, đo tỉ lệ cache hit qua các trường usage; chuyển các tác vụ không cần trả lời ngay sang batch; bật streaming cho giao diện; thử một mô hình nhỏ hơn trên bộ eval cho các tác vụ đơn giản."
+    deliverable: "Bảng trước/sau: chi phí mỗi nghìn request, thời gian tới chữ đầu tiên, tỉ lệ cache hit, chất lượng trên bộ eval."
+sources: [claude-streaming, claude-prompt-caching, claude-batch-processing, claude-context-windows]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Một chatbot có system prompt dài và bộ tài liệu cố định. Giải thích cách sắp xếp request để prompt caching phát huy, và cách bạn kiểm chứng nó đang hoạt động."
+  rubric:
+    - { id: prefix, criterion: "Cache theo tiền tố: phần không đổi (tools, system, tài liệu) đặt trước, phần thay đổi (câu hỏi) đặt sau" }
+    - { id: ttl, criterion: "Cache có thời gian sống; lưu lượng thưa có thể không trúng cache" }
+    - { id: min, criterion: "Phải đủ độ dài tối thiểu mới cache được" }
+    - { id: verify, criterion: "Kiểm tra trường usage (cache_read_input_tokens, cache_creation_input_tokens) để đo tỉ lệ trúng" }
+---
+
+<Callout kind="story" title="Cùng một cuốn sổ tay, trả tiền 40.000 lần">
+Một chatbot nội bộ gửi kèm cùng một bộ tài liệu chính sách dài ở mỗi câu hỏi. Đội bật prompt caching nhưng hoá đơn không giảm. Lý do: họ chèn ngày giờ hiện tại vào **đầu** system prompt — tiền tố thay đổi mỗi giây, nên không lần gọi nào trúng cache.
+</Callout>
+
+## Streaming: thấy chữ ngay
+
+Một câu trả lời dài có thể mất nhiều giây để sinh xong. Không có streaming, người dùng nhìn spinner suốt thời gian đó. Đặt `"stream": true`, API trả về **server-sent events** theo thứ tự (tài liệu Anthropic):
+
+1. `message_start` — một Message với nội dung rỗng.
+2. Với mỗi khối nội dung: `content_block_start`, nhiều `content_block_delta` (mỗi cái mang một mảnh văn bản), rồi `content_block_stop`.
+3. Một hoặc nhiều `message_delta` — thay đổi cấp message như `stop_reason`; số token trong `usage` ở đây là **cộng dồn**.
+4. `message_stop`. Xen giữa có thể có sự kiện `ping`.
+
+Streaming **không** làm mô hình nhanh hơn; nó rút ngắn **thời gian tới chữ đầu tiên**, thứ quyết định cảm nhận "nhanh hay chậm". Tài liệu cũng lưu ý: với `max_tokens` lớn, SDK yêu cầu dùng streaming (kể cả khi bạn chỉ cần kết quả cuối) để tránh timeout HTTP.
+
+<Quiz id="q-a2p-stream" />
+
+## Prompt caching: đừng trả đủ tiền cho phần lặp lại
+
+Nhiều ứng dụng gửi đi gửi lại cùng một **tiền tố**: định nghĩa công cụ, system prompt, tài liệu tham khảo, ví dụ. Prompt caching cho phép tái dùng phần đó:
+
+- Cache theo **tiền tố**, theo thứ tự `tools` → `system` → `messages`, tới điểm đánh dấu `cache_control`. Một ký tự khác ở **đầu** là mất cache cho mọi thứ phía sau — như câu chuyện chèn ngày giờ.
+- Thời gian sống: <Fact id="cache-ttl" />.
+- Giá: <Fact id="cache-prices" />.
+- Độ dài tối thiểu: <Fact id="cache-min" />.
+- Kiểm chứng bằng `usage`: số token đầu vào được tách thành `input_tokens`, `cache_creation_input_tokens` và `cache_read_input_tokens`. Không thấy `cache_read` tăng là cache không trúng.
+
+<Quiz id="q-a2p-prefix" />
+
+<Callout kind="field" title="Thứ tự prompt tôi dùng để cache trúng">
+Công cụ (ổn định) → system prompt (ổn định, **không** chứa thời gian hay tên người dùng) → tài liệu tham khảo (ổn định theo phiên) → lịch sử hội thoại → câu hỏi mới. Thông tin thay đổi theo request (ngày giờ, ID phiên) đặt **cuối**, trong message của user. Và tôi theo dõi tỉ lệ `cache_read_input_tokens / tổng input` trên dashboard như theo dõi hit rate của Redis.
+</Callout>
+
+## Batch: rẻ hơn khi không cần ngay
+
+Đánh giá hàng nghìn câu hỏi, phân loại lại dữ liệu cũ, sinh mô tả sản phẩm hàng loạt — những việc này không cần trả lời trong vài giây. <Fact id="batch-discount" />. Đánh đổi rõ ràng: rẻ một nửa, đổi lấy độ trễ tính bằng phút tới giờ.
+
+## Ước lượng chi phí và chọn mô hình
+
+Chi phí một request ≈ (token vào × giá vào) + (token ra × giá ra), với phần cache tính theo giá cache. Lưu ý:
+
+- **Token ra thường đắt hơn token vào** (xem bảng giá hiện hành của nhà cung cấp — giá thay đổi, đừng ghi cứng vào code).
+- **Độ trễ** gần như tỉ lệ với số token **ra**; đầu vào dài ảnh hưởng thời gian tới chữ đầu tiên.
+- **Chọn mô hình theo việc**: tác vụ đơn giản (phân loại, trích xuất ngắn) thường chạy tốt trên mô hình nhỏ, rẻ, nhanh; giữ mô hình lớn cho việc khó. Quyết định bằng **bộ eval** của bạn (chặng A5), không bằng cảm giác.
+
+<Quiz id="q-a2p-cost" />
+
+<Callout kind="field" title="Ba câu tôi hỏi trước khi tối ưu chi phí">
+1) **Ai đang chờ?** Có người chờ thì streaming; không ai chờ thì batch. 2) **Phần nào lặp lại?** Lặp lại thì đưa lên đầu và cache. 3) **Mô hình nhỏ có đủ không?** Chạy bộ eval rồi mới quyết. Phần lớn hoá đơn LLM tôi từng rà giảm mạnh chỉ nhờ ba câu này, trước khi phải đụng tới kiến trúc.
+</Callout>

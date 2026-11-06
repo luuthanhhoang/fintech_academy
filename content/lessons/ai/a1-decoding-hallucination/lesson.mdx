@@ -1,0 +1,95 @@
+---
+id: a1-decoding-hallucination
+track: ai
+stage: a1
+order: 2
+title: { vi: "Giải mã và ảo giác: vì sao mô hình trôi chảy mà vẫn sai", en: "Decoding and hallucination: why models are fluent yet wrong" }
+summary: "Mô hình cho ra phân phối xác suất; cách chọn token từ phân phối đó (greedy, temperature, top-k, top-p) quyết định đầu ra đa dạng hay lặp lại. Ảo giác — nội dung trôi chảy nhưng sai hoặc không có căn cứ — là hệ quả tự nhiên của việc học 'điều nghe hợp lý' và của cách đánh giá thưởng cho việc đoán. Kỹ sư không 'tắt' được ảo giác, nhưng thiết kế được hệ thống chịu được nó."
+concepts: [sampling-decoding, hallucination]
+estMinutes: 35
+whyQuestion: "Chatbot của bạn trích dẫn một điều khoản hợp đồng không hề tồn tại, với giọng chắc chắn tuyệt đối. Đặt temperature về 0 có sửa được không, và nếu không thì sửa ở đâu?"
+devMapping:
+  - finance: "Temperature"
+    dev: "Núm vặn độ 'liều': thấp thì chọn token xác suất cao, cao thì phân phối phẳng hơn"
+    explanation: "Thay đổi độ đa dạng của câu chữ, không thay đổi việc mô hình biết hay không biết sự thật."
+  - finance: "Top-p (nucleus)"
+    dev: "Chỉ bốc thăm trong nhóm token chiếm p% xác suất cao nhất"
+    explanation: "Cắt bỏ phần đuôi xác suất thấp — nơi sinh ra các token lạc đề."
+  - finance: "Ảo giác"
+    dev: "Output hợp lệ về cú pháp nhưng sai về dữ liệu — như API trả 200 với nội dung sai"
+    explanation: "Không có exception nào báo; phải kiểm chứng bằng nguồn hoặc logic ở tầng ứng dụng."
+pretest: [q-a1d-temp, q-a1d-cause]
+applications:
+  - id: app-a1d-guard
+    title: "Chốt chặn ảo giác cho một tính năng thật"
+    context: "Tính năng của bạn dùng LLM để trả lời câu hỏi về sản phẩm, chính sách hoặc dữ liệu khách hàng."
+    task: "Phân loại các loại câu trả lời theo mức hậu quả khi sai. Với loại hậu quả cao: chỉ trả lời dựa trên tài liệu truy xuất kèm trích dẫn, cho phép và khuyến khích trả lời 'không tìm thấy', kiểm tra tự động trích dẫn có thật trong tài liệu, và đo tỉ lệ ảo giác trên một bộ câu hỏi có đáp án."
+    deliverable: "Ma trận rủi ro + chốt chặn cho từng loại + bộ câu hỏi đánh giá đầu tiên."
+facts:
+  - id: claude-no-sampling-params
+    text: "Theo tài liệu Messages API của Anthropic, các tham số lấy mẫu temperature, top_p, top_k"
+    value: "không còn được hỗ trợ trên Claude 4.7 trở về sau và trên mọi model từ API version 2026-10-21 — gửi giá trị là bị lỗi 400; hãy điều khiển hành vi bằng prompt"
+    sourceId: claude-messages-api
+    asOf: 2026-11-06
+    status: verified
+sources: [holtzman-2020, kalai-2025, claude-messages-api]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao giảm temperature không loại bỏ ảo giác, và đề xuất ba biện pháp ở tầng hệ thống."
+  rubric:
+    - { id: dist, criterion: "Temperature chỉ đổi cách chọn trong phân phối; nếu token sai có xác suất cao, vẫn được chọn" }
+    - { id: cause, criterion: "Ảo giác đến từ việc học điều nghe hợp lý và đánh giá thưởng cho việc đoán thay vì thừa nhận không chắc" }
+    - { id: ground, criterion: "Grounding: trả lời dựa trên tài liệu truy xuất kèm trích dẫn" }
+    - { id: abstain, criterion: "Cho phép/khuyến khích 'không biết' và kiểm chứng đầu ra quan trọng" }
+---
+
+<Callout kind="story" title="Điều 14.3 không tồn tại">
+Một trợ lý pháp chế nội bộ được hỏi về phí phạt chấm dứt hợp đồng sớm. Nó trả lời gọn gàng: "Theo Điều 14.3, phí phạt là hai tháng phí dịch vụ." Hợp đồng chỉ có 12 điều. Đội kỹ thuật hạ temperature xuống 0 — lần hỏi sau, nó vẫn trả lời "Điều 14.3", chỉ là lần nào cũng giống nhau.
+</Callout>
+
+## Giải mã: từ phân phối tới một chuỗi chữ
+
+Ở mỗi bước, mô hình cho một phân phối xác suất trên từ vựng (bài trước). **Giải mã** là quy tắc chọn token từ phân phối đó, lặp lại tới khi dừng:
+
+- **Greedy**: luôn chọn token xác suất cao nhất. Ổn định, nhưng với văn bản mở dễ rơi vào **lặp lại** và câu chữ nhạt.
+- **Temperature**: chia logit cho T trước softmax. T nhỏ làm phân phối "nhọn" hơn (gần greedy); T lớn làm phẳng hơn (đa dạng, dễ lạc đề).
+- **Top-k**: chỉ bốc thăm trong k token xác suất cao nhất.
+- **Top-p (nucleus sampling)**: chỉ bốc thăm trong nhóm nhỏ nhất các token có tổng xác suất ≥ p. Kích thước nhóm co giãn theo từng bước — khi mô hình chắc chắn, nhóm nhỏ; khi phân vân, nhóm lớn.
+
+Nucleus sampling được đề xuất trong *The Curious Case of Neural Text Degeneration* (Holtzman và cộng sự, ICLR 2020). Các tác giả lập luận rằng **cực đại hoá xác suất là mục tiêu giải mã kém cho sinh văn bản mở**: chọn toàn token "an toàn nhất" sinh ra văn bản lặp và kém tự nhiên, còn bốc thăm cả phần đuôi xác suất thấp thì sinh token lạc đề — cắt bỏ phần đuôi là thoả hiệp tốt.
+
+<Quiz id="q-a1d-temp" />
+
+Với các API và mô hình mở còn cho chỉnh, chọn tham số theo **việc**: trích xuất dữ liệu, phân loại, sinh code thì muốn ổn định (temperature thấp); viết sáng tạo, gợi ý ý tưởng thì muốn đa dạng hơn. Nhưng xu hướng mới là **nhà cung cấp tự quản lý việc giải mã**: <Fact id="claude-no-sampling-params" />. Hiểu cơ chế vẫn cần — để đọc tài liệu, dùng mô hình mở, và để không kỳ vọng sai vào một "núm vặn" — nhưng trong sản phẩm, bạn điều khiển đầu ra chủ yếu bằng **prompt** và **structured outputs** (chặng A2).
+
+<Callout kind="field" title="Đừng viết test dựa trên đầu ra giống hệt từng chữ">
+Ngay cả khi đặt temperature thấp nhất, tôi không giả định hai lần gọi cho ra **từng chữ giống nhau** — phiên bản mô hình, hạ tầng suy luận và cách tính toán song song đều có thể làm khác đi một chút. Test của tôi kiểm tra **tính chất**: JSON đúng schema, trường bắt buộc có mặt, con số khớp nguồn, câu trả lời chứa trích dẫn hợp lệ. Còn việc so sánh chất lượng thì để cho bộ eval (chặng A5).
+</Callout>
+
+## Ảo giác: trôi chảy nhưng không có căn cứ
+
+**Ảo giác** (hallucination) là nội dung nghe hợp lý, trôi chảy, nhưng **sai hoặc không có căn cứ** — trích dẫn bịa, số liệu sai, API không tồn tại, điều khoản không có trong tài liệu.
+
+Vì sao xảy ra? Nhắc lại bài trước: mô hình học **điều nghe hợp lý theo phân phối văn bản**, không có cơ chế riêng để phân biệt "biết" với "đoán". Bài *Why Language Models Hallucinate* (Kalai, Nachum, Vempala, Zhang — OpenAI, 2025) đưa thêm một lập luận: phần lớn bộ đánh giá chấm theo **độ chính xác thuần**, nên trả lời "không biết" được 0 điểm còn đoán bừa đôi khi trúng — quá trình huấn luyện và đánh giá vô tình **thưởng cho việc đoán** thay vì thừa nhận không chắc. Các tác giả đề xuất sửa cách chấm điểm của các bộ đánh giá phổ biến. Đây là lập luận của chính nhóm tác giả, bạn nên đọc như một giả thuyết có cơ sở chứ không phải kết luận cuối cùng.
+
+<Quiz id="q-a1d-cause" />
+
+Hai hệ quả thực tế:
+
+1. **Temperature không phải công tắc ảo giác.** Nếu câu trả lời sai có xác suất cao, temperature 0 chỉ làm nó sai **một cách nhất quán** — như câu chuyện "Điều 14.3".
+2. **Ảo giác tăng khi hỏi ngoài vùng mô hình có thông tin**: dữ liệu nội bộ, sự kiện sau ngày cắt, chi tiết hiếm (số hiệu điều khoản, trích dẫn, phiên bản thư viện).
+
+## Thiết kế hệ thống chịu được ảo giác
+
+- **Grounding**: đưa tài liệu liên quan vào ngữ cảnh (truy xuất — chặng A3) và yêu cầu trả lời **chỉ** dựa trên đó, **kèm trích dẫn**.
+- **Cho phép "không biết"**: nói rõ trong prompt rằng thiếu căn cứ thì trả lời không tìm thấy — và **đừng phạt** câu trả lời đó trong eval của bạn.
+- **Kiểm chứng tự động** những gì kiểm được: trích dẫn có thật trong tài liệu không, con số có khớp nguồn không, tên hàm có tồn tại trong codebase không.
+- **Người duyệt** cho đầu ra hậu quả cao (pháp lý, tài chính, y tế).
+- **Đo**: một bộ câu hỏi có đáp án, theo dõi tỉ lệ sai và tỉ lệ từ chối theo thời gian.
+
+<Quiz id="q-a1d-fix" />
+
+<Callout kind="field" title="Câu tôi hay nói với đội sản phẩm">
+"Mô hình là một nhân viên mới rất giỏi viết, đọc rất nhanh, nhưng **không bao giờ nói 'em không biết'** trừ khi được dạy và được phép." Thiết kế quy trình như với nhân viên đó: đưa đúng tài liệu, yêu cầu ghi nguồn, kiểm tra những việc hậu quả cao. Đừng thiết kế như thể nó là cơ sở dữ liệu.
+</Callout>

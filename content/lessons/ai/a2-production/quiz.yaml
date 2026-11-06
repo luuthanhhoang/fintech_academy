@@ -1,0 +1,39 @@
+items:
+  - id: q-a2p-stream
+    type: mcq
+    conceptId: streaming
+    prompt: "Streaming cải thiện chỉ số nào nhiều nhất?"
+    options:
+      - { id: a, text: "Tổng thời gian sinh xong câu trả lời" }
+      - { id: b, text: "Thời gian tới chữ đầu tiên mà người dùng thấy" }
+      - { id: c, text: "Chi phí token" }
+    correct: [b]
+    explanation: "Mô hình không sinh nhanh hơn; streaming cho người dùng thấy chữ ngay khi nó được sinh."
+  - id: q-a2p-prefix
+    type: mcq
+    conceptId: prompt-caching
+    prompt: "System prompt bắt đầu bằng 'Hôm nay là [ngày giờ hiện tại]', theo sau là 20.000 token tài liệu cố định. Vì sao cache gần như không bao giờ trúng?"
+    options:
+      - { id: a, text: "Vì tài liệu quá dài" }
+      - { id: b, text: "Vì cache theo tiền tố: phần đầu thay đổi mỗi lần gọi nên toàn bộ phần sau không khớp tiền tố đã cache" }
+      - { id: c, text: "Vì cache chỉ áp dụng cho messages" }
+    correct: [b]
+    explanation: "Đưa phần thay đổi (ngày giờ) xuống cuối, giữ phần cố định ở đầu."
+  - id: q-a2p-cost
+    type: numeric
+    conceptId: prompt-caching
+    prompt: "Tiền tố 10.000 token được gửi 100 lần trong vòng vài phút (cache 5 phút còn hiệu lực). Lần đầu ghi cache (1,25× giá đầu vào thường), 99 lần sau đọc cache (0,1×). Tổng chi phí phần tiền tố bằng bao nhiêu phần trăm so với không cache (100 × 1×)? (làm tròn số nguyên)"
+    answer: 11
+    tolerance: { kind: abs, value: 1 }
+    unit: "%"
+    explanation: "Có cache: 1,25 + 99 × 0,1 = 11,15 đơn vị; không cache: 100 đơn vị → khoảng 11%. Chỉ đúng khi các lần gọi đủ dày để cache chưa hết hạn."
+  - id: q-a2p-batch
+    type: mcq
+    conceptId: cost-latency
+    prompt: "Tác vụ nào phù hợp với Batch API nhất?"
+    options:
+      - { id: a, text: "Chatbot trả lời khách đang chờ trên web" }
+      - { id: b, text: "Chạy lại bộ eval 5.000 câu hỏi mỗi đêm" }
+      - { id: c, text: "Gợi ý tự động khi người dùng đang gõ" }
+    correct: [b]
+    explanation: "Batch đổi độ trễ (phút tới giờ) lấy giá thấp hơn — hợp với việc không có người chờ."

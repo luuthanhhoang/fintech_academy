@@ -1,0 +1,38 @@
+items:
+  - id: q-a0n-split
+    type: mcq
+    conceptId: ml-basics
+    prompt: "Bạn thử 30 cấu hình siêu tham số và chọn cấu hình có điểm cao nhất trên tập test. Vấn đề là gì?"
+    options:
+      - { id: a, text: "Không có vấn đề, test là để chọn mô hình" }
+      - { id: b, text: "Điểm test giờ đã bị lạc quan hoá vì bạn đã dùng nó để chọn — cần tập validation riêng để chọn, test chỉ dùng một lần cuối" }
+      - { id: c, text: "Chỉ có vấn đề nếu tập test nhỏ hơn 1.000 mẫu" }
+    correct: [b]
+    explanation: "Chọn theo một tập là để thông tin của tập đó rò vào mô hình. Validation để chọn, test để ước lượng cuối cùng."
+  - id: q-a0n-overfit
+    type: mcq
+    conceptId: ml-basics
+    prompt: "Loss trên tập train tiếp tục giảm, nhưng loss trên tập validation bắt đầu tăng. Đây là dấu hiệu của gì?"
+    options:
+      - { id: a, text: "Underfitting" }
+      - { id: b, text: "Overfitting — mô hình bắt đầu học thuộc nhiễu của tập train" }
+      - { id: c, text: "Learning rate quá nhỏ" }
+    correct: [b]
+    explanation: "Khoảng cách train–validation mở rộng là dấu hiệu kinh điển của overfitting; cân nhắc dừng sớm, điều chuẩn, thêm dữ liệu."
+  - id: q-a0n-update
+    type: numeric
+    conceptId: ml-basics
+    prompt: "Tham số w = 2,0, gradient của loss theo w là 0,5, learning rate 0,1. Sau một bước gradient descent, w bằng bao nhiêu?"
+    answer: 1.95
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "w ← w − lr × gradient = 2,0 − 0,1 × 0,5 = 1,95."
+  - id: q-a0n-linear
+    type: mcq
+    conceptId: neural-networks
+    prompt: "Vì sao mạng nơ-ron cần hàm kích hoạt phi tuyến giữa các lớp?"
+    options:
+      - { id: a, text: "Để tính nhanh hơn" }
+      - { id: b, text: "Vì nhiều lớp tuyến tính xếp chồng vẫn chỉ tương đương một lớp tuyến tính; phi tuyến cho phép biểu diễn quan hệ phức tạp" }
+      - { id: c, text: "Để gradient luôn bằng 0" }
+    correct: [b]
+    explanation: "W₂(W₁x) = (W₂W₁)x vẫn là một phép tuyến tính. Hàm phi tuyến như ReLU phá vỡ điều đó."

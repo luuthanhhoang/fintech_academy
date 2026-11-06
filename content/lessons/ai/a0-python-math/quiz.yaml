@@ -1,0 +1,38 @@
+items:
+  - id: q-a0m-shape
+    type: mcq
+    conceptId: python-for-ai
+    prompt: "Ma trận embedding có shape (1000, 768) và vector câu hỏi có shape (768,). Phép nào cho ra điểm của từng tài liệu, shape (1000,)?"
+    options:
+      - { id: a, text: "docs @ q" }
+      - { id: b, text: "q @ docs" }
+      - { id: c, text: "docs * q rồi lấy phần tử đầu" }
+    correct: [a]
+    explanation: "(1000, 768) @ (768,) → (1000,): mỗi hàng (một tài liệu) chấm với q. q @ docs sai shape (768 không khớp 1000)."
+  - id: q-a0m-cosine
+    type: mcq
+    conceptId: linear-algebra-ml
+    prompt: "Hai embedding có cosine similarity ≈ 0. Điều đó gợi ý gì?"
+    options:
+      - { id: a, text: "Hai văn bản gần như trùng nghĩa" }
+      - { id: b, text: "Hai vector gần vuông góc — ít liên quan theo không gian embedding đó" }
+      - { id: c, text: "Một trong hai vector bằng 0" }
+    correct: [b]
+    explanation: "Cosine đo góc: ≈ 1 cùng hướng, ≈ 0 vuông góc, âm là ngược hướng. Nó không phụ thuộc độ dài vector."
+  - id: q-a0m-ce
+    type: numeric
+    conceptId: probability-ml
+    prompt: "Mô hình gán xác suất 0,5 cho token đúng. Cross-entropy (log tự nhiên) của dự đoán này là bao nhiêu? (làm tròn 2 chữ số)"
+    answer: 0.69
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "−ln(0,5) = ln 2 ≈ 0,693. Xác suất càng thấp cho đáp án đúng, phạt càng lớn."
+  - id: q-a0m-entropy
+    type: mcq
+    conceptId: probability-ml
+    prompt: "Phân phối nào có entropy cao nhất trên 4 lựa chọn?"
+    options:
+      - { id: a, text: "(1, 0, 0, 0)" }
+      - { id: b, text: "(0.7, 0.1, 0.1, 0.1)" }
+      - { id: c, text: "(0.25, 0.25, 0.25, 0.25)" }
+    correct: [c]
+    explanation: "Entropy đo độ không chắc chắn; phân phối đều là 'không biết gì' nhất nên entropy lớn nhất; dồn hết vào một chỗ thì entropy bằng 0."

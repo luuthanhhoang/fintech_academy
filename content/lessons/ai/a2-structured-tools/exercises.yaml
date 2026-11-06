@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a2s-design
+    conceptId: tool-calling
+    prompt: "Thiết kế 2–3 công cụ cho trợ lý chăm sóc khách hàng ngân hàng có thể: tra số dư, xem 10 giao dịch gần nhất, và khoá thẻ khi khách báo mất. Với mỗi công cụ ghi: tên, mô tả, tham số, và kiểm tra nào bắt buộc ở code trước khi thực thi."
+    hint: "Phân biệt thao tác chỉ đọc và thao tác thay đổi trạng thái."
+    solution: "get_balance(account_id) và list_recent_transactions(account_id, limit≤10): chỉ đọc; kiểm tra account_id thuộc khách đã xác thực trong phiên (không lấy từ lời nói của khách), giới hạn limit. lock_card(card_last4, reason): thay đổi trạng thái; kiểm tra thẻ thuộc khách, yêu cầu xác nhận rõ ràng trước khi khoá, ghi nhật ký kiểm toán, idempotent (khoá lần hai không lỗi). Mô tả mỗi công cụ nói khi nào dùng; lỗi trả về có hướng dẫn. Không có công cụ chuyển tiền — phạm vi càng hẹp càng an toàn."
+  - id: ex-a2s-pipeline
+    conceptId: structured-output
+    prompt: "Sửa pipeline trong câu chuyện đầu bài (tên trường sai 'Category') bằng structured outputs. Liệt kê những gì vẫn phải kiểm tra ở code."
+    hint: "Schema với additionalProperties false và enum."
+    solution: "Định nghĩa schema có category là enum, các trường required, additionalProperties false — tên trường sai không thể xuất hiện. Vẫn phải: xử lý stop_reason refusal và max_tokens; so enum không phân biệt hoa thường; kiểm tra ràng buộc không hỗ trợ (khoảng số tiền); cảnh báo khi tỉ lệ 'khac' tăng bất thường; chạy bộ giao dịch có nhãn sau mỗi lần sửa prompt hoặc đổi mô hình."

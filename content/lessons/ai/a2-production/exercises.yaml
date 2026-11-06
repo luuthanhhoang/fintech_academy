@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a2p-reorder
+    conceptId: prompt-caching
+    prompt: "Request hiện tại theo thứ tự: system = 'Người dùng: [tên]. Hôm nay: [ngày]. Bạn là trợ lý chính sách...' + 30.000 token chính sách; messages = lịch sử + câu hỏi. Sắp xếp lại để cache trúng và giải thích cách kiểm chứng."
+    hint: "Phần nào cố định cho mọi người dùng, phần nào thay đổi?"
+    solution: "Đưa phần cố định lên đầu: system = vai trò + quy tắc (không có tên, ngày) + 30.000 token chính sách, đánh dấu cache_control ở cuối khối chính sách. Tên người dùng và ngày chuyển vào message user của lượt hiện tại. Kiểm chứng: sau lần gọi đầu, các lần sau trong vòng 5 phút phải có cache_read_input_tokens xấp xỉ độ dài tiền tố; theo dõi tỉ lệ này theo giờ — nếu lưu lượng thưa hơn thời gian sống của cache thì cân nhắc TTL 1 giờ."
+  - id: ex-a2p-route
+    conceptId: cost-latency
+    prompt: "Một sản phẩm có ba tác vụ: (1) trả lời chat khách hàng, (2) phân loại email đến thành 5 nhóm, (3) tóm tắt toàn bộ ticket của tháng để làm báo cáo. Với mỗi tác vụ, chọn: streaming hay không, batch hay không, mô hình lớn hay nhỏ — và bạn sẽ kiểm chứng lựa chọn mô hình thế nào?"
+    hint: "Ai đang chờ? Việc khó cỡ nào?"
+    solution: "(1) Có người chờ → streaming, không batch; mô hình theo độ khó câu hỏi, bắt đầu với mô hình mạnh rồi thử mô hình nhỏ hơn trên eval. (2) Không ai nhìn chữ → không cần streaming; nếu cần phân loại gần thời gian thực thì gọi thường, mô hình nhỏ + structured outputs thường đủ. (3) Không ai chờ → batch rẻ hơn một nửa. Kiểm chứng: chạy cùng bộ eval có nhãn trên hai mô hình, so chất lượng, chi phí và độ trễ, chọn mô hình rẻ nhất đạt ngưỡng chất lượng."

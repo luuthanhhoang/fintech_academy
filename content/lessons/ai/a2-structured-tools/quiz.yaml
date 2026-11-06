@@ -1,0 +1,42 @@
+items:
+  - id: q-a2s-guarantee
+    type: mcq
+    conceptId: structured-output
+    prompt: "Khi bật structured outputs, trường hợp nào đầu ra VẪN có thể không khớp schema? (chọn tất cả)"
+    options:
+      - { id: a, text: "Mô hình từ chối (stop_reason refusal)" }
+      - { id: b, text: "Đầu ra bị cắt vì chạm max_tokens" }
+      - { id: c, text: "Giá trị enum bị đổi chữ hoa/thường" }
+      - { id: d, text: "Khi prompt viết bằng tiếng Việt" }
+    correct: [a, b, c]
+    explanation: "Tài liệu liệt kê các ngoại lệ: từ chối, hết token, và chữ hoa/thường của enum. Ngôn ngữ prompt không phải ngoại lệ."
+  - id: q-a2s-who-runs
+    type: mcq
+    conceptId: tool-calling
+    prompt: "Với một client tool bạn tự định nghĩa (ví dụ get_order_status), ai thực thi hàm?"
+    options:
+      - { id: a, text: "Mô hình tự chạy hàm trên máy của nhà cung cấp" }
+      - { id: b, text: "Ứng dụng của bạn: mô hình trả khối tool_use, bạn chạy hàm và gửi tool_result" }
+      - { id: c, text: "Không ai, mô hình đoán kết quả" }
+    correct: [b]
+    explanation: "Mô hình chỉ đề xuất lời gọi. Quyền thực thi — và trách nhiệm kiểm tra — nằm ở ứng dụng."
+  - id: q-a2s-error
+    type: mcq
+    conceptId: tool-calling
+    prompt: "Công cụ tra cứu đơn hàng không tìm thấy mã đơn. Cách xử lý tốt nhất trong vòng gọi công cụ?"
+    options:
+      - { id: a, text: "Ném exception, dừng toàn bộ phiên" }
+      - { id: b, text: "Trả tool_result đánh dấu lỗi, kèm thông điệp có hướng dẫn (ví dụ gợi ý tìm theo số điện thoại) để mô hình tự điều chỉnh" }
+      - { id: c, text: "Trả kết quả rỗng không giải thích" }
+    correct: [b]
+    explanation: "Lỗi có hướng dẫn giúp mô hình sửa bước tiếp theo; vẫn cần giới hạn số vòng để không lặp vô hạn."
+  - id: q-a2s-constraint
+    type: mcq
+    conceptId: structured-output
+    prompt: "Schema của bạn cần amount_vnd nằm trong khoảng 1.000 đến 50.000.000. Theo tài liệu structured outputs hiện tại, làm thế nào?"
+    options:
+      - { id: a, text: "Thêm minimum/maximum vào schema là đủ" }
+      - { id: b, text: "Ràng buộc số không được hỗ trợ trong schema; kiểm tra khoảng giá trị ở code sau khi nhận kết quả (có thể ghi khoảng vào mô tả trường)" }
+      - { id: c, text: "Không thể làm được" }
+    correct: [b]
+    explanation: "Ràng buộc số và độ dài chuỗi không được hỗ trợ; kiểm tra ở tầng ứng dụng."

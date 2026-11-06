@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a3r-memory
+    conceptId: vector-search
+    prompt: "Kho có 2 triệu đoạn, mỗi đoạn một vector 1.024 chiều số thực 32-bit (4 byte). Vector chiếm bao nhiêu GB (lấy 1 GB = 10⁹ byte)? Nếu lượng tử hoá sang 8-bit thì còn bao nhiêu?"
+    hint: "Số đoạn × số chiều × số byte mỗi chiều."
+    solution: "2.000.000 × 1.024 × 4 = 8.192.000.000 byte ≈ 8,2 GB (chưa tính chỉ mục). 8-bit: chia 4 → ≈ 2,0 GB. Đổi lại cần đo recall@k trước/sau để biết mất bao nhiêu chất lượng."
+  - id: ex-a3r-failure
+    conceptId: embeddings
+    prompt: "Với câu chuyện 'E-4012' đầu bài, đề xuất hai cách sửa và cách bạn kiểm chứng cách sửa có hiệu quả."
+    hint: "Kết hợp từ khoá; metadata."
+    solution: "(1) Truy xuất lai: chạy song song BM25 (khớp chính xác mã) và vector, gộp kết quả (bài sau). (2) Trích mã lỗi bằng regex, lọc theo metadata 'error_code' trước khi xếp hạng. Kiểm chứng: thêm vào bộ đo một nhóm câu hỏi chỉ gồm mã/tên riêng; đo recall@5 riêng cho nhóm đó và cho nhóm câu tự nhiên, đảm bảo nhóm này tăng mà nhóm kia không giảm."

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a1d-temperature
+    conceptId: sampling-decoding
+    prompt: "Logit của 2 token là (2, 0). Tính xác suất của token thứ nhất khi temperature T = 1 và T = 0,5 (làm tròn 2 chữ số). Temperature nhỏ làm phân phối thay đổi thế nào?"
+    hint: "Chia logit cho T rồi softmax. e² ≈ 7,39; e⁴ ≈ 54,6."
+    solution: "T = 1: e²/(e²+1) ≈ 7,39/8,39 ≈ 0,88. T = 0,5: logit thành (4, 0) → e⁴/(e⁴+1) ≈ 54,6/55,6 ≈ 0,98. Temperature nhỏ làm phân phối 'nhọn' hơn, dồn xác suất vào token vốn đã cao nhất — không thêm thông tin nào về việc token đó đúng hay sai."
+  - id: ex-a1d-eval
+    conceptId: hallucination
+    prompt: "Bộ eval của đội bạn chấm 1 điểm cho câu đúng, 0 điểm cho câu sai và 0 điểm cho 'không tìm thấy'. Vì sao cách chấm này có thể khiến bạn chọn nhầm phiên bản prompt dễ ảo giác hơn? Đề xuất cách chấm khác."
+    hint: "So một prompt hay đoán với một prompt hay từ chối khi thiếu căn cứ."
+    solution: "Prompt hay đoán thỉnh thoảng đoán trúng nên được thêm điểm, còn prompt trung thực từ chối thì được 0 — điểm trung bình thưởng cho việc đoán, đúng như lập luận của Kalai và cộng sự. Cách chấm khác: câu sai bị trừ điểm (ví dụ −1), 'không tìm thấy' được 0, câu đúng +1; và báo riêng hai chỉ số tỉ lệ sai và tỉ lệ từ chối để chọn điểm cân bằng phù hợp với mức hậu quả."

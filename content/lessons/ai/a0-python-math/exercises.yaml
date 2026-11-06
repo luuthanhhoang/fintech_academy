@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a0m-cosine
+    conceptId: linear-algebra-ml
+    prompt: "Tính cosine similarity giữa a = (1, 2, 2) và b = (2, 0, 0). Sau đó chuẩn hoá cả hai về độ dài 1 và kiểm tra rằng tích vô hướng của hai vector đã chuẩn hoá bằng đúng số vừa tính."
+    hint: "‖a‖ = √(1+4+4) = 3, ‖b‖ = 2."
+    solution: "a · b = 1×2 + 2×0 + 2×0 = 2. cos = 2 / (3 × 2) = 1/3 ≈ 0,333. Chuẩn hoá: a' = (1/3, 2/3, 2/3), b' = (1, 0, 0); a' · b' = 1/3. Vì vậy hệ thống lưu vector đã chuẩn hoá có thể dùng tích vô hướng thay cho cosine."
+  - id: ex-a0m-softmax
+    conceptId: probability-ml
+    prompt: "Logit của 3 token là (2, 1, 0). Tính softmax (làm tròn 2 chữ số) và cross-entropy nếu token đúng là token thứ hai. Vì sao cộng 1000 vào cả ba logit không đổi kết quả, và điều đó giúp gì khi cài đặt?"
+    hint: "e² ≈ 7,39, e¹ ≈ 2,72, e⁰ = 1."
+    solution: "Tổng ≈ 11,11 → p ≈ (0,67; 0,24; 0,09). Cross-entropy = −ln 0,24 ≈ 1,41. Cộng cùng một hằng số c vào mọi logit nhân tử và mẫu với e^c nên không đổi kết quả; vì vậy cài đặt ổn định số học trừ đi logit lớn nhất trước khi lấy exp để tránh tràn số."

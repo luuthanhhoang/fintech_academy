@@ -1,0 +1,112 @@
+---
+id: a2-structured-tools
+track: ai
+stage: a2
+order: 1
+title: { vi: "Structured output và tool calling: khi đầu ra phải để máy đọc", en: "Structured output and tool calling: when the output is for machines" }
+summary: "Đầu ra để code xử lý thì không được 'gần đúng JSON'. Structured outputs ép đầu ra theo JSON schema bằng giải mã có ràng buộc; tool calling cho mô hình yêu cầu gọi hàm của bạn với tham số theo schema, bạn thực thi rồi trả kết quả. Bài này dạy vòng gọi công cụ, các ngoại lệ của 'đảm bảo', và vì sao vẫn phải kiểm tra mọi thứ mô hình đưa ra."
+concepts: [structured-output, tool-calling]
+estMinutes: 40
+whyQuestion: "Bạn yêu cầu mô hình 'trả về JSON'. 99 lần ổn, lần thứ 100 nó thêm một câu 'Đây là kết quả:' trước dấu ngoặc và pipeline sập lúc 3 giờ sáng. Có cách nào để không phải viết lại parser chịu lỗi mãi mãi?"
+facts:
+  - id: so-unsupported-constraints
+    text: "Ràng buộc JSON schema không được structured outputs hỗ trợ (trả lỗi 400) theo tài liệu Anthropic"
+    value: "ràng buộc số (minimum, maximum, multipleOf), ràng buộc chuỗi (minLength, maxLength), schema đệ quy, $ref ra ngoài"
+    sourceId: claude-structured-outputs
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Structured outputs"
+    dev: "Kiểu trả về được kiểm tra lúc sinh, không phải lúc parse"
+    explanation: "Mô hình chỉ được sinh token tạo thành JSON hợp lệ theo schema — giống trình biên dịch chặn sai kiểu thay vì để lỗi xảy ra lúc chạy."
+  - finance: "Tool calling"
+    dev: "Mô hình đề xuất một lời gọi RPC; ứng dụng của bạn là bên thực thi"
+    explanation: "Mô hình không tự chạy gì cả (trừ server tool của nhà cung cấp); quyền thực thi và kiểm tra nằm ở code của bạn."
+  - finance: "tool_result"
+    dev: "Response trả về cho lời gọi, gắn với tool_use_id"
+    explanation: "Lỗi của công cụ cũng nên trả về dạng kết quả có đánh dấu lỗi để mô hình tự sửa, thay vì làm sập vòng lặp."
+pretest: [q-a2s-guarantee, q-a2s-who-runs]
+applications:
+  - id: app-a2s-extract
+    title: "Trích xuất dữ liệu có schema từ tài liệu thật"
+    context: "Đội vận hành đang gõ tay thông tin từ hoá đơn/hợp đồng PDF vào hệ thống."
+    task: "Định nghĩa schema (bằng Pydantic hoặc Zod) cho các trường cần lấy; dùng structured outputs; kiểm tra lại các ràng buộc mà schema không hỗ trợ (khoảng giá trị, độ dài) ở code; xử lý riêng stop_reason refusal và max_tokens; đo độ chính xác trên 50 tài liệu có đáp án."
+    deliverable: "Module trích xuất + báo cáo độ chính xác theo từng trường."
+sources: [claude-structured-outputs, claude-tool-use, anthropic-writing-tools]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả vòng gọi công cụ từ request đầu tiên tới câu trả lời cuối, và liệt kê những chỗ ứng dụng phải kiểm tra."
+  rubric:
+    - { id: define, criterion: "Khai báo công cụ: tên, mô tả, input_schema (JSON Schema)" }
+    - { id: loop, criterion: "Mô hình trả stop_reason tool_use + khối tool_use; ứng dụng thực thi, gửi tool_result kèm tool_use_id; gọi lại mô hình" }
+    - { id: validate, criterion: "Kiểm tra tham số, quyền, và hậu quả trước khi thực thi; không tin tham số chỉ vì đúng schema" }
+    - { id: errors, criterion: "Trả lỗi công cụ dưới dạng kết quả để mô hình xử lý; đặt giới hạn số vòng" }
+---
+
+<Callout kind="story" title="Dấu phẩy thừa lúc 3 giờ sáng">
+Một pipeline phân loại giao dịch yêu cầu mô hình "chỉ trả về JSON". Đội đã viết parser chịu lỗi: cắt văn bản thừa trước dấu ngoặc, xoá dấu phẩy cuối. Một đêm, mô hình trả về JSON hợp lệ nhưng đặt tên trường là `"Category"` thay vì `"category"`. Parser không lỗi; 4.000 giao dịch rơi vào nhóm mặc định "khác" trước khi có người để ý.
+</Callout>
+
+## Structured outputs: đúng schema ngay từ lúc sinh
+
+Yêu cầu "trả về JSON" trong prompt là **xin**, không phải **ép**. Tài liệu Anthropic nói rõ: dù prompt cẩn thận, không có structured outputs bạn vẫn có thể gặp JSON hỏng, thiếu trường bắt buộc, sai kiểu.
+
+**Structured outputs** dùng **giải mã có ràng buộc** (constrained decoding): ở mỗi bước, mô hình chỉ được chọn những token giữ cho đầu ra là JSON hợp lệ theo schema bạn đưa. Với Claude, bật bằng `output_config.format` kiểu `json_schema`; SDK có hàm tiện ích nhận thẳng model Pydantic (Python) hoặc Zod (TypeScript) và trả về đối tượng đã kiểm tra.
+
+```json
+"output_config": {
+  "format": {
+    "type": "json_schema",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "enum": ["an_uong", "di_chuyen", "hoa_don", "khac"] },
+        "amount_vnd": { "type": "integer" },
+        "needs_review": { "type": "boolean" }
+      },
+      "required": ["category", "amount_vnd", "needs_review"],
+      "additionalProperties": false
+    }
+  }
+}
+```
+
+"Đảm bảo" có **ngoại lệ**, và code của bạn phải xử lý:
+
+- **Từ chối** (`stop_reason: "refusal"`): thông điệp từ chối được ưu tiên hơn schema.
+- **Hết token** (`stop_reason: "max_tokens"`): đầu ra có thể dang dở.
+- **Chữ hoa/thường** của giá trị `enum` có thể bị đổi — so sánh không phân biệt hoa thường.
+
+Và không phải mọi ràng buộc JSON Schema đều được hỗ trợ: <Fact id="so-unsupported-constraints" />. Những ràng buộc đó bạn vẫn phải **kiểm tra ở code** (SDK có thể chuyển chúng vào mô tả trường và kiểm tra tại chỗ).
+
+<Quiz id="q-a2s-guarantee" />
+
+## Tool calling: mô hình đề xuất, ứng dụng thực thi
+
+Khi bạn khai báo **công cụ** (tên, mô tả, `input_schema` theo JSON Schema), mô hình có thể quyết định gọi chúng. Vòng lặp theo tài liệu Anthropic:
+
+1. Request kèm `tools`. Mô hình trả về `stop_reason: "tool_use"` và một hoặc nhiều khối `tool_use` (có `id`, `name`, `input`).
+2. **Ứng dụng của bạn** chạy hàm tương ứng.
+3. Gửi lại cuộc hội thoại kèm khối `tool_result` có `tool_use_id` khớp.
+4. Mô hình dùng kết quả để trả lời — hoặc gọi thêm công cụ.
+
+**Client tool** (bạn định nghĩa, hoặc có schema do Anthropic định nghĩa như `bash`, `text_editor`) chạy trong ứng dụng của bạn. **Server tool** (như `web_search`, `code_execution`) chạy trên hạ tầng của Anthropic. Có thể ép gọi công cụ bằng `tool_choice`, và thêm `strict: true` vào định nghĩa công cụ để tham số luôn khớp schema.
+
+<Quiz id="q-a2s-who-runs" />
+
+<Callout kind="field" title="Đúng schema không có nghĩa là an toàn">
+Schema đảm bảo `transfer_money(amount, to_account)` có đúng kiểu dữ liệu — không đảm bảo **nên** chuyển tiền. Trước mỗi lần thực thi, code của tôi kiểm tra: người dùng hiện tại có quyền không, giá trị có nằm trong giới hạn nghiệp vụ không, hành động có đảo ngược được không. Hành động không đảo ngược được (chuyển tiền, xoá dữ liệu, gửi email ra ngoài) luôn cần người xác nhận. Kết quả công cụ cũng là **dữ liệu không đáng tin** — nội dung một trang web có thể chứa lệnh giả mạo; bạn sẽ gặp lại ở bài prompt injection.
+</Callout>
+
+## Thiết kế công cụ để mô hình dùng đúng
+
+Bài "Writing effective tools for agents" của Anthropic và kinh nghiệm thực tế gặp nhau ở vài điểm:
+
+- **Mô tả là prompt.** Viết như cho đồng nghiệp mới: công cụ làm gì, khi nào dùng, tham số nghĩa là gì, ví dụ giá trị.
+- **Ít công cụ mà rõ** tốt hơn nhiều công cụ chồng chéo. Gộp các bước hay đi cùng nhau thành một công cụ.
+- **Trả kết quả gọn và có ích**: trả tên, mô tả thay vì mã nội bộ khó hiểu; phân trang hoặc cắt bớt kết quả lớn.
+- **Lỗi có hướng dẫn**: "không tìm thấy khách hàng với email này; thử tìm theo số điện thoại" giúp mô hình tự sửa.
+- **Giới hạn vòng lặp** và log mọi lần gọi — bạn sẽ dựng hẳn một agent loop ở chặng A4.
+
+<Quiz id="q-a2s-error" />

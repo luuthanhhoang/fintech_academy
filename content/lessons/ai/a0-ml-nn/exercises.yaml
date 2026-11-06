@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a0n-leak
+    conceptId: ml-basics
+    prompt: "Bạn có 2 năm giao dịch thẻ, nhãn 'gian lận' được xác nhận sau 30–60 ngày. Thiết kế cách chia train/validation/test và chọn metric. Chỉ ra ít nhất hai cách chia sẽ làm metric đẹp giả."
+    hint: "Thời gian, cùng một chủ thẻ, độ trễ của nhãn, dữ liệu lệch lớp."
+    solution: "Chia theo thời gian: ví dụ 18 tháng đầu train, 3 tháng tiếp validation, 3 tháng cuối test, và bỏ 60 ngày cuối vì nhãn chưa chín. Tránh: (1) chia ngẫu nhiên theo dòng — dùng thông tin tương lai; (2) để cùng chủ thẻ ở cả train và test — mô hình học thuộc chủ thẻ; (3) dùng đặc trưng chỉ có sau sự kiện (đã khiếu nại, đã hoàn tiền). Metric: precision/recall hoặc PR-AUC tại ngưỡng vận hành, không dùng accuracy vì gian lận rất hiếm; luôn so với baseline luật thủ công."
+  - id: ex-a0n-debug
+    conceptId: neural-networks
+    prompt: "Mạng 3 lớp của bạn có loss đứng yên ở cùng một giá trị từ bước đầu tới bước 10.000. Liệt kê theo thứ tự những gì bạn kiểm tra."
+    hint: "Bắt đầu từ việc rẻ nhất và loại trừ được nhiều nguyên nhân nhất."
+    solution: "1) Thử học thuộc một batch nhỏ — không giảm thì là bug pipeline (quên optimizer.step, quên zero_grad, gradient bị tách khỏi đồ thị, nhãn sai). 2) In gradient: bằng 0 có thể do ReLU 'chết' hoặc khởi tạo sai. 3) Giảm/tăng learning rate một bậc. 4) Kiểm tra chuẩn hoá đầu vào và shape. Chỉ sau đó mới thay kiến trúc."

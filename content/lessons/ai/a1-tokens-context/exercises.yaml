@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a1t-growth
+    conceptId: context-window
+    prompt: "Một chatbot có system prompt 2.000 token. Mỗi lượt người dùng gửi khoảng 100 token và mô hình trả lời khoảng 300 token, và ứng dụng gửi lại toàn bộ lịch sử mỗi lượt. Lượt thứ 10 gửi bao nhiêu token đầu vào? Tổng token đầu vào của cả 10 lượt là bao nhiêu? Rút ra điều gì?"
+    hint: "Lượt k gửi system + (k−1) cặp hỏi–đáp trước + câu hỏi mới."
+    solution: "Lượt k: 2.000 + (k−1)×400 + 100. Lượt 10: 2.000 + 3.600 + 100 = 5.700 token. Tổng 10 lượt: 10×2.100 + 400×(0+1+…+9) = 21.000 + 18.000 = 39.000 token đầu vào. Chi phí đầu vào tăng theo bình phương số lượt; cần prompt caching cho phần tiền tố cố định (chặng A2) và chính sách cắt/tóm tắt lịch sử."
+  - id: ex-a1t-handbook
+    conceptId: tokenization
+    prompt: "Sửa thiết kế chatbot sổ tay nhân sự trong câu chuyện đầu bài để vừa rẻ hơn vừa trả lời đúng mục nằm giữa tài liệu."
+    hint: "Đừng gửi cả sổ tay mỗi lượt."
+    solution: "Cắt sổ tay thành đoạn theo mục, truy xuất vài đoạn liên quan nhất cho mỗi câu hỏi (RAG — chặng A3), đặt các đoạn trong thẻ rõ ràng kèm tên mục, rồi đặt câu hỏi sau tài liệu; yêu cầu trích dẫn mục. Nếu vẫn gửi phần cố định lớn, đặt nó ở đầu và dùng prompt caching. Đo lại token p95 và tỉ lệ trả lời đúng trên bộ câu hỏi mẫu."

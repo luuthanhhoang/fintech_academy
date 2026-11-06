@@ -1,0 +1,95 @@
+---
+id: a1-transformer
+track: ai
+stage: a1
+order: 1
+title: { vi: "Transformer hoạt động thế nào: attention, dự đoán token tiếp theo và hậu huấn luyện", en: "How transformers work: attention, next-token prediction and post-training" }
+summary: "Một LLM là chồng các khối Transformer: mỗi token nhìn sang các token trước nó qua self-attention, rồi qua một mạng nơ-ron nhỏ. Mô hình được tiền huấn luyện bằng một việc duy nhất — đoán token tiếp theo — trên kho văn bản khổng lồ, rồi hậu huấn luyện để làm theo chỉ dẫn. Hiểu đủ để biết vì sao ngữ cảnh dài tốn kém và vì sao mô hình 'biết' mà vẫn có thể sai."
+concepts: [transformer-attention, pretraining-objective]
+estMinutes: 40
+whyQuestion: "Một mô hình chỉ được dạy 'đoán chữ tiếp theo' — vậy làm sao nó viết được code, trả lời câu hỏi, và làm theo chỉ dẫn của bạn?"
+facts:
+  - id: instructgpt-preference
+    text: "Trong đánh giá của người trên phân phối prompt của nghiên cứu InstructGPT, mô hình nhỏ đã hậu huấn luyện được ưa thích hơn mô hình gốc lớn hơn nhiều"
+    value: "InstructGPT 1,3 tỉ tham số được ưa thích hơn GPT-3 175 tỉ tham số"
+    sourceId: ouyang-2022
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Self-attention"
+    dev: "Một phép tra cứu mềm: mỗi token gửi 'query', so với 'key' của các token khác, lấy trung bình có trọng số các 'value'"
+    explanation: "Giống một truy vấn tìm kiếm trả về hỗn hợp kết quả theo độ liên quan, thay vì đúng một kết quả."
+  - finance: "Causal mask"
+    dev: "Token chỉ được nhìn về phía trước nó, không nhìn trộm tương lai"
+    explanation: "Nhờ đó một lần chạy huấn luyện học cùng lúc việc đoán token tiếp theo ở mọi vị trí."
+  - finance: "Hậu huấn luyện (post-training)"
+    dev: "Fine-tune trên ví dụ hội thoại mẫu + học từ đánh giá của người"
+    explanation: "Biến 'cỗ máy viết tiếp văn bản' thành trợ lý làm theo chỉ dẫn."
+pretest: [q-a1x-objective, q-a1x-cost]
+applications:
+  - id: app-a1x-explain
+    title: "Giải thích giới hạn của LLM cho đội sản phẩm"
+    context: "Đội sản phẩm muốn dùng LLM để 'tra cứu chính sách công ty' và tin rằng mô hình 'đã biết' chính sách."
+    task: "Viết một trang giải thích ngắn: mô hình học gì khi tiền huấn luyện (thống kê văn bản công khai, có ngày cắt), vì sao nó không biết chính sách nội bộ trừ khi bạn đưa vào ngữ cảnh, và vì sao ngữ cảnh dài tốn kém. Đề xuất hướng: truy xuất tài liệu nội bộ (chặng A3)."
+    deliverable: "Một trang FAQ nội bộ được đội sản phẩm duyệt."
+sources: [vaswani-2017, ouyang-2022, goodfellow-dlbook]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Kể lại đường đi của một câu hỏi qua mô hình: từ token đến phân phối xác suất của token tiếp theo, và nói vì sao mô hình đã hậu huấn luyện làm theo chỉ dẫn tốt hơn mô hình gốc."
+  rubric:
+    - { id: embed, criterion: "Token → vector (embedding) + thông tin vị trí" }
+    - { id: attn, criterion: "Self-attention: Q·K → trọng số (softmax) → trộn V; có causal mask" }
+    - { id: stack, criterion: "Nhiều khối attention + MLP xếp chồng, cuối cùng ra logit trên từ vựng" }
+    - { id: post, criterion: "Tiền huấn luyện đoán token tiếp theo; hậu huấn luyện (SFT, học từ phản hồi của người) để làm theo chỉ dẫn" }
+---
+
+<Callout kind="story" title="'Nó viết tiếp chứ không trả lời'">
+Một kỹ sư lần đầu chạy một mô hình gốc (chưa hậu huấn luyện) tải về từ internet và gõ: "Thủ đô của Pháp là gì?". Mô hình đáp: "Thủ đô của Đức là gì? Thủ đô của Ý là gì?…" — nó coi câu hỏi là đầu một danh sách câu đố và viết tiếp. Cùng kiến trúc, cùng loại dữ liệu; thiếu đúng một giai đoạn huấn luyện.
+</Callout>
+
+## Đường đi của một câu qua mô hình
+
+1. **Token → vector**: mỗi token tra ra một vector (embedding), cộng thêm thông tin **vị trí** để mô hình biết thứ tự.
+2. **Chồng nhiều khối Transformer**: mỗi khối gồm **self-attention** (token trộn thông tin từ các token khác) và một **mạng nơ-ron nhỏ** áp dụng riêng cho từng vị trí, kèm kết nối tắt (residual) và chuẩn hoá giúp huấn luyện mạng sâu ổn định.
+3. **Đầu ra**: vector ở vị trí cuối được chiếu thành **logit cho mọi token trong từ vựng**; softmax ra phân phối xác suất của **token tiếp theo** (đã gặp ở bài A0).
+
+## Self-attention: tra cứu mềm
+
+Ở mỗi khối, mỗi token tạo ba vector bằng ba phép nhân ma trận: **query** (tôi đang tìm gì), **key** (tôi chứa gì), **value** (tôi đóng góp gì). Bài báo *Attention Is All You Need* (Vaswani và cộng sự, NIPS 2017) định nghĩa *scaled dot-product attention*:
+
+Attention(Q, K, V) = softmax(Q Kᵀ / √d) · V
+
+- `Q Kᵀ`: tích vô hướng giữa query của mỗi token với key của mọi token — mức liên quan.
+- Chia `√d` (d là số chiều của key) để giá trị không quá lớn khi số chiều lớn, giữ softmax không bị "bão hoà".
+- Softmax biến thành trọng số; trộn các value theo trọng số đó.
+
+**Multi-head**: chạy song song nhiều "đầu" attention, mỗi đầu có ma trận riêng, để học nhiều kiểu quan hệ (cú pháp, tham chiếu, …) cùng lúc. Với mô hình sinh văn bản, một **causal mask** chặn token nhìn các token phía sau nó.
+
+<Quiz id="q-a1x-attn" />
+
+Bài báo này bỏ hẳn hồi quy (RNN) và tích chập, dựa hoàn toàn vào attention — nhờ đó huấn luyện **song song** trên cả chuỗi thay vì từng bước, một lý do Transformer mở rộng quy mô tốt. Cái giá: mỗi token so với mọi token khác, nên chi phí attention tăng theo **bình phương** độ dài chuỗi. Đây là gốc rễ vì sao ngữ cảnh dài tốn kém, và vì sao các kỹ thuật như KV cache (chặng A7) tồn tại.
+
+<Quiz id="q-a1x-cost" />
+
+## Tiền huấn luyện: chỉ một việc, làm ở quy mô cực lớn
+
+Mục tiêu tiền huấn luyện của mô hình sinh văn bản: **đoán token tiếp theo**, tối thiểu hoá cross-entropy trên một kho văn bản khổng lồ. Để đoán tốt câu tiếp theo trong một bài giải toán, một đoạn code hay một cuộc tranh luận, mô hình buộc phải nắm ngữ pháp, kiến thức, mẫu suy luận phổ biến. Đó là cách một mục tiêu đơn giản sinh ra năng lực rộng.
+
+Nhưng cũng chính từ đó mà ra các giới hạn:
+
+- Mô hình học **phân phối văn bản**, không học "sự thật"; điều sai nhưng phổ biến cũng được học (bài tiếp theo: ảo giác).
+- Kiến thức có **ngày cắt** — sau đó mô hình không biết gì trừ khi bạn đưa vào ngữ cảnh.
+- Mô hình gốc **viết tiếp** chứ không tự động "trả lời".
+
+<Quiz id="q-a1x-objective" />
+
+## Hậu huấn luyện: từ viết tiếp tới làm theo chỉ dẫn
+
+Nghiên cứu InstructGPT (Ouyang và cộng sự, NeurIPS 2022) mô tả công thức hai bước: **fine-tune có giám sát** trên các câu trả lời mẫu do người viết, rồi **học tăng cường từ phản hồi của người** (RLHF) dựa trên việc người xếp hạng các câu trả lời. Kết quả đáng nhớ: <Fact id="instructgpt-preference" /> — trên phân phối prompt của nghiên cứu đó. Hậu huấn luyện thay đổi **hành vi** nhiều không kém việc tăng kích thước.
+
+<Callout kind="field" title="Những gì hiểu kiến trúc thực sự giúp tôi khi làm sản phẩm">
+Không phải để tự huấn luyện mô hình. Mà để **dự đoán chi phí và giới hạn**: ngữ cảnh dài đắt vì attention; mô hình không biết dữ liệu nội bộ vì nó chỉ học văn bản tới ngày cắt; nó tự tin sai vì nó học điều *nghe hợp lý*. Ba hệ quả đó quyết định kiến trúc ứng dụng: truy xuất tài liệu thay vì kỳ vọng mô hình "biết", kiểm chứng đầu ra quan trọng, và đo chi phí theo token.
+</Callout>
+
+<Quiz id="q-a1x-mask" />

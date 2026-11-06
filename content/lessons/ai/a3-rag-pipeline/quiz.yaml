@@ -1,0 +1,39 @@
+items:
+  - id: q-a3p-small
+    type: mcq
+    conceptId: rag-grounding
+    prompt: "Kho tài liệu của bạn chỉ khoảng 60 trang chính sách và hiếm khi thay đổi. Hướng nào nên cân nhắc trước?"
+    options:
+      - { id: a, text: "Dựng ngay pipeline RAG đầy đủ với vector database" }
+      - { id: b, text: "Đưa cả kho vào prompt (kèm prompt caching) và đo chất lượng; chỉ dựng RAG khi kho lớn hơn hoặc chất lượng không đạt" }
+      - { id: c, text: "Fine-tune mô hình trên 60 trang đó" }
+    correct: [b]
+    explanation: "Anthropic gợi ý kho dưới khoảng 200.000 token có thể đưa thẳng vào prompt; đơn giản hơn và ít khâu hỏng hơn."
+  - id: q-a3p-rrf
+    type: numeric
+    conceptId: hybrid-retrieval
+    prompt: "Với k = 60, một đoạn đứng hạng 1 trong danh sách BM25 và hạng 3 trong danh sách vector. Điểm RRF của nó là bao nhiêu? (làm tròn 4 chữ số thập phân)"
+    answer: 0.0323
+    tolerance: { kind: abs, value: 0.0001 }
+    explanation: "1/(60+1) + 1/(60+3) = 0,016393 + 0,015873 ≈ 0,0323."
+  - id: q-a3p-ground
+    type: mcq
+    conceptId: rag-grounding
+    prompt: "Biện pháp nào kiểm tra được bằng code để giảm câu trả lời bịa trong RAG? (chọn tất cả)"
+    options:
+      - { id: a, text: "Kiểm tra mỗi trích dẫn trỏ tới một đoạn đã thật sự đưa vào ngữ cảnh" }
+      - { id: b, text: "Kiểm tra đoạn trích nguyên văn xuất hiện trong văn bản nguồn" }
+      - { id: c, text: "Đo tỉ lệ 'không tìm thấy' trên các câu hỏi không có đáp án trong kho" }
+      - { id: d, text: "Tin tưởng câu trả lời nếu giọng văn tự tin" }
+    correct: [a, b, c]
+    explanation: "Trích dẫn và trích nguyên văn kiểm tra được tự động; tỉ lệ từ chối đúng đo trên bộ câu hỏi không có đáp án."
+  - id: q-a3p-context
+    type: mcq
+    conceptId: chunking
+    prompt: "Trong câu chuyện đầu bài, đoạn 'Doanh thu tăng 3% so với quý trước' không có tên công ty. Cách sửa nào nhắm đúng nguyên nhân?"
+    options:
+      - { id: a, text: "Tăng số đoạn đưa vào ngữ cảnh lên gấp đôi" }
+      - { id: b, text: "Gắn ngữ cảnh cho từng đoạn (tên công ty, kỳ báo cáo, mục) qua metadata hoặc câu ngữ cảnh nối vào đầu đoạn trước khi lập chỉ mục" }
+      - { id: c, text: "Dùng mô hình sinh lớn hơn" }
+    correct: [b]
+    explanation: "Đoạn mất ngữ cảnh khi bị cắt; contextual retrieval/metadata khôi phục nó cho cả truy xuất lẫn bước sinh."

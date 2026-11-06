@@ -1,0 +1,39 @@
+items:
+  - id: q-a3r-meaning
+    type: mcq
+    conceptId: embeddings
+    prompt: "Câu hỏi nào tìm kiếm thuần embedding dễ làm KÉM hơn tìm kiếm từ khoá?"
+    options:
+      - { id: a, text: "\"Làm sao để xin nghỉ khi con bị ốm?\"" }
+      - { id: b, text: "\"E-4012\"" }
+      - { id: c, text: "\"Quy trình hoàn tiền cho khách không hài lòng\"" }
+    correct: [b]
+    explanation: "Chuỗi mã ít mang nghĩa; khớp chính xác theo từ khoá thường tốt hơn. Câu diễn đạt tự nhiên là thế mạnh của embedding."
+  - id: q-a3r-same-model
+    type: mcq
+    conceptId: embeddings
+    prompt: "Bạn nâng cấp lên mô hình embedding mới nhưng chỉ dùng nó cho câu hỏi, giữ nguyên vector tài liệu cũ. Điều gì xảy ra?"
+    options:
+      - { id: a, text: "Kết quả tốt hơn ngay vì mô hình mới tốt hơn" }
+      - { id: b, text: "Kết quả gần như vô nghĩa vì hai mô hình tạo vector ở hai không gian khác nhau; phải nhúng lại toàn bộ tài liệu" }
+      - { id: c, text: "Không ảnh hưởng gì" }
+    correct: [b]
+    explanation: "Vector chỉ so sánh được khi cùng một mô hình tạo ra. Đổi mô hình = nhúng lại kho."
+  - id: q-a3r-ann
+    type: mcq
+    conceptId: vector-search
+    prompt: "Chỉ mục ANN (như HNSW) đánh đổi điều gì?"
+    options:
+      - { id: a, text: "Một chút độ chính xác (recall) lấy tốc độ tìm kiếm nhanh hơn nhiều trên kho lớn" }
+      - { id: b, text: "Tốc độ lấy độ chính xác tuyệt đối" }
+      - { id: c, text: "Không đánh đổi gì" }
+    correct: [a]
+    explanation: "ANN trả về láng giềng gần đúng; tham số chỉ mục điều chỉnh cân bằng recall, tốc độ và bộ nhớ."
+  - id: q-a3r-recall
+    type: numeric
+    conceptId: vector-search
+    prompt: "Trên 50 câu hỏi có đáp án, đoạn đúng xuất hiện trong 5 kết quả đầu ở 41 câu. Recall@5 là bao nhiêu phần trăm?"
+    answer: 82
+    tolerance: { kind: abs, value: 0.5 }
+    unit: "%"
+    explanation: "41 / 50 = 0,82 = 82%."

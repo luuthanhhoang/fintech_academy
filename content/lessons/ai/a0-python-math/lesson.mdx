@@ -1,0 +1,110 @@
+---
+id: a0-python-math
+track: ai
+stage: a0
+order: 0
+title: { vi: "Python và toán cho AI: chỉ phần bạn thật sự dùng", en: "Python and math for AI: only the parts you actually use" }
+summary: "Ba thứ đủ để đọc hiểu mọi bài sau: Python với mảng numpy (vector hoá, broadcasting, thí nghiệm tái lập được), đại số tuyến tính ở mức vector–ma trận–tích vô hướng, và xác suất ở mức softmax, entropy, cross-entropy. Không chứng minh định lý; mỗi khái niệm đi kèm chỗ nó xuất hiện trong LLM."
+concepts: [python-for-ai, linear-algebra-ml, probability-ml]
+estMinutes: 40
+whyQuestion: "Bạn đọc một bài về embedding thấy 'cosine similarity', đọc về huấn luyện thấy 'cross-entropy loss', đọc về attention thấy 'QKᵀ'. Đó là cùng ba mảnh toán nhỏ — mảnh nào, và vì sao chúng lặp lại khắp nơi?"
+devMapping:
+  - finance: "Vector hoá (numpy)"
+    dev: "Thay vòng for trong Python bằng một phép toán trên cả mảng"
+    explanation: "Giống viết một câu SQL thay vì lặp từng dòng ở tầng ứng dụng: phần lặp chạy trong thư viện viết bằng C, nhanh hơn nhiều bậc."
+  - finance: "Tích vô hướng"
+    dev: "sum(a[i] * b[i]) — một con số đo hai vector 'cùng hướng' tới đâu"
+    explanation: "Là phép toán nền của embedding, attention và cả một lớp mạng nơ-ron."
+  - finance: "Cross-entropy"
+    dev: "-log(xác suất mô hình gán cho đáp án đúng)"
+    explanation: "Hàm phạt khi mô hình tự tin sai; huấn luyện LLM chính là làm con số này nhỏ dần trên hàng nghìn tỉ token."
+pretest: [q-a0m-cosine, q-a0m-ce]
+applications:
+  - id: app-a0m-notebook
+    title: "Notebook thí nghiệm tái lập được"
+    context: "Bạn sắp bắt đầu thử nghiệm với embedding hoặc gọi API mô hình trong dự án."
+    task: "Dựng một notebook/script có môi trường cố định (file khoá phiên bản thư viện), seed ngẫu nhiên đặt ở một chỗ, dữ liệu đầu vào ghi đường dẫn và ngày lấy, và một hàm tính cosine similarity bằng numpy có test với vài cặp vector biết trước kết quả."
+    deliverable: "Repo nhỏ chạy lại được trên máy người khác cho ra đúng số."
+sources: [goodfellow-dlbook, vaswani-2017]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cho một bạn dev: cosine similarity giữa hai embedding đo cái gì, và vì sao cross-entropy là hàm mất mát tự nhiên cho bài toán dự đoán token tiếp theo."
+  rubric:
+    - { id: dot, criterion: "Cosine = tích vô hướng chia tích độ dài; đo góc giữa hai vector, không phụ thuộc độ dài" }
+    - { id: range, criterion: "Gần 1 là cùng hướng (gần nghĩa), gần 0 là không liên quan" }
+    - { id: softmax, criterion: "Mô hình ra phân phối xác suất qua softmax" }
+    - { id: ce, criterion: "Cross-entropy = -log xác suất của token đúng; phạt nặng khi tự tin sai" }
+---
+
+<Callout kind="story" title="Ba tuần đọc giáo trình, chưa gọi được dòng API nào">
+Một bạn backend quyết định "học AI cho bài bản": mua sách giải tích, đọc lại xác suất từ đầu, làm bài tập ma trận nghịch đảo. Ba tuần sau bạn ấy vẫn chưa hiểu vì sao kết quả tìm kiếm embedding của mình trả về toàn tài liệu không liên quan — mà nguyên nhân hoá ra là quên chuẩn hoá vector, một dòng numpy.
+</Callout>
+
+Bài này cố ý hẹp: chỉ những mảnh toán và Python **xuất hiện lặp lại** trong các bài sau (embedding, attention, huấn luyện, giải mã). Muốn đi sâu hơn, Phần I của sách *Deep Learning* (Goodfellow, Bengio, Courville) có bản đọc miễn phí và đủ chặt chẽ.
+
+## Python cho AI: mảng, không phải vòng lặp
+
+Gần như mọi thứ trong ML là phép toán trên **mảng nhiều chiều** (numpy, hoặc tensor trong PyTorch). Hai thói quen quan trọng nhất:
+
+- **Vector hoá**: viết phép toán trên cả mảng thay vì vòng `for` qua từng phần tử. Thư viện chạy phần lặp bằng mã biên dịch, nhanh hơn rất nhiều so với vòng lặp Python.
+- **Đọc shape trước khi đọc số**: một ma trận embedding 1.000 câu × 768 chiều có shape `(1000, 768)`. Phần lớn bug ML đầu đời là sai shape, chứ không phải sai công thức.
+
+```python
+import numpy as np
+
+q = np.array([0.2, 0.9, 0.1])           # vector câu hỏi, shape (3,)
+docs = np.array([[0.1, 0.8, 0.0],        # 3 tài liệu, shape (3, 3)
+                 [0.9, 0.1, 0.2],
+                 [0.3, 0.7, 0.4]])
+scores = docs @ q                        # tích vô hướng với từng tài liệu, shape (3,)
+```
+
+**Broadcasting**: khi hai mảng khác shape, numpy so shape từ chiều cuối; hai chiều tương thích khi bằng nhau hoặc một bên bằng 1, khi đó bên bằng 1 được "kéo giãn". Nhờ vậy `docs - docs.mean(axis=0)` trừ trung bình của từng cột mà không cần vòng lặp.
+
+<Quiz id="q-a0m-shape" />
+
+**Tái lập được** quan trọng hơn bạn nghĩ: kết quả ML có yếu tố ngẫu nhiên (khởi tạo trọng số, chia tập dữ liệu, lấy mẫu khi sinh văn bản). Đặt seed ở một chỗ, khoá phiên bản thư viện, ghi lại dữ liệu đã dùng — nếu không, "hôm qua chạy được 0,82" sẽ không ai kiểm chứng lại được.
+
+## Đại số tuyến tính: vector, tích vô hướng, ma trận
+
+**Vector** là một danh sách số; trong AI nó thường là **biểu diễn** của một thứ gì đó — một token, một câu, một tài liệu. Hai vector "gần nghĩa" khi chúng **cùng hướng**.
+
+**Tích vô hướng** (dot product) `a · b = Σ aᵢbᵢ` đo mức cùng hướng, nhưng bị ảnh hưởng bởi độ dài. **Cosine similarity** chia cho tích độ dài để chỉ còn góc:
+
+cos(a, b) = (a · b) / (‖a‖ · ‖b‖)
+
+- Gần **1**: cùng hướng; gần **0**: vuông góc (không liên quan); âm: ngược hướng.
+- Nếu đã **chuẩn hoá** mọi vector về độ dài 1, cosine chính là tích vô hướng — đó là lý do nhiều hệ thống tìm kiếm vector chuẩn hoá trước khi lưu.
+
+<Quiz id="q-a0m-cosine" />
+
+**Nhân ma trận** là "nhiều tích vô hướng cùng lúc". Một lớp mạng nơ-ron là `y = W x + b`: mỗi hàng của `W` chấm với `x` ra một đầu ra. Attention trong Transformer cũng dựa trên tích vô hướng giữa các vector "query" và "key" — bài báo *Attention Is All You Need* gọi nó là *scaled dot-product attention*. Bạn sẽ gặp lại ở bài Transformer.
+
+<Callout kind="field" title="Bug embedding tôi gặp nhiều nhất">
+Không phải sai mô hình, mà là **trộn hai thước đo**: lưu vector chưa chuẩn hoá rồi dùng chỉ mục tính tích vô hướng, trong khi lúc đánh giá lại dùng cosine. Tài liệu dài (vector có độ dài lớn hơn) bỗng luôn đứng đầu. Quy tắc của tôi: chọn **một** thước đo, ghi nó cạnh tên chỉ mục, và viết test với vài cặp câu biết trước "phải gần" và "phải xa".
+</Callout>
+
+## Xác suất: softmax, entropy, cross-entropy
+
+Một mô hình ngôn ngữ, ở mỗi bước, cho ra **một điểm số (logit) cho mọi token** trong từ vựng. **Softmax** biến các điểm số đó thành phân phối xác suất (dương, cộng lại bằng 1):
+
+p(i) = exp(zᵢ) / Σⱼ exp(zⱼ)
+
+**Kỳ vọng** là trung bình có trọng số theo xác suất — cùng khái niệm với <Term id="expected-value-variance">kỳ vọng và phương sai</Term> trong tài chính. **Entropy** đo mức "không chắc chắn" của một phân phối: phân phối dồn hết vào một lựa chọn có entropy 0; phân phối đều có entropy lớn nhất.
+
+**Cross-entropy** với một đáp án đúng `y` là `−log p(y)`: nếu mô hình gán xác suất 0,9 cho token đúng, phạt nhỏ (≈ 0,105); nếu chỉ gán 0,01, phạt lớn (≈ 4,6). Huấn luyện LLM về bản chất là giảm trung bình cross-entropy này trên rất nhiều văn bản — bạn sẽ thấy lại ở bài mục tiêu tiền huấn luyện.
+
+<Quiz id="q-a0m-ce" />
+
+<Callout kind="field" title="Đừng tính softmax kiểu sách giáo khoa trong code thật">
+`exp(1000)` tràn số. Mọi thư viện đều trừ đi giá trị lớn nhất trước khi lấy `exp` (kết quả không đổi vì tử và mẫu cùng nhân một hằng số), và tính `log_softmax` trực tiếp thay vì `log(softmax(x))`. Nếu bạn tự viết, hãy làm vậy — và viết test với logit rất lớn.
+</Callout>
+
+## Tóm tắt để mang theo
+
+- Python cho AI = numpy/tensor + vector hoá + đọc shape + thí nghiệm tái lập được.
+- Đại số tuyến tính cần dùng = vector, tích vô hướng, cosine, nhân ma trận.
+- Xác suất cần dùng = softmax, kỳ vọng, entropy, cross-entropy (`−log p` của đáp án đúng).
+
+<Quiz id="q-a0m-entropy" />

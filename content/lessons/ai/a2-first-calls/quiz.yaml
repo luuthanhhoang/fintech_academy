@@ -1,0 +1,41 @@
+items:
+  - id: q-a2f-stop
+    type: mcq
+    conceptId: messages-api
+    prompt: "Phản hồi có stop_reason = \"max_tokens\". Ứng dụng nên làm gì?"
+    options:
+      - { id: a, text: "Gửi nội dung cho người dùng như bình thường" }
+      - { id: b, text: "Coi là chưa xong: tăng max_tokens, yêu cầu ngắn gọn hơn, hoặc xử lý như lỗi — không gửi văn bản bị cắt như thể hoàn chỉnh" }
+      - { id: c, text: "Bỏ qua, vì max_tokens chỉ là cảnh báo" }
+    correct: [b]
+    explanation: "max_tokens nghĩa là đầu ra bị cắt ở trần token. Code phải phân nhánh theo stop_reason."
+  - id: q-a2f-doc-order
+    type: mcq
+    conceptId: prompt-engineering
+    prompt: "Theo hướng dẫn viết prompt của Anthropic, nên đặt một tài liệu dài ở đâu so với câu hỏi?"
+    options:
+      - { id: a, text: "Ở đầu prompt, trước câu hỏi và chỉ dẫn" }
+      - { id: b, text: "Ở cuối, sau câu hỏi" }
+      - { id: c, text: "Không quan trọng" }
+    correct: [a]
+    explanation: "Hướng dẫn khuyên đặt tài liệu dài ở đầu, câu hỏi sau; kèm yêu cầu trích các đoạn liên quan trước khi trả lời."
+  - id: q-a2f-why
+    type: mcq
+    conceptId: prompt-engineering
+    prompt: "Chỉ dẫn nào hiệu quả hơn cho một bot đọc thành giọng nói?"
+    options:
+      - { id: a, text: "\"KHÔNG BAO GIỜ dùng dấu chấm lửng.\"" }
+      - { id: b, text: "\"Câu trả lời sẽ được đọc bằng giọng nói, nên đừng dùng dấu chấm lửng — máy đọc không biết phát âm nó.\"" }
+    correct: [b]
+    explanation: "Cho lý do giúp mô hình hiểu mục tiêu và tổng quát hoá sang các trường hợp tương tự (ví dụ tránh cả ký hiệu khác khó đọc)."
+  - id: q-a2f-stateless
+    type: mcq
+    conceptId: messages-api
+    prompt: "Điều nào ĐÚNG về Messages API? (chọn tất cả)"
+    options:
+      - { id: a, text: "API không trạng thái; ứng dụng gửi lại lịch sử hội thoại" }
+      - { id: b, text: "usage cho biết số token vào/ra của lần gọi" }
+      - { id: c, text: "Message phải xen kẽ vai trò user và assistant" }
+      - { id: d, text: "Mô hình tự nhớ người dùng giữa các ngày" }
+    correct: [a, b, c]
+    explanation: "Không có trí nhớ giữa các lần gọi trừ khi ứng dụng gửi lại; usage là cơ sở tính chi phí."

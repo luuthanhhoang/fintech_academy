@@ -55,3 +55,121 @@ sources:
     publisher: Anthropic
     accessed: 2026-11-05
     note: Bài 01/2026; chi tiết về các loại grader và việc đọc transcript đối chiếu qua bản tóm tắt thứ cấp.
+  - id: rumelhart-1986
+    title: "Learning representations by back-propagating errors — Nature 323, 533–536"
+    url: https://doi.org/10.1038/323533a0
+    publisher: Rumelhart, Hinton & Williams / Nature
+    accessed: 2026-11-06
+    note: Bài phổ biến thuật toán lan truyền ngược cho mạng có lớp ẩn; toán nền đã được khám phá độc lập trước đó.
+  - id: vaswani-2017
+    title: "Attention Is All You Need — NIPS 2017"
+    url: https://research.google/pubs/attention-is-all-you-need/
+    publisher: Vaswani et al. / Google Research
+    accessed: 2026-11-06
+    note: Kiến trúc Transformer chỉ dựa trên attention, bỏ hồi quy và tích chập; kết quả dịch máy WMT 2014.
+  - id: sennrich-bpe-2016
+    title: "Neural Machine Translation of Rare Words with Subword Units — ACL 2016"
+    url: https://aclanthology.org/P16-1162/
+    publisher: Sennrich, Haddow & Birch / ACL Anthology
+    accessed: 2026-11-06
+    note: Đưa byte pair encoding vào NMT để biểu diễn từ hiếm bằng chuỗi đơn vị dưới-từ.
+  - id: ouyang-2022
+    title: "Training language models to follow instructions with human feedback — NeurIPS 2022"
+    url: https://neurips.cc/virtual/2022/poster/52886
+    publisher: Ouyang et al. / NeurIPS
+    accessed: 2026-11-06
+    note: InstructGPT — fine-tune có giám sát trên minh hoạ của người, rồi RLHF trên xếp hạng đầu ra.
+  - id: holtzman-2020
+    title: "The Curious Case of Neural Text Degeneration — ICLR 2020"
+    url: https://iclr.cc/virtual/2020/poster/1428
+    publisher: Holtzman, Buys, Du, Forbes & Choi / ICLR
+    accessed: 2026-11-06
+    note: Đề xuất nucleus (top-p) sampling; lập luận cực đại hoá xác suất là mục tiêu giải mã kém cho sinh văn bản mở.
+  - id: kalai-2025
+    title: "Why Language Models Hallucinate"
+    url: https://openai.com/index/why-language-models-hallucinate/
+    publisher: Kalai, Nachum, Vempala & Zhang / OpenAI
+    accessed: 2026-11-06
+    note: Lập luận cách chấm điểm chỉ theo độ chính xác thưởng cho việc đoán thay vì thừa nhận không chắc; đây là lập luận của chính các tác giả.
+  - id: liu-lost-middle-2024
+    title: "Lost in the Middle: How Language Models Use Long Contexts — TACL 12"
+    url: https://aclanthology.org/2024.tacl-1.9/
+    publisher: Liu et al. / ACL Anthology
+    accessed: 2026-11-06
+    note: Hiệu năng giảm khi thông tin liên quan nằm giữa ngữ cảnh dài, kể cả với mô hình ngữ cảnh dài.
+  - id: claude-context-windows
+    title: Context windows
+    url: https://platform.claude.com/docs/en/build-with-claude/context-windows
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+    note: Mọi thứ trong request (system, messages, tool, output kể cả thinking) đều tính vào cửa sổ; ngữ cảnh dài làm độ chính xác giảm ("context rot").
+  - id: claude-tool-use
+    title: Tool use with Claude
+    url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+  - id: claude-structured-outputs
+    title: Structured outputs
+    url: https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+    note: Constrained decoding theo JSON schema (output_config.format) và strict tool use; có ngoại lệ khi từ chối hoặc chạm max_tokens.
+  - id: claude-prompt-caching
+    title: Prompt caching
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+  - id: anthropic-contextual-retrieval
+    title: Introducing Contextual Retrieval
+    url: https://www.anthropic.com/news/contextual-retrieval
+    publisher: Anthropic
+    accessed: 2026-11-06
+    note: Bài 19/9/2024; số liệu là trên bộ thử của chính Anthropic.
+  - id: lewis-rag-2020
+    title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks — NeurIPS 2020"
+    url: https://papers.nips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html
+    publisher: Lewis et al. / NeurIPS
+    accessed: 2026-11-06
+  - id: cormack-rrf-2009
+    title: "Reciprocal rank fusion outperforms Condorcet and individual rank learning methods — SIGIR 2009"
+    url: https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf
+    publisher: Cormack, Clarke & Büttcher / SIGIR
+    accessed: 2026-11-06
+  - id: goodfellow-dlbook
+    title: "Deep Learning (bản đọc trực tuyến miễn phí)"
+    url: https://www.deeplearningbook.org/
+    publisher: Goodfellow, Bengio & Courville / MIT Press (2016)
+    accessed: 2026-11-06
+    note: Phần I (đại số tuyến tính, xác suất, tính toán số, cơ bản học máy) là nền cho các bài A0.
+  - id: claude-messages-api
+    title: Using the Messages API
+    url: https://platform.claude.com/docs/en/build-with-claude/working-with-messages
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+    note: API không trạng thái (gửi lại toàn bộ lịch sử); temperature/top_p/top_k không còn hỗ trợ trên Claude 4.7+ và API version 2026-10-21; prefill không hỗ trợ trên Claude 4.6+.
+  - id: claude-prompting-best-practices
+    title: Prompting best practices
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+  - id: claude-streaming
+    title: Streaming messages
+    url: https://platform.claude.com/docs/en/build-with-claude/streaming
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+  - id: claude-batch-processing
+    title: Batch processing (Message Batches API)
+    url: https://platform.claude.com/docs/en/build-with-claude/batch-processing
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+  - id: claude-embeddings
+    title: Embeddings
+    url: https://platform.claude.com/docs/en/build-with-claude/embeddings
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-06
+    note: Anthropic không có mô hình embedding riêng; trang giới thiệu một nhà cung cấp (Voyage AI) và khuyên đánh giá nhiều nhà cung cấp.
+  - id: hnsw-2020
+    title: "Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs — IEEE TPAMI 42(4)"
+    url: https://doi.org/10.1109/TPAMI.2018.2889473
+    publisher: Malkov & Yashunin / IEEE
+    accessed: 2026-11-06
