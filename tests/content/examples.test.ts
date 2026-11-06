@@ -28,6 +28,11 @@ const EXPECTED: Record<string, number[]> = {
   'we-bull-spread': [breakevens([call(100, 1, 6), call(110, -1, 2)], 50, 150)[0] as number, strategyProfit([call(100, 1, 6), call(110, -1, 2)], 107)],
   'we-min-variance': [w[0] as number, portfolioStats(w, [0.1, 0.05], cov).vol * 100],
   'we-mm1-latency': [mmc(80, 100).w * 1000, mmc(80, 100).l, mmc(95, 100).w * 1000],
+  // Bank arithmetic: net interest income, NIM; duration gap D_A − (L/A)·D_L and ΔE ≈ −DGAP·A·Δy.
+  'we-bank-nim': [900 * 0.07 - 850 * 0.04, ((900 * 0.07 - 850 * 0.04) / 900) * 100],
+  'we-duration-gap': [6 - (1840 / 2000) * 0.8, -(6 - (1840 / 2000) * 0.8) * 2000 * 0.02],
+  // Wallet reconciliation: ledger + unposted deposits, minus (bank − in-flight withdrawals).
+  'we-wallet-recon': [980 + 12, 980 + 12 - (1000 - 30)],
 }
 
 describe('worked examples match the tested libraries', () => {
