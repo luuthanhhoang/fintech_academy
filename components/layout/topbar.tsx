@@ -3,79 +3,81 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { isNavGroup, type NavGroup, type NavItem, type SiteConfig } from '@/lib/content/schema/config'
+import type { SiteConfig } from '@/lib/content/schema/config'
 import { FocusChip } from '@/components/focus/focus-chip'
 import { Icon } from '@/components/ui/icons'
 import { Dialog } from './dialog'
-import { DesktopNav, isActive } from './nav-menu'
+import { isActive, LineMark, MoreMenu, PrimaryNav } from './nav-menu'
 import { ThemeToggle } from './theme-toggle'
 
 const SearchIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
     <circle cx="11" cy="11" r="6" />
     <path d="m20 20-4.5-4.5" />
   </svg>
 )
 
-/** Slim top bar: brand, grouped navigation, search, focus timer, theme. Replaces the old 14-item sidebar. */
-export function TopBar({ site, onSearch }: { site: SiteConfig; onSearch: () => void }) {
+export interface Line { id: string; color: string }
+
+/** Top bar: brand, four destinations, then search, the focus timer, "ask the tutor" and your personal menu. */
+export function TopBar({ site, lines, onSearch }: { site: SiteConfig; lines: Line[]; onSearch: () => void }) {
+  const nav = site.nav
+  const path = usePathname()
   return (
-    <header className="sticky top-0 z-40 border-b border-rule bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex h-[var(--topbar)] w-full max-w-[1360px] items-center gap-3 px-3 sm:px-5">
-        <Link href="/" className="flex items-center gap-2 font-serif text-lg font-semibold">
-          <Icon name="tree" className="text-accent" width={20} height={20} />
+    <header className="sticky top-0 z-40 border-b border-rule bg-card/92 backdrop-blur">
+      <div className="mx-auto flex h-[var(--topbar)] w-full max-w-[1280px] items-stretch gap-2 px-3 sm:px-5">
+        <Link href="/" className="mr-3 flex items-center gap-2 font-display text-[1.05rem] font-bold tracking-tight">
+          <LineMark lines={lines} />
           {site.name}
         </Link>
-        <DesktopNav nav={site.nav} />
-        <div className="ml-auto flex items-center gap-2">
-          <FocusChip />
-          <button type="button" onClick={onSearch} aria-label="Tìm kiếm" className="flex items-center gap-2 rounded-md border border-rule px-2.5 py-1.5 text-sm text-ink-3 hover:bg-paper-2">
+        <PrimaryNav items={nav.primary} />
+        <div className="ml-auto flex items-center gap-1.5">
+          <button type="button" onClick={onSearch} aria-label="Tìm kiếm" className="flex items-center gap-2 rounded-full bg-paper-2 px-3 py-1.5 text-sm text-ink-3 transition-colors hover:text-ink">
             <SearchIcon />
-            <span className="hidden md:inline">Tìm kiếm</span>
-            <kbd className="num hidden text-xs md:inline">⌘K</kbd>
+            <span className="hidden lg:inline">Tìm bài, khái niệm…</span>
+            <kbd className="hidden rounded border border-rule bg-card px-1 text-[0.7rem] lg:inline">⌘K</kbd>
           </button>
-          <span className="hidden lg:block">
-            <ThemeToggle />
-          </span>
+          <FocusChip />
+          <Link
+            href={nav.ask.href}
+            aria-current={isActive(path, nav.ask.href) ? 'page' : undefined}
+            className="hidden items-center gap-1.5 rounded-full border border-accent/30 px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent-soft aria-[current=page]:bg-accent-soft sm:flex"
+          >
+            <Icon name={nav.ask.icon} width={16} height={16} />
+            {nav.ask.label}
+          </Link>
+          <MoreMenu more={nav.more} />
         </div>
       </div>
     </header>
   )
 }
 
-/** Bottom tab bar on small screens: top-level links open directly, groups open a sheet. */
+/** Phone tab bar: the primary destinations, plus "more" for the tutor and personal pages. */
 export function MobileTabs({ site }: { site: SiteConfig }) {
   const path = usePathname()
-  const [sheet, setSheet] = useState<NavGroup | null>(null)
-  const tabs = site.nav.filter((n) => n.mobile)
-  const rest: NavItem[] = site.nav.filter((n) => !n.mobile)
-  const cls = 'flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.68rem] text-ink-3 aria-[current=page]:text-accent'
+  const [open, setOpen] = useState(false)
+  const nav = site.nav
+  const extra = [nav.ask, ...nav.more.items]
+  const cls = 'flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.7rem] font-medium text-ink-3 aria-[current=page]:text-ink'
   return (
     <>
-      <nav aria-label="Điều hướng nhanh" className="fixed inset-x-0 bottom-0 z-40 flex border-t border-rule bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
-        {tabs.map((n) =>
-          isNavGroup(n) ? (
-            <button key={n.label} type="button" onClick={() => setSheet(n)} aria-haspopup="dialog" aria-current={n.items.some((i) => isActive(path, i.href)) ? 'page' : undefined} className={cls}>
-              <Icon name={n.icon} />
-              {n.label}
-            </button>
-          ) : (
-            <Link key={n.href} href={n.href} aria-current={isActive(path, n.href) ? 'page' : undefined} className={cls}>
-              <Icon name={n.icon} />
-              {n.label}
-            </Link>
-          ),
-        )}
-        <button type="button" onClick={() => setSheet({ label: 'Thêm', icon: 'gear', mobile: false, items: rest.flatMap((n) => (isNavGroup(n) ? n.items : [n])) })} className={cls}>
-          <Icon name="gear" />
+      <nav aria-label="Điều hướng nhanh" className="fixed inset-x-0 bottom-0 z-40 flex border-t border-rule bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+        {nav.primary.map((n) => (
+          <Link key={n.href} href={n.href} aria-current={isActive(path, n.href) ? 'page' : undefined} className={cls}>
+            <Icon name={n.icon} />
+            {n.label}
+          </Link>
+        ))}
+        <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-current={extra.some((i) => isActive(path, i.href)) ? 'page' : undefined} className={cls}>
+          <Icon name={nav.more.icon} />
           Thêm
         </button>
       </nav>
-      <Dialog open={sheet !== null} onClose={() => setSheet(null)} label={sheet?.label ?? 'Menu'}>
-        <nav className="p-2" aria-label={sheet?.label}>
-          <p className="px-3 py-2 text-xs font-semibold text-ink-3">{sheet?.label}</p>
-          {sheet?.items.map((i) => (
-            <Link key={i.href} href={i.href} onClick={() => setSheet(null)} className="flex items-start gap-3 rounded-lg px-3 py-2.5 hover:bg-paper-2">
+      <Dialog open={open} onClose={() => setOpen(false)} label={nav.more.label}>
+        <nav className="p-2" aria-label={nav.more.label}>
+          {extra.map((i) => (
+            <Link key={i.href} href={i.href} onClick={() => setOpen(false)} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-paper-2">
               <Icon name={i.icon} className="mt-0.5 text-accent" />
               <span>
                 <span className="block text-sm font-medium">{i.label}</span>

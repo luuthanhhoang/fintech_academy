@@ -76,6 +76,13 @@ export function buildSearchDocs(b: ContentBundle): SearchDoc[] {
   for (const v of b.world.views) {
     docs.push({ id: `place:view:${v.id}`, kind: 'place', title: v.title, titleEn: b.world.map.title, text: v.description, tags: '', href: `/?view=${v.id}` })
   }
+  // Tracks and their stations: the English names make "backend" or "fintech" find the right line and station.
+  for (const t of b.tracks) {
+    docs.push({ id: `track:${t.id}`, kind: 'track', title: t.title.vi, titleEn: t.title.en, text: t.summary, tags: t.colorName, href: `/tracks/${t.id}/` })
+    for (const st of t.stages) {
+      docs.push({ id: `stage:${st.id}`, kind: 'stage', title: `Ga ${st.id.toUpperCase()} · ${st.title.vi}`, titleEn: st.title.en, text: st.summary, tags: t.title.vi, href: `/tracks/${t.id}/#${st.id}` })
+    }
+  }
   for (const p of b.planned) {
     docs.push({
       id: `planned:${p.id}`,

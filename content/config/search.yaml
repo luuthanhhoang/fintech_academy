@@ -5,6 +5,8 @@ prefix: true
 resultLimit: 12
 kindLabels:
   lesson: Bài học
+  track: Lộ trình
+  stage: Ga (chặng)
   section: Đoạn trong bài
   concept: Khái niệm
   simulator: Mô phỏng

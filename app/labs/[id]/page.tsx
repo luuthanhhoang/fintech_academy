@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getContent } from '@/lib/content/server'
 import { LabWorkbench } from '@/components/lab/lab-runner'
@@ -14,7 +15,7 @@ export default async function LabPage({ params }: { params: Promise<{ id: string
   if (!lab) notFound()
   return (
     <>
-      <PageTitle eyebrow="Code lab" title={lab.title.vi} en={lab.title.en} lead={lab.summary} />
+      <PageTitle eyebrow={<Link href="/labs/" className="hover:underline">← Code lab</Link>} title={lab.title.vi} en={lab.title.en} lead={lab.summary} />
       <section className="mb-6 whitespace-pre-line rounded-lg border border-rule bg-paper-2 p-4 font-sans text-sm">{lab.instructions}</section>
       <LabWorkbench lab={lab} />
     </>

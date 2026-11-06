@@ -20,7 +20,7 @@ export function FocusHud({ stationNames }: { stationNames: string[] }) {
       <p className="text-[11px] text-ink-3">
         {active.phase === 'focus' ? `Chặng ${active.segment + 1}/${active.segments} — tàu đang chạy` : 'Dừng ga — giờ nghỉ'}
       </p>
-      <p className="num font-serif text-4xl font-semibold" aria-live="off">
+      <p className="num font-display text-4xl font-semibold" aria-live="off">
         {clock(remainingMs(active, now))}
       </p>
       <div className="mt-1 flex gap-1" aria-hidden="true">

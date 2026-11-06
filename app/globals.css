@@ -5,63 +5,68 @@
 @import '@fontsource/be-vietnam-pro/400.css';
 @import '@fontsource/be-vietnam-pro/500.css';
 @import '@fontsource/be-vietnam-pro/600.css';
+@import '@fontsource/be-vietnam-pro/700.css';
 @import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Design tokens: paper and ink for reading; river teal is the interface accent, lantern amber marks focus and lit windows (the village palette). */
 :root {
-  --paper: #fbfaf6;
-  --paper-2: #f3f1ea;
-  --rule: #e2ded2;
-  --ink: #1d1c1a;
-  --ink-2: #4a4740;
-  --ink-3: #78736a;
-  --accent: #1d6a73;
-  --accent-soft: #e0efef;
-  --lantern: #b87a12;
-  --lantern-soft: #f8eed6;
-  --good: #2f7a4f;
-  --good-soft: #e3f1e8;
-  --warn: #9a5b12;
-  --warn-soft: #f7ecdc;
-  --bad: #a83a32;
-  --bad-soft: #f6e2df;
+  /* "Tuyến học": morning-mist page, forest-ink text, tea-leaf actions; each track adds its own line colour (--line-<id>). */
+  --paper: #eef2ee;
+  --paper-2: #e2e9e3;
+  --card: #fafbf9;
+  --rule: #d2dbd4;
+  --ink: #17211d;
+  --ink-2: #3c4943;
+  --ink-3: #5f6d66;
+  --accent: #1d6650;
+  --accent-soft: #d6eadf;
+  --lantern: #a86f12;
+  --lantern-soft: #f6ead1;
+  --good: #2b7a4b;
+  --good-soft: #dcefe2;
+  --warn: #93560f;
+  --warn-soft: #f5e8d6;
+  --bad: #a6392f;
+  --bad-soft: #f5dfdb;
   /* Categorical chart slots validated (dataviz validator) against --paper in each mode. */
   --chart-1: #2a78d6;
   --chart-2: #eb6834;
   --chart-3: #1baf7a;
   --chart-4: #eda100;
-  --chart-grid: #e7e3d8;
+  --chart-grid: #dbe2dc;
 }
 
 .dark {
-  --paper: #191917;
-  --paper-2: #22221f;
-  --rule: #34332e;
-  --ink: #ece8dd;
-  --ink-2: #c4bfb2;
-  --ink-3: #8f8a7e;
-  --accent: #6ec3c9;
-  --accent-soft: #1a3235;
-  --lantern: #e8b04a;
-  --lantern-soft: #3a2e16;
+  --paper: #111714;
+  --paper-2: #1a221e;
+  --card: #161d19;
+  --rule: #2b3631;
+  --ink: #e2eae4;
+  --ink-2: #b6c3bb;
+  --ink-3: #8a988f;
+  --accent: #7ccaa9;
+  --accent-soft: #183028;
+  --lantern: #e3ac48;
+  --lantern-soft: #362a15;
   --good: #7cc79a;
-  --good-soft: #1f3327;
+  --good-soft: #1b3024;
   --warn: #e0a85c;
-  --warn-soft: #3a2c19;
+  --warn-soft: #382a17;
   --bad: #f08c82;
-  --bad-soft: #3e2220;
+  --bad-soft: #3c211f;
   --chart-1: #3987e5;
   --chart-2: #d95926;
   --chart-3: #199e70;
   --chart-4: #c98500;
-  --chart-grid: #2e2d29;
+  --chart-grid: #26302b;
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
+  --color-card: var(--card);
   --color-rule: var(--rule);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
@@ -76,7 +81,9 @@
   --color-warn-soft: var(--warn-soft);
   --color-bad: var(--bad);
   --color-bad-soft: var(--bad-soft);
-  --font-serif: 'Newsreader Variable', Georgia, serif;
+  /* Be Vietnam Pro (made for Vietnamese) carries the interface and headings; Newsreader is only for long reading. */
+  --font-display: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-read: 'Newsreader Variable', Georgia, serif;
   --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
@@ -103,26 +110,33 @@ body {
 }
 
 .num {
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Headings: tight, confident sans. */
+.font-display {
+  letter-spacing: -0.018em;
 }
 
 /* Long-form prose (lesson body). */
 .prose-notebook {
-  font-family: var(--font-serif);
+  font-family: var(--font-read);
   font-size: 1.125rem;
   line-height: 1.7;
   color: var(--ink);
 }
 .prose-notebook h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: -0.018em;
+  font-size: 1.55rem;
+  font-weight: 700;
   margin: 2.5rem 0 0.75rem;
   line-height: 1.25;
   scroll-margin-top: 5rem;
 }
 .prose-notebook h3 {
-  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
   font-weight: 600;
   margin: 1.75rem 0 0.5rem;
   scroll-margin-top: 5rem;

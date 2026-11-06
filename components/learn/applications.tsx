@@ -11,7 +11,7 @@ export function ApplicationsList({ conceptIds, items }: { conceptIds: string[]; 
   const done = useLiveQuery(async () => new Set((await db().practiceLogs.where('kind').equals('application').toArray()).map((p) => p.refId)), [])
   return (
     <section aria-labelledby="ap-dung" className="mt-10 font-sans">
-      <h2 id="ap-dung" className="font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
+      <h2 id="ap-dung" className="font-display text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
         Áp dụng vào công việc dev
       </h2>
       <p className="mt-1 text-sm text-ink-3">Bài tập chuyển giao: làm một thứ nhỏ, thật, bằng kỹ năng bạn đã có.</p>

@@ -2,6 +2,8 @@ id: web
 order: 2
 title: { vi: "Fullstack web developer", en: "Fullstack web developer" }
 summary: Từ một request HTTP đi qua mạng tới trình duyệt, frontend, API, cơ sở dữ liệu, xác thực và bảo mật, hiệu năng, kiểm thử đến triển khai và vận hành.
+color: "#c4523a"
+colorName: "đỏ ngói phố"
 stages:
   - { id: "w0", order: 0, title: { vi: "Nền tảng web", en: "Web foundations" }, summary: "Vòng đời một request, ngữ nghĩa HTTP, cache, trình duyệt vẽ trang và Core Web Vitals." }
   - { id: "w1", order: 1, title: { vi: "Frontend hiện đại", en: "Modern frontend" }, summary: "HTML ngữ nghĩa và a11y, CSS layout, JavaScript bất đồng bộ, TypeScript, component/state và chiến lược render." }

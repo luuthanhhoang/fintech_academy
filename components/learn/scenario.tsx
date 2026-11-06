@@ -59,7 +59,7 @@ export function ScenarioPlayer({ scenario, embedded = false }: { scenario: Scena
         </div>
         {finished && node.ending && (
           <div role="status" className="rounded-lg border border-accent p-3">
-            <p className="font-serif text-lg font-semibold">{VERDICT[node.ending.verdict]}</p>
+            <p className="font-display text-lg font-semibold">{VERDICT[node.ending.verdict]}</p>
             <p className="num mt-1 text-xs text-ink-3">Lựa chọn hợp lý {summary.good} · rủi ro {summary.risky} · sai lầm {summary.bad}</p>
             <p className="mt-2 whitespace-pre-line text-sm">{node.ending.debrief}</p>
             <div className="mt-3 flex flex-wrap items-center gap-3">

@@ -38,6 +38,10 @@ tests/       Vitest cho lib/
 - Lộ trình + đồ thị khái niệm sinh tự động từ concept/prerequisites.
 - Làng học: ga/lô đất/công trình đặt tự động từ track/concept/lesson; công trình 3D map qua `components/world/models/registry.tsx`
   theo `WORLD_MODEL_KEYS`. Trạng thái làng (ruộng, đèn, cá, cây) chỉ suy ra từ dữ liệu học thật trong IndexedDB.
+- Nhận diện "Tuyến học": mỗi track có `color` (content/tracks) → biến CSS `--line-<track>`; vẽ đường ray màu ở /tracks (sơ đồ tuyến),
+  trang track, đầu bài học, thanh bài trong ga. Tiêu đề/giao diện: Be Vietnam Pro (`font-display`); thân bài đọc: Newsreader (`--font-read`).
+- Điều hướng (`site.yaml → nav`): 4 điểm đến (Làng, Hôm nay, Lộ trình, Thực hành) + "Hỏi gia sư" + menu "Của bạn"; hub /workshop gom luyện tập.
+- Mô hình 3D CC0 (Kenney, Quaternius) trong `public/models` (+NOTICE); khai báo ở `content/world/assets.yaml`, validator đọc từng .glb.
 - Đồng hồ tập trung là `FocusProvider` trong AppShell (chạy mọi trang); logic thuần ở `lib/focus/machine.ts`.
 - `components/world/**` tắt rule `react-hooks/immutability` (three.js mutate object mỗi frame trong useFrame).
 

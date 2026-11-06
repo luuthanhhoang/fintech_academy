@@ -2,6 +2,8 @@ id: fintech
 order: 0
 title: { vi: "Fintech từ con số 0", en: "Fintech from zero" }
 summary: Từ khái niệm tiền, lãi suất đến thị trường, ngân hàng, thanh toán, rủi ro và kỹ thuật hệ thống tài chính.
+color: "#c8961a"
+colorName: "vàng lúa chín"
 stages:
   - { id: "f0", order: 0, title: { vi: "Nền tảng tài chính", en: "Finance foundations" }, summary: "Tiền, lãi suất, giá trị thời gian của tiền, lạm phát, rủi ro–lợi suất, kế toán và định giá." }
   - { id: "f1", order: 1, title: { vi: "Thị trường tài chính", en: "Financial markets" }, summary: "Cổ phiếu, trái phiếu, cấu trúc thị trường, khớp lệnh, bù trừ–thanh toán, phái sinh và danh mục." }

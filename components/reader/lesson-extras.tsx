@@ -25,7 +25,7 @@ export async function LessonExtras({ lesson }: { lesson: Lesson }) {
     <>
       {remaining.length > 0 && (
         <section aria-labelledby="quiz" className="mt-10 font-sans">
-          <h2 id="quiz" className="font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
+          <h2 id="quiz" className="font-display text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
             Kiểm tra nhanh (Quiz)
           </h2>
           <WhyLink method="retrieval-practice" />
@@ -38,7 +38,7 @@ export async function LessonExtras({ lesson }: { lesson: Lesson }) {
       )}
       {exercises.length > 0 && (
         <section aria-labelledby="bai-tap" className="mt-10 font-sans">
-          <h2 id="bai-tap" className="font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
+          <h2 id="bai-tap" className="font-display text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
             Bài tập (Exercises)
           </h2>
           <div className="mt-4 space-y-4">
@@ -49,7 +49,7 @@ export async function LessonExtras({ lesson }: { lesson: Lesson }) {
         </section>
       )}
       <section aria-labelledby="tu-giai-thich" className="mt-10 rounded-lg border border-rule p-4 sm:p-5">
-        <h2 id="tu-giai-thich" className="mb-3 font-serif text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
+        <h2 id="tu-giai-thich" className="mb-3 font-display text-2xl font-semibold" style={{ scrollMarginTop: '5rem' }}>
           Tự giải thích lại
         </h2>
         <div className="-mt-2 mb-3 font-sans"><WhyLink method="self-explanation" /></div>

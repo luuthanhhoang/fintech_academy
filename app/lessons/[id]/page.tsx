@@ -16,6 +16,8 @@ import { NotesPanel } from '@/components/reader/notes'
 import { SourcesList } from '@/components/reader/sources'
 import { ReadingAids } from '@/components/reader/toc'
 import { StatusBadge, Tag } from '@/components/ui/badges'
+import { minutes } from '@/components/ui/primitives'
+import { fmtDay } from '@/lib/util/format'
 
 export const dynamicParams = false
 
@@ -46,33 +48,38 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         <div className="sticky top-[calc(var(--topbar)+1.5rem)] max-h-[calc(100dvh-var(--topbar)-3rem)] overflow-y-auto pr-2">{rail && <LessonRail {...rail} />}</div>
       </aside>
       <article className="min-w-0">
-        <header className="mb-8 font-sans">
-          {concepts[0] && (
-            <Link href={`/?place=lot:${concepts[0].id}`} className="embed-hide mb-3 inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-3 py-1 text-xs font-medium text-accent hover:bg-accent hover:text-paper">
-              🏡 Về làng — tới nhà “{concepts[0].name.vi}”
-            </Link>
-          )}
-          <p className="text-xs text-ink-3">
-            <Link href={`/tracks/${lesson.track}/`} className="hover:underline">{track?.title.vi}</Link> · <Link href={`/tracks/${lesson.track}/#${lesson.stage}`} className="hover:underline">{stage?.title.vi}</Link>
+        <header className="mb-10 font-sans">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-3">
+            <span aria-hidden="true" className="h-[6px] w-6 rounded-full" style={{ background: `var(--line-${lesson.track})` }} />
+            <Link href={`/tracks/${lesson.track}/`} className="hover:text-ink hover:underline">{track?.title.vi}</Link>
+            <span aria-hidden="true">›</span>
+            <Link href={`/tracks/${lesson.track}/#${lesson.stage}`} className="hover:text-ink hover:underline">Ga {lesson.stage.toUpperCase()} · {stage?.title.vi}</Link>
           </p>
-          <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight sm:text-4xl">{lesson.title.vi}</h1>
-          <p className="mt-1 text-ink-3">{lesson.title.en}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-ink-3">
+          <h1 className="mt-3 max-w-[22ch] font-display text-[1.9rem] font-bold leading-[1.15] sm:text-[2.3rem]">{lesson.title.vi}</h1>
+          <p lang="en" className="mt-2 text-ink-3">{lesson.title.en}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-2">
+            <span>{minutes(lesson.estMinutes)}</span>
             <StatusBadge status={lesson.status} />
-            <span>~{lesson.estMinutes} phút</span>
-            <span>· kiểm tra {lesson.lastVerified}</span>
+            <span className="text-ink-3">Kiểm tra nguồn ngày {fmtDay(lesson.lastVerified)}</span>
+            {concepts[0] && (
+              <Link href={`/?place=lot:${concepts[0].id}`} className="embed-hide text-accent hover:underline">
+                Tới nhà “{concepts[0].name.vi}” trong làng
+              </Link>
+            )}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {concepts.map((c) => (
-              <Link key={c.id} href={`/concepts/${c.id}/`}>
+              <Link key={c.id} href={`/concepts/${c.id}/`} className="hover:opacity-80">
                 <Tag>{c.name.vi}</Tag>
               </Link>
             ))}
           </div>
-          <blockquote className="mt-6 border-l-4 border-accent bg-accent-soft px-4 py-3 font-serif text-lg italic">
-            <span className="mb-1 block font-sans text-xs font-semibold not-italic text-accent">Câu hỏi tại sao</span>
-            {lesson.whyQuestion}
+          <blockquote className="mt-8 border-l-[6px] py-1 pl-5" style={{ borderColor: `var(--line-${lesson.track})` }}>
+            <span className="block font-sans text-sm font-semibold text-ink-3">Câu hỏi bài này trả lời</span>
+            <span className="mt-1 block font-[family-name:var(--font-read)] text-xl italic leading-snug text-ink sm:text-2xl">{lesson.whyQuestion}</span>
           </blockquote>
         </header>
-        <details className="mb-6 rounded-md border border-rule px-4 py-2 font-sans text-sm xl:hidden">
+        <details className="mb-8 rounded-2xl bg-card px-5 py-3 font-sans text-sm ring-1 ring-rule/70 xl:hidden">
           <summary className="cursor-pointer text-ink-2">Trong chặng này · Mục lục</summary>
           {rail && <div className="mt-3"><LessonRail {...rail} /></div>}
           <ol className="mt-3 space-y-1 border-t border-rule pt-3">

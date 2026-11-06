@@ -2,6 +2,8 @@ id: ai
 order: 1
 title: { vi: "AI/LLM engineer", en: "AI/LLM engineer" }
 summary: Từ nền tảng ML, hiểu LLM, làm việc với API, RAG, agent và harness đến đánh giá, fine-tuning, inference và an toàn.
+color: "#3b77a8"
+colorName: "xanh núi sương"
 stages:
   - { id: "a0", order: 0, title: { vi: "Nền tảng", en: "Foundations" }, summary: "Python cho AI, đại số tuyến tính, xác suất, ML và mạng nơ-ron cơ bản." }
   - { id: "a1", order: 1, title: { vi: "Hiểu LLM", en: "Understanding LLMs" }, summary: "Token, transformer/attention, tiền huấn luyện, giải mã, context window, ảo giác." }

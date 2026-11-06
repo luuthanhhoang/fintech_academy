@@ -9,10 +9,10 @@ import { Card, PageTitle } from '@/components/ui/primitives'
 export default function SettingsPage() {
   return (
     <>
-      <PageTitle title="Cài đặt" en="Settings" />
+      <PageTitle title="Cài đặt" />
       <div className="space-y-6 font-sans">
         <Card>
-          <h2 className="font-serif text-xl font-semibold">Giao diện</h2>
+          <h2 className="font-display text-xl font-semibold">Giao diện</h2>
           <div className="mt-3"><ThemeToggle /></div>
         </Card>
         <BackupPanel />

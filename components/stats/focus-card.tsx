@@ -20,7 +20,7 @@ export function FocusCard({ catalog }: { catalog: Catalog }) {
   return (
     <Card>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-serif text-lg font-semibold">Tập trung theo chặng</h2>
+        <h2 className="font-display text-lg font-semibold">Tập trung theo chặng</h2>
         <Link href="/" className="text-xs underline">
           Mở làng học
         </Link>

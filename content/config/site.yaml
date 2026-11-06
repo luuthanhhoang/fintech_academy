@@ -10,28 +10,28 @@ callouts:
   story: { label: "Tình huống mở đầu", disclaimer: "Tình huống minh hoạ (giả định), dựng để đặt vấn đề — không phải sự kiện có thật." }
   field: { label: "Ghi chép thực chiến", disclaimer: "Góc nhìn của người viết (Claude), tổng hợp từ thực hành kỹ thuật phổ biến — kinh nghiệm để cân nhắc, không phải số liệu hay sự kiện có thật." }
 nav:
-  - { href: "/", label: "Làng học", en: "Village", icon: "tree", mobile: true }
-  - { href: "/today/", label: "Hôm nay", en: "Today", icon: "sun", mobile: true }
-  - label: "Học"
-    icon: "map"
-    mobile: true
+  # Bốn điểm đến chính (cũng là thanh tab trên điện thoại), theo việc người học muốn làm.
+  primary:
+    - { href: "/", label: "Làng", icon: "tree", desc: "Đi dạo thế giới 3D: nhà là bài học, ga là chặng" }
+    - { href: "/today/", label: "Hôm nay", icon: "sun", desc: "Việc nên làm bây giờ, theo thứ tự" }
+    - { href: "/tracks/", label: "Lộ trình", icon: "map", desc: "Ba tuyến học, từng ga và từng bài" }
+    - { href: "/workshop/", label: "Thực hành", icon: "code", desc: "Ôn thẻ, luyện trộn, mô phỏng, code lab, case, tình huống" }
+  ask: { href: "/tutor/", label: "Hỏi gia sư", icon: "spark", desc: "Hỏi gia sư AI về bài đang học" }
+  more:
+    label: "Của bạn"
+    icon: "pulse"
     items:
-      - { href: "/tracks/", label: "Lộ trình", en: "Tracks", icon: "map", desc: "Ba lộ trình, từng chặng và đồ thị khái niệm" }
-      - { href: "/review/", label: "Ôn tập", en: "Review", icon: "cards", desc: "Thẻ đến hạn theo lịch FSRS" }
-      - { href: "/practice/", label: "Luyện tập", en: "Practice", icon: "shuffle", desc: "Câu hỏi trộn từ nhiều khái niệm" }
-      - { href: "/method/", label: "Phương pháp học", en: "Method", icon: "book", desc: "Bằng chứng đứng sau từng khối học" }
-  - label: "Thực hành"
-    icon: "code"
-    mobile: true
-    items:
-      - { href: "/simulators/", label: "Mô phỏng", en: "Simulators", icon: "chart", desc: "Kéo tham số, thấy kết quả" }
-      - { href: "/labs/", label: "Code lab", en: "Labs", icon: "code", desc: "Viết Python chạy ngay trong trình duyệt" }
-      - { href: "/cases/", label: "Case study", en: "Case studies", icon: "alert", desc: "Sự cố thật từ nguồn chính thống" }
-      - { href: "/scenarios/", label: "Tình huống", en: "Scenarios", icon: "route", desc: "Nhập vai ra quyết định" }
-  - { href: "/tutor/", label: "Gia sư AI", en: "AI tutor", icon: "spark", mobile: true }
-  - { href: "/stats/", label: "Thống kê", en: "Stats", icon: "pulse" }
-  - label: "Khác"
-    icon: "gear"
-    items:
-      - { href: "/settings/", label: "Cài đặt", en: "Settings", icon: "gear" }
-      - { href: "/about/", label: "Giới thiệu", en: "About", icon: "info" }
+      - { href: "/stats/", label: "Tiến độ", icon: "pulse", desc: "Bạn đã học gì, nhớ được bao nhiêu" }
+      - { href: "/method/", label: "Cách học ở đây", icon: "book", desc: "Vì sao mỗi khối học được thiết kế như vậy" }
+      - { href: "/settings/", label: "Cài đặt", icon: "gear", desc: "Mục tiêu, sao lưu dữ liệu, khoá gia sư" }
+      - { href: "/about/", label: "Giới thiệu", icon: "info", desc: "Site này là gì và dùng dữ liệu ra sao" }
+workshop:
+  title: "Thực hành"
+  intro: "Đọc xong thì làm. Mỗi mục dưới đây gắn với khái niệm trong lộ trình — làm ở đây cũng làm ruộng ngoài làng xanh lên."
+  sections:
+    - { kind: review, title: "Ôn thẻ đến hạn", desc: "Mỗi ngày vài phút, đúng lúc sắp quên.", href: "/review/", icon: "cards" }
+    - { kind: practice, title: "Luyện trộn", desc: "Câu hỏi trộn từ các khái niệm đã học, để nhớ lâu và phân biệt được.", href: "/practice/", icon: "shuffle" }
+    - { kind: simulators, title: "Mô phỏng", desc: "Kéo tham số, xem kết quả đổi theo. Có phần “thử phá nó”.", href: "/simulators/", icon: "chart" }
+    - { kind: labs, title: "Code lab", desc: "Viết Python chạy ngay trong trình duyệt, có test tự chấm.", href: "/labs/", icon: "code" }
+    - { kind: cases, title: "Case study", desc: "Sự cố thật, dữ kiện có nguồn, đọc như hồ sơ điều tra.", href: "/cases/", icon: "alert" }
+    - { kind: scenarios, title: "Tình huống nhập vai", desc: "Bạn là người trực ca: chọn hành động, xem hệ quả.", href: "/scenarios/", icon: "route" }

@@ -32,7 +32,7 @@ export function BackupPanel() {
 
   return (
     <Card>
-      <h2 className="font-serif text-xl font-semibold">Sao lưu & khôi phục (Export / Import JSON)</h2>
+      <h2 className="font-display text-xl font-semibold">Sao lưu & khôi phục (Export / Import JSON)</h2>
       <p className="mt-1 text-sm text-ink-2">Tiến độ, thẻ ôn, lịch sử, ghi chú, cài đặt chỉ lưu trên trình duyệt này. Xuất file định kỳ để không mất dữ liệu.</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Button variant="primary" onClick={doExport}>Xuất JSON</Button>

@@ -8,7 +8,7 @@ import { LabEmbedById } from '@/components/lab/lab-by-id'
 import { PracticeSession } from '@/components/practice/practice-session'
 import { SelfExplainSection } from '@/components/reader/self-explain-section'
 import { ReviewSession } from '@/components/review/review-session'
-import { Button, LinkButton } from '@/components/ui/primitives'
+import { Button, LinkButton, minutes } from '@/components/ui/primitives'
 import { EmptyState } from '@/components/ui/states'
 import type { TodayData } from './use-today'
 
@@ -18,7 +18,7 @@ export interface BlockProps {
 }
 
 function ReviewsBlock({ catalog, today }: BlockProps) {
-  if (today.plan.reviews.length === 0) return <p className="text-sm text-ink-3">Không có thẻ đến hạn hôm nay. 🎉</p>
+  if (today.plan.reviews.length === 0) return <p className="text-ink-2">Không có thẻ nào đến hạn hôm nay. Sang điểm dừng tiếp theo.</p>
   return <ReviewSession catalog={catalog} limit={today.plan.reviews.length} />
 }
 
@@ -27,11 +27,13 @@ function LessonBlock({ today }: BlockProps) {
   if (!l) return <EmptyState title="Bạn đã đi hết các bài đã viết trong lộ trình đang chọn.">Các bài còn lại đang ở trạng thái “dự kiến”.</EmptyState>
   return (
     <div>
-      <p className="font-serif text-xl font-semibold">{l.title.vi}</p>
-      <p className="text-sm text-ink-3">{l.title.en} · ~{l.estMinutes} phút</p>
-      <p className="mt-2 italic text-ink-2">“{l.whyQuestion}”</p>
-      <LinkButton href={`/lessons/${l.id}/`} variant="primary" className="mt-3">
-        Học bài này →
+      <p className="font-display text-xl font-semibold">{l.title.vi}</p>
+      <p className="text-sm text-ink-3">{minutes(l.estMinutes)}</p>
+      <p className="mt-3 border-l-4 pl-4 font-[family-name:var(--font-read)] text-lg italic text-ink-2" style={{ borderColor: `var(--line-${l.track})` }}>
+        {l.whyQuestion}
+      </p>
+      <LinkButton href={`/lessons/${l.id}/`} variant="primary" className="mt-4">
+        Bắt đầu học bài này
       </LinkButton>
     </div>
   )
@@ -64,7 +66,7 @@ function CaseBlock({ catalog, today }: BlockProps) {
   const q = c.questions[0]
   return (
     <div>
-      <p className="font-serif text-xl font-semibold">{c.title.vi}</p>
+      <p className="font-display text-xl font-semibold">{c.title.vi}</p>
       <p className="text-sm text-ink-3">{c.period}</p>
       <p className="mt-2 text-sm">{c.summary}</p>
       {q && <p className="mt-2 font-medium">❓ {q.prompt}</p>}

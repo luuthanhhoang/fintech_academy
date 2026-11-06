@@ -30,7 +30,7 @@ function TutorSettingsForm({ catalog, initial }: { catalog: Catalog; initial: Tu
 
   return (
     <Card>
-      <h2 className="font-serif text-xl font-semibold">Gia sư AI (BYOK — tự mang API key)</h2>
+      <h2 className="font-display text-xl font-semibold">Gia sư AI (BYOK — tự mang API key)</h2>
       <p role="note" className="mt-2 rounded-md border border-warn bg-warn-soft p-3 text-sm">⚠ {cfg.keyWarning}</p>
       <label className="mt-4 flex items-center gap-2 text-sm font-medium">
         <input type="checkbox" checked={draft.enabled} onChange={(e) => setDraft({ ...draft, enabled: e.target.checked })} />

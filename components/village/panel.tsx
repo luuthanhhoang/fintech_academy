@@ -8,7 +8,7 @@ export function Panel({ title, onClose, children, className = '' }: { title?: st
     <section className={`pointer-events-auto rounded-xl border border-rule bg-paper/95 p-3 font-sans text-sm text-ink shadow-lg backdrop-blur ${className}`}>
       {(title || onClose) && (
         <header className="mb-2 flex items-start justify-between gap-2">
-          {title && <h2 className="font-serif text-base font-semibold leading-tight">{title}</h2>}
+          {title && <h2 className="font-display text-base font-semibold leading-tight">{title}</h2>}
           {onClose && (
             <button type="button" onClick={onClose} aria-label="Đóng" className="-mr-1 -mt-1 rounded px-2 py-1 text-ink-3 hover:bg-paper-2">
               ✕

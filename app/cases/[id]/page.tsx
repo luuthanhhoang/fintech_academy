@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getContent, sourcesById } from '@/lib/content/server'
 import { CaseView } from '@/components/case/case-view'
@@ -15,7 +16,7 @@ export default async function CasePage({ params }: { params: Promise<{ id: strin
   const ids = [...new Set([...cs.timeline.flatMap((e) => e.sourceIds), ...cs.rootCauses.flatMap((r) => r.sourceIds)])]
   return (
     <>
-      <PageTitle eyebrow={`Case study · ${cs.period}`} title={cs.title.vi} en={cs.title.en} lead={cs.summary} />
+      <PageTitle eyebrow={<><Link href="/cases/" className="hover:underline">← Case study</Link>, {cs.period}</>} title={cs.title.vi} en={cs.title.en} lead={cs.summary} />
       <CaseView cs={cs} sources={sourcesById(ids)} />
     </>
   )

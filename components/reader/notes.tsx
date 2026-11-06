@@ -22,7 +22,7 @@ export function NotesPanel({ lessonId, anchors }: { lessonId: string; anchors: {
 
   return (
     <section aria-labelledby="notes" className="mt-12 rounded-lg border border-rule p-4 font-sans sm:p-5">
-      <h2 id="notes" className="font-serif text-xl font-semibold">
+      <h2 id="notes" className="font-display text-xl font-semibold">
         Ghi chú cá nhân (Notes)
       </h2>
       <p className="mt-1 text-xs text-ink-3">Lưu trên trình duyệt này (IndexedDB). Sao lưu bằng Export trong Cài đặt.</p>

@@ -3,28 +3,51 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { isNavGroup, type NavGroup, type NavItem, type NavLink } from '@/lib/content/schema/config'
+import type { Nav, NavLink } from '@/lib/content/schema/config'
 import { Icon } from '@/components/ui/icons'
+import { ThemeToggle } from './theme-toggle'
 
 export function isActive(path: string, href: string) {
   return href === '/' ? path === '/' : path.startsWith(href)
 }
 
-const groupActive = (path: string, g: NavGroup) => g.items.some((i) => isActive(path, i.href))
-
-const ITEM = 'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-ink-2 transition-colors hover:bg-paper-2 aria-[current=page]:bg-accent-soft aria-[current=page]:text-accent'
-
-function LinkItem({ n, path }: { n: NavLink; path: string }) {
+/** Brand mark: the three track lines running into one station (colours from content/tracks). */
+export function LineMark({ lines, size = 22 }: { lines: { id: string; color: string }[]; size?: number }) {
+  const n = lines.length
   return (
-    <Link href={n.href} aria-current={isActive(path, n.href) ? 'page' : undefined} className={ITEM}>
-      <Icon name={n.icon} width={16} height={16} />
-      {n.label}
-    </Link>
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      {lines.map((l, i) => {
+        const y = 5 + (i * 14) / Math.max(1, n - 1)
+        return <path key={l.id} d={`M2 ${y} C 9 ${y}, 11 12, 17 12`} fill="none" stroke={l.color} strokeWidth="2.6" strokeLinecap="round" />
+      })}
+      <circle cx="18.5" cy="12" r="3.6" fill="var(--card)" stroke="var(--ink)" strokeWidth="2.2" />
+    </svg>
   )
 }
 
-/** Dropdown: click to open, Esc / outside click / navigation to close. */
-function Group({ g, path }: { g: NavGroup; path: string }) {
+/** Primary destinations: a quiet row; the current one carries a short ink rule beneath it. */
+export function PrimaryNav({ items }: { items: NavLink[] }) {
+  const path = usePathname()
+  return (
+    <nav aria-label="Điều hướng chính" className="hidden h-full items-stretch md:flex">
+      {items.map((n) => (
+        <Link
+          key={n.href}
+          href={n.href}
+          title={n.desc}
+          aria-current={isActive(path, n.href) ? 'page' : undefined}
+          className="relative flex items-center px-3 text-[0.95rem] font-medium text-ink-2 transition-colors hover:text-ink aria-[current=page]:text-ink after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:rounded-t after:bg-transparent aria-[current=page]:after:bg-ink"
+        >
+          {n.label}
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
+/** "Yours" menu: personal pages and the theme switch. Click to open; Esc, outside click or navigation closes it. */
+export function MoreMenu({ more }: { more: Nav['more'] }) {
+  const path = usePathname()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -42,24 +65,26 @@ function Group({ g, path }: { g: NavGroup; path: string }) {
     const id = window.setTimeout(() => setOpen(false), 0)
     return () => window.clearTimeout(id)
   }, [path])
+  const active = more.items.some((i) => isActive(path, i.href))
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative hidden md:block">
       <button
         type="button"
         aria-expanded={open}
         aria-haspopup="true"
         onClick={() => setOpen((o) => !o)}
-        aria-current={groupActive(path, g) ? 'page' : undefined}
-        className={`${ITEM} gap-1.5`}
+        className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors hover:bg-paper-2 ${active ? 'text-ink' : 'text-ink-2'}`}
       >
-        <Icon name={g.icon} width={16} height={16} />
-        {g.label}
-        <span aria-hidden="true" className="text-[10px] text-ink-3">▾</span>
+        <Icon name={more.icon} width={16} height={16} />
+        {more.label}
+        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" className={`transition-transform ${open ? 'rotate-180' : ''}`}>
+          <path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
       </button>
       {open && (
-        <div role="menu" className="absolute left-0 top-full z-50 mt-1 w-72 rounded-xl border border-rule bg-paper p-1.5 shadow-xl">
-          {g.items.map((i) => (
-            <Link key={i.href} role="menuitem" href={i.href} aria-current={isActive(path, i.href) ? 'page' : undefined} className="flex items-start gap-3 rounded-lg px-3 py-2 hover:bg-paper-2 aria-[current=page]:bg-accent-soft">
+        <div role="menu" className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-rule bg-card p-1.5 shadow-[0_18px_40px_-18px_rgba(23,33,29,0.35)]">
+          {more.items.map((i) => (
+            <Link key={i.href} role="menuitem" href={i.href} aria-current={isActive(path, i.href) ? 'page' : undefined} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-paper-2 aria-[current=page]:bg-accent-soft">
               <Icon name={i.icon} className="mt-0.5 shrink-0 text-accent" />
               <span>
                 <span className="block text-sm font-medium text-ink">{i.label}</span>
@@ -67,17 +92,11 @@ function Group({ g, path }: { g: NavGroup; path: string }) {
               </span>
             </Link>
           ))}
+          <div className="mt-1 border-t border-rule px-3 pb-1.5 pt-2.5">
+            <ThemeToggle />
+          </div>
         </div>
       )}
     </div>
-  )
-}
-
-export function DesktopNav({ nav }: { nav: NavItem[] }) {
-  const path = usePathname()
-  return (
-    <nav aria-label="Điều hướng chính" className="hidden items-center gap-0.5 lg:flex">
-      {nav.map((n) => (isNavGroup(n) ? <Group key={n.label} g={n} path={path} /> : <LinkItem key={n.href} n={n} path={path} />))}
-    </nav>
   )
 }

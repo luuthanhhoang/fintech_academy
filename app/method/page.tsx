@@ -8,11 +8,11 @@ export default function MethodPage() {
   const { methods } = getContent().config
   return (
     <>
-      <PageTitle eyebrow="Vì sao site được thiết kế như vậy" title="Phương pháp học" en="Learning methods" lead={methods.intro} />
+      <PageTitle eyebrow="Của bạn" title="Cách học ở đây" lead={methods.intro} />
       <div className="space-y-5 font-sans">
         {methods.methods.map((m) => (
           <Card key={m.id} as="article">
-            <h2 id={m.id} className="scroll-mt-20 font-serif text-2xl font-semibold">
+            <h2 id={m.id} className="scroll-mt-20 font-display text-2xl font-semibold">
               {m.name.vi} <span className="font-sans text-base font-normal text-ink-3">({m.name.en})</span>
             </h2>
             <p className="mt-2">{m.summary}</p>

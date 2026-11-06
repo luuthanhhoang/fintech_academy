@@ -36,7 +36,7 @@ export function TravelDock({ catalog, layout, views, current, dueCount, focusing
             const stations = layout.stations.filter((s) => s.regionId === r.id)
             return (
               <section key={r.id}>
-                <h3 className="font-serif text-sm font-semibold">{r.title}</h3>
+                <h3 className="font-display text-sm font-semibold">{r.title}</h3>
                 <p className="mb-1 text-[11px] text-ink-3">{track?.title.vi}</p>
                 <ul className="space-y-0.5">
                   {stations.map((s) => (

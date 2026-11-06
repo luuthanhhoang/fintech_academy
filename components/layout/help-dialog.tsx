@@ -14,7 +14,7 @@ export function HelpDialog({ shortcuts, open, onClose }: { shortcuts: readonly S
   return (
     <Dialog open={open} onClose={onClose} label="Phím tắt">
       <div className="p-5">
-        <h2 className="font-serif text-xl font-semibold">Phím tắt (Keyboard shortcuts)</h2>
+        <h2 className="font-display text-xl font-semibold">Phím tắt (Keyboard shortcuts)</h2>
         <ul className="mt-4 divide-y divide-rule">
           {shortcuts.map((s) => (
             <li key={s.keys} className="flex items-center justify-between gap-4 py-2 text-sm">

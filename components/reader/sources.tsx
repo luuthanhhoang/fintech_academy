@@ -6,7 +6,7 @@ export function SourcesList({ sources, lastVerified, status }: { sources: Source
   return (
     <section aria-labelledby="sources" className="mt-12 border-t border-rule pt-6 font-sans">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 id="sources" className="font-serif text-xl font-semibold">
+        <h2 id="sources" className="font-display text-xl font-semibold">
           Nguồn (Sources)
         </h2>
         <StatusBadge status={status} />

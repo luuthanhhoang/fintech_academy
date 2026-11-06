@@ -23,7 +23,7 @@ export function CaseView({ cs, sources }: { cs: CaseStudy; sources: Source[] }) 
   return (
     <div className="font-sans">
       <section aria-labelledby="timeline">
-        <h2 id="timeline" className="font-serif text-2xl font-semibold">Dòng thời gian</h2>
+        <h2 id="timeline" className="font-display text-2xl font-semibold">Dòng thời gian</h2>
         <ol className="mt-4 border-l-2 border-rule">
           {cs.timeline.map((e, i) => (
             <li key={i} className="relative mb-5 pl-5">
@@ -43,7 +43,7 @@ export function CaseView({ cs, sources }: { cs: CaseStudy; sources: Source[] }) 
         </ol>
       </section>
       <section aria-labelledby="root" className="mt-8">
-        <h2 id="root" className="font-serif text-2xl font-semibold">Nguyên nhân gốc rễ</h2>
+        <h2 id="root" className="font-display text-2xl font-semibold">Nguyên nhân gốc rễ</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           {cs.rootCauses.map((r, i) => (
             <li key={i}>
@@ -54,11 +54,11 @@ export function CaseView({ cs, sources }: { cs: CaseStudy; sources: Source[] }) 
         </ul>
       </section>
       <section aria-labelledby="questions" className="mt-8">
-        <h2 id="questions" className="font-serif text-2xl font-semibold">Bạn sẽ chặn thế nào?</h2>
+        <h2 id="questions" className="font-display text-2xl font-semibold">Bạn sẽ chặn thế nào?</h2>
         <CaseQuestions caseId={cs.id} conceptIds={cs.concepts} questions={cs.questions} />
       </section>
       <section aria-labelledby="controls" className="mt-8">
-        <h2 id="controls" className="font-serif text-2xl font-semibold">Các lớp kiểm soát (gợi ý đối chiếu)</h2>
+        <h2 id="controls" className="font-display text-2xl font-semibold">Các lớp kiểm soát (gợi ý đối chiếu)</h2>
         <p className="mt-1 text-sm text-ink-3">Đây là phân tích sư phạm của site, đối chiếu với các phát hiện trong nguồn — không phải trích dẫn nguyên văn.</p>
         <dl className="mt-3 divide-y divide-rule rounded-lg border border-rule">
           {cs.controls.map((c, i) => (
@@ -71,7 +71,7 @@ export function CaseView({ cs, sources }: { cs: CaseStudy; sources: Source[] }) 
       </section>
       <section aria-labelledby="case-sources" className="mt-8 border-t border-rule pt-5">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 id="case-sources" className="font-serif text-xl font-semibold">Nguồn</h2>
+          <h2 id="case-sources" className="font-display text-xl font-semibold">Nguồn</h2>
           <StatusBadge status={cs.status} />
           <span className="text-xs text-ink-3">Kiểm tra lần cuối: {cs.lastVerified}</span>
         </div>

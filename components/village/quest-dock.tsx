@@ -16,7 +16,7 @@ export function QuestDock({ catalog, onJourney, journeyOpen }: { catalog: Catalo
   return (
     <Panel className="w-72">
       <header className="mb-2 flex items-baseline justify-between gap-2">
-        <h2 className="font-serif text-base font-semibold">Nhiệm vụ hôm nay</h2>
+        <h2 className="font-display text-base font-semibold">Nhiệm vụ hôm nay</h2>
         <span className="num text-xs text-ink-3">{done}/{blocks.length}</span>
       </header>
       <ul className="space-y-1">

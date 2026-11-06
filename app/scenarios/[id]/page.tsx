@@ -17,7 +17,7 @@ export default async function ScenarioPage({ params }: { params: Promise<{ id: s
   const lessons = b.lessons.filter((l) => l.scenarios.includes(sc.id))
   return (
     <>
-      <PageTitle eyebrow="Tình huống nhập vai" title={sc.title.vi} en={sc.title.en} lead={sc.summary} />
+      <PageTitle eyebrow={<Link href="/scenarios/" className="hover:underline">← Tình huống nhập vai</Link>} title={sc.title.vi} en={sc.title.en} lead={sc.summary} />
       <ScenarioPlayer scenario={sc} />
       <p className="font-sans text-sm">
         Học lý thuyết: {lessons.map((l) => <Link key={l.id} href={`/lessons/${l.id}/`} className="mr-3 text-accent underline">{l.title.vi}</Link>)}

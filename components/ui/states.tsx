@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 export function EmptyState({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
   return (
     <div className="rounded-lg border border-dashed border-rule p-6 text-center">
-      <p className="font-serif text-lg">{title}</p>
+      <p className="font-display text-lg">{title}</p>
       {children && <div className="mt-1 text-sm text-ink-3">{children}</div>}
       {action && <div className="mt-4">{action}</div>}
     </div>

@@ -19,7 +19,7 @@ export default async function SimulatorPage({ params }: { params: Promise<{ id: 
   const lessons = b.lessons.filter((l) => l.simulators.includes(meta.id))
   return (
     <>
-      <PageTitle eyebrow="Mô phỏng" title={meta.title.vi} en={meta.title.en} lead={meta.summary} />
+      <PageTitle eyebrow={<Link href="/simulators/" className="hover:underline">← Mô phỏng</Link>} title={meta.title.vi} en={meta.title.en} lead={meta.summary} />
       <Suspense fallback={<Skeleton lines={8} />}>
         <SimulatorFromQuery meta={meta} syntheticLabel={b.config.site.syntheticLabel} />
       </Suspense>

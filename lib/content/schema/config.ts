@@ -4,25 +4,31 @@ import { IdSchema } from './common'
 export const NavLinkSchema = z.strictObject({
   href: z.string().startsWith('/'),
   label: z.string().min(1),
-  en: z.string().min(1),
   icon: z.string().min(1),
-  /** One-line hint shown under the label in dropdown menus. */
+  /** One-line hint shown under the label in menus and on hub pages. */
   desc: z.string().min(1).optional(),
-  /** Shown as a tab in the bottom bar on small screens. */
-  mobile: z.boolean().default(false),
 })
-export const NavGroupSchema = z.strictObject({
-  label: z.string().min(1),
-  icon: z.string().min(1),
-  items: z.array(NavLinkSchema).min(2),
-  mobile: z.boolean().default(false),
-})
-/** A top-level entry is a link or a dropdown group of links. */
-export const NavItemSchema = z.union([NavLinkSchema, NavGroupSchema])
 export type NavLink = z.infer<typeof NavLinkSchema>
-export type NavGroup = z.infer<typeof NavGroupSchema>
-export type NavItem = z.infer<typeof NavItemSchema>
-export const isNavGroup = (n: NavItem): n is NavGroup => 'items' in n
+
+/**
+ * Navigation by what a learner wants to do: a few primary destinations (also the phone tab bar), one button to ask
+ * the tutor, and a "yours" menu for personal pages (progress, settings…).
+ */
+export const NavSchema = z.strictObject({
+  primary: z.array(NavLinkSchema).min(2).max(5),
+  ask: NavLinkSchema,
+  more: z.strictObject({ label: z.string().min(1), icon: z.string().min(1), items: z.array(NavLinkSchema).min(1) }),
+})
+export type Nav = z.infer<typeof NavSchema>
+
+/** Kinds of practice gathered on the workshop hub (each lists its real items from content). */
+export const WORKSHOP_KINDS = ['review', 'practice', 'simulators', 'labs', 'cases', 'scenarios'] as const
+export const WorkshopSchema = z.strictObject({
+  title: z.string().min(1),
+  intro: z.string().min(1),
+  sections: z.array(z.strictObject({ kind: z.enum(WORKSHOP_KINDS), title: z.string().min(1), desc: z.string().min(1), href: z.string().startsWith('/'), icon: z.string().min(1) })).min(1),
+})
+export type Workshop = z.infer<typeof WorkshopSchema>
 
 export const SiteConfigSchema = z.strictObject({
   name: z.string().min(1),
@@ -31,7 +37,8 @@ export const SiteConfigSchema = z.strictObject({
   syntheticLabel: z.string().min(1),
   /** Labels (and an honesty note where needed) for MDX <Callout kind="…"> blocks. */
   callouts: z.record(z.string(), z.strictObject({ label: z.string().min(1), disclaimer: z.string().min(1).optional() })),
-  nav: z.array(NavItemSchema).min(1),
+  nav: NavSchema,
+  workshop: WorkshopSchema,
 })
 export type SiteConfig = z.infer<typeof SiteConfigSchema>
 

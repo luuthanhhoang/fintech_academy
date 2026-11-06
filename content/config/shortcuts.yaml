@@ -5,6 +5,7 @@ shortcuts:
   - { action: "go", keys: "g v", description: "Về làng học", href: "/" }
   - { action: "go", keys: "g h", description: "Mở bảng Hôm nay", href: "/today/" }
   - { action: "go", keys: "g l", description: "Mở lộ trình", href: "/tracks/" }
+  - { action: "go", keys: "g t", description: "Mở Thực hành", href: "/workshop/" }
   - { action: "go", keys: "g r", description: "Mở ôn tập", href: "/review/" }
   - { action: "go", keys: "g s", description: "Mở thống kê", href: "/stats/" }
   - { action: "go", keys: "g a", description: "Mở gia sư AI", href: "/tutor/" }

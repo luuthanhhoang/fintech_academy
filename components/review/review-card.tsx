@@ -42,7 +42,7 @@ export function ReviewCard({ catalog, card, onDone }: { catalog: Catalog; card: 
   return (
     <article className="rounded-lg border border-rule p-5 font-sans">
       <p className="text-xs text-ink-3">Thẻ khái niệm</p>
-      <h2 className="mt-1 font-serif text-2xl font-semibold">{concept?.name.vi ?? card.conceptId}</h2>
+      <h2 className="mt-1 font-display text-2xl font-semibold">{concept?.name.vi ?? card.conceptId}</h2>
       <p className="text-sm text-ink-3">{concept?.name.en}</p>
       <p className="mt-4 text-sm">Tự nhớ lại: định nghĩa, vì sao nó quan trọng, và một ví dụ/ánh xạ sang dev. Rồi lật thẻ để so.</p>
       {revealed ? (

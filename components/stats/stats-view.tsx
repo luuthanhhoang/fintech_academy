@@ -54,12 +54,12 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
         <Tile label="Tình huống đã chơi" value={fmtNum(new Set(scenarioRuns.map((p) => p.refId)).size, 0)} hint={`/ ${catalog.scenarios.length} · kết cục tốt ${scenarioRuns.filter((p) => p.result === 'passed').length} lần`} />
       </div>
       <Card>
-        <h2 className="font-serif text-lg font-semibold">Hoạt động {WINDOW_DAYS} ngày gần nhất</h2>
+        <h2 className="font-display text-lg font-semibold">Hoạt động {WINDOW_DAYS} ngày gần nhất</h2>
         <ActivityHeatmap days={s.daily} />
       </Card>
       <FocusCard catalog={catalog} />
       <Card>
-        <h2 className="font-serif text-lg font-semibold">Thành thạo theo chặng</h2>
+        <h2 className="font-display text-lg font-semibold">Thành thạo theo chặng</h2>
         <ul className="mt-3 space-y-2">
           {stages.map((st) => (
             <li key={st.stageId} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm sm:grid-cols-[220px_1fr_auto]">
@@ -73,7 +73,7 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
         </ul>
       </Card>
       <Card>
-        <h2 className="font-serif text-lg font-semibold">Lịch sử ôn tập: phân bố đánh giá</h2>
+        <h2 className="font-display text-lg font-semibold">Lịch sử ôn tập: phân bố đánh giá</h2>
         <ul className="mt-3 space-y-1.5">
           {GRADES.map((g, i) => (
             <li key={g.grade} className="grid grid-cols-[120px_1fr_48px] items-center gap-3 text-sm">

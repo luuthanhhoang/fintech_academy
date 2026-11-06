@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getContent } from '@/lib/content/server'
 import { TrackPageClient } from './client'
@@ -14,7 +15,12 @@ export default async function TrackPage({ params }: { params: Promise<{ track: s
   if (!t) notFound()
   return (
     <>
-      <PageTitle eyebrow="Lộ trình" title={t.title.vi} en={t.title.en} lead={t.summary} />
+      <PageTitle
+        line={t.id}
+        eyebrow={<Link href="/tracks/" className="hover:underline">← Tất cả lộ trình</Link>}
+        title={t.title.vi}
+        lead={t.summary}
+      />
       <TrackPageClient trackId={t.id} />
     </>
   )

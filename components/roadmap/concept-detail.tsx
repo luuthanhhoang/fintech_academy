@@ -28,7 +28,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
   return (
     <div className="grid gap-4 font-sans md:grid-cols-2">
       <Card>
-        <h2 className="font-serif text-lg font-semibold">Trạng thái: {label?.label} <span className="text-sm font-normal text-ink-3">({label?.en})</span></h2>
+        <h2 className="font-display text-lg font-semibold">Trạng thái: {label?.label} <span className="text-sm font-normal text-ink-3">({label?.en})</span></h2>
         <dl className="num mt-3 grid grid-cols-2 gap-2 text-sm">
           <dt className="text-ink-3">Điểm thành thạo</dt>
           <dd>{score?.score === null || !score ? 'chưa có dữ liệu' : fmtPct(score.score, 0)}</dd>
@@ -44,7 +44,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
         </p>
       </Card>
       <Card>
-        <h2 className="font-serif text-lg font-semibold">Tiền đề (prerequisites)</h2>
+        <h2 className="font-display text-lg font-semibold">Tiền đề (prerequisites)</h2>
         {concept.prerequisites.length === 0 ? (
           <p className="mt-2 text-sm text-ink-3">Không có — có thể học ngay.</p>
         ) : (
@@ -73,7 +73,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
         )}
       </Card>
       <Card className="md:col-span-2">
-        <h2 className="font-serif text-lg font-semibold">Học ở đâu</h2>
+        <h2 className="font-display text-lg font-semibold">Học ở đâu</h2>
         <ul className="mt-2 space-y-1 text-sm">
           {lessons.map((l) => (
             <li key={l.id}>
