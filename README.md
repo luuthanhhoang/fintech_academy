@@ -9,7 +9,7 @@ Website tĩnh (Next.js static export), không backend; dữ liệu học tập l
 
 ```bash
 npm ci
-npm run dev        # dựng content + chép Pyodide, rồi chạy dev server
+npm run dev        # chép Pyodide rồi chạy dev server (dữ liệu nội dung luôn tính từ content/, không cần dựng trước)
 npm run check      # giới hạn 500 dòng + validate nội dung + typecheck + lint + test
 npm run build      # prebuild (check dòng, validate, dựng artefact, Pyodide) → next build → out/
 ```

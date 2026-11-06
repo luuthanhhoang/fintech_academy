@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   reactStrictMode: true,
+  // Do not write an AGENTS.md into the repo on every `next dev` (project guidance lives in CLAUDE.md).
+  agentRules: false,
 }
 
 export default nextConfig

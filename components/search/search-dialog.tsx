@@ -15,7 +15,7 @@ type IndexState = { status: 'loading' } | { status: 'error'; error: Error } | { 
 let cached: Promise<MiniSearch<SearchDoc>> | null = null
 
 function loadIndex(cfg: SearchConfig) {
-  cached ??= fetch('/generated/search-index.json')
+  cached ??= fetch('/generated/search-index.json', { cache: 'no-cache' })
     .then((r) => {
       if (!r.ok) throw new Error(`Không tải được chỉ mục (HTTP ${r.status})`)
       return r.text()

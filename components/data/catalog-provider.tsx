@@ -15,7 +15,8 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/generated/catalog.json')
+    // no-cache: revalidate every visit, so a new deploy (or a pull in dev) never pairs new code with an old catalog.
+    fetch('/generated/catalog.json', { cache: 'no-cache' })
       .then((r) => {
         if (!r.ok) throw new Error(`Không tải được catalog (HTTP ${r.status})`)
         return r.json() as Promise<Catalog>
