@@ -14,7 +14,9 @@ npm run check      # giới hạn 500 dòng + validate nội dung + typecheck + 
 npm run build      # prebuild (check dòng, validate, dựng artefact, Pyodide) → next build → out/
 ```
 
-Yêu cầu Node ≥ 22.
+Yêu cầu Node ≥ 22. Trình quản lý gói chuẩn là **npm** (`package-lock.json`). Dùng Yarn 2+ vẫn được nhờ `.yarnrc.yml`
+(`nodeLinker: node-modules`); nếu trước đó đã lỡ cài ở chế độ PnP, xoá `.pnp.cjs`, `.pnp.loader.mjs`, `.yarn/` rồi cài lại.
+Lỗi `EACCES` ở `~/.npm/_cacache` là do cache npm có file thuộc root: chạy `sudo chown -R $(id -u):$(id -g) ~/.npm`.
 
 ## Deploy lên Vercel
 
