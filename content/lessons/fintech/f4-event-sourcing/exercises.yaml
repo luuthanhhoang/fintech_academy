@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f4e-replay
+    conceptId: event-sourcing-audit
+    prompt: "Viết hàm `limitAt(events, t)` trả hạn mức tại thời điểm t, và hàm `whoChanged(events, from, to)` liệt kê ai thay đổi hạn mức trong khoảng thời gian. Nêu cách xử lý sự kiện có thời điểm hiệu lực khác thời điểm ghi nhận."
+    hint: "Lọc theo thời điểm hiệu lực, sắp theo (thời điểm hiệu lực, số thứ tự)."
+    solution: "limitAt: lọc sự kiện có effectiveAt ≤ t, sắp xếp theo effectiveAt rồi sequence, reduce từ trạng thái rỗng (Granted đặt giá trị, Increased/Decreased/Corrected đặt giá trị mới, Frozen đặt cờ). whoChanged: lọc theo khoảng, map ra (by, reason, effectiveAt). Hai trục thời gian: câu hỏi 'hạn mức hiệu lực tại t' dùng effectiveAt; câu hỏi 'hệ thống đã biết gì tại t' (ví dụ để giải thích một quyết định đã đưa ra) lọc thêm recordedAt ≤ t."
+  - id: ex-f4e-hash
+    conceptId: event-sourcing-audit
+    prompt: "Mô tả cách dùng chuỗi băm để phát hiện sự kiện bị sửa trong event store, và giới hạn của cách này."
+    hint: "Mỗi sự kiện chứa băm của sự kiện trước."
+    solution: "hash_n = H(hash_(n−1) || nội dung sự kiện n đã chuẩn hoá). Kiểm tra: tính lại chuỗi và so; sửa một sự kiện làm lệch mọi băm sau đó. Định kỳ công bố/lưu băm mới nhất ở nơi tách biệt (hệ thống khác, bên thứ ba). Giới hạn: người có toàn quyền có thể tính lại cả chuỗi nếu băm mốc không được lưu ở nơi họ không kiểm soát; nó phát hiện, không ngăn chặn; vẫn cần phân quyền chỉ-thêm."

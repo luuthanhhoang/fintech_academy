@@ -1,0 +1,21 @@
+diagrams:
+  - id: dg-trading-path
+    kind: sequence
+    title: "Đường đi của một lệnh và các điểm chặn"
+    caption: "Kiến trúc khái niệm; lớp kiểm soát rủi ro trước giao dịch độc lập với chiến lược, kill switch dừng lệnh mới và huỷ lệnh treo."
+    actors:
+      - { id: strategy, label: "Chiến lược / Khách" }
+      - { id: gateway, label: "Cổng nhận lệnh" }
+      - { id: risk, label: "Kiểm soát trước GD" }
+      - { id: router, label: "Định tuyến" }
+      - { id: venue, label: "Sàn" }
+    steps:
+      - { from: strategy, to: gateway, label: "Lệnh" }
+      - { from: gateway, to: risk, label: "Đã xác thực, gán mã" }
+      - { from: risk, to: risk, label: "Hạn mức: giá trị, khối lượng, tần suất, vị thế, độ lệch giá" }
+      - { from: risk, to: gateway, label: "Từ chối nếu vượt (kèm lý do)" }
+      - { from: risk, to: router, label: "Chấp nhận" }
+      - { from: router, to: venue, label: "Gửi lệnh" }
+      - { from: venue, to: router, label: "Xác nhận khớp" }
+      - { from: router, to: risk, label: "Cập nhật vị thế / lãi lỗ" }
+      - { from: risk, to: router, label: "Kill switch: dừng + huỷ lệnh treo" }

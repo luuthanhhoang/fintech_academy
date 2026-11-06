@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-reconciliation
+    kind: sequence
+    title: "Một vòng đối soát hằng ngày"
+    caption: "Luồng khái niệm; nguồn bên ngoài có thể là sao kê ngân hàng, file quyết toán của cổng thanh toán hoặc hệ thống chuyển mạch."
+    actors:
+      - { id: ledger, label: "Sổ cái nội bộ" }
+      - { id: external, label: "Dữ liệu bên ngoài" }
+      - { id: job, label: "Job đối soát" }
+      - { id: ops, label: "Vận hành tài chính" }
+    steps:
+      - { from: ledger, to: job, label: "Giao dịch ngày D (đã chuẩn hoá)" }
+      - { from: external, to: job, label: "Sao kê/file ngày D (đã chuẩn hoá)" }
+      - { from: job, to: job, label: "Ghép theo mã tham chiếu, rồi khoá phụ" }
+      - { from: job, to: ops, label: "Danh sách break theo loại + tuổi" }
+      - { from: ops, to: ledger, label: "Bút toán điều chỉnh có lý do" }
+      - { from: ops, to: external, label: "Tra soát với đối tác" }
+      - { from: job, to: ops, label: "Cảnh báo break quá hạn" }

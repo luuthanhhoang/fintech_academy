@@ -1,0 +1,39 @@
+items:
+  - id: q-f4m-float
+    type: mcq
+    conceptId: money-representation
+    prompt: "Cách lưu số tiền 19,99 USD nào an toàn cho hệ thống thanh toán?"
+    options:
+      - { id: a, text: "`double` 19.99" }
+      - { id: b, text: "Số nguyên 1999 kèm mã tiền tệ USD (2 chữ số đơn vị nhỏ theo ISO 4217)" }
+      - { id: c, text: "Chuỗi \"19.99\" và parse thành float khi cần tính" }
+    correct: [b]
+    explanation: "Số nguyên theo đơn vị nhỏ nhất cộng trừ chính xác; số chữ số lấy từ bảng tiền tệ."
+  - id: q-f4m-update
+    type: mcq
+    conceptId: ledger-design
+    prompt: "Phát hiện bút toán hôm qua ghi sai số tiền. Cách sửa đúng trong sổ cái bất biến?"
+    options:
+      - { id: a, text: "UPDATE số tiền của bút toán cũ" }
+      - { id: b, text: "Ghi bút toán đảo triệt tiêu bút toán sai, rồi ghi bút toán đúng; giữ liên kết giữa chúng" }
+      - { id: c, text: "DELETE bút toán sai" }
+    correct: [b]
+    explanation: "Lịch sử phải giữ nguyên để kiểm toán và tái tính số dư tại mọi thời điểm."
+  - id: q-f4m-alloc
+    type: numeric
+    conceptId: money-representation
+    prompt: "Chia 100.000 đ (VND, 0 chữ số lẻ) cho 3 người theo cách làm tròn xuống rồi phân bổ phần dư cho người đầu. Người đầu nhận bao nhiêu đồng?"
+    answer: 33334
+    tolerance: { kind: abs, value: 0 }
+    unit: "đ"
+    explanation: "Làm tròn xuống mỗi phần 33.333 (tổng 99.999), dư 1 đồng cho người đầu: 33.334 + 33.333 + 33.333 = 100.000."
+  - id: q-f4m-fx
+    type: mcq
+    conceptId: ledger-design
+    prompt: "Khách đổi 100 USD sang VND trong ví. Thiết kế bút toán nào cân được?"
+    options:
+      - { id: a, text: "Một posting Nợ ví VND, Có ví USD với hai số tiền khác tiền tệ" }
+      - { id: b, text: "Hai cặp cân riêng: USD (Nợ ví USD của khách → Có tài khoản quy đổi USD) và VND (Nợ tài khoản quy đổi VND → Có ví VND của khách), ghi kèm tỉ giá và phần làm tròn" }
+      - { id: c, text: "Quy đổi mọi thứ sang VND trước khi ghi" }
+    correct: [b]
+    explanation: "Mỗi tiền tệ cân riêng; tài khoản quy đổi nối hai chân và giữ vị thế ngoại tệ của công ty."

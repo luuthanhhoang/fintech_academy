@@ -1,0 +1,106 @@
+---
+id: f4-money-ledger
+track: fintech
+stage: f4
+order: 0
+title: { vi: "Biểu diễn tiền và thiết kế sổ cái", en: "Representing money and designing a ledger" }
+summary: "Tiền không bao giờ được lưu bằng số thực dấu phẩy động: dùng số nguyên theo đơn vị nhỏ nhất của từng loại tiền (theo ISO 4217) hoặc kiểu decimal, luôn đi kèm mã tiền tệ, và quy tắc làm tròn tường minh khi chia. Sổ cái là nhật ký bất biến các bút toán cân Nợ = Có; số dư là thứ suy ra từ bút toán chứ không phải một ô bị ghi đè; sửa sai bằng bút toán đảo, không bằng UPDATE."
+concepts: [money-representation, ledger-design]
+estMinutes: 45
+whyQuestion: "Chia đều 100.000 đ phí cho 3 người bằng float rồi cộng lại: tổng có còn đúng 100.000 không? Và nếu một bug ghi đè số dư, bạn lấy gì để biết số dư đúng là bao nhiêu?"
+facts:
+  - id: iso-minor-units
+    text: "Số chữ số đơn vị nhỏ (minor unit) theo bảng mã ISO 4217"
+    value: "VND: 0; JPY: 0; USD: 2; BHD: 3"
+    sourceId: iso-4217
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Đơn vị nhỏ nhất"
+    dev: "Lưu số nguyên (BIGINT) thay vì float"
+    explanation: "1,50 USD lưu là 150 cent; 50.000 VND lưu là 50000 — phép cộng chính xác tuyệt đối."
+  - finance: "Bút toán kép"
+    dev: "Bất biến (invariant) kiểm tra ở tầng ghi"
+    explanation: "Mỗi giao dịch gồm các dòng có tổng Nợ = tổng Có; từ chối ghi nếu không cân."
+  - finance: "Số dư suy ra từ bút toán"
+    dev: "Materialized view / projection từ log bất biến"
+    explanation: "Có thể cache số dư, nhưng nguồn sự thật là nhật ký — luôn tái tính được."
+pretest: [q-f4m-float, q-f4m-update]
+applications:
+  - id: app-f4m-schema
+    title: "Schema sổ cái cho ví hoặc hệ thống thanh toán"
+    context: "Bạn xây backend cho một ví đa tiền tệ."
+    task: "Thiết kế bảng accounts (loại, tiền tệ), journal_entries (bất biến, mã idempotency, thời điểm hiệu lực và ghi sổ), postings (tài khoản, số tiền nguyên đơn vị nhỏ, dấu Nợ/Có); ràng buộc tổng theo từng tiền tệ của mỗi bút toán bằng 0; cơ chế đảo bút toán; truy vấn số dư tại một thời điểm bất kỳ; test thuộc tính: tổng mọi tài khoản luôn bằng 0."
+    deliverable: "Migration SQL + hàm ghi bút toán + bộ test bất biến."
+labs: [ledger-double-entry]
+sources: [iso-4217, openstax-accounting]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cách lưu tiền đúng và các nguyên tắc thiết kế sổ cái bất biến."
+  rubric:
+    - { id: int, criterion: "Lưu số nguyên theo đơn vị nhỏ nhất của từng tiền tệ (hoặc decimal), kèm mã tiền tệ; không dùng float" }
+    - { id: round, criterion: "Làm tròn tường minh khi chia/quy đổi; phân bổ phần dư để tổng giữ nguyên" }
+    - { id: balanced, criterion: "Mỗi bút toán cân Nợ = Có theo từng tiền tệ; từ chối bút toán không cân" }
+    - { id: immutable, criterion: "Nhật ký bất biến; số dư suy ra; sửa sai bằng bút toán đảo; lưu cả thời điểm hiệu lực và ghi sổ" }
+---
+
+<Callout kind="story" title="Lệch một đồng mỗi đêm">
+Một hệ thống hoa hồng giả định lưu số tiền bằng `double`. Mỗi đêm, tổng hoa hồng trả cho đại lý lệch tổng doanh thu chia sẻ đúng một vài đồng. Không ai bận tâm — cho tới khi kiểm toán hỏi vì sao hai con số không bao giờ khớp, và đội phát hiện có hai bản sửa lỗi trước đó đã "chữa" bằng cách cộng thêm chênh lệch vào một tài khoản tạm.
+</Callout>
+
+## Đừng dùng float cho tiền
+
+Số thực dấu phẩy động nhị phân không biểu diễn chính xác được phần lớn số thập phân:
+
+```js
+0.1 + 0.2            // 0.30000000000000004
+1.1 * 3              // 3.3000000000000003
+```
+
+Sai số nhỏ, nhưng cộng dồn qua hàng triệu giao dịch và so sánh bằng `===` thì đủ gây lệch đối soát.
+
+<Quiz id="q-f4m-float" />
+
+Hai lựa chọn đúng:
+
+- **Số nguyên theo đơn vị nhỏ nhất** (phổ biến nhất): mỗi tiền tệ có số chữ số đơn vị nhỏ theo ISO 4217 — <Fact id="iso-minor-units" />. 12,34 USD lưu là `1234`; 50.000 VND lưu là `50000`. Số chữ số **lấy từ bảng tiền tệ**, không hardcode "chia 100".
+- **Decimal** với độ chính xác cố định khi cần nhiều chữ số hơn (tỉ giá, lãi suất ngày, giá đơn vị quỹ).
+
+Và **luôn đi kèm mã tiền tệ**: `{ amount: 1234, currency: "USD" }`. Cộng USD với VND là lỗi kiểu, không phải phép tính.
+
+## Làm tròn và phân bổ
+
+Mọi phép chia, nhân lãi suất, quy đổi tỉ giá đều tạo phần lẻ. Quy tắc phải **tường minh** (làm tròn nửa lên, làm tròn kiểu ngân hàng, cắt bỏ — theo hợp đồng/quy định của nghiệp vụ) và **phân bổ phần dư** sao cho tổng các phần đúng bằng số ban đầu.
+
+<WorkedExample id="we-allocate" />
+
+## Sổ cái bất biến
+
+Nhắc lại bài bút toán kép. Áp vào thiết kế hệ thống:
+
+| Thành phần | Quy tắc |
+|---|---|
+| **Tài khoản** | Có loại (tài sản, nợ, vốn, thu, chi) và **một tiền tệ** |
+| **Bút toán (journal entry)** | Bất biến, có mã idempotency, mô tả, thời điểm hiệu lực và thời điểm ghi sổ |
+| **Dòng bút toán (posting)** | Tài khoản + số tiền nguyên + Nợ/Có; tổng Nợ = tổng Có **theo từng tiền tệ** |
+| **Số dư** | Suy ra từ tổng các posting; có thể cache nhưng luôn tái tính được |
+| **Sửa sai** | Bút toán **đảo** (reversal) rồi bút toán đúng — không UPDATE, không DELETE |
+
+<Quiz id="q-f4m-update" />
+
+Hai thời điểm khác nhau: **hiệu lực** (giao dịch thuộc về ngày nào) và **ghi sổ** (lúc hệ thống ghi nhận). Giao dịch muộn của ngày hôm qua ghi sổ hôm nay vẫn phải hiện đúng trong số dư "tại cuối ngày hôm qua" khi tính lại.
+
+## Đa tiền tệ
+
+Quy đổi không phải một posting giữa hai tài khoản khác tiền tệ (không cân được). Mô hình chuẩn: bút toán gồm hai cặp cân riêng theo từng tiền tệ, nối qua tài khoản trung gian quy đổi; tỉ giá và phần làm tròn được ghi lại.
+
+<Quiz id="q-f4m-fx" />
+
+Thực hành: viết sổ cái nhỏ bắt buộc mỗi bút toán cân, lưu tiền bằng số nguyên.
+
+<Lab id="ledger-double-entry" />
+
+<Callout kind="field" title="Kiểm tra bất biến trong test, không chỉ trong code">
+Ngoài ràng buộc ở tầng ghi, tôi luôn có một test thuộc tính (property-based) sinh ngẫu nhiên hàng nghìn chuỗi thao tác — nạp, rút, chuyển, hoàn, đảo — rồi kiểm tra hai điều: tổng mọi tài khoản bằng 0 theo từng tiền tệ, và số dư cache bằng số dư tính lại từ posting. Hai dòng kiểm tra đó bắt được nhiều bug sổ sách hơn mọi test ví dụ tôi viết tay.
+</Callout>

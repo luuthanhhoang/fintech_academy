@@ -1,0 +1,100 @@
+---
+id: f4-trading-systems
+track: fintech
+stage: f4
+order: 3
+title: { vi: "Hệ thống giao dịch và triển khai an toàn", en: "Trading systems and safe deployment" }
+summary: "Một hệ thống giao dịch gồm cổng nhận lệnh, lớp kiểm soát rủi ro trước giao dịch, bộ định tuyến/khớp lệnh và luồng dữ liệu thị trường. Độ trễ và tính tất định quan trọng, nhưng điều quyết định sống còn là kiểm soát: hạn mức trước giao dịch độc lập với logic chiến lược, kill switch, và quy trình triển khai có kiểm tra cấu hình, phát hành từng phần, gỡ code chết. Case Knight Capital cho thấy một lần triển khai lỗi có thể gây tổn thất lớn tới mức nào trong vài chục phút."
+concepts: [trading-systems-latency, deployment-safety-finance]
+estMinutes: 45
+whyQuestion: "Chiến lược giao dịch của bạn có bug khiến nó gửi lệnh liên tục. Lớp nào trong hệ thống phải chặn nó — và nếu lớp đó cũng là code do cùng đội viết, cùng lần triển khai, thì có còn là lớp chặn không?"
+facts:
+  - id: mar-compliance
+    text: "Quy tắc truy cập thị trường Rule 15c3-5 của SEC (thông qua năm 2010) yêu cầu kiểm soát rủi ro trước giao dịch đối với nhà môi giới có quyền truy cập thị trường; ngày tuân thủ"
+    value: "14/07/2011"
+    sourceId: sec-15c3-5-2010
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Kiểm soát rủi ro trước giao dịch"
+    dev: "Policy enforcement point độc lập (như WAF/rate limiter trước dịch vụ)"
+    explanation: "Không tin dịch vụ phía sau; mọi lệnh đi qua một điểm kiểm tra hạn mức do nhóm khác sở hữu."
+  - finance: "Kill switch"
+    dev: "Circuit breaker có thể bật tay và tự động"
+    explanation: "Dừng gửi lệnh mới và huỷ lệnh đang treo — đã diễn tập, không cần triển khai code để dùng."
+  - finance: "Triển khai không đồng nhất"
+    dev: "Fleet drift — một số máy chạy phiên bản khác"
+    explanation: "Kiểm tra mọi máy cùng phiên bản và cấu hình trước khi bật tính năng."
+pretest: [q-f4t-layer, q-f4t-p99]
+applications:
+  - id: app-f4t-pretrade
+    title: "Lớp kiểm soát trước giao dịch có cấu hình"
+    context: "Một hệ thống gửi lệnh (dùng sàn mô phỏng hoặc bộ khớp lệnh từ lab chặng F1)."
+    task: "Viết lớp kiểm tra đứng trước bộ gửi lệnh: hạn mức giá trị lệnh, khối lượng, số lệnh mỗi giây, vị thế ròng, độ lệch giá so với giá tham chiếu — tất cả là dữ liệu cấu hình có phiên bản; kill switch dừng lệnh mới và huỷ lệnh treo; test với một 'chiến lược lỗi' gửi lệnh vô hạn."
+    deliverable: "Lớp kiểm soát + cấu hình + test chứng minh chiến lược lỗi bị chặn trong giới hạn đã đặt."
+cases: [knight-capital-2012]
+scenarios: [oncall-order-spike]
+sources: [sec-15c3-5-2010, sec-knight-2013, tail-at-scale]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả kiến trúc tối thiểu của một hệ thống giao dịch an toàn và quy trình triển khai cho nó."
+  rubric:
+    - { id: arch, criterion: "Cổng nhận lệnh → kiểm soát trước giao dịch → định tuyến/khớp → dữ liệu thị trường; tách biệt trách nhiệm" }
+    - { id: pretrade, criterion: "Hạn mức giá trị/khối lượng/tần suất/vị thế/độ lệch giá, độc lập với logic chiến lược; kill switch đã diễn tập" }
+    - { id: latency, criterion: "Đo độ trễ theo phân vị, tính tất định và thứ tự; không đánh đổi kiểm soát lấy tốc độ" }
+    - { id: deploy, criterion: "Triển khai từng phần, kiểm tra đồng nhất phiên bản/cấu hình, feature flag tắt mặc định, gỡ code chết, rollback nhanh" }
+---
+
+<Callout kind="story" title="Cờ cũ, nghĩa mới">
+Một đội giả định tái sử dụng một cờ cấu hình đã lâu không dùng để bật tính năng mới. Bản triển khai lên 8 máy, nhưng một máy bị bỏ sót, vẫn chạy code cũ — nơi cờ đó kích hoạt một chức năng thử nghiệm đã bị bỏ từ nhiều năm. Khi bật cờ lúc mở phiên, 7 máy chạy đúng. Máy thứ 8 bắt đầu gửi lệnh.
+</Callout>
+
+## Kiến trúc tối thiểu
+
+<Diagram id="dg-trading-path" />
+
+- **Cổng nhận lệnh**: xác thực, kiểm tra định dạng, gán mã lệnh duy nhất.
+- **Kiểm soát rủi ro trước giao dịch**: chặn lệnh vượt hạn mức **trước khi** ra thị trường.
+- **Định tuyến / khớp lệnh**: gửi tới sàn hoặc khớp nội bộ (bài cấu trúc thị trường).
+- **Dữ liệu thị trường**: giá tham chiếu cho kiểm soát độ lệch giá và cho chiến lược.
+- **Sổ lệnh và vị thế**: cập nhật theo xác nhận khớp, đối soát với sàn và bù trừ (chặng F1, F4).
+
+## Độ trễ và tính tất định
+
+- Đo **phân vị** (p50, p99, p99,9), không trung bình — phần đuôi quyết định lệnh có kịp hay không.
+- **Thứ tự** quan trọng hơn tốc độ thô: xử lý lệnh theo đúng trình tự nhận, tái lập được khi phát lại log.
+- Tối ưu độ trễ **không bao giờ** là lý do bỏ qua kiểm soát trước giao dịch.
+
+<Quiz id="q-f4t-p99" />
+
+## Kiểm soát trước giao dịch
+
+Ở Mỹ: <Fact id="mar-compliance" />. Quy tắc yêu cầu chặn lệnh vượt ngưỡng tín dụng/vốn đặt trước và chặn lệnh sai theo tham số giá hoặc khối lượng, và cấm truy cập thị trường "trần" không qua kiểm soát. Dù bạn ở thị trường nào, các nguyên tắc kỹ thuật giống nhau:
+
+- **Độc lập**: lớp kiểm soát do nhóm khác sở hữu, triển khai riêng, cấu hình riêng — bug của chiến lược không thể tắt nó.
+- **Nhiều chiều hạn mức**: giá trị lệnh, khối lượng, số lệnh mỗi giây, vị thế ròng, tổng lỗ trong ngày, độ lệch giá so với tham chiếu.
+- **Kill switch**: dừng lệnh mới và huỷ lệnh treo; bật tay hoặc tự động theo ngưỡng; **diễn tập định kỳ**.
+
+<Quiz id="q-f4t-layer" />
+
+## Triển khai an toàn
+
+- **Kiểm tra đồng nhất**: trước khi bật tính năng, xác nhận **mọi** máy chạy cùng phiên bản và cấu hình (câu chuyện đầu bài).
+- **Feature flag tắt mặc định**, bật từng phần (một tài khoản, một mã, một tỉ lệ nhỏ), có người theo dõi.
+- **Không tái sử dụng cờ cũ**; **gỡ code chết** thay vì để nó "ngủ".
+- **Kiểm tra cấu hình tự động** như kiểm tra code.
+- **Cảnh báo phải có người hành động** — cảnh báo không ai đọc tương đương không có cảnh báo.
+- **Rollback nhanh** và đã thử; tránh triển khai sát giờ mở phiên.
+
+Đối chiếu với sự cố thật có nguồn:
+
+<Case id="knight-capital-2012" />
+
+Và tự đóng vai on-call trong một tình huống giả định:
+
+<Scenario id="oncall-order-spike" />
+
+<Callout kind="field" title="Lớp kiểm soát phải nói 'không' được với chính đội mình">
+Tôi đánh giá lớp kiểm soát trước giao dịch bằng một câu hỏi: nếu đội chiến lược triển khai một bản lỗi nặng nhất có thể, lớp này có chặn được mà không cần ai trong đội đó làm gì không? Nếu câu trả lời phụ thuộc vào việc họ nhớ cập nhật cấu hình, hay lớp kiểm soát nằm trong cùng process với chiến lược, thì đó chưa phải lớp kiểm soát — đó là một phần của chiến lược.
+</Callout>

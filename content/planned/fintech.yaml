@@ -1,9 +1,5 @@
 track: fintech
 lessons:
-  - { id: "f4-money-ledger", stage: "f4", order: 0, title: { vi: "Biểu diễn tiền và thiết kế sổ cái", en: "Money types and ledger design" }, concepts: [money-representation, ledger-design] }
-  - { id: "f4-idempotency-recon", stage: "f4", order: 1, title: { vi: "Idempotency và đối soát", en: "Idempotency and reconciliation" }, concepts: [idempotency, reconciliation] }
-  - { id: "f4-event-sourcing", stage: "f4", order: 2, title: { vi: "Event sourcing và audit trail", en: "Event sourcing and audit trails" }, concepts: [event-sourcing-audit] }
-  - { id: "f4-trading-systems", stage: "f4", order: 3, title: { vi: "Hệ thống giao dịch và triển khai an toàn", en: "Trading systems and safe deployment" }, concepts: [trading-systems-latency, deployment-safety-finance] }
   - { id: "f5-returns", stage: "f5", order: 0, title: { vi: "Thống kê lợi suất và chuỗi thời gian", en: "Return statistics and time series" }, concepts: [returns-statistics, time-series-basics] }
   - { id: "f5-backtesting", stage: "f5", order: 1, title: { vi: "Backtest không tự lừa mình", en: "Backtesting without fooling yourself" }, concepts: [backtesting] }
   - { id: "f5-factors-mc", stage: "f5", order: 2, title: { vi: "Mô hình nhân tố và Monte Carlo", en: "Factor models and Monte Carlo" }, concepts: [factor-models, monte-carlo] }

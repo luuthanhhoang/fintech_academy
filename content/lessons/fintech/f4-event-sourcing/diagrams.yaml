@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-event-sourcing
+    kind: sequence
+    title: "Lệnh → sự kiện → projection"
+    caption: "Kiến trúc khái niệm của event sourcing kèm outbox; tên thành phần mang tính minh hoạ."
+    actors:
+      - { id: client, label: "Người dùng/Hệ thống" }
+      - { id: handler, label: "Xử lý lệnh" }
+      - { id: store, label: "Event store" }
+      - { id: projector, label: "Projector" }
+      - { id: readdb, label: "Bảng đọc" }
+    steps:
+      - { from: client, to: handler, label: "Lệnh: tăng hạn mức (lý do, người duyệt)" }
+      - { from: handler, to: store, label: "Đọc luồng sự kiện của khách → trạng thái" }
+      - { from: handler, to: handler, label: "Kiểm tra quy tắc" }
+      - { from: handler, to: store, label: "Thêm LimitIncreased (kỳ vọng phiên bản N)" }
+      - { from: store, to: projector, label: "Sự kiện mới (kèm outbox)" }
+      - { from: projector, to: readdb, label: "Cập nhật hạn mức hiện tại" }
+      - { from: client, to: readdb, label: "Truy vấn nhanh" }
+      - { from: client, to: store, label: "Truy vấn theo thời điểm: phát lại" }

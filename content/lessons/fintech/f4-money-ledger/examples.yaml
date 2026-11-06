@@ -1,0 +1,21 @@
+examples:
+  - id: we-allocate
+    title: "Phân bổ phí không để mất đồng nào"
+    conceptId: money-representation
+    problem: "Phí 100.000 đ (VND, 0 chữ số lẻ) chia cho 3 đối tác theo tỉ lệ 50% / 30% / 20%, rồi một khoản 100.000 đ khác chia đều cho 3 đối tác. Dùng làm tròn xuống và phân bổ phần dư theo phần lẻ lớn nhất."
+    steps:
+      - text: "Theo tỉ lệ: 50.000; 30.000; 20.000 — không có phần lẻ."
+      - text: "Chia đều: phần thô 33.333,33… mỗi người; làm tròn xuống 33.333 × 3 = 99.999."
+        faded: true
+        prompt: "Phần dư sau khi làm tròn xuống là bao nhiêu đồng?"
+        answer: 1
+        tolerance: { kind: abs, value: 0 }
+        unit: "đ"
+      - text: "Ba phần lẻ bằng nhau (0,33…); hoà thì theo thứ tự → người đầu nhận thêm 1 đ: 33.334; 33.333; 33.333."
+        faded: true
+        prompt: "Tổng ba phần sau phân bổ là bao nhiêu đồng?"
+        answer: 100000
+        tolerance: { kind: abs, value: 0 }
+        unit: "đ"
+      - text: "Ghi rõ quy tắc hoà vào tài liệu nghiệp vụ để mọi hệ thống phân bổ giống hệt nhau."
+    takeaway: "Làm tròn từng phần độc lập làm mất hoặc thừa tiền; phân bổ phần dư giữ tổng chính xác."

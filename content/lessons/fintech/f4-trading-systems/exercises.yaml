@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f4t-limits
+    conceptId: trading-systems-latency
+    prompt: "Một chiến lược bình thường gửi khoảng 20 lệnh/phút, giá trị mỗi lệnh dưới 500 triệu. Đề xuất bộ hạn mức trước giao dịch (đặt ngưỡng tương đối so với hành vi bình thường) và hành động khi vượt."
+    hint: "Tần suất, giá trị, vị thế, độ lệch giá, lỗ trong ngày."
+    solution: "Ví dụ: số lệnh tối đa vài lần mức bình thường trong một cửa sổ ngắn → vượt thì từ chối lệnh mới và cảnh báo; giá trị mỗi lệnh tối đa vượt mức bình thường một biên độ → từ chối lệnh đó; vị thế ròng tối đa theo mã và tổng → từ chối lệnh làm tăng vị thế; độ lệch giá so với giá tham chiếu tối đa → từ chối; lỗ trong ngày chạm ngưỡng → kích hoạt kill switch tự động, huỷ lệnh treo, gọi người. Ngưỡng là dữ liệu cấu hình có phiên bản, hiệu chỉnh theo lịch sử, do bộ phận rủi ro duyệt."
+  - id: ex-f4t-runbook
+    conceptId: deployment-safety-finance
+    prompt: "Viết checklist triển khai cho một thay đổi chiến lược giao dịch, từ trước khi merge tới 30 phút sau khi bật."
+    hint: "Kiểm thử, cấu hình, đồng nhất, bật từng phần, theo dõi, rollback."
+    solution: "Trước merge: review, test hồi quy với dữ liệu phát lại, kiểm tra cấu hình tự động, xác nhận không dùng lại cờ cũ. Trước bật: triển khai ngoài giờ cao điểm; kiểm tra mọi máy cùng phiên bản/cấu hình; xác nhận lớp kiểm soát trước giao dịch đang hoạt động với hạn mức cho chiến lược mới; kill switch sẵn sàng, người trực rõ. Bật: tài khoản/mã nhỏ trước, hạn mức thấp. 30 phút: theo dõi số lệnh/giây, tỉ lệ từ chối, vị thế, lãi lỗ so với kỳ vọng; ngưỡng rollback viết sẵn; ghi lại kết quả trước khi mở rộng."

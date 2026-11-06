@@ -1,0 +1,89 @@
+---
+id: f4-event-sourcing
+track: fintech
+stage: f4
+order: 2
+title: { vi: "Event sourcing và audit trail", en: "Event sourcing and audit trails" }
+summary: "Event sourcing lưu mọi thay đổi trạng thái thành chuỗi sự kiện bất biến theo thứ tự; trạng thái hiện tại là kết quả phát lại các sự kiện. Với tài chính, nó cho sẵn thứ kiểm toán cần: ai làm gì, lúc nào, vì sao, và trạng thái tại bất kỳ thời điểm nào trong quá khứ. Cái giá: thiết kế sự kiện cẩn thận, quản lý phiên bản schema, projection cho truy vấn, và xử lý dữ liệu cá nhân trong một log không xoá được."
+concepts: [event-sourcing-audit]
+estMinutes: 40
+whyQuestion: "Cơ quan quản lý hỏi: 'Hạn mức tín dụng của khách X ngày 15/3 năm ngoái là bao nhiêu, ai đã đổi nó, và vì sao?' Hệ thống của bạn trả lời được trong bao lâu?"
+devMapping:
+  - finance: "Event store"
+    dev: "Append-only log (như commit log của Git)"
+    explanation: "Không sửa, không xoá; chỉ thêm. Trạng thái là kết quả của việc áp lần lượt các thay đổi."
+  - finance: "Projection"
+    dev: "Read model / materialized view dựng từ log"
+    explanation: "Bảng số dư, danh sách hạn mức hiện tại... dựng lại được bất cứ lúc nào bằng cách phát lại."
+  - finance: "Audit trail"
+    dev: "Metadata bắt buộc trên mỗi sự kiện"
+    explanation: "Người thực hiện, thời điểm, lý do, nguồn request, phiên bản quy tắc — không thêm sau được."
+pretest: [q-f4e-asof, q-f4e-correct]
+applications:
+  - id: app-f4e-limits
+    title: "Event sourcing cho hạn mức tín dụng"
+    context: "Hệ thống quản lý hạn mức thẻ hoặc khoản vay."
+    task: "Định nghĩa các sự kiện (LimitGranted, LimitIncreased, LimitDecreased, LimitFrozen...) với metadata audit; viết hàm phát lại để lấy hạn mức tại thời điểm bất kỳ; projection 'hạn mức hiện tại' cho API; snapshot mỗi N sự kiện; một lần đổi schema sự kiện kèm hàm nâng cấp (upcaster) và test phát lại toàn bộ lịch sử cũ."
+    deliverable: "Định nghĩa sự kiện + hàm phát lại + projection + test truy vấn theo thời điểm."
+sources: [fowler-event-sourcing, openstax-accounting]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích event sourcing, vì sao nó hợp với yêu cầu kiểm toán tài chính, và các khó khăn phải xử lý."
+  rubric:
+    - { id: log, criterion: "Mọi thay đổi là một sự kiện bất biến theo thứ tự; trạng thái = phát lại sự kiện" }
+    - { id: audit, criterion: "Sự kiện mang metadata ai/khi/vì sao; truy vấn trạng thái tại thời điểm bất kỳ" }
+    - { id: projection, criterion: "Projection/snapshot cho truy vấn nhanh; dựng lại được từ log" }
+    - { id: hard, criterion: "Phiên bản schema (upcasting), sửa sai bằng sự kiện bù, dữ liệu cá nhân trong log bất biến" }
+---
+
+<Callout kind="story" title="Câu hỏi của kiểm toán">
+Một công ty cho vay giả định lưu hạn mức của khách trong một cột `credit_limit`, cập nhật mỗi khi thay đổi. Kiểm toán hỏi về một khách cụ thể: hạn mức ngày 15/3 năm ngoái là bao nhiêu, ai tăng nó lên, theo chính sách nào. Đội kỹ thuật lục log ứng dụng đã bị xoay vòng, bản sao lưu cơ sở dữ liệu theo tuần, và lịch sử chat. Sau ba ngày, câu trả lời vẫn là "có lẽ".
+</Callout>
+
+## Ý tưởng
+
+Martin Fowler (bài *Event Sourcing*, 12/2005) mô tả: ghi **mọi thay đổi** của trạng thái ứng dụng thành **chuỗi sự kiện**, lưu theo đúng thứ tự áp dụng. Muốn biết trạng thái, bắt đầu từ trạng thái rỗng và **phát lại** các sự kiện. Ví dụ quen thuộc nhất: hệ quản lý phiên bản — lịch sử commit là nguồn sự thật, thư mục làm việc là trạng thái suy ra.
+
+Sổ cái kế toán (bài trước) là event sourcing từ trước khi có máy tính: nhật ký bút toán là sự kiện, số dư là phát lại.
+
+```text
+LimitGranted     { customer: X, amount: 20000000, by: "policy-engine v12", at: 2025-01-10 }
+LimitIncreased   { customer: X, amount: 30000000, by: "officer:ng.a", reason: "income-verified", at: 2025-03-02 }
+LimitFrozen      { customer: X, by: "aml-rule v3", reason: "alert-8812", at: 2025-03-20 }
+```
+
+Hạn mức ngày 15/3 = phát lại các sự kiện có thời điểm ≤ 15/3 → 30.000.000, tăng bởi `ng.a` với lý do đã ghi.
+
+<Quiz id="q-f4e-asof" />
+
+## Kiến trúc
+
+<Diagram id="dg-event-sourcing" />
+
+- **Lệnh (command)** được kiểm tra theo trạng thái hiện tại → nếu hợp lệ, sinh **sự kiện**.
+- **Event store**: chỉ thêm; mỗi luồng (ví dụ mỗi khách) có số thứ tự để chống ghi đồng thời (optimistic concurrency).
+- **Projection**: bảng đọc tối ưu cho truy vấn (hạn mức hiện tại, số dư) — dựng lại được từ đầu.
+- **Snapshot**: lưu trạng thái tại sự kiện thứ N để không phải phát lại từ đầu mỗi lần.
+- **Phát hành ra ngoài**: ghi sự kiện và tin nhắn gửi đi trong cùng giao dịch (mẫu outbox) để không mất hay lặp.
+
+## Audit trail tốt cần gì
+
+- **Ai** (người hoặc hệ thống + phiên bản), **khi nào** (thời điểm hiệu lực và ghi nhận), **vì sao** (lý do, mã chính sách, mã cảnh báo), **từ đâu** (request id, kênh).
+- **Không sửa được**: quyền ghi chỉ-thêm; có thể thêm chuỗi băm (mỗi sự kiện chứa băm của sự kiện trước) để phát hiện bị sửa.
+- **Sửa sai bằng sự kiện bù**, không xoá sự kiện sai.
+
+<Quiz id="q-f4e-correct" />
+
+## Những chỗ khó
+
+- **Thiết kế sự kiện**: đặt tên theo nghiệp vụ đã xảy ra (`LimitIncreased`), không theo thao tác CRUD (`LimitUpdated`).
+- **Phiên bản schema**: sự kiện cũ sống mãi; đổi cấu trúc thì viết hàm nâng cấp (upcaster) và test phát lại toàn bộ lịch sử.
+- **Projection chậm/lệch**: đọc từ projection là nhất quán sau (eventual); thao tác cần chắc chắn thì kiểm tra theo luồng sự kiện.
+- **Dữ liệu cá nhân trong log bất biến**: khi quy định yêu cầu xoá, một cách thường dùng là lưu dữ liệu cá nhân tách riêng hoặc mã hoá theo khoá của từng người rồi huỷ khoá — phải thiết kế từ đầu, cùng bộ phận pháp chế.
+
+<Quiz id="q-f4e-schema" />
+
+<Callout kind="field" title="Không phải mọi thứ đều cần event sourcing">
+Tôi dùng event sourcing cho những thực thể mà câu hỏi "trạng thái tại thời điểm T là gì, vì sao" có giá trị pháp lý hoặc tài chính: sổ cái, hạn mức, quyết định duyệt vay, cấu hình quy tắc rủi ro. Danh mục sản phẩm hay hồ sơ hiển thị thì một bảng thường kèm bảng lịch sử thay đổi là đủ. Áp event sourcing khắp nơi làm hệ thống khó hiểu mà không thêm giá trị kiểm toán.
+</Callout>

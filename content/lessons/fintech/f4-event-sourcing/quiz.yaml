@@ -1,0 +1,29 @@
+items:
+  - id: q-f4e-asof
+    type: numeric
+    conceptId: event-sourcing-audit
+    prompt: "Sự kiện của một tài khoản (triệu đồng): 01/01 cấp hạn mức 20; 10/02 tăng lên 35; 01/03 giảm xuống 25; 20/03 tăng lên 40. Hạn mức tại ngày 15/03 là bao nhiêu triệu?"
+    answer: 25
+    tolerance: { kind: abs, value: 0 }
+    unit: "triệu"
+    explanation: "Phát lại các sự kiện có ngày ≤ 15/03: 20 → 35 → 25. Sự kiện 20/03 chưa xảy ra."
+  - id: q-f4e-correct
+    type: mcq
+    conceptId: event-sourcing-audit
+    prompt: "Một sự kiện LimitIncreased ghi nhầm số tiền. Cách sửa đúng trong event sourcing?"
+    options:
+      - { id: a, text: "Sửa trực tiếp sự kiện trong event store" }
+      - { id: b, text: "Thêm sự kiện bù (ví dụ LimitCorrected) tham chiếu sự kiện sai, kèm người thực hiện và lý do" }
+      - { id: c, text: "Xoá sự kiện sai và phát lại" }
+    correct: [b]
+    explanation: "Log bất biến; lịch sử phải cho thấy cả sai lẫn sửa — đó chính là giá trị kiểm toán."
+  - id: q-f4e-schema
+    type: mcq
+    conceptId: event-sourcing-audit
+    prompt: "Bạn đổi tên trường `amount` thành `limit` trong sự kiện LimitGranted. Việc gì phải làm?"
+    options:
+      - { id: a, text: "Chạy UPDATE đổi tên trường trong mọi sự kiện cũ" }
+      - { id: b, text: "Ghi phiên bản schema cho sự kiện; viết hàm nâng cấp đọc bản cũ thành bản mới khi phát lại; test phát lại toàn bộ lịch sử" }
+      - { id: c, text: "Bỏ các sự kiện cũ" }
+    correct: [b]
+    explanation: "Sự kiện cũ sống mãi; nâng cấp lúc đọc giữ log nguyên vẹn mà code mới vẫn hiểu."

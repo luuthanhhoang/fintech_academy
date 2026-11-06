@@ -1,0 +1,32 @@
+items:
+  - id: q-f4t-layer
+    type: mcq
+    conceptId: trading-systems-latency
+    prompt: "Đặt kiểm soát hạn mức ở đâu thì bảo vệ được khi code chiến lược có bug?"
+    options:
+      - { id: a, text: "Bên trong code chiến lược, như một hàm kiểm tra trước khi gửi" }
+      - { id: b, text: "Ở một lớp độc lập mà mọi lệnh bắt buộc đi qua trước khi ra thị trường, do nhóm khác sở hữu và cấu hình" }
+      - { id: c, text: "Trong báo cáo cuối ngày" }
+    correct: [b]
+    explanation: "Kiểm soát nằm cùng chỗ với lỗi có thể hỏng cùng lỗi; lớp độc lập mới chặn được."
+  - id: q-f4t-p99
+    type: mcq
+    conceptId: trading-systems-latency
+    prompt: "Bản tối ưu mới làm độ trễ trung bình giảm 30% nhưng p99,9 tăng gấp đôi. Đánh giá nào hợp lý cho hệ thống gửi lệnh?"
+    options:
+      - { id: a, text: "Chấp nhận ngay vì trung bình tốt hơn" }
+      - { id: b, text: "Điều tra phần đuôi trước: những lệnh chậm nhất thường rơi vào lúc thị trường biến động — đúng lúc độ trễ quan trọng nhất" }
+      - { id: c, text: "Bỏ qua p99,9 vì hiếm" }
+    correct: [b]
+    explanation: "Phân vị cao phản ánh lúc căng thẳng; trung bình che giấu nó."
+  - id: q-f4t-deploy
+    type: mcq
+    conceptId: deployment-safety-finance
+    prompt: "Thực hành nào giảm rủi ro như trong câu chuyện đầu bài? (chọn tất cả)"
+    options:
+      - { id: a, text: "Kiểm tra tự động mọi máy cùng phiên bản và cấu hình trước khi bật cờ" }
+      - { id: b, text: "Không tái sử dụng cờ cấu hình cũ; gỡ code chết" }
+      - { id: c, text: "Bật tính năng từng phần với hạn mức nhỏ và người theo dõi" }
+      - { id: d, text: "Triển khai ngay trước giờ mở phiên để kịp tính năng" }
+    correct: [a, b, c]
+    explanation: "Đồng nhất phiên bản, cờ mới, code sạch và bật từng phần cắt từng mắt xích của sự cố."

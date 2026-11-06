@@ -1,0 +1,96 @@
+---
+id: f4-idempotency-recon
+track: fintech
+stage: f4
+order: 1
+title: { vi: "Idempotency và đối soát: không trừ tiền hai lần, không để lệch một đồng", en: "Idempotency and reconciliation" }
+summary: "Mạng lỗi và timeout là chuyện thường; thử lại là bắt buộc. Idempotency biến 'thử lại' thành an toàn: mỗi thao tác tiền có một khoá duy nhất, lần gọi lặp trả lại đúng kết quả cũ thay vì thực hiện lần nữa. Đối soát là lưới an toàn thứ hai: so từng giao dịch trong sổ nội bộ với dữ liệu bên ngoài (ngân hàng, hệ thống chuyển mạch, cổng thanh toán), phân loại chênh lệch và xử lý tới khi bằng không."
+concepts: [idempotency, reconciliation]
+estMinutes: 45
+whyQuestion: "App gửi yêu cầu chuyển tiền, mạng rớt, app tự gửi lại. Làm sao server biết đó là cùng một yêu cầu — và nếu vẫn lỡ chuyển hai lần thì ai phát hiện, khi nào?"
+devMapping:
+  - finance: "Khoá idempotency"
+    dev: "Unique constraint + bảng lưu kết quả theo khoá"
+    explanation: "Lần đầu: thực hiện và lưu phản hồi. Lần sau cùng khoá: trả phản hồi đã lưu, không chạy lại."
+  - finance: "Đối soát"
+    dev: "Diff hai tập dữ liệu theo khoá ghép"
+    explanation: "Full outer join sổ nội bộ với sao kê bên ngoài; mọi dòng không ghép được hoặc lệch giá trị là một 'break'."
+  - finance: "Tuổi của chênh lệch"
+    dev: "Tuổi của ticket trong hàng đợi"
+    explanation: "Chênh lệch càng cũ càng khó giải thích — cảnh báo theo tuổi, không chỉ theo số lượng."
+pretest: [q-f4i-retry, q-f4i-break]
+applications:
+  - id: app-f4i-recon
+    title: "Job đối soát hằng ngày"
+    context: "Sổ cái nội bộ của bạn và file sao kê/quyết toán của một đối tác (dữ liệu tổng hợp dán nhãn mô phỏng)."
+    task: "Viết job đọc hai nguồn, chuẩn hoá (tiền tệ, đơn vị nhỏ, múi giờ), ghép theo mã tham chiếu rồi theo khoá phụ (số tiền + ngày + tài khoản) cho các dòng còn lại; phân loại break (thiếu bên nội bộ, thiếu bên ngoài, lệch số tiền, lệch ngày); lưu break với tuổi và người phụ trách; báo cáo tổng hợp và cảnh báo khi break quá hạn."
+    deliverable: "Job + bảng break + báo cáo mẫu + test cho từng loại break."
+labs: [idempotency-store]
+sources: [stripe-idempotency, idempotency-key-draft, aws-backoff-jitter]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cách một API thanh toán đạt idempotency, và quy trình đối soát bắt những gì idempotency bỏ lọt."
+  rubric:
+    - { id: key, criterion: "Client tạo khoá duy nhất cho mỗi thao tác, gửi kèm mọi lần thử lại" }
+    - { id: store, criterion: "Server lưu khoá + dấu vân tay request + phản hồi; khoá trùng trả phản hồi cũ; khoá trùng nhưng nội dung khác bị từ chối; xử lý đồng thời bằng ràng buộc duy nhất/khoá" }
+    - { id: recon, criterion: "Đối soát ghép từng giao dịch nội bộ với dữ liệu bên ngoài; phân loại break" }
+    - { id: resolve, criterion: "Mọi break có người phụ trách, tuổi, nguyên nhân; mục tiêu là bằng không, không 'bù' vào tài khoản tạm" }
+---
+
+<Callout kind="story" title="Hai lần, cùng một giây">
+Một ví giả định cho phép retry tự động khi gọi API chuyển tiền của ngân hàng đối tác timeout. Một buổi chiều ngân hàng chậm, mỗi yêu cầu bị gửi hai–ba lần. Ngân hàng xử lý tất cả. Ví chỉ ghi một lần. Hai ngày sau, file sao kê cho thấy hàng trăm giao dịch "lạ" — và ví đã thiếu tiền thật trong tài khoản đảm bảo.
+</Callout>
+
+## Vì sao cần idempotency
+
+Timeout không có nghĩa thất bại: yêu cầu có thể đã được xử lý, chỉ là phản hồi bị mất. Ba lựa chọn khi timeout:
+
+- **Không thử lại** → có thể bỏ sót thao tác cần làm.
+- **Thử lại mù** → có thể làm hai lần (câu chuyện đầu bài).
+- **Thử lại với khoá idempotency** → server nhận ra lần lặp và trả lại kết quả lần đầu.
+
+Tài liệu API của Stripe mô tả cơ chế này: client gửi khoá idempotency với yêu cầu; server lưu kết quả của lần đầu và trả lại đúng kết quả đó cho các lần gửi lại cùng khoá. IETF đang chuẩn hoá header `Idempotency-Key` (bản nháp, chưa phải RFC tại ngày kiểm tra). Thử lại nên kèm **backoff có jitter** để không dồn tải lên hệ thống đang chậm.
+
+<Quiz id="q-f4i-retry" />
+
+## Cài đặt phía server
+
+1. Nhận khoá → **chèn** bản ghi `(khoá, dấu vân tay request, trạng thái = đang xử lý)` với ràng buộc duy nhất. Chèn thất bại vì trùng → đây là lần lặp.
+2. Lần lặp: nếu đã có phản hồi lưu → trả lại nguyên văn. Nếu đang xử lý → trả lỗi "đang xử lý, thử lại sau". Nếu **dấu vân tay khác** (cùng khoá, nội dung khác) → từ chối: đó là lỗi của client.
+3. Thực hiện thao tác **và** ghi bút toán **và** lưu phản hồi trong cùng một giao dịch DB khi có thể.
+4. Khi gọi tiếp hệ thống bên ngoài, **truyền khoá xuống** (hoặc mã tham chiếu duy nhất) để bên kia cũng chống trùng.
+
+Thực hành ngay:
+
+<Lab id="idempotency-store" />
+
+## Đối soát: lưới an toàn thứ hai
+
+Idempotency giảm lỗi; không loại bỏ được mọi lỗi (bên ngoài xử lý trùng, lỗi thủ công, giao dịch phát sinh từ phía đối tác). **Đối soát** so từng giao dịch:
+
+<Diagram id="dg-reconciliation" />
+
+Các loại chênh lệch (break):
+
+| Loại | Ví dụ nguyên nhân |
+|---|---|
+| Có ở ngoài, không có trong sổ | Bên ngoài xử lý trùng; phí do ngân hàng tự trừ; giao dịch phát sinh phía đối tác |
+| Có trong sổ, không có ở ngoài | Lệnh chưa được gửi; bị từ chối mà sổ không cập nhật; còn trên đường |
+| Lệch số tiền | Phí, tỉ giá, làm tròn khác nhau |
+| Lệch ngày | Giờ chốt, múi giờ khác nhau |
+
+<Quiz id="q-f4i-break" />
+
+Nguyên tắc vận hành:
+
+- **Ghép theo mã tham chiếu duy nhất** trước, rồi mới tới ghép mờ (số tiền + ngày + tài khoản).
+- **Chuẩn hoá** trước khi so: đơn vị nhỏ, tiền tệ, múi giờ.
+- Mỗi break có **người phụ trách, tuổi, nguyên nhân, cách xử lý**. Không "bù" chênh lệch vào tài khoản tạm (câu chuyện bài trước).
+- Theo dõi **xu hướng**: số break mới mỗi ngày và tuổi break cũ nhất là KRI (bài rủi ro vận hành).
+
+<Quiz id="q-f4i-match" />
+
+<Callout kind="field" title="Khoá idempotency là của thao tác, không phải của request HTTP">
+Lỗi thiết kế tôi gặp nhiều nhất: client sinh khoá mới mỗi lần thử lại (vì sinh trong hàm gửi request), thế là cơ chế chống trùng vô dụng. Khoá phải sinh **một lần** khi người dùng quyết định thực hiện thao tác (bấm "Chuyển"), lưu lại phía client, và gửi kèm mọi lần thử lại — kể cả sau khi app bị tắt và mở lại.
+</Callout>

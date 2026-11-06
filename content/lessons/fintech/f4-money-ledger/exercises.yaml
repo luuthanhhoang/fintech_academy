@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f4m-split
+    conceptId: money-representation
+    prompt: "Viết hàm `allocate(amount, weights)` chia một số nguyên theo tỉ lệ trọng số sao cho tổng các phần đúng bằng amount. Thử với amount = 1000 và weights = [1, 1, 1] và [50, 30, 20]."
+    hint: "Làm tròn xuống từng phần, rồi chia phần dư theo phần lẻ lớn nhất."
+    solution: "Mỗi phần thô = amount × w / tổng w; lấy phần nguyên; dư = amount − tổng phần nguyên; cộng 1 cho 'dư' phần có phần lẻ lớn nhất (hoà thì theo thứ tự). [1,1,1]: 333,33 → 333 ×3 = 999, dư 1 → [334, 333, 333]. [50,30,20]: 500, 300, 200, dư 0. Test thuộc tính: với mọi input, tổng = amount và mỗi phần lệch phần thô không quá 1."
+  - id: ex-f4m-entries
+    conceptId: ledger-design
+    prompt: "Viết bút toán (tài khoản, Nợ/Có, số tiền nguyên VND) cho: khách A nạp 500.000 đ vào ví qua ngân hàng; A chuyển 200.000 đ cho B, phí 1.000 đ do A trả; sau đó phát hiện phí thu nhầm và hoàn lại."
+    hint: "Tài sản: tiền tại tài khoản đảm bảo; nợ: ví A, ví B; thu nhập: phí."
+    solution: "(1) Nạp: Nợ Tiền đảm bảo 500.000 / Có Ví A 500.000. (2) Chuyển: Nợ Ví A 201.000 / Có Ví B 200.000, Có Thu nhập phí 1.000. (3) Hoàn phí: bút toán đảo phần phí — Nợ Thu nhập phí 1.000 / Có Ví A 1.000, tham chiếu bút toán (2). Mỗi bút toán cân; số dư A = 500.000 − 201.000 + 1.000 = 300.000."

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f4i-race
+    conceptId: idempotency
+    prompt: "Hai request cùng khoá idempotency tới hai instance server cùng lúc. Mô tả điều kiện đua và cách chặn."
+    hint: "SELECT rồi INSERT không an toàn."
+    solution: "Nếu mỗi instance SELECT thấy chưa có khoá rồi cùng thực hiện, thao tác chạy hai lần. Chặn: INSERT bản ghi khoá với ràng buộc duy nhất trước khi làm gì khác (hoặc khoá hàng/advisory lock); chỉ instance chèn thành công mới thực hiện; instance kia nhận lỗi trùng và trả 'đang xử lý' hoặc phản hồi đã lưu khi có. Ghi bút toán và cập nhật trạng thái khoá trong cùng giao dịch."
+  - id: ex-f4i-design
+    conceptId: reconciliation
+    prompt: "Thiết kế quy tắc ghép hai tầng cho đối soát giao dịch chuyển tiền với file của hệ thống chuyển mạch, và cách xử lý giao dịch quanh nửa đêm."
+    hint: "Mã tham chiếu trước, khoá phụ sau; cửa sổ thời gian."
+    solution: "Tầng 1: ghép chính xác theo mã giao dịch duy nhất đã truyền cho hệ thống chuyển mạch. Tầng 2 cho phần còn lại: ghép theo (tài khoản, số tiền, thời điểm ±N phút) và chỉ khi duy nhất một ứng viên; nhiều ứng viên → đưa người xem. Nửa đêm: chuẩn hoá về cùng múi giờ; dùng cửa sổ chồng lấn (đối soát ngày D gồm cả giao dịch cuối ngày D−1 và đầu ngày D+1 chưa ghép), break 'lệch ngày' tự đóng nếu ghép được ở lần chạy sau; break còn mở sau 1 chu kỳ thì cảnh báo."

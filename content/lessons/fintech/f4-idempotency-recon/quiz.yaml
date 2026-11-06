@@ -1,0 +1,39 @@
+items:
+  - id: q-f4i-retry
+    type: mcq
+    conceptId: idempotency
+    prompt: "Gọi API chuyển tiền bị timeout. Cách xử lý đúng ở phía client?"
+    options:
+      - { id: a, text: "Gửi lại với khoá idempotency mới" }
+      - { id: b, text: "Gửi lại với cùng khoá idempotency của lần đầu, có backoff và jitter" }
+      - { id: c, text: "Báo thất bại cho người dùng và không làm gì thêm" }
+    correct: [b]
+    explanation: "Cùng khoá cho phép server nhận ra lần lặp; backoff có jitter tránh dồn tải."
+  - id: q-f4i-same-key
+    type: mcq
+    conceptId: idempotency
+    prompt: "Server nhận cùng khoá idempotency nhưng số tiền khác lần đầu. Nên làm gì?"
+    options:
+      - { id: a, text: "Thực hiện thao tác mới với số tiền mới" }
+      - { id: b, text: "Từ chối yêu cầu vì khoá đã gắn với một nội dung khác" }
+      - { id: c, text: "Trả lại phản hồi của lần đầu mà không báo gì" }
+    correct: [b]
+    explanation: "So dấu vân tay request; cùng khoá khác nội dung là lỗi của client, phải báo rõ."
+  - id: q-f4i-break
+    type: mcq
+    conceptId: reconciliation
+    prompt: "Sao kê ngân hàng có một khoản trừ 22.000 đ không có trong sổ nội bộ, mô tả 'phí duy trì'. Đây là loại break gì và xử lý ra sao?"
+    options:
+      - { id: a, text: "Có ở ngoài không có trong sổ; xác nhận với hợp đồng, ghi bút toán chi phí phí ngân hàng, cân nhắc tự động hoá cho lần sau" }
+      - { id: b, text: "Bỏ qua vì số tiền nhỏ" }
+      - { id: c, text: "Cộng chênh lệch vào tài khoản tạm" }
+    correct: [a]
+    explanation: "Mọi break có nguyên nhân và cách xử lý; số nhỏ lặp lại mỗi tháng cũng cộng dồn."
+  - id: q-f4i-match
+    type: numeric
+    conceptId: reconciliation
+    prompt: "Sổ nội bộ có 1.000 giao dịch, sao kê có 1.004. Ghép được 995 cặp, trong đó 3 cặp lệch số tiền. Có bao nhiêu break tổng cộng (thiếu nội bộ + thiếu bên ngoài + lệch số tiền)?"
+    answer: 17
+    tolerance: { kind: abs, value: 0 }
+    unit: "break"
+    explanation: "Thiếu bên ngoài: 1.000 − 995 = 5; thiếu nội bộ: 1.004 − 995 = 9; lệch số tiền: 3. Tổng 17."

@@ -1,0 +1,19 @@
+sources:
+  - id: iso-4217
+    title: "ISO 4217 — Currency codes"
+    url: https://www.iso.org/iso-4217-currency-codes.html
+    publisher: International Organization for Standardization
+    accessed: 2026-11-06
+    note: Mã tiền tệ ba chữ cái và số chữ số của đơn vị nhỏ (minor unit), ví dụ VND và JPY 0 chữ số, BHD 3 chữ số. Đối chiếu qua nhiều bảng mã đăng lại trong kết quả tìm kiếm (gồm bản của Ngân hàng Quốc gia Bỉ).
+  - id: fowler-event-sourcing
+    title: "Event Sourcing — Martin Fowler (12/12/2005)"
+    url: https://martinfowler.com/eaaDev/EventSourcing.html
+    publisher: martinfowler.com
+    accessed: 2026-11-06
+    note: "Ghi mọi thay đổi trạng thái ứng dụng thành chuỗi sự kiện theo thứ tự; tái dựng trạng thái bằng cách phát lại sự kiện. Kiểm tra qua trích đoạn kết quả tìm kiếm."
+  - id: sec-15c3-5-2010
+    title: "Risk Management Controls for Brokers or Dealers with Market Access (Rule 15c3-5, Release No. 34-63241)"
+    url: https://www.sec.gov/rules/final/2010/34-63241.pdf
+    publisher: U.S. Securities and Exchange Commission
+    accessed: 2026-11-06
+    note: Thông qua 2010, ngày tuân thủ 14/07/2011; yêu cầu kiểm soát rủi ro trước giao dịch (ngưỡng tín dụng/vốn, chặn lệnh sai theo giá/khối lượng), cấm truy cập thị trường 'trần' không qua kiểm soát. Kiểm tra qua trích đoạn kết quả tìm kiếm.
