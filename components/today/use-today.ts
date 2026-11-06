@@ -39,7 +39,7 @@ export function useToday(catalog: Catalog): TodayData | null {
     const progress = new Map(mastery.records.progress.map((p) => [p.lessonId, p.status]))
     const practiced = new Set(live.practice.filter((p) => p.result !== 'failed').map((p) => p.refId))
     const plan = buildDailyPlan(
-      { catalog, states: mastery.states, progress, dueCardIds: live.due.map((c) => c.id), practiced, focusTrack: live.focus, day },
+      { catalog, progress, dueCardIds: live.due.map((c) => c.id), practiced, focusTrack: live.focus, day },
       catalog.config.today.maxReviews,
     )
     const todayPractice = live.practice.filter((p) => p.at >= live.start)

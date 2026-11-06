@@ -1,8 +1,0 @@
-note: >-
-  Nhạc được sinh trực tiếp trong trình duyệt (Web Audio) từ các tham số dưới đây — không dùng bản thu của ai,
-  nên không có vấn đề bản quyền. Âm thanh môi trường (mưa, gió, sóng, chim, dế, tàu) cũng được tổng hợp tại chỗ.
-pieces:
-  - { id: sang-tren-dong, title: "Sáng trên đồng", mood: "nhẹ, sáng", bpm: 72, root: 60, scale: [0, 2, 4, 7, 9], progression: [0, 3, 4, 2], layers: [pad, bell, bass], density: 0.45 }
-  - { id: mua-dem, title: "Mưa đêm", mood: "trầm, tĩnh", bpm: 58, root: 57, scale: [0, 3, 5, 7, 10], progression: [0, 2, 3, 1], layers: [pad, pluck], density: 0.3 }
-  - { id: tau-dem, title: "Chuyến tàu đêm", mood: "đều, tập trung", bpm: 84, root: 50, scale: [0, 2, 3, 5, 7, 9, 10], progression: [0, 3, 6, 4], layers: [pad, bass, pluck], density: 0.4 }
-  - { id: hai-dang, title: "Hải đăng", mood: "rộng, xa", bpm: 52, root: 55, scale: [0, 2, 4, 6, 7, 9, 11], progression: [0, 4, 5, 3], layers: [pad, bell], density: 0.22 }

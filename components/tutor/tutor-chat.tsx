@@ -16,7 +16,7 @@ import { useTutor } from './use-tutor'
 type Entry = { q: string; turn: TurnResult | null; error: string | null }
 const WEAK_LIMIT = 5
 
-/** `?mode=<id>` (e.g. from a village guide) preselects a tutor mode defined in tutor.yaml. */
+/** `?mode=<id>` preselects a tutor mode defined in tutor.yaml. */
 export function TutorChat({ catalog }: { catalog: Catalog }) {
   const params = useSearchParams()
   const tutor = useTutor(catalog)

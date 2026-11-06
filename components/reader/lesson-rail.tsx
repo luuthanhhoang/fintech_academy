@@ -6,7 +6,7 @@ import type { RailItem } from '@/lib/content/lesson-nav'
 import { db } from '@/lib/db/dexie'
 import { minutes } from '@/components/ui/primitives'
 
-/** Left rail: where you are in the stage, which lessons are done, and a door to the same place on the village map. */
+/** Left rail: where you are in the stage and which lessons are done. */
 export function LessonRail({ items, currentId, trackId, trackTitle, stageId, stageTitle }: { items: RailItem[]; currentId: string; trackId: string; trackTitle: string; stageId: string; stageTitle: string }) {
   const progress = useLiveQuery(async () => new Map((await db().progress.toArray()).map((p) => [p.lessonId, p.status])), [])
   return (
@@ -44,9 +44,6 @@ export function LessonRail({ items, currentId, trackId, trackTitle, stageId, sta
           )
         })}
       </ol>
-      <Link href={`/?place=station:${stageId}`} className="embed-hide mt-5 block text-xs text-accent hover:underline">
-        Tới ga này trong làng
-      </Link>
     </nav>
   )
 }

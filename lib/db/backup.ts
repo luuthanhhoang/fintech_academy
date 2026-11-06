@@ -40,7 +40,6 @@ const REQUIRED_KEYS: Record<BackupTable, string[]> = {
   practiceLogs: ['kind', 'refId', 'result'],
   selfExplains: ['targetId', 'text', 'score'],
   todaySessions: ['day', 'completed'],
-  focusSessions: ['day', 'journeyId', 'focusedMs', 'status'],
   settings: ['key'],
 }
 

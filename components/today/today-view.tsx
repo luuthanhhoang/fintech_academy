@@ -5,7 +5,6 @@ import { useState } from 'react'
 import type { Catalog } from '@/lib/content/catalog'
 import { db } from '@/lib/db/dexie'
 import { markTodayBlock, setSetting } from '@/lib/db/repos/activity'
-import { LinkButton } from '@/components/ui/primitives'
 import { Skeleton } from '@/components/ui/states'
 import { TODAY_BLOCKS } from './blocks'
 import { useToday } from './use-today'
@@ -58,7 +57,6 @@ export function TodayView({ catalog }: { catalog: Catalog }) {
         </div>
         <div className="flex flex-col items-start gap-3 sm:items-end">
           <FocusPicker catalog={catalog} />
-          <LinkButton href={`/?journey=${catalog.config.focus.journeys[0]?.id ?? ''}`}>Học tập trung trên tàu ở Làng</LinkButton>
         </div>
       </div>
       <ol className="relative">

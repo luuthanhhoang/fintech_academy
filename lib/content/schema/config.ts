@@ -55,10 +55,8 @@ export type Shortcut = z.infer<typeof ShortcutSchema>
 export const MasteryConfigSchema = z.strictObject({
   weights: z.strictObject({ quiz: z.number().min(0).max(1), retention: z.number().min(0).max(1) }),
   quizHalfLifeDays: z.number().positive(),
-  unlockAt: z.number().min(0).max(1),
   masteredAt: z.number().min(0).max(1),
   minQuizAttempts: z.number().int().nonnegative(),
-  plannedPrerequisitesBlock: z.boolean(),
 })
 export type MasteryConfig = z.infer<typeof MasteryConfigSchema>
 

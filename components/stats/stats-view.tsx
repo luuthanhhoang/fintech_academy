@@ -10,7 +10,6 @@ import { fmtDuration, fmtNum, fmtPct } from '@/lib/util/format'
 import { useMastery } from '@/components/data/use-learner'
 import { Card } from '@/components/ui/primitives'
 import { EmptyState, Skeleton } from '@/components/ui/states'
-import { FocusCard } from './focus-card'
 import { ActivityHeatmap } from './heatmap'
 
 const WINDOW_DAYS = 84
@@ -57,7 +56,6 @@ export function StatsView({ catalog }: { catalog: Catalog }) {
         <h2 className="font-display text-lg font-semibold">Hoạt động {WINDOW_DAYS} ngày gần nhất</h2>
         <ActivityHeatmap days={s.daily} />
       </Card>
-      <FocusCard catalog={catalog} />
       <Card>
         <h2 className="font-display text-lg font-semibold">Thành thạo theo chặng</h2>
         <ul className="mt-3 space-y-2">

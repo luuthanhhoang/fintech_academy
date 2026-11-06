@@ -8,7 +8,6 @@ export type CatalogLesson = Omit<Lesson, 'body' | 'devMapping' | 'facts' | 'sour
 
 export interface Catalog {
   config: ContentBundle['config']
-  world: ContentBundle['world']
   tracks: ContentBundle['tracks']
   concepts: ContentBundle['concepts']
   lessons: CatalogLesson[]
@@ -22,7 +21,6 @@ export interface Catalog {
 export function buildCatalog(b: ContentBundle): Catalog {
   return {
     config: b.config,
-    world: b.world,
     tracks: b.tracks,
     concepts: b.concepts,
     lessons: b.lessons.map((l) => ({

@@ -1,12 +1,10 @@
 /** Builds the daily plan from catalog + learner state. Pure and deterministic for a given day. */
 import type { Catalog, CatalogLesson } from '../content/catalog'
 import { stageRank } from '../content/catalog'
-import type { ConceptState } from '../mastery/state'
 import { hashString } from '../util/date'
 
 export interface PlanInput {
   catalog: Catalog
-  states: ReadonlyMap<string, ConceptState>
   /** lessonId -> status */
   progress: ReadonlyMap<string, 'started' | 'completed'>
   dueCardIds: readonly string[]
@@ -35,15 +33,12 @@ export function curriculumOrder(catalog: Catalog, focusTrack: string | null): Ca
     .sort((a, b) => (rank.get(a.stage) ?? 0) - (rank.get(b.stage) ?? 0) || a.order - b.order)
 }
 
-export function lessonUnlocked(lesson: CatalogLesson, states: ReadonlyMap<string, ConceptState>): boolean {
-  return lesson.concepts.every((c) => states.get(c) !== 'locked')
-}
-
 export function nextLesson(input: PlanInput): CatalogLesson | null {
   const ordered = curriculumOrder(input.catalog, input.focusTrack)
   const started = ordered.find((l) => input.progress.get(l.id) === 'started')
   if (started) return started
-  return ordered.find((l) => !input.progress.has(l.id) && lessonUnlocked(l, input.states)) ?? null
+  // Every lesson is open: simply the first one along the curriculum you have not started.
+  return ordered.find((l) => !input.progress.has(l.id)) ?? null
 }
 
 function rotate<T>(items: readonly T[], seed: string): T | null {

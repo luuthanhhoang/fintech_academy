@@ -1,7 +1,7 @@
 /** IndexedDB schema (Dexie). Bump the version and add an upgrade when changing indexes. */
 import Dexie, { type EntityTable } from 'dexie'
 import type {
-  CardRecord, FocusSessionRecord, KeyValueRecord, LessonProgressRecord, MarkRecord, NoteRecord, PracticeLogRecord, QuizAttemptRecord,
+  CardRecord, KeyValueRecord, LessonProgressRecord, MarkRecord, NoteRecord, PracticeLogRecord, QuizAttemptRecord,
   ReviewLogRecord, SelfExplainRecord, StudySessionRecord, TodaySessionRecord,
 } from './types'
 
@@ -16,7 +16,6 @@ export class AcademyDB extends Dexie {
   practiceLogs!: EntityTable<PracticeLogRecord, 'id'>
   selfExplains!: EntityTable<SelfExplainRecord, 'id'>
   todaySessions!: EntityTable<TodaySessionRecord, 'day'>
-  focusSessions!: EntityTable<FocusSessionRecord, 'id'>
   settings!: EntityTable<KeyValueRecord, 'key'>
   secrets!: EntityTable<KeyValueRecord, 'key'>
 
@@ -36,8 +35,9 @@ export class AcademyDB extends Dexie {
       settings: 'key',
       secrets: 'key',
     })
-    // v2: focus journeys (village). Additive table, no data migration needed.
+    // v2 added focus journeys for the (now removed) 3D village; v3 drops that table.
     this.version(2).stores({ focusSessions: '++id, day, status, startedAt' })
+    this.version(3).stores({ focusSessions: null })
   }
 }
 
@@ -56,6 +56,6 @@ export function setDb(next: AcademyDB) {
 /** Table names included in backups, excluding secrets on purpose. */
 export const BACKUP_TABLES = [
   'cards', 'reviewLogs', 'quizAttempts', 'progress', 'notes', 'marks', 'studySessions', 'practiceLogs',
-  'selfExplains', 'todaySessions', 'focusSessions', 'settings',
+  'selfExplains', 'todaySessions', 'settings',
 ] as const
 export type BackupTable = (typeof BACKUP_TABLES)[number]

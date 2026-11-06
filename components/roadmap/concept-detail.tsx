@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { Catalog } from '@/lib/content/catalog'
 import { dependentsOf } from '@/lib/content/graph'
-import { blockingPrerequisites, CONCEPT_STATES } from '@/lib/mastery/state'
+import { CONCEPT_STATES, weakPrerequisites } from '@/lib/mastery/state'
 import { fmtNum, fmtPct } from '@/lib/util/format'
 import { useMastery } from '@/components/data/use-learner'
 import { StatusBadge } from '@/components/ui/badges'
@@ -19,7 +19,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
   const state = m.states.get(id) ?? 'planned'
   const score = m.scores.get(id)
   const byId = new Map(catalog.concepts.map((c) => [c.id, c]))
-  const blocking = new Set(blockingPrerequisites(id, { concepts: catalog.concepts, learnable: m.learnable, scores: m.scores, active: new Set() }, catalog.config.mastery))
+  const weak = new Set(weakPrerequisites(id, { concepts: catalog.concepts, learnable: m.learnable, scores: m.scores, active: new Set() }, catalog.config.mastery))
   const lessons = catalog.lessons.filter((l) => l.concepts.includes(id))
   const planned = catalog.planned.filter((p) => p.concepts.includes(id))
   const dependents = dependentsOf(catalog.concepts, id)
@@ -28,7 +28,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
   return (
     <div className="grid gap-4 font-sans md:grid-cols-2">
       <Card>
-        <h2 className="font-display text-lg font-semibold">Trạng thái: {label?.label} <span className="text-sm font-normal text-ink-3">({label?.en})</span></h2>
+        <h2 className="font-display text-lg font-semibold">Trạng thái: {label?.label}</h2>
         <dl className="num mt-3 grid grid-cols-2 gap-2 text-sm">
           <dt className="text-ink-3">Điểm thành thạo</dt>
           <dd>{score?.score === null || !score ? 'chưa có dữ liệu' : fmtPct(score.score, 0)}</dd>
@@ -40,13 +40,13 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
           <dd>{fmtNum(score?.attempts ?? 0, 0)} / {fmtNum(score?.reviewedCards ?? 0, 0)}</dd>
         </dl>
         <p className="mt-3 text-xs text-ink-3">
-          Công thức: {catalog.config.mastery.weights.quiz} × quiz + {catalog.config.mastery.weights.retention} × ghi nhớ (chuẩn hoá theo thành phần có dữ liệu). Mở khoá khi tiền đề ≥ {fmtPct(catalog.config.mastery.unlockAt, 0)}, thành thạo khi ≥ {fmtPct(catalog.config.mastery.masteredAt, 0)}.
+          Công thức: {catalog.config.mastery.weights.quiz} × quiz + {catalog.config.mastery.weights.retention} × ghi nhớ (chuẩn hoá theo thành phần có dữ liệu). Thành thạo khi ≥ {fmtPct(catalog.config.mastery.masteredAt, 0)}.
         </p>
       </Card>
       <Card>
-        <h2 className="font-display text-lg font-semibold">Tiền đề (prerequisites)</h2>
+        <h2 className="font-display text-lg font-semibold">Nên biết trước</h2>
         {concept.prerequisites.length === 0 ? (
-          <p className="mt-2 text-sm text-ink-3">Không có — có thể học ngay.</p>
+          <p className="mt-2 text-sm text-ink-3">Không có gì cần biết trước.</p>
         ) : (
           <ul className="mt-2 space-y-1.5">
             {concept.prerequisites.map((p) => {
@@ -54,7 +54,7 @@ export function ConceptDetail({ catalog, id }: { catalog: Catalog; id: string })
               return c ? (
                 <li key={p} className="flex items-center gap-2">
                   <ConceptChip concept={c} state={m.states.get(p) ?? 'planned'} score={m.scores.get(p)} />
-                  {blocking.has(p) && <span className="text-xs text-warn">đang chặn</span>}
+                  {weak.has(p) && <span className="text-xs text-ink-3">nên xem lại trước</span>}
                 </li>
               ) : null
             })}

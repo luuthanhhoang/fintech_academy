@@ -2,8 +2,5 @@
 # Nếu chỉ có một thành phần, dùng thành phần đó; không có dữ liệu => "chưa có dữ liệu".
 weights: { quiz: 0.6, retention: 0.4 }
 quizHalfLifeDays: 21
-unlockAt: 0.6
 masteredAt: 0.85
 minQuizAttempts: 2
-# Tiền đề chỉ có bài "planned" (chưa viết) có chặn khái niệm phía sau không?
-plannedPrerequisitesBlock: false

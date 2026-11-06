@@ -64,18 +64,6 @@ export function buildSearchDocs(b: ContentBundle): SearchDoc[] {
       href: `/cases/${c.id}/`,
     })
   }
-  for (const s of b.world.map.regions.flatMap((r) => b.tracks.filter((t) => t.id === r.track).flatMap((t) => t.stages.map((st) => ({ st, r }))))) {
-    docs.push({ id: `place:station:${s.st.id}`, kind: 'place', title: `Ga ${s.st.id.toUpperCase()} · ${s.st.title.vi}`, titleEn: s.r.title, text: s.st.summary, tags: '', href: `/?place=station:${s.st.id}` })
-  }
-  for (const l of b.world.landmarks) {
-    docs.push({ id: `place:landmark:${l.id}`, kind: 'place', title: l.title, titleEn: b.world.map.title, text: l.metaphor, tags: '', href: `/?place=landmark:${l.id}` })
-  }
-  for (const g of b.world.guides) {
-    docs.push({ id: `place:guide:${g.id}`, kind: 'place', title: `${g.name} — ${g.role}`, titleEn: b.world.map.title, text: g.greeting, tags: '', href: `/?place=guide:${g.id}` })
-  }
-  for (const v of b.world.views) {
-    docs.push({ id: `place:view:${v.id}`, kind: 'place', title: v.title, titleEn: b.world.map.title, text: v.description, tags: '', href: `/?view=${v.id}` })
-  }
   // Tracks and their stations: the English names make "backend" or "fintech" find the right line and station.
   for (const t of b.tracks) {
     docs.push({ id: `track:${t.id}`, kind: 'track', title: t.title.vi, titleEn: t.title.en, text: t.summary, tags: t.colorName, href: `/tracks/${t.id}/` })

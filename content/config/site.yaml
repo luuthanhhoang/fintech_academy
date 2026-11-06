@@ -12,7 +12,7 @@ callouts:
 nav:
   # Bốn điểm đến chính (cũng là thanh tab trên điện thoại), theo việc người học muốn làm.
   primary:
-    - { href: "/", label: "Làng", icon: "tree", desc: "Đi dạo thế giới 3D: nhà là bài học, ga là chặng" }
+    - { href: "/", label: "Trang chủ", icon: "home", desc: "Học tiếp, việc hôm nay và các lộ trình" }
     - { href: "/today/", label: "Hôm nay", icon: "sun", desc: "Việc nên làm bây giờ, theo thứ tự" }
     - { href: "/tracks/", label: "Lộ trình", icon: "map", desc: "Ba tuyến học, từng ga và từng bài" }
     - { href: "/workshop/", label: "Thực hành", icon: "code", desc: "Ôn thẻ, luyện trộn, mô phỏng, code lab, case, tình huống" }
@@ -27,7 +27,7 @@ nav:
       - { href: "/about/", label: "Giới thiệu", icon: "info", desc: "Site này là gì và dùng dữ liệu ra sao" }
 workshop:
   title: "Thực hành"
-  intro: "Đọc xong thì làm. Mỗi mục dưới đây gắn với khái niệm trong lộ trình — làm ở đây cũng làm ruộng ngoài làng xanh lên."
+  intro: "Đọc xong thì làm. Mỗi mục dưới đây gắn với khái niệm trong lộ trình, và kết quả được tính vào mức thành thạo của bạn."
   sections:
     - { kind: review, title: "Ôn thẻ đến hạn", desc: "Mỗi ngày vài phút, đúng lúc sắp quên.", href: "/review/", icon: "cards" }
     - { kind: practice, title: "Luyện trộn", desc: "Câu hỏi trộn từ các khái niệm đã học, để nhớ lâu và phân biệt được.", href: "/practice/", icon: "shuffle" }

@@ -2,7 +2,7 @@ shortcuts:
   - { action: "open-search", keys: "mod+k", description: "Mở tìm kiếm toàn site" }
   - { action: "show-help", keys: "?", description: "Hiện bảng phím tắt" }
   - { action: "toggle-theme", keys: "t", description: "Đổi sáng/tối" }
-  - { action: "go", keys: "g v", description: "Về làng học", href: "/" }
+  - { action: "go", keys: "g c", description: "Về trang chủ", href: "/" }
   - { action: "go", keys: "g h", description: "Mở bảng Hôm nay", href: "/today/" }
   - { action: "go", keys: "g l", description: "Mở lộ trình", href: "/tracks/" }
   - { action: "go", keys: "g t", description: "Mở Thực hành", href: "/workshop/" }

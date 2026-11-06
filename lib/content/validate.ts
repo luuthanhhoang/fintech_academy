@@ -6,7 +6,6 @@ import { isMdxComponentName, MDX_COMPONENT_REFS } from './mdx-spec'
 import type { ContentBundle, Lesson } from './types'
 import { validateLearning } from './validate-learning'
 import { validateOrphans } from './validate-orphans'
-import { validateWorld } from './validate-world'
 
 export interface Issue {
   where: string
@@ -19,13 +18,6 @@ export interface ValidateOptions {
   iconKeys: readonly string[]
   shortcutActions: readonly string[]
   providerKinds: readonly string[]
-  worldModelKeys: readonly string[]
-  ambienceKeys: readonly string[]
-  musicLayerKeys: readonly string[]
-  hdriKeys: readonly string[]
-  treeKinds: readonly string[]
-  /** Reads a model file's clips and materials (node scripts/tests); without it file checks are skipped. */
-  readModel?: (file: string) => { clips: string[]; materials: string[] } | null
 }
 
 type Push = (where: string, message: string) => void
@@ -237,7 +229,6 @@ export function validateContent(b: ContentBundle, opts: ValidateOptions): Issue[
   checkSimulators(b, opts, push)
   checkLabsAndCases(b, push)
   validateLearning(b, push)
-  validateWorld(b, opts, push)
   validateOrphans(b, push)
   return issues
 }

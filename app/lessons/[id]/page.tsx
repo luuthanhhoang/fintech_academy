@@ -61,11 +61,6 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
             <span>{minutes(lesson.estMinutes)}</span>
             <StatusBadge status={lesson.status} />
             <span className="text-ink-3">Kiểm tra nguồn ngày {fmtDay(lesson.lastVerified)}</span>
-            {concepts[0] && (
-              <Link href={`/?place=lot:${concepts[0].id}`} className="embed-hide text-accent hover:underline">
-                Tới nhà “{concepts[0].name.vi}” trong làng
-              </Link>
-            )}
           </div>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {concepts.map((c) => (

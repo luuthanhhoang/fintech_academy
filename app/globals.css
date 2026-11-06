@@ -229,11 +229,6 @@ body {
   }
 }
 
-/* Inside the village's in-world reader the world provides navigation: hide links back to it. */
-[data-embed] .embed-hide {
-  display: none !important;
-}
-
 @keyframes reader-in {
   from {
     opacity: 0;

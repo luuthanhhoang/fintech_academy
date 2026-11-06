@@ -5,7 +5,7 @@ import { computeStates } from '@/lib/mastery/state'
 import { buildDailyPlan } from '@/lib/today/plan'
 import { currentStreak, longestStreak } from '@/lib/stats/streak'
 
-const cfg = { weights: { quiz: 0.6, retention: 0.4 }, quizHalfLifeDays: 10, unlockAt: 0.6, masteredAt: 0.85, minQuizAttempts: 2, plannedPrerequisitesBlock: false }
+const cfg = { weights: { quiz: 0.6, retention: 0.4 }, quizHalfLifeDays: 10, masteredAt: 0.85, minQuizAttempts: 2 }
 const now = new Date('2026-11-05T10:00:00')
 
 describe('mastery', () => {
@@ -27,7 +27,7 @@ describe('mastery', () => {
       },
       cfg,
     )
-    expect(Object.fromEntries(states)).toEqual({ a: 'available', b: 'locked', c: 'available', p: 'planned' })
+    expect(Object.fromEntries(states)).toEqual({ a: 'available', b: 'available', c: 'available', p: 'planned' })
   })
 })
 
@@ -41,9 +41,9 @@ describe('daily plan', () => {
     lessons: [lesson('l1', 0, ['a'], { labs: ['lab1'], cases: ['c1'] }), lesson('l2', 1, ['b'])],
     cases: [{ id: 'c1' }, { id: 'c2' }],
   } as unknown as Catalog
-  it('picks the next unlocked lesson and related practice', () => {
+  it('picks the next lesson in curriculum order (nothing is locked) and related practice', () => {
     const plan = buildDailyPlan(
-      { catalog, states: new Map([['a', 'available'], ['b', 'locked']]), progress: new Map(), dueCardIds: ['x', 'y'], practiced: new Set(), focusTrack: null, day: '2026-11-05' },
+      { catalog, progress: new Map(), dueCardIds: ['x', 'y'], practiced: new Set(), focusTrack: null, day: '2026-11-05' },
       1,
     )
     expect(plan.reviews).toEqual(['x'])
@@ -53,7 +53,7 @@ describe('daily plan', () => {
   })
   it('resumes a started lesson first', () => {
     const plan = buildDailyPlan(
-      { catalog, states: new Map([['a', 'mastered'], ['b', 'learning']]), progress: new Map([['l1', 'completed'], ['l2', 'started']]), dueCardIds: [], practiced: new Set(['lab1', 'c1']), focusTrack: null, day: 'd' },
+      { catalog, progress: new Map([['l1', 'completed'], ['l2', 'started']]), dueCardIds: [], practiced: new Set(['lab1', 'c1']), focusTrack: null, day: 'd' },
       5,
     )
     expect(plan.lesson?.id).toBe('l2')

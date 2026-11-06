@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import type { SiteConfig } from '@/lib/content/schema/config'
-import { FocusChip } from '@/components/focus/focus-chip'
 import { Icon } from '@/components/ui/icons'
 import { Dialog } from './dialog'
 import { isActive, LineMark, MoreMenu, PrimaryNav } from './nav-menu'
@@ -19,13 +18,13 @@ const SearchIcon = () => (
 
 export interface Line { id: string; color: string }
 
-/** Top bar: brand, four destinations, then search, the focus timer, "ask the tutor" and your personal menu. */
+/** Top bar: brand, four destinations, then search, "ask the tutor" and your personal menu. */
 export function TopBar({ site, lines, onSearch }: { site: SiteConfig; lines: Line[]; onSearch: () => void }) {
   const nav = site.nav
   const path = usePathname()
   return (
     <header className="sticky top-0 z-40 border-b border-rule bg-card/92 backdrop-blur">
-      <div className="mx-auto flex h-[var(--topbar)] w-full max-w-[1280px] items-stretch gap-2 px-3 sm:px-5">
+      <div className="mx-auto flex h-[var(--topbar)] w-full max-w-[1200px] items-stretch gap-2 px-3 sm:px-5">
         <Link href="/" className="mr-3 flex items-center gap-2 font-display text-[1.05rem] font-bold tracking-tight">
           <LineMark lines={lines} />
           {site.name}
@@ -37,7 +36,6 @@ export function TopBar({ site, lines, onSearch }: { site: SiteConfig; lines: Lin
             <span className="hidden lg:inline">Tìm bài, khái niệm…</span>
             <kbd className="hidden rounded border border-rule bg-card px-1 text-[0.7rem] lg:inline">⌘K</kbd>
           </button>
-          <FocusChip />
           <Link
             href={nav.ask.href}
             aria-current={isActive(path, nav.ask.href) ? 'page' : undefined}

@@ -25,9 +25,9 @@ Bài mới viết theo giọng trải nghiệm: mở bằng `<Callout kind="stor
 ## Kiến trúc
 ```
 content/     dữ liệu: config/, tracks/, concepts/, lessons/<track>/<id>/{lesson.mdx,quiz.yaml,exercises.yaml},
-             planned/, simulators/, labs/<id>/, cases/, scenarios/, sources/, world/ (làng 3D)
+             planned/, simulators/, labs/<id>/, cases/, scenarios/, sources/
 lib/         logic thuần: content (schema, load, validate, graph), finance, srs, mastery, today, quiz, search,
-             tutor, stats, db, registry, world (địa hình, bố cục, bầu trời), focus (máy trạng thái), audio (Web Audio)
+             tutor, stats, db, registry, roadmap (tuyến/ga)
 components/  UI theo miền
 app/         route App Router (chỉ ghép dữ liệu build-time + component)
 scripts/     validate-content, check-file-lines, copy-pyodide
@@ -37,14 +37,11 @@ tests/       Vitest cho lib/
 - Simulator/lab được map qua registry (`lib/registry/*`, key → lazy component). Không if/else theo tên.
 - Số liệu thật trong MDX dùng `<Fact id="..."/>` trỏ tới `facts` trong frontmatter (có `sourceId`, `asOf`, `status`).
 - Lộ trình + đồ thị khái niệm sinh tự động từ concept/prerequisites.
-- Làng học: ga/lô đất/công trình đặt tự động từ track/concept/lesson; công trình 3D map qua `components/world/models/registry.tsx`
-  theo `WORLD_MODEL_KEYS`. Trạng thái làng (ruộng, đèn, cá, cây) chỉ suy ra từ dữ liệu học thật trong IndexedDB.
+- Không khoá bài: mọi bài đã viết đều mở; tiền đề chưa vững chỉ hiện là gợi ý ("nên biết trước", `weakPrerequisites`).
 - Nhận diện "Tuyến học": mỗi track có `color` (content/tracks) → biến CSS `--line-<track>`; vẽ đường ray màu ở /tracks (sơ đồ tuyến),
   trang track, đầu bài học, thanh bài trong ga. Tiêu đề/giao diện: Be Vietnam Pro (`font-display`); thân bài đọc: Newsreader (`--font-read`).
-- Điều hướng (`site.yaml → nav`): 4 điểm đến (Làng, Hôm nay, Lộ trình, Thực hành) + "Hỏi gia sư" + menu "Của bạn"; hub /workshop gom luyện tập.
-- Mô hình 3D CC0 (Kenney, Quaternius) trong `public/models` (+NOTICE); khai báo ở `content/world/assets.yaml`, validator đọc từng .glb.
-- Đồng hồ tập trung là `FocusProvider` trong AppShell (chạy mọi trang); logic thuần ở `lib/focus/machine.ts`.
-- `components/world/**` tắt rule `react-hooks/immutability` (three.js mutate object mỗi frame trong useFrame).
+- Điều hướng (`site.yaml → nav`): 4 điểm đến (Trang chủ, Hôm nay, Lộ trình, Thực hành) + "Hỏi gia sư" + menu "Của bạn"; hub /workshop gom luyện tập.
+- Không có đồ hoạ 3D (đã gỡ làng học, three.js); site là website học tập tĩnh, gọn.
 
 ## Quyết định kỹ thuật đã chốt
 - TypeScript 6.0.x (không dùng TS 7: typescript-eslint chưa hỗ trợ TS 7 tại thời điểm dựng dự án).
@@ -55,8 +52,8 @@ tests/       Vitest cho lib/
 
 ## Lệnh
 - `npm run check` — lines + validate + typecheck + lint + test (phải xanh trước khi commit).
-- `npm run build` — prebuild (lines, validate, content, pyodide) rồi `next build` → `out/`.
-- `npm run dev` — dựng content rồi chạy dev server.
+- `npm run build` — prebuild (lines, validate, pyodide) rồi `next build` → `out/`.
+- `npm run dev` — chép Pyodide rồi chạy dev server.
 
 ## Thêm nội dung
 - Khái niệm: thêm vào `content/concepts/<track>/<stage>.yaml`.

@@ -73,43 +73,6 @@ describe('learning-block validation', () => {
     expect(m.some((x) => x.includes('faded cần'))).toBe(true)
     expect(m.some((x) => x.includes('node không tồn tại'))).toBe(true)
   })
-  it('village: every simulator/lab/case/scenario needs exactly one landmark with a known model', () => {
-    const b = clone()
-    b.world.landmarks = b.world.landmarks.filter((l) => l.ref.id !== 'tvm')
-    b.world.landmarks[0]!.model = 'castle'
-    const m = messages(b)
-    expect(m.some((x) => x.startsWith('simulator:tvm') && x.includes('đúng một công trình'))).toBe(true)
-    expect(m.some((x) => x.includes('model "castle"'))).toBe(true)
-  })
-  it('village: rejects rail in the sea, unknown weather/ambience, bad guides and orphan focus views', () => {
-    const b = clone()
-    b.world.map.rail.points.push([0, b.world.map.coast.z + 50])
-    b.world.views[0]!.weather = 'bao-tuyet'
-    b.world.weather.presets[0]!.ambience = ['jazz']
-    b.world.guides[0]!.tutorMode = 'nope'
-    b.config.focus.journeys = b.config.focus.journeys.filter((j) => j.view !== 'hien-nha')
-    const m = messages(b)
-    expect(m.some((x) => x.includes('dưới biển'))).toBe(true)
-    expect(m.some((x) => x.includes('"bao-tuyet"'))).toBe(true)
-    expect(m.some((x) => x.includes('"jazz"'))).toBe(true)
-    expect(m.some((x) => x.includes('"nope"'))).toBe(true)
-    expect(m.some((x) => x.startsWith('view:hien-nha'))).toBe(true)
-  })
-  it('village: music progressions must stay inside the scale', () => {
-    const b = clone()
-    b.world.music.pieces[0]!.progression = [0, 99]
-    expect(messages(b).some((x) => x.includes('bậc hợp âm 99'))).toBe(true)
-  })
-  it('village graphics: unknown HDRI, quality ids and tree species are rejected', () => {
-    const b = clone()
-    b.world.graphics.looks[0]!.hdri = 'mars'
-    b.world.graphics.defaultQuality = 'ultra'
-    b.world.map.vegetation.species.lowland.push({ kind: 'baobab', weight: 1 })
-    const m = messages(b)
-    expect(m.some((x) => x.includes('"mars"'))).toBe(true)
-    expect(m.some((x) => x.includes('"ultra"'))).toBe(true)
-    expect(m.some((x) => x.includes('"baobab"'))).toBe(true)
-  })
   it('rejects a Callout kind that site.yaml does not declare', () => {
     const b = clone()
     const l = b.lessons.find((x) => x.id === 'w0-request-lifecycle')!

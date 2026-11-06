@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
-import { VillageEntry } from '@/components/village/village-entry'
+import { getContent } from '@/lib/content/server'
+import { HomeClient } from './home-client'
 
-export const metadata: Metadata = { title: { absolute: 'FinAI Academy — Làng học' }, description: 'Lộ trình học thành một ngôi làng 3D: tập trung theo chặng, ôn tập bên ao, công trình là mô phỏng và case.' }
+export function generateMetadata(): Metadata {
+  const { site } = getContent().config
+  return { title: { absolute: site.name }, description: site.tagline }
+}
 
-/** The village is the home page: the learning world is the hub, everything else hangs off it. */
+/** Home: what to study now (continue, due cards, today's plan) and the three tracks. */
 export default function HomePage() {
-  return <VillageEntry />
+  return <HomeClient />
 }
