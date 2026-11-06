@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3k-rule
+    conceptId: kyc-aml
+    prompt: "Viết (bằng YAML hoặc JSON) định nghĩa dữ liệu cho quy tắc 'trung chuyển': tài khoản mở dưới 30 ngày, nhận từ ít nhất N nguồn khác nhau trong 24 giờ, và chuyển đi ít nhất X% số tiền nhận trong vòng 2 giờ. Nêu các trường cần cho kiểm toán."
+    hint: "Tách tham số khỏi logic; có phiên bản và hiệu lực."
+    solution: "Ví dụ các trường: id: pass-through-new-account; version: 3; effectiveFrom: ngày; approvedBy: người duyệt; segment: tài khoản cá nhân; conditions: accountAgeDays < 30, distinctSendersInWindow >= N trong window 24h, outflowRatio >= X trong window 2h sau mỗi lần nhận; priority: cao. Kiểm toán: mọi cảnh báo lưu ruleId + version + giá trị tham số lúc đánh giá + dữ liệu đầu vào đã dùng. N và X là tham số được hiệu chỉnh bằng dữ liệu, không phải hằng số trong code."
+  - id: ex-f3k-names
+    conceptId: kyc-aml
+    prompt: "Tên trong danh sách cấm vận: 'NGUYEN VAN AN'. Khách hàng: 'Nguyễn Văn Ân', 'An Nguyen Van', 'Nguyễn Văn Anh'. Thiết kế bước chuẩn hoá và so khớp; xử lý thế nào để không quá nhiều cảnh báo giả?"
+    hint: "Bỏ dấu, chữ hoa, tách token, so tập token; thuộc tính phụ."
+    solution: "Chuẩn hoá: bỏ dấu (Ân→AN), chữ hoa, bỏ ký tự đặc biệt, tách token; so khớp theo tập token không phụ thuộc thứ tự → 'Nguyễn Văn Ân' và 'An Nguyen Van' khớp hoàn toàn, 'Nguyễn Văn Anh' khớp gần (khoảng cách chỉnh sửa nhỏ). Giảm cảnh báo giả: tính điểm khớp, đối chiếu thuộc tính phụ (ngày sinh, quốc tịch, số giấy tờ) trước khi đưa người xem; ghi lý do đóng cảnh báo để học ngưỡng. Không được hạ ngưỡng tới mức bỏ sót khớp thật — sai sót bỏ lọt nghiêm trọng hơn cảnh báo giả."

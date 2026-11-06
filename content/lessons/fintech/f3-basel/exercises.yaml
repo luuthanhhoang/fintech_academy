@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3b-shock
+    conceptId: capital-regulation
+    prompt: "Ngân hàng giả định: CET1 80 tỉ, RWA 1.000 tỉ. Một năm xấu: lỗ 25 tỉ (trừ thẳng vào CET1) và RWA tăng 10% do xếp hạng khách hàng xấu đi. Tính tỉ lệ CET1 trước và sau; so với 4,5% và 7%."
+    hint: "Cả tử số và mẫu số đều thay đổi."
+    solution: "Trước: 80/1.000 = 8,0%. Sau: 55/1.100 = 5,0%. Vẫn trên tối thiểu 4,5% nhưng dưới 7% → hạn chế phân phối lợi nhuận, phải lập kế hoạch khôi phục vốn. Bài học: suy thoái làm vốn giảm và RWA tăng cùng lúc."
+  - id: ex-f3b-raise
+    conceptId: capital-regulation
+    prompt: "Ngân hàng trong bài trên muốn trở lại 7% CET1. Nêu ba cách và tác động của mỗi cách tới tử số hoặc mẫu số."
+    hint: "Tăng vốn, giữ lợi nhuận, giảm RWA."
+    solution: "(1) Phát hành cổ phần mới → tăng CET1 (pha loãng cổ đông). (2) Giữ lại toàn bộ lợi nhuận, không chia cổ tức → tăng CET1 dần. (3) Giảm RWA: thu hẹp cho vay rủi ro cao, bán bớt danh mục, tăng tài sản bảo đảm → giảm mẫu số, nhưng giảm thu nhập và có thể ảnh hưởng khách hàng. Cần 7% × 1.100 = 77 tỉ CET1 nếu giữ nguyên RWA, tức thêm 22 tỉ."

@@ -1,10 +1,5 @@
 track: fintech
 lessons:
-  - { id: "f3-credit-risk", stage: "f3", order: 0, title: { vi: "Rủi ro tín dụng và tổn thất kỳ vọng", en: "Credit risk and expected loss" }, concepts: [credit-risk] }
-  - { id: "f3-market-liquidity-risk", stage: "f3", order: 1, title: { vi: "Rủi ro thị trường và thanh khoản", en: "Market and liquidity risk" }, concepts: [market-risk-var, liquidity-risk] }
-  - { id: "f3-operational-risk", stage: "f3", order: 2, title: { vi: "Rủi ro vận hành", en: "Operational risk" }, concepts: [operational-risk] }
-  - { id: "f3-kyc-aml", stage: "f3", order: 3, title: { vi: "KYC/AML cho kỹ sư", en: "KYC/AML for engineers" }, concepts: [kyc-aml] }
-  - { id: "f3-basel", stage: "f3", order: 4, title: { vi: "Vốn và thanh khoản theo Basel", en: "Basel capital and liquidity" }, concepts: [capital-regulation] }
   - { id: "f4-money-ledger", stage: "f4", order: 0, title: { vi: "Biểu diễn tiền và thiết kế sổ cái", en: "Money types and ledger design" }, concepts: [money-representation, ledger-design] }
   - { id: "f4-idempotency-recon", stage: "f4", order: 1, title: { vi: "Idempotency và đối soát", en: "Idempotency and reconciliation" }, concepts: [idempotency, reconciliation] }
   - { id: "f4-event-sourcing", stage: "f4", order: 2, title: { vi: "Event sourcing và audit trail", en: "Event sourcing and audit trails" }, concepts: [event-sourcing-audit] }

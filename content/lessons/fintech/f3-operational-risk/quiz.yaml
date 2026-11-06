@@ -1,0 +1,32 @@
+items:
+  - id: q-f3o-def
+    type: mcq
+    conceptId: operational-risk
+    prompt: "Theo định nghĩa của Basel, trường hợp nào là rủi ro vận hành? (chọn tất cả)"
+    options:
+      - { id: a, text: "Lỗi cấu hình làm hệ thống gửi lệnh sai" }
+      - { id: b, text: "Bị phạt do vi phạm quy định bảo vệ người tiêu dùng" }
+      - { id: c, text: "Trung tâm dữ liệu ngừng hoạt động do thiên tai" }
+      - { id: d, text: "Khách hàng vỡ nợ khoản vay" }
+    correct: [a, b, c]
+    explanation: "Vỡ nợ là rủi ro tín dụng. Lỗi hệ thống, rủi ro pháp lý và sự kiện bên ngoài thuộc rủi ro vận hành."
+  - id: q-f3o-kri
+    type: mcq
+    conceptId: operational-risk
+    prompt: "Chỉ số nào là KRI tốt (báo trước rủi ro) cho dịch vụ thanh toán?"
+    options:
+      - { id: a, text: "Tổng doanh thu tháng" }
+      - { id: b, text: "Số ngoại lệ đối soát tồn quá 3 ngày chưa giải thích" }
+      - { id: c, text: "Số nhân viên trong công ty" }
+    correct: [b]
+    explanation: "Ngoại lệ đối soát tồn đọng báo hiệu lỗi đang tích luỹ trước khi thành tổn thất lớn."
+  - id: q-f3o-control
+    type: mcq
+    conceptId: operational-risk
+    prompt: "Đội có quy trình kill switch trên giấy nhưng chưa bao giờ chạy thử. Đánh giá nào đúng?"
+    options:
+      - { id: a, text: "Kiểm soát đã đủ vì đã có tài liệu" }
+      - { id: b, text: "Chưa thể coi là kiểm soát hiệu quả cho tới khi được diễn tập và kiểm chứng hoạt động" }
+      - { id: c, text: "Kill switch không liên quan rủi ro vận hành" }
+    correct: [b]
+    explanation: "Kiểm soát chưa kiểm thử là giả định; diễn tập định kỳ biến nó thành bằng chứng."

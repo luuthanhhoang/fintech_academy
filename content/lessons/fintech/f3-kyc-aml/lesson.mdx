@@ -1,0 +1,96 @@
+---
+id: f3-kyc-aml
+track: fintech
+stage: f3
+order: 3
+title: { vi: "KYC/AML cho kỹ sư: định danh, giám sát và báo cáo", en: "KYC/AML for engineers: identification, monitoring and reporting" }
+summary: "Phòng chống rửa tiền (AML) yêu cầu tổ chức tài chính biết khách hàng là ai (KYC/CDD, kể cả chủ sở hữu hưởng lợi), đánh giá rủi ro theo khách hàng và sản phẩm, giám sát giao dịch để phát hiện dấu hiệu đáng ngờ, sàng lọc danh sách cấm vận, và báo cáo giao dịch đáng ngờ cho cơ quan chức năng. Với kỹ sư, đó là một hệ thống dữ liệu: quy tắc cấu hình được, hàng đợi cảnh báo, so khớp tên mờ, và dấu vết kiểm toán cho mọi quyết định."
+concepts: [kyc-aml]
+estMinutes: 40
+whyQuestion: "Một tài khoản mới nhận 40 khoản chuyển nhỏ từ 40 người lạ trong một ngày, rồi chuyển hết đi ngay. Hệ thống của bạn có phát hiện không — và phát hiện rồi thì phải làm gì, không được làm gì?"
+facts:
+  - id: vn-aml-effective
+    text: "Luật Phòng, chống rửa tiền số 14/2022/QH15 (thay thế Luật 07/2012/QH13) có hiệu lực từ"
+    value: "01/03/2023"
+    sourceId: vn-aml-law-2022
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "KYC / CDD"
+    dev: "Xác thực danh tính + hồ sơ rủi ro gắn với tài khoản"
+    explanation: "Không chỉ 'đăng ký xong'; hồ sơ phải được cập nhật và mức kiểm tra tăng theo rủi ro."
+  - finance: "Giám sát giao dịch"
+    dev: "Hệ thống phát hiện bất thường trên luồng sự kiện + hàng đợi xử lý của con người"
+    explanation: "Quy tắc và mô hình sinh cảnh báo; chuyên viên quyết định; mọi quyết định có lý do và dấu vết."
+  - finance: "Sàng lọc cấm vận"
+    dev: "So khớp mờ (fuzzy matching) với danh sách thay đổi liên tục"
+    explanation: "Tên viết khác nhau, có/không dấu, thứ tự họ tên — so khớp chính xác sẽ bỏ sót."
+pretest: [q-f3k-structuring, q-f3k-tipoff]
+applications:
+  - id: app-f3k-rules
+    title: "Bộ quy tắc giám sát giao dịch cấu hình bằng dữ liệu"
+    context: "Luồng giao dịch của một ví hoặc ngân hàng số (dữ liệu tổng hợp dán nhãn mô phỏng)."
+    task: "Thiết kế schema cho quy tắc (điều kiện, cửa sổ thời gian, ngưỡng, phân khúc khách áp dụng, mức ưu tiên) lưu dưới dạng dữ liệu thay vì if/else trong code; cài 3 quy tắc (chia nhỏ giao dịch, tiền vào nhiều nguồn rồi ra ngay, tăng đột biến so với lịch sử của chính khách); đo số cảnh báo/ngày và tỉ lệ cảnh báo được chuyên viên xác nhận trên dữ liệu thử; ghi nhật ký phiên bản quy tắc."
+    deliverable: "Schema quy tắc + engine đánh giá + báo cáo chất lượng cảnh báo theo phiên bản quy tắc."
+sources: [fatf-recommendations, vn-aml-law-2022]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Mô tả các thành phần của một chương trình AML từ góc nhìn hệ thống, và vì sao 'tiếp cận dựa trên rủi ro' quan trọng."
+  rubric:
+    - { id: kyc, criterion: "Định danh, xác minh khách hàng và chủ sở hữu hưởng lợi; hiểu mục đích quan hệ; cập nhật định kỳ" }
+    - { id: risk, criterion: "Tiếp cận dựa trên rủi ro: phân hạng khách/sản phẩm, tăng cường kiểm tra với rủi ro cao" }
+    - { id: monitor, criterion: "Giám sát giao dịch + sàng lọc cấm vận sinh cảnh báo; con người xem xét; báo cáo giao dịch đáng ngờ" }
+    - { id: audit, criterion: "Dấu vết kiểm toán cho quy tắc, cảnh báo, quyết định; không báo trước cho khách việc đã báo cáo" }
+---
+
+<Callout kind="story" title="Tài khoản 'trung chuyển'">
+Một ví điện tử giả định chạy chương trình thưởng mở tài khoản. Một tuần sau, đội vận hành nhận ra hàng trăm tài khoản mới có cùng kiểu hoạt động: nhận nhiều khoản nhỏ từ người lạ, chuyển hết sang một vài tài khoản khác trong vài phút. Hệ thống giám sát chỉ có một quy tắc: cảnh báo giao dịch đơn lẻ vượt một ngưỡng lớn. Không giao dịch nào chạm ngưỡng.
+</Callout>
+
+## Khung pháp lý
+
+- **Chuẩn quốc tế**: các Khuyến nghị của **FATF** là chuẩn toàn cầu về phòng chống rửa tiền và tài trợ khủng bố. Trọng tâm là **tiếp cận dựa trên rủi ro**: mức kiểm tra tương xứng với rủi ro của khách hàng, sản phẩm, kênh, địa bàn. Khuyến nghị 10 về **nhận biết khách hàng (CDD)**: định danh và xác minh khách hàng, xác định **chủ sở hữu hưởng lợi**, hiểu mục đích quan hệ, giám sát liên tục; cấm tài khoản ẩn danh.
+- **Việt Nam**: <Fact id="vn-aml-effective" />. Luật yêu cầu đối tượng báo cáo **tự đánh giá rủi ro rửa tiền** (Điều 15) và **báo cáo giao dịch đáng ngờ** (Điều 26). Văn bản hướng dẫn chi tiết (thủ tục, mẫu báo cáo, thời hạn) đã được ban hành và sửa đổi nhiều lần — phải đọc bản hiện hành, bài này không thay thế tư vấn pháp lý.
+
+## KYC: biết khách hàng là ai
+
+- **Định danh và xác minh**: giấy tờ, sinh trắc học, đối chiếu cơ sở dữ liệu được phép.
+- **Chủ sở hữu hưởng lợi** với khách hàng tổ chức: ai thật sự sở hữu, kiểm soát.
+- **Phân hạng rủi ro**: thấp / trung bình / cao, dựa trên nghề nghiệp, nguồn tiền, địa bàn, sản phẩm dùng, có phải người có ảnh hưởng chính trị không.
+- **Kiểm tra tăng cường** cho rủi ro cao; **cập nhật** hồ sơ định kỳ và khi hành vi thay đổi.
+
+## Giám sát giao dịch
+
+Hai nguồn cảnh báo, thường dùng cùng nhau:
+
+- **Quy tắc**: "nhiều giao dịch ngay dưới ngưỡng trong 24 giờ" (chia nhỏ), "tiền vào từ nhiều nguồn rồi ra gần hết trong thời gian ngắn" (trung chuyển), "hoạt động lệch xa lịch sử của chính khách".
+- **Mô hình**: phát hiện bất thường, đồ thị quan hệ giữa tài khoản (chặng F6).
+
+Mọi cảnh báo vào **hàng đợi** cho chuyên viên: xem xét, yêu cầu thêm thông tin, đóng (kèm lý do) hoặc lập **báo cáo giao dịch đáng ngờ**. Câu chuyện đầu bài thất bại vì chỉ có một quy tắc ngưỡng đơn lẻ — mẫu hành vi nằm ở **tổng hợp theo thời gian và theo mạng lưới**.
+
+<Diagram id="dg-aml-alert" />
+
+<Quiz id="q-f3k-structuring" />
+
+## Sàng lọc cấm vận
+
+So tên khách hàng và bên nhận với danh sách cấm vận/trừng phạt — **lúc mở tài khoản, khi danh sách cập nhật, và trên từng giao dịch** liên quan. Khó khăn kỹ thuật: tên có/không dấu, phiên âm khác nhau, đảo thứ tự họ tên, viết tắt. So khớp mờ tạo nhiều kết quả giả → cần thêm thuộc tính phụ (ngày sinh, quốc tịch) và người xem xét.
+
+## Báo cáo và giữ bí mật
+
+- Phát hiện dấu hiệu đáng ngờ → **báo cáo cho cơ quan có thẩm quyền** theo quy định.
+- Chuẩn quốc tế yêu cầu **không báo trước cho khách** (tipping-off) việc đã hoặc sẽ báo cáo về họ. Với hệ thống: thông báo hiển thị cho khách không được tiết lộ lý do AML; quyền xem trạng thái báo cáo giới hạn chặt.
+
+<Quiz id="q-f3k-tipoff" />
+
+## Yêu cầu kỹ thuật
+
+- **Quy tắc là dữ liệu**, có phiên bản, ngày hiệu lực, người duyệt — không if/else rải trong code.
+- **Dấu vết kiểm toán**: cảnh báo nào sinh từ quy tắc phiên bản nào, ai quyết định gì, lúc nào, lý do gì (chặng F4: event sourcing).
+- **Đo chất lượng**: số cảnh báo/ngày so với năng lực xử lý; tỉ lệ cảnh báo được xác nhận; thời gian xử lý; phần trăm cảnh báo quá hạn.
+- **Lưu giữ hồ sơ** theo thời hạn luật định.
+
+<Callout kind="field" title="Ngưỡng không phải là tài sản bí mật duy nhất">
+Nhiều đội coi ngưỡng cảnh báo là bí mật và chỉ cần thế. Kinh nghiệm của tôi: kẻ gian dò ra ngưỡng giao dịch đơn lẻ rất nhanh, nhưng khó né được quy tắc nhìn theo hành vi tổng hợp (tốc độ tiền vào–ra, số đối tác mới, độ lệch so với chính mình) và theo mạng lưới tài khoản. Tôi ưu tiên đầu tư vào đặc trưng hành vi và quan hệ hơn là tinh chỉnh ngưỡng số tiền.
+</Callout>

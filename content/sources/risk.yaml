@@ -1,0 +1,37 @@
+sources:
+  - id: bcbs-basel3-2010
+    title: "Group of Governors and Heads of Supervision announces higher global minimum capital standards (press release, annex calibration table)"
+    url: https://www.bis.org/press/p100912a.pdf
+    publisher: Basel Committee on Banking Supervision / BIS
+    accessed: 2026-11-06
+    note: "Bảng hiệu chuẩn Basel III: tối thiểu CET1 4,5%, Tier 1 6%, tổng vốn 8%; đệm bảo toàn vốn 2,5% bằng CET1. Không truy cập trực tiếp bis.org từ môi trường dựng; kiểm tra qua trích đoạn kết quả tìm kiếm."
+  - id: bcbs-lcr-2013
+    title: "Basel III: The Liquidity Coverage Ratio and liquidity risk monitoring tools (BCBS 238)"
+    url: https://www.bis.org/publ/bcbs238.htm
+    publisher: Basel Committee on Banking Supervision / BIS
+    accessed: 2026-11-06
+    note: Yêu cầu giữ tài sản thanh khoản chất lượng cao (HQLA) không bị cầm cố đủ đáp ứng 30 ngày căng thẳng; tối thiểu 100% khi áp dụng đầy đủ. Kiểm tra qua trích đoạn kết quả tìm kiếm; nay đã hợp nhất vào Basel Framework.
+  - id: bcbs-basel2-2004
+    title: "International Convergence of Capital Measurement and Capital Standards: a Revised Framework (Basel II, BCBS 107)"
+    url: https://www.bis.org/publ/bcbs107.htm
+    publisher: Basel Committee on Banking Supervision / BIS
+    accessed: 2026-11-06
+    note: Định nghĩa rủi ro vận hành (tổn thất do quy trình, con người, hệ thống nội bộ không đầy đủ hoặc thất bại, hoặc do sự kiện bên ngoài; gồm rủi ro pháp lý, không gồm rủi ro chiến lược và danh tiếng) và cách tiếp cận IRB với PD, LGD, EAD — đối chiếu qua trích dẫn thứ cấp.
+  - id: bcbs-market-risk-2019
+    title: "Minimum capital requirements for market risk (BCBS d457, January 2019)"
+    url: https://www.bis.org/bcbs/publ/d457.htm
+    publisher: Basel Committee on Banking Supervision / BIS
+    accessed: 2026-11-06
+    note: FRTB — mô hình nội bộ chuyển từ VaR sang Expected Shortfall dưới kịch bản căng thẳng. Mức tin cậy cụ thể chỉ xác nhận qua nguồn thứ cấp — needs_verification, bài không nêu con số.
+  - id: fatf-recommendations
+    title: "International Standards on Combating Money Laundering and the Financing of Terrorism & Proliferation — The FATF Recommendations"
+    url: https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Fatf-recommendations.html
+    publisher: Financial Action Task Force (FATF)
+    accessed: 2026-11-06
+    note: Chuẩn quốc tế về phòng chống rửa tiền; tiếp cận dựa trên rủi ro; Khuyến nghị 10 về nhận biết khách hàng (CDD). Kiểm tra qua nguồn thứ cấp và tài liệu tham vấn của FATF.
+  - id: vn-aml-law-2022
+    title: "Luật Phòng, chống rửa tiền số 14/2022/QH15"
+    url: https://thuvienphapluat.vn/van-ban/Tien-te-Ngan-hang/Law-14-2022-QH15-Anti-Money-Laundering-547270.aspx
+    publisher: Quốc hội (bản đăng trên Thư viện Pháp luật)
+    accessed: 2026-11-06
+    note: Thông qua 15/11/2022, hiệu lực 01/03/2023, thay thế Luật 07/2012/QH13; Điều 15 đánh giá rủi ro, Điều 26 báo cáo giao dịch đáng ngờ. Văn bản hướng dẫn và sửa đổi sau đó (2025–2026) chưa đối chiếu — needs_verification cho chi tiết thủ tục.

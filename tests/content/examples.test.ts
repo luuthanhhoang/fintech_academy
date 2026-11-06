@@ -33,6 +33,13 @@ const EXPECTED: Record<string, number[]> = {
   'we-duration-gap': [6 - (1840 / 2000) * 0.8, -(6 - (1840 / 2000) * 0.8) * 2000 * 0.02],
   // Wallet reconciliation: ledger + unposted deposits, minus (bank − in-flight withdrawals).
   'we-wallet-recon': [980 + 12, 980 + 12 - (1000 - 30)],
+  // Expected loss EL = PD × LGD × EAD per segment, then share of total exposure.
+  // Parametric VaR = z × σ × value; LCR = HQLA / (outflows − inflows).
+  'we-param-var': [1.645 * 0.015 * 10000, 2.326 * 0.015 * 10000],
+  'we-lcr': [1200 - 400, (900 / (1200 - 400)) * 100],
+  // RWA = Σ exposure × weight (+ market/operational); CET1 ratio = CET1 / RWA.
+  'we-cet1': [400 * 0.35 + 300 * 1, (60 / (400 * 0.35 + 300 * 1 + 100)) * 100],
+  'we-credit-el': [0.08 * 0.8 * 200, ((0.01 * 0.4 * 500 + 0.03 * 0.5 * 300 + 0.08 * 0.8 * 200) / 1000) * 100],
 }
 
 describe('worked examples match the tested libraries', () => {

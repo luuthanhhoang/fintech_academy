@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3o-event
+    conceptId: operational-risk
+    prompt: "Ghi một sự kiện tổn thất đầy đủ cho câu chuyện đầu bài (giả định 10.000 khách, phí 15.000 đ mỗi lần trừ thừa, 1.200 cuộc gọi tổng đài chi phí 20.000 đ/cuộc)."
+    hint: "Nhóm sự kiện, nguyên nhân gốc, tổn thất trực tiếp, thu hồi, hành động."
+    solution: "Nhóm: thực hiện, chuyển giao, quản lý quy trình (lỗi triển khai) kéo theo khách hàng/sản phẩm (tính phí sai). Nguyên nhân gốc: thay đổi thứ tự xử lý không có test hồi quy cho tính phí; đối soát cuối ngày không so số lần thu phí theo giao dịch. Tổn thất trực tiếp: hoàn 10.000 × 15.000 = 150 triệu (trả lại tiền của khách) + tổng đài 1.200 × 20.000 = 24 triệu. Thu hồi: 0. Hành động: test hồi quy tính phí, kiểm soát đối soát 'một phí mỗi giao dịch', triển khai từng phần với cảnh báo số lần thu phí bất thường, đánh giá nghĩa vụ báo cáo."
+  - id: ex-f3o-kri
+    conceptId: operational-risk
+    prompt: "Đề xuất 4 KRI cho một nền tảng cho vay số, kèm ngưỡng cảnh báo và người chịu trách nhiệm."
+    hint: "Thay đổi, quyền truy cập, đối soát, nhà cung cấp."
+    solution: "(1) Tỉ lệ thay đổi production không qua review — ngưỡng > 0 trong tuần; trưởng nhóm kỹ thuật. (2) Số tài khoản đặc quyền chưa rà soát quá 90 ngày — ngưỡng > 0; bảo mật. (3) Ngoại lệ đối soát giải ngân tồn quá 2 ngày — ngưỡng > 5 khoản hoặc bất kỳ khoản lớn; vận hành tài chính. (4) Thời gian gián đoạn của nhà cung cấp eKYC trong tháng — ngưỡng vượt SLA hợp đồng; quản lý nhà cung cấp. Ngưỡng là đề xuất ban đầu, hiệu chỉnh theo dữ liệu thực tế."

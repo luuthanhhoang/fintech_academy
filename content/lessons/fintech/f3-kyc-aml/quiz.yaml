@@ -1,0 +1,31 @@
+items:
+  - id: q-f3k-structuring
+    type: mcq
+    conceptId: kyc-aml
+    prompt: "Quy tắc nào bắt được mẫu 'tài khoản trung chuyển' trong câu chuyện đầu bài?"
+    options:
+      - { id: a, text: "Cảnh báo khi một giao dịch đơn lẻ vượt ngưỡng lớn" }
+      - { id: b, text: "Cảnh báo khi tài khoản mới nhận tiền từ nhiều nguồn khác nhau và chuyển đi phần lớn trong thời gian ngắn" }
+      - { id: c, text: "Cảnh báo khi khách đăng nhập từ thiết bị mới" }
+    correct: [b]
+    explanation: "Mẫu hành vi nằm ở tổng hợp theo thời gian và số đối tác, không ở từng giao dịch."
+  - id: q-f3k-tipoff
+    type: mcq
+    conceptId: kyc-aml
+    prompt: "Sau khi lập báo cáo giao dịch đáng ngờ về một khách, ứng dụng nên hiển thị gì cho khách khi tài khoản bị tạm giới hạn?"
+    options:
+      - { id: a, text: "'Tài khoản bị khoá vì bị nghi ngờ rửa tiền, đã báo cáo cơ quan chức năng'" }
+      - { id: b, text: "Thông báo chung theo quy trình (ví dụ cần bổ sung thông tin), không tiết lộ việc báo cáo" }
+      - { id: c, text: "Không giới hạn gì để tránh khách nghi ngờ" }
+    correct: [b]
+    explanation: "Chuẩn quốc tế cấm báo trước cho khách về việc báo cáo; nội dung thông báo phải được thiết kế cùng bộ phận tuân thủ."
+  - id: q-f3k-risk
+    type: mcq
+    conceptId: kyc-aml
+    prompt: "'Tiếp cận dựa trên rủi ro' trong AML nghĩa là gì?"
+    options:
+      - { id: a, text: "Áp mức kiểm tra giống hệt nhau cho mọi khách hàng" }
+      - { id: b, text: "Mức kiểm tra và giám sát tương xứng với rủi ro của khách hàng, sản phẩm, kênh, địa bàn — tăng cường cho rủi ro cao" }
+      - { id: c, text: "Chỉ kiểm tra khách hàng có giao dịch lớn" }
+    correct: [b]
+    explanation: "Đây là trọng tâm của các Khuyến nghị FATF và yêu cầu tự đánh giá rủi ro trong luật Việt Nam."

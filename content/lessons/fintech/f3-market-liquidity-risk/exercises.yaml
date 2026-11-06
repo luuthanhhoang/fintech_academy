@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3m-hist
+    conceptId: market-risk-var
+    prompt: "Lỗ 20 ngày tệ nhất (tỉ, sắp xếp giảm dần) trong 1.000 ngày lịch sử áp lên danh mục hiện tại: 9,1; 7,4; 6,8; 6,0; 5,5; 5,2; 4,9; 4,7; 4,6; 4,4; 4,3; 4,1; ... Tính VaR lịch sử 99% và ES 99% (dùng quy ước: VaR là lỗ lớn thứ 10, ES là trung bình 10 lỗ lớn nhất)."
+    hint: "1% của 1.000 ngày = 10 ngày."
+    solution: "VaR 99% = lỗ lớn thứ 10 = 4,4 tỉ (theo quy ước đã nêu). ES 99% = trung bình 10 lỗ lớn nhất = (9,1 + 7,4 + 6,8 + 6,0 + 5,5 + 5,2 + 4,9 + 4,7 + 4,6 + 4,4) / 10 = 58,6 / 10 = 5,86 tỉ. ES lớn hơn VaR khoảng 33% vì đuôi có vài ngày rất xấu."
+  - id: ex-f3m-ladder
+    conceptId: liquidity-risk
+    prompt: "Thang dòng tiền (tỉ) của một ngân hàng giả định trong kịch bản căng thẳng: tuần 1 vào 40, ra 120; tuần 2 vào 50, ra 90; tuần 3 vào 60, ra 70; tuần 4 vào 70, ra 60. Đệm thanh khoản 130 tỉ. Ngân hàng trụ được tới tuần nào?"
+    hint: "Cộng dồn khe hở ròng, so với đệm."
+    solution: "Khe hở ròng: −80, −40, −10, +10. Cộng dồn: −80, −120, −130, −120. Đệm 130 vừa đủ tới hết tuần 3 (thiếu hụt tích luỹ đúng bằng 130), không còn dư cho bất kỳ sai lệch nào — cần tăng đệm hoặc nguồn vay dự phòng."

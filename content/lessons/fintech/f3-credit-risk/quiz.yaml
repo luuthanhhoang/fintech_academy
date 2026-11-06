@@ -1,0 +1,30 @@
+items:
+  - id: q-f3c-el
+    type: numeric
+    conceptId: credit-risk
+    prompt: "Khoản vay dư nợ 200 triệu, PD 12 tháng 4%, LGD 60%. Tổn thất kỳ vọng là bao nhiêu triệu?"
+    answer: 4.8
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "triệu"
+    explanation: "EL = 0,04 × 0,6 × 200 = 4,8 triệu, tức 2,4% dư nợ."
+  - id: q-f3c-price
+    type: mcq
+    conceptId: credit-risk
+    prompt: "Quay lại câu hỏi đầu bài: lãi suất 30%/năm, tỉ lệ nợ xấu 8%. Thiếu thông tin nào để biết sản phẩm lãi hay lỗ? (chọn tất cả)"
+    options:
+      - { id: a, text: "LGD — phần mất thật sau thu hồi khi khách vỡ nợ" }
+      - { id: b, text: "Chi phí vốn và chi phí vận hành, thu nợ" }
+      - { id: c, text: "Tỉ lệ 8% đo thế nào: theo vintage đã đủ thời gian hay trên danh mục đang tăng nhanh" }
+      - { id: d, text: "Màu logo của sản phẩm" }
+    correct: [a, b, c]
+    explanation: "Lợi nhuận ≈ lãi − chi phí vốn − chi phí vận hành − PD × LGD; và PD phải được đo đúng cách."
+  - id: q-f3c-ul
+    type: mcq
+    conceptId: credit-risk
+    prompt: "Vì sao tổn thất của danh mục trong suy thoái có thể vượt xa tổng EL đã tính?"
+    options:
+      - { id: a, text: "Vì các khoản vay vỡ nợ cùng nhau và giá tài sản bảo đảm giảm, nên PD và LGD cùng tăng" }
+      - { id: b, text: "Vì EL luôn tính sai" }
+      - { id: c, text: "Vì trong suy thoái lãi suất cho vay giảm" }
+    correct: [a]
+    explanation: "Tương quan làm đuôi phân phối tổn thất dày; vốn được dành cho phần ngoài kỳ vọng đó."

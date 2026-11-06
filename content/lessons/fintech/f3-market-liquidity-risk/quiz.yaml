@@ -1,0 +1,29 @@
+items:
+  - id: q-f3m-var-meaning
+    type: mcq
+    conceptId: market-risk-var
+    prompt: "'VaR 1 ngày 99% = 5 tỉ' nghĩa là gì?"
+    options:
+      - { id: a, text: "Lỗ tối đa có thể xảy ra trong một ngày là 5 tỉ" }
+      - { id: b, text: "Theo mô hình, khoảng 1% số ngày có mức lỗ vượt 5 tỉ; VaR không cho biết vượt bao nhiêu" }
+      - { id: c, text: "Lỗ trung bình mỗi ngày là 5 tỉ" }
+    correct: [b]
+    explanation: "VaR là một phân vị, không phải mức trần; phần đuôi cần Expected Shortfall và kịch bản căng thẳng."
+  - id: q-f3m-backtest
+    type: numeric
+    conceptId: market-risk-var
+    prompt: "Trong 250 ngày giao dịch, nếu mô hình VaR 99% đúng, số ngày lỗ vượt VaR kỳ vọng là bao nhiêu?"
+    answer: 2.5
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "ngày"
+    explanation: "250 × 1% = 2,5. Thấy 10 lần vượt là dấu hiệu mô hình đánh giá thấp rủi ro."
+  - id: q-f3m-liq
+    type: mcq
+    conceptId: liquidity-risk
+    prompt: "Một quỹ phải bán gấp một lượng lớn trái phiếu ít giao dịch để đáp ứng yêu cầu rút vốn, làm giá giảm mạnh. Những mặt rủi ro thanh khoản nào xuất hiện? (chọn tất cả)"
+    options:
+      - { id: a, text: "Thanh khoản nguồn vốn — phải đáp ứng nghĩa vụ rút vốn đến hạn" }
+      - { id: b, text: "Thanh khoản thị trường — bán khối lượng lớn làm giá rơi" }
+      - { id: c, text: "Rủi ro vận hành" }
+    correct: [a, b]
+    explanation: "Hai mặt khuếch đại nhau: nhu cầu tiền ép phải bán, bán gấp làm giá rơi."

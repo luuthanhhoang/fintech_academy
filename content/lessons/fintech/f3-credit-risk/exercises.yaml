@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3c-breakeven
+    conceptId: credit-risk
+    prompt: "Khoản vay tiêu dùng không bảo đảm: LGD 85%, chi phí vốn 8%/năm, chi phí vận hành 6%/năm (trên dư nợ). Lãi suất 30%/năm. PD tối đa bao nhiêu để hoà vốn (bỏ qua thuế, coi tổn thất xảy ra trong năm)?"
+    hint: "Lãi − chi phí vốn − chi phí vận hành = PD × LGD."
+    solution: "Biên trước rủi ro = 30% − 8% − 6% = 16%. Hoà vốn khi PD × 0,85 = 16% → PD ≈ 18,8%. Nếu tính thêm việc khách vỡ nợ không trả lãi cả năm thì ngưỡng còn thấp hơn. Với PD đo theo vintage vượt mức này, sản phẩm lỗ dù lãi suất cao."
+  - id: ex-f3c-ead
+    conceptId: credit-risk
+    prompt: "Thẻ tín dụng hạn mức 50 triệu, đang dùng 20 triệu. Dữ liệu (giả định) cho thấy trước khi vỡ nợ, khách thường rút thêm 60% phần hạn mức chưa dùng. Ước lượng EAD; vì sao dùng dư nợ hiện tại sẽ đánh giá thấp rủi ro?"
+    hint: "EAD = dư nợ hiện tại + tỉ lệ rút thêm × hạn mức chưa dùng."
+    solution: "EAD = 20 + 0,6 × 30 = 38 triệu. Khách gặp khó khăn tài chính có xu hướng rút hết hạn mức trước khi vỡ nợ, nên dư nợ hiện tại (20) đánh giá thấp gần một nửa mức phơi nhiễm."

@@ -1,0 +1,99 @@
+---
+id: f3-market-liquidity-risk
+track: fintech
+stage: f3
+order: 1
+title: { vi: "Rủi ro thị trường và rủi ro thanh khoản", en: "Market risk and liquidity risk" }
+summary: "Rủi ro thị trường là tổn thất do giá biến động; Value at Risk (VaR) tóm tắt nó thành một con số 'mức lỗ không vượt quá với xác suất p trong h ngày' — hữu ích nhưng mù với đuôi phân phối, nên cần thêm Expected Shortfall và kịch bản căng thẳng. Rủi ro thanh khoản có hai mặt: không đủ tiền trả nghĩa vụ đến hạn (thanh khoản nguồn vốn) và không bán được tài sản mà không làm giá sụp (thanh khoản thị trường). Basel đo mặt thứ nhất bằng tỉ lệ bao phủ thanh khoản (LCR)."
+concepts: [market-risk-var, liquidity-risk]
+estMinutes: 45
+whyQuestion: "Báo cáo nói 'VaR 1 ngày 99% của danh mục là 5 tỉ'. Điều đó có nghĩa là ngày tệ nhất bạn mất tối đa 5 tỉ không?"
+facts:
+  - id: lcr-def
+    text: "Tỉ lệ bao phủ thanh khoản (LCR) của Basel III yêu cầu ngân hàng giữ tài sản thanh khoản chất lượng cao không bị cầm cố, đủ đáp ứng dòng tiền ra ròng trong"
+    value: "30 ngày căng thẳng; mức tối thiểu 100% khi áp dụng đầy đủ"
+    sourceId: bcbs-lcr-2013
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "VaR 99%"
+    dev: "Độ trễ p99"
+    explanation: "Nói 99% số ngày lỗ không vượt quá X, nhưng không nói gì về 1% còn lại — giống p99 không cho biết p99,9."
+  - finance: "Expected Shortfall"
+    dev: "Trung bình của các request chậm hơn p99"
+    explanation: "Nhìn vào chính phần đuôi thay vì chỉ ranh giới của nó."
+  - finance: "Thang đáo hạn dòng tiền"
+    dev: "Dự báo dung lượng theo từng khung thời gian"
+    explanation: "Xếp dòng tiền vào/ra theo ngày để thấy ngày nào thiếu hụt — như capacity planning theo giờ cao điểm."
+pretest: [q-f3m-var-meaning, q-f3m-liq]
+applications:
+  - id: app-f3m-var
+    title: "Tính VaR lịch sử và kiểm định ngược"
+    context: "Chuỗi giá đóng cửa công khai của vài tài sản (ghi nguồn và ngày tải) hoặc dữ liệu tổng hợp dán nhãn mô phỏng."
+    task: "Tính lợi suất ngày của một danh mục cố định trọng số; VaR 1 ngày 99% theo phương pháp lịch sử (cửa sổ 250 ngày trượt) và tham số (chuẩn); Expected Shortfall 99%; đếm số ngày lỗ thực tế vượt VaR trong giai đoạn kiểm định và so với kỳ vọng 1%."
+    deliverable: "Notebook + biểu đồ lỗ thực tế so với VaR + bảng số lần vượt."
+sources: [bcbs-lcr-2013, bcbs-market-risk-2019, openstax-finance]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích VaR nói gì và không nói gì, và hai mặt của rủi ro thanh khoản."
+  rubric:
+    - { id: var, criterion: "VaR(p, h): mức lỗ mà với xác suất p sẽ không bị vượt trong h ngày, dưới giả định mô hình/dữ liệu" }
+    - { id: limits, criterion: "Không nói độ lớn lỗ trong phần đuôi; phụ thuộc giai đoạn dữ liệu; cần ES và kịch bản căng thẳng" }
+    - { id: two-faces, criterion: "Thanh khoản nguồn vốn (trả nghĩa vụ đến hạn) và thanh khoản thị trường (bán mà không làm sụp giá)" }
+    - { id: lcr, criterion: "LCR: HQLA không cầm cố đủ cho dòng tiền ra ròng 30 ngày căng thẳng" }
+---
+
+<Callout kind="story" title="Con số 'tối đa' không phải tối đa">
+Một bàn giao dịch giả định báo cáo VaR 1 ngày 99% ổn định suốt hai năm thị trường êm. Ban lãnh đạo hiểu đó là "ngày tệ nhất". Rồi một ngày thị trường biến động mạnh, khoản lỗ gấp nhiều lần VaR. Mô hình không sai — nó chỉ chưa bao giờ hứa điều mà người đọc nghĩ nó hứa.
+</Callout>
+
+## Value at Risk
+
+**VaR(p, h)**: mức lỗ mà, theo mô hình, chỉ bị vượt với xác suất 1 − p trong h ngày. "VaR 1 ngày 99% = 5 tỉ" nghĩa là: khoảng 1 ngày trong 100 ngày, lỗ **vượt** 5 tỉ — và VaR không nói vượt bao nhiêu.
+
+Ba cách tính phổ biến:
+
+- **Lịch sử**: áp lợi suất thực tế của N ngày qua lên danh mục hiện tại, lấy phân vị.
+- **Tham số**: giả định phân phối (thường chuẩn): VaR ≈ z_p × σ × giá trị danh mục, với z ≈ 2,326 cho 99% và 1,645 cho 95%.
+- **Monte Carlo**: mô phỏng nhiều kịch bản (chặng F5).
+
+<WorkedExample id="we-param-var" />
+
+<Quiz id="q-f3m-var-meaning" />
+
+## Giới hạn của VaR
+
+- **Mù phần đuôi**: hai danh mục cùng VaR có thể có mức lỗ trong 1% ngày xấu nhất khác nhau rất xa.
+- **Phụ thuộc giai đoạn dữ liệu**: cửa sổ toàn ngày êm cho VaR thấp — đúng lúc rủi ro tích tụ.
+- **Giả định chuẩn** đánh giá thấp đuôi dày của lợi suất tài chính (chặng F5).
+- **Không cộng gộp tốt**: VaR của tổng có thể lớn hơn tổng VaR các phần trong một số trường hợp.
+
+Bổ sung:
+
+- **Expected Shortfall (ES)**: lỗ **trung bình** trong các ngày tệ hơn VaR — nhìn vào chính phần đuôi. Khung rủi ro thị trường sửa đổi của Basel (FRTB) chuyển mô hình nội bộ từ VaR sang Expected Shortfall đo dưới điều kiện căng thẳng.
+- **Kịch bản căng thẳng**: "lãi suất +300 điểm, cổ phiếu −30%" — không cần xác suất, hỏi thẳng hậu quả.
+- **Kiểm định ngược (backtesting)**: đếm số ngày lỗ thật vượt VaR; với 99% trên 250 ngày, kỳ vọng khoảng 2–3 lần.
+
+<Quiz id="q-f3m-backtest" />
+
+## Rủi ro thanh khoản: hai mặt
+
+**Thanh khoản nguồn vốn**: không đủ tiền mặt trả nghĩa vụ đến hạn — rút tiền gửi, nợ đáo hạn, gọi ký quỹ. Nhắc lại bài ALM và case SVB.
+
+**Thanh khoản thị trường**: muốn bán một lượng lớn tài sản mà không làm giá rơi mạnh (bài sổ lệnh — đi sâu vào sổ, chênh lệch mua–bán). Hai mặt khuếch đại nhau: thiếu tiền → bán gấp → giá rơi → tài sản bảo đảm mất giá → thiếu tiền thêm.
+
+Công cụ:
+
+- **Thang đáo hạn dòng tiền**: xếp dòng tiền vào/ra theo từng khung thời gian, tìm khe hở.
+- **Đệm thanh khoản**: tài sản bán hoặc cầm cố được nhanh mà ít mất giá.
+- **LCR** của Basel III: <Fact id="lcr-def" />. Bổ sung tỉ lệ nguồn vốn ổn định ròng (NSFR) cho tầm nhìn dài hơn.
+- **Kế hoạch nguồn vốn dự phòng** đã diễn tập.
+
+<WorkedExample id="we-lcr" />
+
+<Quiz id="q-f3m-liq" />
+
+<Callout kind="field" title="Báo VaR luôn kèm ba thứ">
+Tôi không chấp nhận một dòng "VaR = X" đứng một mình. Kèm theo phải có: Expected Shortfall cùng mức tin cậy, kết quả của hai–ba kịch bản căng thẳng lịch sử hoặc giả định, và số lần vượt VaR trong năm qua so với kỳ vọng. Ba con số đó trả lời câu hỏi mà ban lãnh đạo thật sự quan tâm: "ngày xấu thì xấu tới đâu, và mô hình có đáng tin không".
+</Callout>

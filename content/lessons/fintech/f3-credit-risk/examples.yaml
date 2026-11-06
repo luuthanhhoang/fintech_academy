@@ -1,0 +1,21 @@
+examples:
+  - id: we-credit-el
+    title: "Tổn thất kỳ vọng của danh mục ba nhóm (giả định)"
+    conceptId: credit-risk
+    problem: "Dữ liệu tổng hợp (mô phỏng): nhóm A dư nợ 500 tỉ, PD 1%, LGD 40%; nhóm B 300 tỉ, PD 3%, LGD 50%; nhóm C 200 tỉ, PD 8%, LGD 80%. Tính EL từng nhóm, tổng EL và EL trên tổng dư nợ."
+    steps:
+      - text: "EL_A = 0,01 × 0,4 × 500 = 2 tỉ; EL_B = 0,03 × 0,5 × 300 = 4,5 tỉ."
+      - text: "EL_C = 0,08 × 0,8 × 200 = 12,8 tỉ."
+        faded: true
+        prompt: "EL nhóm C bằng bao nhiêu tỉ?"
+        answer: 12.8
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "tỉ"
+      - text: "Tổng EL = 2 + 4,5 + 12,8 = 19,3 tỉ; trên 1.000 tỉ dư nợ là 1,93%."
+        faded: true
+        prompt: "EL trên tổng dư nợ bằng bao nhiêu %?"
+        answer: 1.93
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+      - text: "Nhóm C chỉ chiếm 20% dư nợ nhưng gần 2/3 tổn thất kỳ vọng."
+    takeaway: "Tổn thất dồn vào nhóm rủi ro cao; giá và hạn mức phải phân theo nhóm chứ không theo trung bình danh mục."

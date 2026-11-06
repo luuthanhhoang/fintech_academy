@@ -1,0 +1,29 @@
+items:
+  - id: q-f3b-rwa
+    type: mcq
+    conceptId: capital-regulation
+    prompt: "Vì sao tỉ lệ vốn theo Basel dùng RWA thay vì tổng tài sản?"
+    options:
+      - { id: a, text: "Để vốn yêu cầu tương xứng với mức rủi ro của từng loại tài sản" }
+      - { id: b, text: "Vì RWA luôn lớn hơn tổng tài sản" }
+      - { id: c, text: "Để ngân hàng không phải công bố tổng tài sản" }
+    correct: [a]
+    explanation: "Trọng số rủi ro phân biệt tài sản an toàn và rủi ro; tỉ lệ đòn bẩy không trọng số bổ sung như lưới an toàn."
+  - id: q-f3b-buffer
+    type: numeric
+    conceptId: capital-regulation
+    prompt: "Ngân hàng giả định có CET1 60 tỉ, RWA 900 tỉ. Tỉ lệ CET1 là bao nhiêu % (2 chữ số thập phân)? So với mức 7% (tối thiểu + đệm bảo toàn), ngân hàng ở trên hay dưới?"
+    answer: 6.67
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "60 / 900 ≈ 6,67%: trên mức tối thiểu 4,5% nhưng dưới 7%, nên bị hạn chế phân phối lợi nhuận theo khung Basel III."
+  - id: q-f3b-local
+    type: mcq
+    conceptId: capital-regulation
+    prompt: "Bạn xây hệ thống báo cáo tỉ lệ vốn cho một ngân hàng Việt Nam. Nguồn sự thật cho trọng số rủi ro và cách tính là gì?"
+    options:
+      - { id: a, text: "Văn bản Basel gốc trên trang của BIS" }
+      - { id: b, text: "Văn bản quy định hiện hành của Ngân hàng Nhà nước áp dụng cho ngân hàng đó" }
+      - { id: c, text: "Bảng trọng số trong một bài blog" }
+    correct: [b]
+    explanation: "Basel là chuẩn; quy định của từng nước mới có hiệu lực pháp lý và có thể khác chuẩn gốc."

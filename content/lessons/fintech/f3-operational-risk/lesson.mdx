@@ -1,0 +1,92 @@
+---
+id: f3-operational-risk
+track: fintech
+stage: f3
+order: 2
+title: { vi: "Rủi ro vận hành: khi quy trình, con người, hệ thống thất bại", en: "Operational risk: when processes, people and systems fail" }
+summary: "Basel định nghĩa rủi ro vận hành là rủi ro tổn thất do quy trình, con người và hệ thống nội bộ không đầy đủ hoặc thất bại, hoặc do sự kiện bên ngoài. Với một công ty fintech, phần lớn rủi ro này nằm trong phần mềm: lỗi triển khai, cấu hình sai, phụ thuộc bên thứ ba, gian lận nội bộ, mất dữ liệu. Quản trị nó giống kỹ thuật độ tin cậy: thu thập sự kiện tổn thất, chỉ số rủi ro chính, kiểm soát được kiểm thử, và học từ sự cố."
+concepts: [operational-risk]
+estMinutes: 35
+whyQuestion: "Một lần triển khai lỗi khiến ứng dụng trừ phí hai lần cho 10.000 khách trong 40 phút. Đó là sự cố kỹ thuật hay tổn thất tài chính — và ai phải biết, đo và ngăn nó?"
+devMapping:
+  - finance: "Rủi ro vận hành"
+    dev: "Toàn bộ những gì SRE và bảo mật lo, cộng thêm quy trình thủ công và con người"
+    explanation: "Khác ở chỗ hậu quả được đo bằng tiền, khiếu nại và vi phạm quy định, không chỉ bằng phút downtime."
+  - finance: "Cơ sở dữ liệu sự kiện tổn thất"
+    dev: "Kho postmortem có trường chi phí"
+    explanation: "Mỗi sự cố ghi lại nguyên nhân, tổn thất trực tiếp, thu hồi được, và hành động khắc phục."
+  - finance: "Chỉ số rủi ro chính (KRI)"
+    dev: "SLI/cảnh báo xu hướng"
+    explanation: "Đo những thứ báo trước sự cố: tỉ lệ thay đổi khẩn cấp, ngoại lệ đối soát tồn đọng, quyền truy cập chưa rà soát."
+pretest: [q-f3o-def, q-f3o-kri]
+applications:
+  - id: app-f3o-register
+    title: "Sổ đăng ký rủi ro vận hành cho một dịch vụ"
+    context: "Một dịch vụ tài chính bạn vận hành (thanh toán, ví, cho vay...)."
+    task: "Liệt kê 10 rủi ro theo nguyên nhân (quy trình, con người, hệ thống, bên ngoài); với mỗi rủi ro: kịch bản, ước lượng tần suất và mức độ (định tính nếu thiếu dữ liệu, ghi rõ), kiểm soát hiện có, cách kiểm thử kiểm soát, KRI và ngưỡng; đánh dấu ba rủi ro cần hành động ngay."
+    deliverable: "Bảng đăng ký rủi ro + kế hoạch kiểm thử kiểm soát cho ba rủi ro ưu tiên."
+cases: [knight-capital-2012]
+sources: [bcbs-basel2-2004, sec-knight-2013]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Định nghĩa rủi ro vận hành theo Basel và mô tả cách một công ty fintech đo và giảm nó."
+  rubric:
+    - { id: def, criterion: "Tổn thất do quy trình, con người, hệ thống nội bộ không đầy đủ/thất bại hoặc sự kiện bên ngoài; gồm rủi ro pháp lý" }
+    - { id: data, criterion: "Thu thập sự kiện tổn thất (kể cả suýt xảy ra), phân loại theo nguyên nhân" }
+    - { id: kri, criterion: "KRI báo trước sự cố, có ngưỡng và người chịu trách nhiệm" }
+    - { id: controls, criterion: "Kiểm soát (phân quyền, bốn mắt, kiểm tra cấu hình, triển khai từng phần) được kiểm thử định kỳ; học từ sự cố" }
+---
+
+<Callout kind="story" title="Bốn mươi phút trừ phí hai lần">
+Một bản cập nhật dịch vụ tính phí giả định đổi thứ tự hai bước xử lý; trong 40 phút, một nhóm khách bị trừ phí hai lần. Đội kỹ thuật rollback trong 20 phút sau khi phát hiện và đóng ticket. Không ai mở sự kiện tổn thất: không ai tính tiền phải hoàn, chi phí tổng đài, khiếu nại gửi cơ quan quản lý, hay câu hỏi "vì sao đối soát cuối ngày không bắt được".
+</Callout>
+
+## Định nghĩa
+
+Basel II định nghĩa rủi ro vận hành là rủi ro tổn thất do **quy trình, con người và hệ thống nội bộ không đầy đủ hoặc thất bại, hoặc do sự kiện bên ngoài**. Định nghĩa này **bao gồm rủi ro pháp lý**, không bao gồm rủi ro chiến lược và rủi ro danh tiếng.
+
+Định nghĩa đi theo **nguyên nhân** — giúp hỏi "vì sao tổn thất xảy ra" thay vì chỉ "mất bao nhiêu".
+
+<Quiz id="q-f3o-def" />
+
+## Các loại sự kiện
+
+Basel II phân loại sự kiện tổn thất vận hành thành các nhóm, ví dụ:
+
+| Nhóm sự kiện | Ví dụ trong fintech |
+|---|---|
+| Gian lận nội bộ | Nhân viên điều chỉnh số dư trái phép |
+| Gian lận bên ngoài | Chiếm tài khoản, giả mạo danh tính |
+| Thực hành tuyển dụng, an toàn nơi làm việc | Tranh chấp lao động |
+| Khách hàng, sản phẩm, thực hành kinh doanh | Tính phí sai, bán sản phẩm không phù hợp |
+| Thiệt hại tài sản vật chất | Cháy, thiên tai tại trung tâm dữ liệu |
+| Gián đoạn kinh doanh, lỗi hệ thống | Sập dịch vụ, lỗi phần mềm, sự cố nhà cung cấp đám mây |
+| Thực hiện, chuyển giao, quản lý quy trình | Nhập liệu sai, cấu hình sai, lỗi đối soát, triển khai lỗi |
+
+Câu chuyện đầu bài thuộc nhóm cuối (lỗi triển khai) và kéo theo nhóm "khách hàng, sản phẩm" (tính phí sai).
+
+## Đo: sự kiện, kịch bản, chỉ số
+
+- **Cơ sở dữ liệu sự kiện tổn thất**: mỗi sự cố có ngày, nguyên nhân, nhóm sự kiện, **tổn thất trực tiếp**, số thu hồi được, và cả **suýt xảy ra** (near miss) — vì near miss rẻ để học hơn tổn thất thật.
+- **Phân tích kịch bản**: với rủi ro hiếm mà lớn (sập nhà cung cấp chính, gian lận nội bộ quy mô lớn), chuyên gia ước lượng tần suất và mức độ.
+- **KRI**: chỉ số báo trước — tỉ lệ thay đổi khẩn cấp không qua review, số ngoại lệ đối soát tồn quá hạn, số tài khoản đặc quyền chưa rà soát, tỉ lệ triển khai phải rollback.
+
+<Quiz id="q-f3o-kri" />
+
+## Giảm: kiểm soát phải được kiểm thử
+
+- **Phòng ngừa**: phân quyền tối thiểu, nguyên tắc bốn mắt cho thao tác nhạy cảm, kiểm tra cấu hình tự động, triển khai từng phần có feature flag (chặng F4).
+- **Phát hiện**: đối soát (chặng F4), giám sát bất thường, cảnh báo theo KRI.
+- **Khắc phục**: kill switch, runbook, quy trình hoàn tiền, thông báo khách hàng và cơ quan quản lý khi cần.
+- Kiểm soát chưa từng được kiểm thử là **giả định**, không phải kiểm soát.
+
+Case Knight Capital (2012) cho thấy rủi ro vận hành trong hệ thống giao dịch có thể lớn tới mức nào:
+
+<Case id="knight-capital-2012" />
+
+<Quiz id="q-f3o-control" />
+
+<Callout kind="field" title="Postmortem phải có dòng 'tổn thất'">
+Tôi thêm vào mẫu postmortem của đội ba trường: tổn thất tài chính trực tiếp (kể cả hoàn tiền), số khách bị ảnh hưởng, và nghĩa vụ báo cáo bên ngoài. Kỹ sư không cần là chuyên gia rủi ro để điền — chỉ cần hỏi bộ phận vận hành. Nhờ vậy sự cố kỹ thuật tự động đi vào sổ sự kiện tổn thất, và bộ phận rủi ro có dữ liệu thật thay vì phải đi hỏi lại sau ba tháng.
+</Callout>

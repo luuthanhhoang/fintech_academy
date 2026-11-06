@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-aml-alert
+    kind: sequence
+    title: "Từ giao dịch tới báo cáo giao dịch đáng ngờ"
+    caption: "Luồng khái niệm; thủ tục, thời hạn và mẫu báo cáo theo văn bản hướng dẫn hiện hành của từng nước."
+    actors:
+      - { id: txn, label: "Luồng giao dịch" }
+      - { id: engine, label: "Quy tắc + mô hình" }
+      - { id: queue, label: "Hàng đợi cảnh báo" }
+      - { id: analyst, label: "Chuyên viên" }
+      - { id: fiu, label: "Cơ quan chức năng" }
+    steps:
+      - { from: txn, to: engine, label: "Sự kiện giao dịch + hồ sơ KYC" }
+      - { from: engine, to: queue, label: "Cảnh báo (quy tắc v3, điểm rủi ro)" }
+      - { from: queue, to: analyst, label: "Phân công theo ưu tiên" }
+      - { from: analyst, to: analyst, label: "Xem xét lịch sử, mạng lưới, thông tin bổ sung" }
+      - { from: analyst, to: queue, label: "Đóng kèm lý do (hoặc)" }
+      - { from: analyst, to: fiu, label: "Báo cáo giao dịch đáng ngờ" }
+      - { from: analyst, to: engine, label: "Phản hồi để hiệu chỉnh quy tắc" }

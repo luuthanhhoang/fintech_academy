@@ -1,0 +1,85 @@
+---
+id: f3-credit-risk
+track: fintech
+stage: f3
+order: 0
+title: { vi: "Rủi ro tín dụng và tổn thất kỳ vọng", en: "Credit risk and expected loss" }
+summary: "Rủi ro tín dụng là khả năng bên vay không trả đủ nợ. Ba đại lượng chuẩn: xác suất vỡ nợ (PD), tỉ lệ tổn thất khi vỡ nợ (LGD) và dư nợ tại thời điểm vỡ nợ (EAD); tổn thất kỳ vọng EL = PD × LGD × EAD được tính vào giá khoản vay và dự phòng. Phần tổn thất vượt kỳ vọng — tập trung, tương quan, suy thoái — mới là thứ vốn chủ sở hữu phải gánh."
+concepts: [credit-risk]
+estMinutes: 40
+whyQuestion: "Một sản phẩm cho vay tiêu dùng có lãi suất 30%/năm và tỉ lệ nợ xấu 'chỉ' 8%. Sản phẩm đó lãi hay lỗ — và bạn cần thêm số nào để trả lời?"
+devMapping:
+  - finance: "PD × LGD × EAD"
+    dev: "Xác suất sự cố × mức thiệt hại mỗi sự cố × phạm vi ảnh hưởng"
+    explanation: "Giống ước lượng chi phí kỳ vọng của một loại lỗi: tách ba thành phần để đo và cải thiện riêng từng cái."
+  - finance: "Tổn thất kỳ vọng"
+    dev: "Chi phí vận hành dự tính được (ngân sách lỗi)"
+    explanation: "Đưa vào giá và dự phòng từ trước; không phải là bất ngờ."
+  - finance: "Tổn thất ngoài kỳ vọng"
+    dev: "Sự cố đuôi dài, nhiều thành phần hỏng cùng lúc"
+    explanation: "Khi các khoản vay vỡ nợ cùng nhau (suy thoái), tổn thất vượt xa trung bình — vốn là tấm đệm cho phần này."
+pretest: [q-f3c-el, q-f3c-price]
+applications:
+  - id: app-f3c-el
+    title: "Báo cáo tổn thất kỳ vọng cho một danh mục cho vay"
+    context: "Danh mục cho vay của một sản phẩm bạn phụ trách (hoặc dữ liệu tổng hợp tự tạo, dán nhãn mô phỏng)."
+    task: "Chia danh mục theo nhóm rủi ro; với mỗi nhóm ước lượng PD từ lịch sử vỡ nợ theo cohort (ghi rõ định nghĩa vỡ nợ và khung thời gian), LGD từ dữ liệu thu hồi, EAD từ dư nợ và hạn mức chưa dùng; tính EL theo nhóm và tổng; so EL với biên lãi của từng nhóm; thêm kịch bản PD tăng gấp đôi."
+    deliverable: "Bảng EL theo nhóm + kịch bản căng thẳng + ghi chú giả định và hạn chế dữ liệu."
+sources: [bcbs-basel2-2004, openstax-finance]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích PD, LGD, EAD, tổn thất kỳ vọng và vì sao vốn được dành cho tổn thất ngoài kỳ vọng."
+  rubric:
+    - { id: pd, criterion: "PD: xác suất vỡ nợ trong một khoảng thời gian, theo một định nghĩa vỡ nợ rõ ràng" }
+    - { id: lgd-ead, criterion: "LGD: phần mất sau thu hồi (tài sản bảo đảm); EAD: dư nợ lúc vỡ nợ, gồm phần hạn mức có thể bị rút thêm" }
+    - { id: el, criterion: "EL = PD × LGD × EAD; đưa vào giá (lãi suất) và dự phòng" }
+    - { id: ul, criterion: "Tổn thất ngoài kỳ vọng do tương quan/tập trung/suy thoái; vốn chủ hấp thụ phần này" }
+---
+
+<Callout kind="story" title="Lãi suất cao, vẫn lỗ">
+Một công ty cho vay tiêu dùng giả định tăng trưởng nhanh nhờ duyệt vay trong vài phút. Lãi suất cao nên ban điều hành tin là "nợ xấu bao nhiêu cũng gánh được". Một năm sau, báo cáo cho thấy nhóm khách vay qua kênh mới vỡ nợ gấp nhiều lần dự kiến và gần như không thu hồi được gì — vì khoản vay không có tài sản bảo đảm. Lãi thu được không bù nổi gốc mất.
+</Callout>
+
+## Ba thành phần của tổn thất
+
+Khung tiếp cận dựa trên xếp hạng nội bộ (IRB) của Basel II dùng ba tham số cho mỗi khoản vay hoặc nhóm khoản vay:
+
+- **PD (probability of default)**: xác suất bên vay vỡ nợ trong một khoảng thời gian (thường 12 tháng). Phải đi kèm **định nghĩa vỡ nợ** rõ ràng (ví dụ quá hạn trên một số ngày nhất định).
+- **LGD (loss given default)**: tỉ lệ dư nợ bị mất sau khi thu hồi (tài sản bảo đảm, thu nợ). Không có tài sản bảo đảm → LGD cao.
+- **EAD (exposure at default)**: dư nợ tại thời điểm vỡ nợ — với thẻ tín dụng hay hạn mức, gồm cả phần khách có thể rút thêm trước khi vỡ nợ.
+
+**Tổn thất kỳ vọng**: EL = PD × LGD × EAD.
+
+<Quiz id="q-f3c-el" />
+
+## EL đi vào đâu
+
+- **Định giá**: lãi suất khoản vay phải bù chi phí vốn, chi phí vận hành **và** tổn thất kỳ vọng. Tỉ lệ EL so với dư nợ là "chi phí rủi ro" tối thiểu phải nằm trong biên lãi.
+- **Dự phòng**: ghi nhận chi phí dự phòng cho tổn thất dự kiến (bài bảng cân đối — dòng chi phí dự phòng ăn vào lợi nhuận).
+
+<WorkedExample id="we-credit-el" />
+
+<Quiz id="q-f3c-price" />
+
+## Tổn thất ngoài kỳ vọng
+
+EL là **trung bình**. Thực tế tổn thất dao động quanh nó, và đuôi xấu đến từ:
+
+- **Tương quan**: trong suy thoái, nhiều bên vay vỡ nợ cùng lúc, đồng thời giá tài sản bảo đảm giảm (LGD tăng) — PD và LGD xấu đi cùng nhau.
+- **Tập trung**: cho vay nhiều vào một ngành, một vùng, một nhóm khách liên quan.
+- **Sai mô hình**: PD ước lượng từ thời kỳ thuận lợi, hoặc từ một nhóm khách khác với nhóm đang vay.
+
+Basel dành **vốn** cho phần tổn thất ngoài kỳ vọng này (bài Basel), còn EL được bù bằng giá và dự phòng.
+
+<Quiz id="q-f3c-ul" />
+
+## Đo PD bằng dữ liệu: những bẫy thường gặp
+
+- **Cohort chưa "chín"**: khoản vay giải ngân tháng trước chưa kịp vỡ nợ; tính tỉ lệ nợ xấu trên toàn danh mục đang tăng trưởng nhanh sẽ đánh giá thấp PD. Theo dõi theo **vintage** (tháng giải ngân).
+- **Định nghĩa không nhất quán**: đổi định nghĩa vỡ nợ giữa chừng làm số liệu không so được.
+- **Thiên lệch chọn mẫu**: chỉ có dữ liệu trả nợ của người **được duyệt**; không biết người bị từ chối sẽ ra sao (chặng F6).
+
+<Callout kind="field" title="Nhìn theo vintage, không nhìn tỉ lệ nợ xấu tổng">
+Trong câu chuyện đầu bài, tỉ lệ nợ xấu tổng trông ổn suốt nhiều tháng — vì mẫu số phình ra với khoản vay mới chưa kịp quá hạn. Tôi luôn yêu cầu biểu đồ vintage: mỗi đường là một tháng giải ngân, trục ngang là số tháng kể từ giải ngân, trục dọc là tỉ lệ vỡ nợ tích luỹ. Kênh mới tệ hơn sẽ hiện ra ngay ở những tháng đầu, trước khi kịp thành vấn đề của cả danh mục.
+</Callout>

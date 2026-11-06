@@ -1,0 +1,96 @@
+---
+id: f3-basel
+track: fintech
+stage: f3
+order: 4
+title: { vi: "Vốn và thanh khoản theo Basel", en: "Basel capital and liquidity" }
+summary: "Khung Basel là chuẩn quốc tế buộc ngân hàng giữ đủ vốn chủ chất lượng cao so với tài sản có rủi ro (RWA) và đủ thanh khoản cho kịch bản căng thẳng. Ba trụ cột: yêu cầu tối thiểu, giám sát của cơ quan quản lý, và công bố thông tin. Basel III nâng chất lượng và lượng vốn (CET1, các lớp đệm) và thêm chuẩn thanh khoản (LCR, NSFR). Với kỹ sư, đây là một pipeline dữ liệu lớn có tính toán quy định, kiểm toán được và lặp lại được."
+concepts: [capital-regulation]
+estMinutes: 40
+whyQuestion: "Hai ngân hàng cùng có 100 tỉ vốn chủ và 1.000 tỉ tài sản. Vì sao một bên có thể bị coi là thiếu vốn còn bên kia thì không?"
+facts:
+  - id: basel3-minimums
+    text: "Các mức tối thiểu của Basel III theo bảng hiệu chuẩn của Uỷ ban Basel (tỉ lệ trên tài sản có rủi ro)"
+    value: "CET1 4,5%; Tier 1 6%; tổng vốn 8%; cộng đệm bảo toàn vốn 2,5% bằng CET1 (tổng CET1 kèm đệm 7%)"
+    sourceId: bcbs-basel3-2010
+    asOf: 2026-11-06
+    status: verified
+  - id: lcr-30d
+    text: "Tỉ lệ bao phủ thanh khoản (LCR) đo tài sản thanh khoản chất lượng cao so với dòng tiền ra ròng trong"
+    value: "30 ngày căng thẳng; tối thiểu 100% khi áp dụng đầy đủ"
+    sourceId: bcbs-lcr-2013
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Tài sản có rủi ro (RWA)"
+    dev: "Tổng có trọng số theo mức nguy hiểm"
+    explanation: "Không phải mọi tài sản đều rủi ro như nhau: mỗi khoản nhân với trọng số rủi ro trước khi cộng."
+  - finance: "Lớp đệm vốn"
+    dev: "Dung lượng dự phòng trên mức tối thiểu, chạm vào thì bị hạn chế"
+    explanation: "Xuống dưới đệm chưa phải vi phạm tối thiểu, nhưng bị hạn chế chia cổ tức — như ngưỡng cảnh báo trước ngưỡng sập."
+  - finance: "Báo cáo quy định"
+    dev: "Pipeline dữ liệu phải tái lập được"
+    explanation: "Chạy lại với dữ liệu của ngày báo cáo phải ra đúng con số đã nộp; mọi điều chỉnh có dấu vết."
+pretest: [q-f3b-rwa, q-f3b-buffer]
+applications:
+  - id: app-f3b-pipeline
+    title: "Pipeline tính tỉ lệ vốn tái lập được"
+    context: "Danh mục tài sản tổng hợp (dán nhãn mô phỏng) với loại tài sản, dư nợ, tài sản bảo đảm."
+    task: "Thiết kế pipeline: snapshot dữ liệu tại ngày báo cáo (bất biến), bảng tra trọng số rủi ro dưới dạng dữ liệu có phiên bản (ghi rõ là giả định minh hoạ, không phải trọng số quy định), tính RWA và tỉ lệ CET1; lưu phiên bản dữ liệu + phiên bản bảng tra + phiên bản code cho mỗi lần chạy; viết test 'chạy lại cho ra cùng kết quả'."
+    deliverable: "Pipeline + báo cáo mẫu + test tái lập."
+sources: [bcbs-basel3-2010, bcbs-lcr-2013, bcbs-basel2-2004, bcbs-market-risk-2019]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích tỉ lệ vốn theo Basel, vai trò của RWA và các lớp đệm, và chuẩn thanh khoản."
+  rubric:
+    - { id: ratio, criterion: "Tỉ lệ vốn = vốn đủ điều kiện / RWA; CET1 là lớp chất lượng cao nhất" }
+    - { id: rwa, criterion: "RWA cộng các phơi nhiễm nhân trọng số rủi ro (tín dụng, thị trường, vận hành)" }
+    - { id: buffer, criterion: "Đệm trên mức tối thiểu; xuống dưới đệm bị hạn chế phân phối lợi nhuận" }
+    - { id: liquidity, criterion: "LCR (30 ngày căng thẳng) và NSFR (nguồn vốn ổn định dài hơn) bổ sung cho vốn" }
+---
+
+<Callout kind="story" title="Cùng vốn, khác rủi ro">
+Hai ngân hàng giả định đều có 100 tỉ vốn chủ trên 1.000 tỉ tài sản. Ngân hàng thứ nhất chủ yếu nắm trái phiếu chính phủ và cho vay mua nhà có tài sản bảo đảm tốt. Ngân hàng thứ hai cho vay tiêu dùng không bảo đảm và cho vay doanh nghiệp rủi ro. Tỉ lệ vốn chủ trên tổng tài sản giống hệt nhau — nhưng một bên có thể mất phần lớn vốn trong một năm xấu, bên kia thì không.
+</Callout>
+
+## Ba trụ cột (Basel II)
+
+1. **Yêu cầu vốn tối thiểu** cho rủi ro tín dụng, thị trường và vận hành.
+2. **Giám sát**: cơ quan quản lý đánh giá quy trình quản trị rủi ro và vốn của từng ngân hàng, có thể yêu cầu thêm.
+3. **Kỷ luật thị trường**: công bố thông tin để nhà đầu tư, người gửi tiền đánh giá được.
+
+## Tỉ lệ vốn và RWA
+
+**Tỉ lệ vốn = Vốn đủ điều kiện / Tài sản có rủi ro (RWA).**
+
+RWA không phải tổng tài sản: mỗi phơi nhiễm nhân với một **trọng số rủi ro** — khoản an toàn trọng số thấp, khoản rủi ro trọng số cao — rồi cộng thêm phần cho rủi ro thị trường và vận hành. Trọng số lấy theo **cách tiếp cận chuẩn** (bảng của quy định) hoặc **xếp hạng nội bộ (IRB)** dựa trên PD, LGD, EAD (bài rủi ro tín dụng) khi được phê duyệt. Đó là lời giải cho câu chuyện đầu bài.
+
+<WorkedExample id="we-cet1" />
+
+<Quiz id="q-f3b-rwa" />
+
+## Basel III: vốn nhiều hơn, tốt hơn
+
+Sau khủng hoảng 2007–2009, Basel III nâng **chất lượng** vốn — **CET1** (cổ phần phổ thông và lợi nhuận giữ lại) là lớp chịu lỗ đầu tiên — và nâng **lượng** vốn: <Fact id="basel3-minimums" />. Ngân hàng xuống dưới mức tối thiểu cộng đệm bị **hạn chế phân phối lợi nhuận** (cổ tức, thưởng). Ngoài ra còn các đệm khác (đệm phản chu kỳ, đệm cho ngân hàng quan trọng hệ thống) và **tỉ lệ đòn bẩy** không theo trọng số làm "lưới an toàn" chống việc RWA bị đánh giá thấp.
+
+Rủi ro thị trường được xử lý trong khung sửa đổi riêng (FRTB, bài rủi ro thị trường).
+
+<Quiz id="q-f3b-buffer" />
+
+## Chuẩn thanh khoản
+
+Vốn không cứu được một ngân hàng hết tiền mặt (bài ALM). Basel III thêm:
+
+- **LCR**: <Fact id="lcr-30d" />.
+- **NSFR**: tỉ lệ nguồn vốn ổn định có sẵn so với nhu cầu nguồn vốn ổn định, cho tầm nhìn dài hơn — hạn chế việc tài trợ tài sản dài bằng nguồn ngắn.
+
+## Áp dụng ở từng nước
+
+Basel là **chuẩn** do Uỷ ban Basel đặt ra; mỗi nước chuyển hoá thành quy định riêng với lộ trình và điều chỉnh riêng. Khi xây hệ thống báo cáo, nguồn sự thật là **văn bản quy định hiện hành của nước bạn**, không phải tài liệu Basel gốc.
+
+<Quiz id="q-f3b-local" />
+
+<Callout kind="field" title="Con số quy định phải chạy lại được">
+Câu hỏi khó nhất trong các đợt kiểm tra báo cáo quy định mà tôi từng chứng kiến không phải "công thức đúng chưa", mà là "chạy lại cho ngày 31/12 năm ngoái có ra đúng số đã nộp không". Muốn trả lời "có", phải snapshot dữ liệu bất biến, bảng tham số có phiên bản, code gắn tag, và mọi điều chỉnh thủ công có người duyệt. Đó là kỹ thuật dữ liệu thuần tuý — và là nơi kỹ sư tạo giá trị lớn nhất trong mảng này.
+</Callout>

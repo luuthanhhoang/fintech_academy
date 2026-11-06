@@ -1,0 +1,21 @@
+examples:
+  - id: we-cet1
+    title: "RWA và tỉ lệ CET1 (trọng số minh hoạ)"
+    conceptId: capital-regulation
+    problem: "Dữ liệu tổng hợp (mô phỏng), trọng số rủi ro chỉ để minh hoạ, không phải trọng số quy định: trái phiếu chính phủ 300 tỉ (trọng số 0%), cho vay mua nhà 400 tỉ (35%), cho vay doanh nghiệp 300 tỉ (100%). Cộng thêm RWA cho rủi ro thị trường và vận hành 100 tỉ. CET1 = 60 tỉ. Tính RWA và tỉ lệ CET1."
+    steps:
+      - text: "RWA tín dụng = 300 × 0 + 400 × 0,35 + 300 × 1 = 0 + 140 + 300 = 440 tỉ."
+        faded: true
+        prompt: "RWA tín dụng bằng bao nhiêu tỉ?"
+        answer: 440
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "tỉ"
+      - text: "Tổng RWA = 440 + 100 = 540 tỉ."
+      - text: "Tỉ lệ CET1 = 60 / 540 ≈ 11,11%."
+        faded: true
+        prompt: "Tỉ lệ CET1 bằng bao nhiêu %? (2 chữ số thập phân)"
+        answer: 11.11
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+      - text: "Cùng 60 tỉ vốn trên 1.000 tỉ tài sản (6%), nhưng tỉ lệ trên RWA cao hơn nhiều vì một phần lớn tài sản có trọng số thấp."
+    takeaway: "Cơ cấu tài sản quyết định vốn yêu cầu; vì thế tỉ lệ đòn bẩy không trọng số được thêm vào để chặn việc trọng số bị đánh giá quá thấp."

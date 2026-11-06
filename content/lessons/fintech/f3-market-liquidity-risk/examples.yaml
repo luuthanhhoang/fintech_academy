@@ -1,0 +1,40 @@
+examples:
+  - id: we-param-var
+    title: "VaR tham số 1 ngày (giả định phân phối chuẩn)"
+    conceptId: market-risk-var
+    problem: "Dữ liệu tổng hợp (mô phỏng): danh mục 10.000 triệu đồng, độ lệch chuẩn lợi suất ngày 1,5%, trung bình coi bằng 0. Tính VaR 1 ngày ở 95% (z = 1,645) và 99% (z = 2,326)."
+    steps:
+      - text: "σ theo tiền = 1,5% × 10.000 = 150 triệu."
+      - text: "VaR 95% = 1,645 × 150 ≈ 246,75 triệu."
+        faded: true
+        prompt: "VaR 95% bằng bao nhiêu triệu? (2 chữ số thập phân)"
+        answer: 246.75
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "triệu"
+      - text: "VaR 99% = 2,326 × 150 ≈ 348,9 triệu."
+        faded: true
+        prompt: "VaR 99% bằng bao nhiêu triệu? (1 chữ số thập phân)"
+        answer: 348.9
+        tolerance: { kind: abs, value: 0.05 }
+        unit: "triệu"
+      - text: "Nếu lợi suất thật có đuôi dày hơn chuẩn, mức lỗ ở 1% ngày xấu nhất sẽ lớn hơn con số này."
+    takeaway: "VaR tham số dễ tính nhưng chỉ đúng bằng giả định phân phối của nó."
+  - id: we-lcr
+    title: "Tính LCR đơn giản hoá (ngân hàng giả định)"
+    conceptId: liquidity-risk
+    problem: "Dữ liệu tổng hợp (mô phỏng), đơn giản hoá, không dùng hệ số chính thức: HQLA 900 tỉ; dòng tiền ra dự kiến trong 30 ngày căng thẳng 1.200 tỉ; dòng tiền vào 400 tỉ. Tính LCR."
+    steps:
+      - text: "Dòng tiền ra ròng = 1.200 − 400 = 800 tỉ (đơn giản hoá; quy định thật có giới hạn mức dòng vào được tính)."
+        faded: true
+        prompt: "Dòng tiền ra ròng bằng bao nhiêu tỉ?"
+        answer: 800
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "tỉ"
+      - text: "LCR = HQLA / dòng ra ròng = 900 / 800 = 112,5%."
+        faded: true
+        prompt: "LCR bằng bao nhiêu %?"
+        answer: 112.5
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "%"
+      - text: "Trên mức tối thiểu 100%; nhưng nếu dòng tiền ra căng thẳng thực tế cao hơn giả định 15%, LCR rơi xuống dưới 100%."
+    takeaway: "LCR chỉ tốt bằng giả định dòng tiền ra căng thẳng — kiểm tra giả định đó với nhóm khách hàng tập trung."
