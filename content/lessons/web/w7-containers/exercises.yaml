@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w7c-review
+    conceptId: containers-docker
+    prompt: "Review Dockerfile sau và liệt kê các vấn đề: `FROM node:latest`, `COPY . .`, `RUN npm install`, `ENV API_KEY=...`, `CMD npm start` (chạy bằng root, không có .dockerignore)."
+    hint: "Tái lập, cache, kích thước, bí mật, quyền."
+    solution: "(1) `latest` không ghim phiên bản → build không tái lập; ghim phiên bản/digest, dùng biến thể slim. (2) `COPY . .` trước khi cài dependency → mất cache; chép cả .git/.env/node_modules → thêm .dockerignore, chép lockfile trước. (3) `npm install` thay vì `npm ci` → không bám lockfile. (4) `ENV API_KEY` → bí mật nằm trong image; truyền lúc chạy từ kho bí mật. (5) Chạy bằng root → thêm `USER` không phải root. (6) Không multi-stage → công cụ build nằm trong image chạy. (7) `npm start` qua shell → tín hiệu dừng có thể không tới tiến trình node; chạy trực tiếp tiến trình."
+  - id: ex-w7c-config
+    conceptId: containers-docker
+    prompt: "Service cần chạy cùng một image ở staging và production với database, mức log và khoá khác nhau. Thiết kế cách cấu hình."
+    hint: "Biến môi trường, kho bí mật, validate khi khởi động."
+    solution: "Image không chứa cấu hình riêng môi trường. Lúc chạy: biến môi trường cho cấu hình thường (URL database, mức log), bí mật lấy từ kho bí mật của nền tảng (mount hoặc biến môi trường được nạp lúc khởi động). Khi khởi động, service parse cấu hình bằng schema và dừng ngay với thông báo rõ nếu thiếu/sai (thay vì chạy rồi lỗi sau). Ghi phiên bản image và tên môi trường vào log khởi động."

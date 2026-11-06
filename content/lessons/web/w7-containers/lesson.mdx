@@ -1,0 +1,110 @@
+---
+id: w7-containers
+track: web
+stage: w7
+order: 0
+title: { vi: "Container và Docker: đóng gói để chạy giống nhau ở mọi nơi", en: "Containers and Docker: packaging that runs the same everywhere" }
+summary: "Container là một tiến trình được cô lập bằng tính năng của nhân Linux (namespace cho phạm vi nhìn thấy, cgroup cho giới hạn tài nguyên), chạy từ một image gồm các lớp filesystem. Khác máy ảo, nó dùng chung nhân của máy chủ nên khởi động nhanh và nhẹ. Image tốt thì nhỏ, tái lập được, chạy với quyền thấp, không chứa bí mật, và cấu hình bằng biến môi trường; các đặc tả của Open Container Initiative làm cho image chạy được trên nhiều runtime khác nhau."
+concepts: [containers-docker]
+estMinutes: 40
+whyQuestion: "'Máy tôi chạy được mà.' Container giải quyết đúng câu đó tới đâu — và những gì nó không giải quyết?"
+facts:
+  - id: oci-founded
+    text: "Open Container Initiative — tổ chức đặt các đặc tả mở cho image, runtime và phân phối container — được thành lập năm"
+    value: "2015"
+    sourceId: oci-specs
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "Image"
+    dev: "Artifact build bất biến, có phiên bản"
+    explanation: "Build một lần, chạy cùng một image ở test, staging và production — không build lại cho từng môi trường."
+  - finance: "Lớp (layer)"
+    dev: "Cache theo bước build"
+    explanation: "Bước không đổi được dùng lại; sắp xếp Dockerfile để bước hay đổi nằm cuối."
+  - finance: "Namespace / cgroup"
+    dev: "Cô lập phạm vi nhìn thấy / giới hạn tài nguyên"
+    explanation: "Tiến trình chỉ thấy filesystem, mạng, tiến trình của nó; bị giới hạn CPU, bộ nhớ."
+pretest: [q-w7c-vm, q-w7c-secret]
+applications:
+  - id: app-w7c-image
+    title: "Đóng gói một service thành image tốt"
+    context: "Một service web nhỏ của bạn (Node, Python, Go...)."
+    task: "Viết Dockerfile multi-stage: stage build cài dependency theo lockfile và build; stage chạy chỉ chứa thứ cần để chạy, base image nhỏ ghim phiên bản (hoặc digest), chạy bằng user không phải root; thêm .dockerignore; cấu hình qua biến môi trường; log ra stdout; healthcheck; so kích thước và thời gian build trước/sau; quét lỗ hổng image."
+    deliverable: "Dockerfile + .dockerignore + bảng so sánh kích thước/thời gian + kết quả quét."
+sources: [oci-specs, sre-book, owasp-top10-2025]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích container khác máy ảo thế nào, image được tạo từ đâu, và năm thực hành cho một image production."
+  rubric:
+    - { id: isolation, criterion: "Container là tiến trình cô lập bằng namespace và giới hạn bằng cgroup, dùng chung nhân máy chủ; máy ảo có nhân riêng" }
+    - { id: image, criterion: "Image gồm các lớp filesystem + cấu hình; bất biến; build một lần chạy mọi môi trường; chuẩn OCI" }
+    - { id: practices, criterion: "Base nhỏ ghim phiên bản, multi-stage, user không phải root, không có bí mật trong image, .dockerignore, cache lớp hợp lý" }
+    - { id: runtime, criterion: "Cấu hình qua biến môi trường, log ra stdout, healthcheck, một mối quan tâm mỗi container; container không thay thế bảo mật ứng dụng" }
+---
+
+<Callout kind="story" title="Image 2 GB có cả khoá API">
+Một đội giả định đóng gói service bằng image dựa trên một hệ điều hành đầy đủ, `COPY . .` toàn bộ thư mục dự án — gồm cả `node_modules` của máy dev, thư mục `.git` và file `.env` chứa khoá API. Image nặng 2 GB, mất nhiều phút để kéo về mỗi lần triển khai, và được đẩy lên một registry mà nhiều người khác có quyền đọc.
+</Callout>
+
+## Container là gì
+
+Không phải máy ảo nhỏ. Container là **một tiến trình bình thường** trên máy chủ, được nhân Linux:
+
+- **Cô lập bằng namespace**: tiến trình chỉ thấy cây tiến trình, mạng, filesystem, hostname của riêng nó.
+- **Giới hạn bằng cgroup**: CPU, bộ nhớ, I/O.
+
+Vì dùng chung nhân của máy chủ, container khởi động nhanh và nhẹ hơn máy ảo; đổi lại mức cô lập yếu hơn máy ảo (có nhân riêng). <Fact id="oci-founded" />; các đặc tả của tổ chức này gồm **image spec** (lớp filesystem và cấu hình), **runtime spec** (cách tạo container từ một bundle, gồm namespace và cgroup trên Linux) và **distribution spec** (API của registry) — nhờ vậy image build bằng công cụ này chạy được trên runtime khác.
+
+<Quiz id="q-w7c-vm" />
+
+## Image và các lớp
+
+Image là chồng **lớp filesystem** chỉ đọc cộng **cấu hình** (lệnh chạy, biến môi trường, user). Mỗi bước trong Dockerfile tạo một lớp; bước không đổi được **dùng lại từ cache**.
+
+```dockerfile
+# Stage build
+FROM node:22-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage chạy
+FROM node:22-slim
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+USER node
+CMD ["node", "dist/server.js"]
+```
+
+- **Chép lockfile và cài dependency trước**, chép code sau → sửa code không phải cài lại dependency.
+- **Multi-stage**: công cụ build ở lại stage build; image chạy nhỏ hơn, ít bề mặt tấn công hơn.
+- **Ghim phiên bản** base image (tốt hơn nữa: digest) để build tái lập được.
+- **`.dockerignore`**: loại `.git`, `node_modules` của máy, `.env`, file test.
+
+<Quiz id="q-w7c-layers" />
+
+## Image cho production
+
+- **Không có bí mật trong image**: mọi lớp đều đọc lại được, kể cả khi bước sau xoá file. Bí mật đi vào lúc chạy (biến môi trường từ kho bí mật, file mount).
+- **User không phải root**; filesystem chỉ đọc khi được.
+- **Cấu hình bằng biến môi trường** — cùng image chạy ở mọi môi trường (bài triển khai).
+- **Log ra stdout/stderr**, để nền tảng thu thập (bài quan sát).
+- **Healthcheck** cho bộ điều phối biết khi nào container sẵn sàng/hỏng.
+- **Quét lỗ hổng** và cập nhật base image định kỳ — container đóng gói cả lỗ hổng của dependency.
+
+<Quiz id="q-w7c-secret" />
+
+## Những gì container không giải quyết
+
+- Không làm code an toàn hơn: lỗ hổng ứng dụng (bài bảo mật web) vẫn nguyên.
+- Không tự đảm bảo dữ liệu bền: filesystem của container mất khi container bị xoá — dữ liệu cần volume hoặc dịch vụ lưu trữ.
+- "Chạy giống nhau" chỉ đúng với những gì nằm trong image; khác biệt về cấu hình, dữ liệu, mạng, phiên bản nhân vẫn có thể gây khác hành vi.
+
+<Callout kind="field" title="Image là thứ được kiểm thử, cũng là thứ được triển khai">
+Quy tắc tôi giữ: CI build image đúng một lần, gắn tag bằng commit, chạy test trên chính image đó, rồi đẩy đúng image đó qua staging lên production. Không build lại "cho production". Khi có sự cố, tag của image cho biết chính xác code nào đang chạy — và rollback là đổi tag, không phải build lại một bản cũ mà không chắc có giống trước không.
+</Callout>

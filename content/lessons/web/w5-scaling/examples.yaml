@@ -1,0 +1,21 @@
+examples:
+  - id: we-cache-load
+    title: "Tỉ lệ cache hit và tải database"
+    conceptId: caching-layers-cdn
+    problem: "Dữ liệu tổng hợp (mô phỏng): 3.000 request/giây; mỗi lần trượt cache tốn một truy vấn DB 40 ms; đọc cache mất 1 ms. So sánh tỉ lệ hit 90% và 98%."
+    steps:
+      - text: "Hit 90%: truy vấn DB = 3.000 × 10% = 300/giây."
+      - text: "Hit 98%: truy vấn DB = 3.000 × 2% = 60/giây."
+        faded: true
+        prompt: "Với hit 98%, DB nhận bao nhiêu truy vấn/giây?"
+        answer: 60
+        tolerance: { kind: abs, value: 0 }
+        unit: "truy vấn/giây"
+      - text: "Độ trễ trung bình phần dữ liệu: hit 90% → 0,9 × 1 + 0,1 × 40 = 4,9 ms; hit 98% → 0,98 × 1 + 0,02 × 40 = 1,78 ms."
+        faded: true
+        prompt: "Với hit 98%, độ trễ trung bình là bao nhiêu ms? (2 chữ số thập phân)"
+        answer: 1.78
+        tolerance: { kind: abs, value: 0.005 }
+        unit: "ms"
+      - text: "Tăng hit từ 90% lên 98% giảm tải DB 5 lần — vài điểm phần trăm ở vùng cao có giá trị rất lớn."
+    takeaway: "Tải DB tỉ lệ với tỉ lệ trượt, không với tỉ lệ hit; đo và tối ưu phần trượt."

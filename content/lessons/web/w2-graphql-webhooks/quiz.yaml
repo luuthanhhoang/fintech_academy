@@ -1,0 +1,31 @@
+items:
+  - id: q-w2g-nplus1
+    type: mcq
+    conceptId: graphql-grpc
+    prompt: "Truy vấn GraphQL lấy 100 khách hàng kèm đơn hàng; log cho thấy 101 truy vấn SQL. Cách sửa phù hợp?"
+    options:
+      - { id: a, text: "Gộp các lần gọi resolver đơn hàng trong cùng lượt thành một truy vấn theo danh sách id (batching kiểu DataLoader)" }
+      - { id: b, text: "Tăng số kết nối DB" }
+      - { id: c, text: "Bỏ GraphQL, viết 100 endpoint REST" }
+    correct: [a]
+    explanation: "Đây là N+1: một truy vấn cho danh sách + một cho mỗi phần tử. Batching gộp thành 2 truy vấn."
+  - id: q-w2g-choose
+    type: mcq
+    conceptId: graphql-grpc
+    prompt: "Hai service nội bộ trao đổi luồng giá liên tục, cần hợp đồng chặt và độ trễ thấp. Lựa chọn hợp lý nhất?"
+    options:
+      - { id: a, text: "gRPC với streaming" }
+      - { id: b, text: "Webhook" }
+      - { id: c, text: "GraphQL công khai" }
+    correct: [a]
+    explanation: "Nội bộ, streaming, hợp đồng protobuf: đúng thế mạnh của gRPC."
+  - id: q-w2g-sig
+    type: mcq
+    conceptId: webhooks-async-api
+    prompt: "Endpoint webhook của bạn parse JSON rồi tuần tự hoá lại để tính chữ ký, và chữ ký thường không khớp. Vì sao?"
+    options:
+      - { id: a, text: "Chữ ký tính trên body thô; parse rồi tuần tự hoá lại có thể đổi khoảng trắng, thứ tự khoá, cách viết số" }
+      - { id: b, text: "HMAC không dùng được cho JSON" }
+      - { id: c, text: "Phải tính chữ ký trên header" }
+    correct: [a]
+    explanation: "Luôn xác minh trên đúng byte nhận được, trước khi parse."

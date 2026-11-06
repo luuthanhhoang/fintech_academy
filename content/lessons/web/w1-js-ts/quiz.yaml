@@ -1,0 +1,29 @@
+items:
+  - id: q-w1j-order
+    type: mcq
+    conceptId: javascript-async
+    prompt: "Đoạn code: `log(1)`; `setTimeout(() => log(2))`; `Promise.resolve().then(() => log(3))`; `log(4)`. Thứ tự in ra?"
+    options:
+      - { id: a, text: "1, 2, 3, 4" }
+      - { id: b, text: "1, 4, 3, 2" }
+      - { id: c, text: "1, 4, 2, 3" }
+    correct: [b]
+    explanation: "Code đồng bộ (1, 4) chạy trước; microtask của Promise (3) chạy hết trước task tiếp theo (2)."
+  - id: q-w1j-parallel
+    type: numeric
+    conceptId: javascript-async
+    prompt: "Ba request độc lập mất lần lượt 300 ms, 500 ms và 200 ms. Viết `await` tuần tự từng cái mất tổng bao lâu, còn `Promise.all` mất bao lâu? Nhập thời gian của Promise.all (ms)."
+    answer: 500
+    tolerance: { kind: abs, value: 0 }
+    unit: "ms"
+    explanation: "Tuần tự: 300 + 500 + 200 = 1.000 ms. Song song: bằng cái chậm nhất, khoảng 500 ms."
+  - id: q-w1j-any
+    type: mcq
+    conceptId: typescript-types
+    prompt: "Phản hồi API được gán kiểu bằng `as User`. Nếu API trả về thiếu trường `email`, điều gì xảy ra?"
+    options:
+      - { id: a, text: "TypeScript báo lỗi lúc chạy" }
+      - { id: b, text: "Không có gì báo lỗi; code chạy tiếp với `email` là undefined cho tới khi gây lỗi ở chỗ khác" }
+      - { id: c, text: "Trình duyệt từ chối phản hồi" }
+    correct: [b]
+    explanation: "Kiểu bị xoá lúc chạy; `as` chỉ là khẳng định với trình biên dịch. Cần validate bằng schema ở biên."

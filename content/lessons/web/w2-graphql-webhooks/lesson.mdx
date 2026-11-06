@@ -1,0 +1,93 @@
+---
+id: w2-graphql-webhooks
+track: web
+stage: w2
+order: 2
+title: { vi: "GraphQL, gRPC và webhook: chọn kiểu giao tiếp", en: "GraphQL, gRPC and webhooks: choosing how systems talk" }
+summary: "REST không phải lựa chọn duy nhất. GraphQL cho client tự chọn trường cần lấy qua một schema có kiểu — đổi lại phải lo N+1 ở resolver, giới hạn độ phức tạp truy vấn và cache khó hơn. gRPC dùng hợp đồng Protocol Buffers trên HTTP/2, hợp cho giao tiếp nội bộ hiệu năng cao và streaming. Webhook đảo chiều: nhà cung cấp gọi bạn khi có sự kiện — bạn phải xác thực chữ ký, chống phát lại, xử lý trùng lặp và sai thứ tự."
+concepts: [graphql-grpc, webhooks-async-api]
+estMinutes: 45
+whyQuestion: "Cổng thanh toán báo 'thanh toán thành công' qua webhook. Làm sao bạn biết request đó thật sự từ cổng thanh toán, không bị gửi lại lần hai, và không đến trước sự kiện 'đã tạo đơn'?"
+devMapping:
+  - finance: "GraphQL"
+    dev: "Một endpoint, client mô tả hình dạng dữ liệu cần lấy"
+    explanation: "Giảm lấy thừa/lấy thiếu cho nhiều loại client; server phải bảo vệ khỏi truy vấn quá nặng."
+  - finance: "gRPC"
+    dev: "Gọi hàm từ xa với hợp đồng biên dịch được"
+    explanation: "File .proto sinh code client/server nhiều ngôn ngữ; lỗi hợp đồng bắt được lúc build."
+  - finance: "Webhook"
+    dev: "Callback HTTP do bên ngoài gọi vào"
+    explanation: "Bạn là server của người khác: không tin request mặc định, xử lý idempotent, trả lời nhanh."
+pretest: [q-w2g-nplus1, q-w2g-sig]
+applications:
+  - id: app-w2g-receiver
+    title: "Endpoint nhận webhook an toàn"
+    context: "Một nhà cung cấp gửi webhook sự kiện thanh toán tới hệ thống của bạn."
+    task: "Viết endpoint: đọc body thô; xác minh chữ ký HMAC bằng so sánh thời gian hằng; từ chối timestamp ngoài ngưỡng; ghi webhook-id vào bảng chống trùng; đẩy sự kiện vào hàng đợi rồi trả 2xx ngay; worker xử lý idempotent, chịu được sự kiện đến sai thứ tự (tra trạng thái hiện tại từ API nhà cung cấp khi cần); test với chữ ký sai, gửi lại, sai thứ tự."
+    deliverable: "Endpoint + worker + bộ test cho từng trường hợp."
+sources: [graphql-spec-2021, grpc-intro-2015, standard-webhooks, stripe-idempotency, aws-sqs-visibility]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "So sánh REST, GraphQL, gRPC và webhook: mỗi cái hợp với tình huống nào, và rủi ro kỹ thuật chính của từng cái."
+  rubric:
+    - { id: graphql, criterion: "GraphQL: schema có kiểu, client chọn trường; rủi ro N+1 ở resolver (gộp bằng batching), truy vấn quá nặng (giới hạn độ sâu/chi phí), cache HTTP khó hơn" }
+    - { id: grpc, criterion: "gRPC: hợp đồng protobuf, HTTP/2, streaming; hợp nội bộ; trình duyệt cần lớp chuyển đổi" }
+    - { id: webhook-sec, criterion: "Webhook: xác minh chữ ký trên body thô, kiểm tra timestamp chống phát lại" }
+    - { id: webhook-ops, criterion: "Xử lý trùng lặp (id sự kiện), sai thứ tự, trả lời nhanh và xử lý bất đồng bộ, thử lại" }
+---
+
+<Callout kind="story" title="Hai lần 'đã thanh toán'">
+Một cửa hàng giả định nhận webhook "thanh toán thành công" và gửi hàng ngay trong request. Một hôm xử lý chậm, nhà cung cấp hết thời gian chờ và gửi lại — cửa hàng gửi hàng hai lần. Tuần sau, có người phát hiện endpoint không kiểm tra chữ ký và tự gửi một webhook giả.
+</Callout>
+
+## GraphQL
+
+Đặc tả GraphQL (bản tháng 10/2021, bản đầu tiên được GraphQL Foundation phê chuẩn) định nghĩa một ngôn ngữ truy vấn trên **schema có kiểu**. Client gửi truy vấn mô tả đúng các trường cần; server trả đúng hình dạng đó, thường qua **một endpoint**.
+
+```graphql
+query {
+  customer(id: "c_1") {
+    name
+    orders(first: 5) { id total status }
+  }
+}
+```
+
+Lợi: nhiều loại client (web, mobile) lấy đúng thứ mình cần trong một lần gọi; schema là tài liệu sống. Cái giá:
+
+- **N+1 ở resolver**: resolver `orders` chạy một lần cho mỗi customer → hàng trăm truy vấn DB. Gộp bằng **batching** theo từng lượt (mẫu DataLoader) — liên hệ bài N+1 ở chặng W3.
+- **Truy vấn quá nặng**: client lồng sâu tuỳ ý. Giới hạn độ sâu, chi phí, kích thước trang; với API công khai, cân nhắc chỉ cho phép truy vấn đã đăng ký trước.
+- **Cache HTTP khó hơn** vì mọi thứ là POST tới một URL — cache phải làm ở tầng ứng dụng.
+
+<Quiz id="q-w2g-nplus1" />
+
+## gRPC
+
+Theo bài giới thiệu của Google (2015), gRPC xây trên **HTTP/2** — streaming hai chiều, điều khiển luồng, nén header, ghép nhiều request trên một kết nối — và dùng **Protocol Buffers** để định nghĩa dịch vụ và tuần tự hoá nhị phân, sinh client nhiều ngôn ngữ tự động.
+
+- Hợp với **giao tiếp nội bộ** giữa service: hợp đồng chặt, hiệu năng, streaming.
+- Trình duyệt không gọi gRPC thuần trực tiếp được; cần lớp chuyển đổi.
+- Tiến hoá hợp đồng theo quy tắc protobuf: thêm trường mới với số mới, không tái sử dụng số đã xoá.
+
+<Quiz id="q-w2g-choose" />
+
+## Webhook
+
+Webhook là HTTP request **nhà cung cấp gửi tới bạn** khi có sự kiện. Đặc tả Standard Webhooks dùng ba header — `webhook-id`, `webhook-timestamp`, `webhook-signature` — với chữ ký HMAC-SHA256 trên chuỗi ghép id, timestamp và **body thô**.
+
+<Diagram id="dg-webhook" />
+
+Checklist bên nhận:
+
+1. **Xác minh chữ ký** trên **body thô** (trước khi parse JSON), so sánh thời gian hằng. Chữ ký sai → 4xx.
+2. **Chống phát lại**: timestamp nằm trong một ngưỡng thời gian so với hiện tại (ngưỡng do bạn chọn và ghi lại).
+3. **Chống trùng**: nhà cung cấp **gửi lại** khi không nhận 2xx kịp; lưu id sự kiện đã xử lý — cùng ý tưởng với idempotency key (bài W2 trước).
+4. **Trả lời nhanh**: ghi nhận, đẩy vào hàng đợi, trả 2xx; xử lý ở worker. Hàng đợi thường giao **ít nhất một lần** (tài liệu Amazon SQS nói rõ không có bảo đảm tuyệt đối một message chỉ được giao một lần) → worker cũng phải idempotent.
+5. **Sai thứ tự**: không giả định sự kiện đến đúng thứ tự; khi cần, tra trạng thái hiện tại từ API của nhà cung cấp.
+
+<Quiz id="q-w2g-sig" />
+
+<Callout kind="field" title="Webhook là gợi ý, API là sự thật">
+Với sự kiện quan trọng (thanh toán, hoàn tiền), tôi coi webhook là tín hiệu "có gì đó thay đổi", rồi gọi API của nhà cung cấp để lấy trạng thái hiện tại trước khi hành động. Cách này tự xử lý được sai thứ tự và sự kiện bị mất, và một webhook giả lọt qua cũng không làm được gì vì trạng thái thật lấy từ nguồn. Kèm theo một job đối soát định kỳ để bắt những sự kiện không bao giờ tới.
+</Callout>

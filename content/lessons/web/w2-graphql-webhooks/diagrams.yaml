@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-webhook
+    kind: sequence
+    title: "Nhận webhook an toàn"
+    caption: "Luồng khái niệm theo các header của Standard Webhooks; ngưỡng thời gian và chính sách thử lại do từng bên tự chọn."
+    actors:
+      - { id: provider, label: "Nhà cung cấp" }
+      - { id: endpoint, label: "Endpoint nhận" }
+      - { id: queue, label: "Hàng đợi" }
+      - { id: worker, label: "Worker" }
+    steps:
+      - { from: provider, to: endpoint, label: "POST sự kiện + id, timestamp, chữ ký" }
+      - { from: endpoint, to: endpoint, label: "Xác minh HMAC trên body thô, kiểm tra timestamp" }
+      - { from: endpoint, to: endpoint, label: "id đã thấy? → bỏ qua" }
+      - { from: endpoint, to: queue, label: "Đẩy sự kiện" }
+      - { from: endpoint, to: provider, label: "2xx ngay" }
+      - { from: queue, to: worker, label: "Giao (ít nhất một lần)" }
+      - { from: worker, to: provider, label: "Tra trạng thái hiện tại (khi cần)" }
+      - { from: worker, to: worker, label: "Cập nhật idempotent theo máy trạng thái" }

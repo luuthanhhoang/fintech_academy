@@ -52,6 +52,8 @@ const EXPECTED: Record<string, number[]> = {
   'we-fraud-pr': [((50000 - 400 - 20 + 80) / 50000) * 100, (80 / 400) * 100, (80 / 100) * 100],
   // Population stability index: Σ (actual − expected) × ln(actual / expected).
   'we-psi': [0.1 * Math.log(0.4 / 0.3), -0.1 * Math.log(0.2 / 0.3) + 0.1 * Math.log(0.4 / 0.3)],
+  // Cache: DB load = rps × miss rate; mean latency = hit × cache + miss × db.
+  'we-cache-load': [3000 * 0.02, 0.98 * 1 + 0.02 * 40],
 }
 
 describe('worked examples match the tested libraries', () => {

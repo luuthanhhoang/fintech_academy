@@ -1,0 +1,104 @@
+---
+id: w1-html-css-a11y
+track: web
+stage: w1
+order: 0
+title: { vi: "HTML ngữ nghĩa, CSS layout và khả năng tiếp cận", en: "Semantic HTML, CSS layout and accessibility" }
+summary: "HTML ngữ nghĩa cho trình duyệt, công cụ tìm kiếm và trình đọc màn hình biết mỗi phần là gì — nút là nút, tiêu đề là tiêu đề — và cho bạn miễn phí bàn phím, tiêu điểm, vai trò. CSS hiện đại dàn trang bằng Flexbox (một chiều) và Grid (hai chiều) thay cho mẹo cũ. Khả năng tiếp cận (a11y) theo WCAG không phải phần trang trí thêm sau: tương phản đủ, điều khiển được bằng bàn phím, nhãn cho mọi trường nhập, và kiểm tra bằng công cụ lẫn bằng tay."
+concepts: [semantic-html-a11y, css-layout]
+estMinutes: 45
+whyQuestion: "Một thẻ `div` có `onClick` trông và chạy giống hệt một nút trên máy bạn. Với người dùng bàn phím hay trình đọc màn hình, khác biệt là gì?"
+facts:
+  - id: wcag22-date
+    text: "WCAG 2.2 trở thành Khuyến nghị (Recommendation) của W3C ngày"
+    value: "05/10/2023"
+    sourceId: wcag-22
+    asOf: 2026-11-06
+    status: verified
+  - id: wcag-contrast
+    text: "Tiêu chí 1.4.3 Tương phản (tối thiểu) của WCAG 2.2"
+    value: "4,5:1 cho chữ thường; 3:1 cho chữ lớn (từ 18pt, hoặc 14pt đậm)"
+    sourceId: wcag-22-contrast
+    asOf: 2026-11-06
+    status: verified
+devMapping:
+  - finance: "HTML ngữ nghĩa"
+    dev: "Kiểu dữ liệu đúng thay vì 'any'"
+    explanation: "`button`, `nav`, `h2`, `label` mang hành vi và ý nghĩa có sẵn; `div` là 'any' — phải tự cài lại mọi thứ."
+  - finance: "Flexbox / Grid"
+    dev: "Bộ máy layout khai báo"
+    explanation: "Mô tả quan hệ (căn giữa, chia cột, giãn) thay vì tính toán vị trí bằng tay."
+  - finance: "Accessibility tree"
+    dev: "API mà công nghệ hỗ trợ đọc từ trang của bạn"
+    explanation: "Trình đọc màn hình không thấy CSS; nó đọc vai trò, tên, trạng thái mà HTML cung cấp."
+pretest: [q-w1h-div, q-w1h-contrast]
+applications:
+  - id: app-w1h-audit
+    title: "Kiểm tra a11y một trang bạn đã làm"
+    context: "Một trang hoặc form trong dự án của bạn."
+    task: "Dùng bàn phím (Tab, Shift+Tab, Enter, Space, Esc) đi hết các thao tác chính và ghi lại chỗ không tới được hoặc không thấy tiêu điểm; chạy một công cụ kiểm tra tự động; kiểm tra tương phản các cặp màu chữ/nền; kiểm tra mọi input có nhãn, ảnh có alt phù hợp, tiêu đề theo thứ tự; sửa 5 lỗi nghiêm trọng nhất."
+    deliverable: "Danh sách lỗi trước/sau + diff sửa."
+sources: [wcag-22, wcag-22-contrast, mdn-css-layout, mdn-how-browsers-work]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao HTML ngữ nghĩa quan trọng, khi nào dùng Flexbox hay Grid, và ba kiểm tra a11y tối thiểu cho một form."
+  rubric:
+    - { id: semantic, criterion: "Phần tử ngữ nghĩa có vai trò, hành vi bàn phím, tiêu điểm sẵn; chỉ dùng ARIA khi không có phần tử phù hợp" }
+    - { id: layout, criterion: "Flexbox cho một chiều (hàng/cột), Grid cho hai chiều; responsive bằng layout co giãn và media/container query" }
+    - { id: wcag, criterion: "WCAG: tương phản đủ, thao tác được bằng bàn phím, tiêu điểm nhìn thấy, nhãn cho trường nhập" }
+    - { id: test, criterion: "Kiểm tra bằng công cụ tự động và bằng tay (bàn phím, trình đọc màn hình)" }
+---
+
+<Callout kind="story" title="Nút không bấm được">
+Một form đăng ký giả định dùng `div` có `onClick` làm nút "Tiếp tục", và ô chọn ngày là một thư viện vẽ bằng `span`. Với chuột, mọi thứ ổn. Một người dùng chỉ dùng bàn phím nhấn Tab mãi mà tiêu điểm nhảy qua nút; một người dùng trình đọc màn hình nghe "nhóm, nhóm, văn bản" và không biết phải làm gì. Cả hai bỏ đi — và không ai trong đội biết, vì log không ghi "không bấm được".
+</Callout>
+
+## HTML ngữ nghĩa
+
+Trình duyệt dựng từ HTML không chỉ DOM để vẽ mà còn **cây khả năng tiếp cận** — thứ trình đọc màn hình và công cụ hỗ trợ đọc. Phần tử ngữ nghĩa cho sẵn **vai trò, tên, trạng thái** và **hành vi**:
+
+| Thay vì | Dùng | Được miễn phí |
+|---|---|---|
+| `div` có onClick | `button` | Nhận tiêu điểm, Enter/Space kích hoạt, vai trò "nút" |
+| `div class="header"` | `header`, `nav`, `main`, `footer` | Mốc điều hướng để nhảy nhanh |
+| chữ to in đậm | `h1`–`h6` theo thứ tự | Dàn ý tài liệu |
+| placeholder làm nhãn | `label for` + `input id` | Tên của trường, bấm nhãn để tiêu điểm |
+| `a` không href làm nút | `a href` cho điều hướng, `button` cho hành động | Hành vi đúng (mở tab mới, quay lại) |
+
+ARIA dùng khi **không có** phần tử gốc phù hợp; ARIA chỉ thay đổi những gì được báo cho công nghệ hỗ trợ, không thêm hành vi bàn phím.
+
+<Quiz id="q-w1h-div" />
+
+## CSS layout: Flexbox và Grid
+
+- **Flexbox** — một chiều: một hàng hoặc một cột; căn chỉnh, phân bổ khoảng trống, co giãn phần tử. Hợp với thanh điều hướng, hàng nút, thẻ trong một hàng.
+- **Grid** — hai chiều: hàng **và** cột cùng lúc; hợp với bố cục trang, lưới thẻ, dashboard.
+- **Responsive**: ưu tiên layout tự co giãn (`minmax`, `auto-fit`, `flex-wrap`) trước, rồi mới thêm media query/container query cho điểm gãy thật sự cần.
+- **Thứ tự hiển thị nên khớp thứ tự trong HTML**: đảo thứ tự bằng CSS làm thứ tự Tab và thứ tự đọc khác thứ tự nhìn.
+
+```css
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+.toolbar { display: flex; gap: .5rem; align-items: center; justify-content: space-between; }
+```
+
+<Quiz id="q-w1h-layout" />
+
+## Khả năng tiếp cận theo WCAG
+
+<Fact id="wcag22-date" />. WCAG tổ chức theo bốn nguyên tắc: **cảm nhận được, vận hành được, hiểu được, mạnh mẽ**. Vài tiêu chí kỹ sư gặp hằng ngày:
+
+- **Tương phản**: <Fact id="wcag-contrast" />. Tỉ lệ = (L₁ + 0,05) / (L₂ + 0,05) với L là độ chói tương đối của màu sáng hơn và tối hơn.
+- **Bàn phím**: mọi chức năng dùng được bằng bàn phím; không có "bẫy" tiêu điểm; **tiêu điểm nhìn thấy được** (đừng `outline: none` mà không thay thế).
+- **Nhãn và lỗi**: mọi trường có nhãn; thông báo lỗi nói rõ lỗi gì và cách sửa, gắn với trường.
+- **Văn bản thay thế** cho ảnh có nội dung; ảnh trang trí để `alt=""`.
+
+<Quiz id="q-w1h-contrast" />
+
+## Kiểm tra
+
+Công cụ tự động bắt được một phần lỗi (tương phản, thiếu nhãn, thiếu alt). Phần còn lại cần **tay**: đi hết luồng bằng bàn phím, thử với trình đọc màn hình, phóng to 200%. Đưa kiểm tra tự động vào CI (bài kiểm thử) để lỗi cũ không quay lại.
+
+<Callout kind="field" title="Rút chuột ra năm phút">
+Bài kiểm tra a11y rẻ nhất mà hiệu quả nhất tôi biết: rút chuột, dùng bàn phím hoàn thành luồng quan trọng nhất của sản phẩm. Hầu như lần nào cũng tìm ra ít nhất một nút không tới được, một hộp thoại không đóng được bằng Esc, hoặc tiêu điểm biến mất sau khi mở menu. Năm phút đó thường cải thiện trải nghiệm cho mọi người, không chỉ người dùng công nghệ hỗ trợ.
+</Callout>

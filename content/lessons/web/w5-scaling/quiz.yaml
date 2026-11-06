@@ -1,0 +1,29 @@
+items:
+  - id: q-w5s-hit
+    type: numeric
+    conceptId: caching-layers-cdn
+    prompt: "Trang nhận 2.000 request/giây, mỗi request cần một truy vấn đắt. Với cache tỉ lệ hit 95%, database phải xử lý bao nhiêu truy vấn/giây?"
+    answer: 100
+    tolerance: { kind: abs, value: 0 }
+    unit: "truy vấn/giây"
+    explanation: "Chỉ phần trượt chạm DB: 2.000 × 5% = 100. Hit tăng từ 95% lên 99% giảm tải DB thêm 5 lần (còn 20)."
+  - id: q-w5s-queue
+    type: mcq
+    conceptId: message-queues-jobs
+    prompt: "Worker gửi email xác nhận lấy message từ hàng đợi giao ít nhất một lần. Làm sao để khách không nhận hai email?"
+    options:
+      - { id: a, text: "Tin rằng hàng đợi không bao giờ giao trùng" }
+      - { id: b, text: "Ghi khoá idempotency (ví dụ id đơn + loại email) trước khi gửi; message trùng thấy khoá đã có thì bỏ qua" }
+      - { id: c, text: "Giảm số worker xuống 1" }
+    correct: [b]
+    explanation: "Giao trùng là hành vi được tài liệu nêu rõ; xử lý idempotent ở consumer là cách duy nhất chắc chắn."
+  - id: q-w5s-state
+    type: mcq
+    conceptId: horizontal-scaling
+    prompt: "Sau khi tăng lên 4 máy, người dùng thỉnh thoảng bị đăng xuất giữa chừng. Nguyên nhân khả dĩ nhất?"
+    options:
+      - { id: a, text: "Phiên lưu trong bộ nhớ của từng máy; request tiếp theo tới máy khác không có phiên đó" }
+      - { id: b, text: "CDN quá nhanh" }
+      - { id: c, text: "Database có quá nhiều index" }
+    correct: [a]
+    explanation: "Ứng dụng giữ trạng thái cục bộ; chuyển phiên sang kho dùng chung hoặc token."

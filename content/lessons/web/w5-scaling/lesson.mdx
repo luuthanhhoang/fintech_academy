@@ -1,0 +1,94 @@
+---
+id: w5-scaling
+track: web
+stage: w5
+order: 1
+title: { vi: "Cache, hàng đợi và mở rộng ngang", en: "Caching, queues and horizontal scaling" }
+summary: "Ba công cụ chính để một hệ thống chịu được nhiều tải hơn. Cache đặt bản sao dữ liệu gần người đọc (trình duyệt, CDN, bộ nhớ ứng dụng) — khó nhất là quyết định khi nào bản sao hết đúng. Hàng đợi tách việc chậm khỏi request và san phẳng đỉnh tải — đổi lại phải chấp nhận giao ít nhất một lần và xử lý idempotent. Mở rộng ngang thêm máy chạy song song — chỉ được khi ứng dụng không giữ trạng thái cục bộ, và điểm nghẽn thường dời sang database."
+concepts: [caching-layers-cdn, message-queues-jobs, horizontal-scaling]
+estMinutes: 50
+whyQuestion: "Trang chủ chậm khi có chiến dịch quảng cáo. Thêm gấp đôi số máy chủ ứng dụng mà vẫn chậm. Bạn đang nhìn sai chỗ nào?"
+devMapping:
+  - finance: "Cache-aside"
+    dev: "Đọc cache, trượt thì đọc DB rồi ghi vào cache"
+    explanation: "Đơn giản và phổ biến; rủi ro chính là dữ liệu cũ và nhiều request cùng trượt một lúc."
+  - finance: "Hàng đợi"
+    dev: "Bộ đệm giữa bên sinh việc và bên làm việc"
+    explanation: "Request trả lời ngay; worker xử lý theo tốc độ của nó; đỉnh tải thành hàng chờ thay vì lỗi."
+  - finance: "Stateless"
+    dev: "Máy nào cũng phục vụ được request nào"
+    explanation: "Phiên, file tải lên, khoá… nằm ở kho dùng chung, không trên đĩa/bộ nhớ của một máy."
+pretest: [q-w5s-hit, q-w5s-queue]
+applications:
+  - id: app-w5s-plan
+    title: "Kế hoạch chịu tải cho một trang có đỉnh tải"
+    context: "Một trang hoặc API trong dự án của bạn dự kiến có đỉnh tải gấp nhiều lần bình thường."
+    task: "Đo hiện trạng (p50/p95, số truy vấn DB mỗi request, tỉ lệ cache hit); xác định phần cache được ở CDN, phần cache ứng dụng với TTL và cách vô hiệu hoá; chuyển việc chậm (gửi email, tạo PDF) sang hàng đợi với worker idempotent và hàng đợi lỗi; kiểm tra ứng dụng không giữ trạng thái cục bộ; load test trước/sau."
+    deliverable: "Bảng số đo trước/sau + thay đổi cấu hình/code + kết quả load test."
+sources: [rfc9111, aws-sqs-visibility, tail-at-scale, sre-book, mm1-queue]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích khi nào dùng cache, hàng đợi và mở rộng ngang, và cái giá kỹ thuật của từng cách."
+  rubric:
+    - { id: cache, criterion: "Các tầng cache (trình duyệt, CDN, ứng dụng); TTL và vô hiệu hoá; chống dồn trượt cache; dữ liệu cũ là đánh đổi" }
+    - { id: queue, criterion: "Hàng đợi tách việc chậm, san đỉnh; giao ít nhất một lần → consumer idempotent; hàng đợi lỗi; theo dõi độ dài hàng" }
+    - { id: scale, criterion: "Mở rộng ngang cần stateless (phiên, file ở kho chung); cân bằng tải; kiểm tra sức khoẻ" }
+    - { id: bottleneck, criterion: "Điểm nghẽn dời sang DB: pool kết nối, replica đọc, cache; đo trước khi thêm máy" }
+---
+
+<Callout kind="story" title="Gấp đôi máy, vẫn chậm">
+Một cửa hàng giả định tăng từ 4 lên 8 máy chủ ứng dụng trước đợt khuyến mãi. Trang chủ vẫn chậm, thậm chí tệ hơn: mỗi request trang chủ chạy 30 truy vấn tới cùng một database, và 8 máy mở gấp đôi số kết nối. Database — không phải máy ứng dụng — là thứ đang nghẹt.
+</Callout>
+
+## Cache: nhiều tầng
+
+| Tầng | Ví dụ | Vô hiệu hoá bằng |
+|---|---|---|
+| Trình duyệt | `Cache-Control` cho file tĩnh | Đổi tên file theo nội dung (hash) |
+| CDN / proxy | Trang công khai, ảnh, API đọc công khai | TTL, purge, `stale-while-revalidate` |
+| Ứng dụng | Kết quả truy vấn đắt (Redis, bộ nhớ) | TTL, xoá khoá khi ghi |
+| Database | Bộ đệm trang của chính DB | Tự quản lý |
+
+HTTP caching (RFC 9111, bài W0) quyết định tầng trình duyệt và CDN. Với cache ứng dụng, mẫu phổ biến là **cache-aside**: đọc cache → trượt thì đọc DB → ghi cache với TTL.
+
+Các bẫy:
+
+- **Dữ liệu cũ**: mọi cache là đánh đổi độ tươi lấy tốc độ. Quyết định từng loại dữ liệu chịu cũ được bao lâu (giá sản phẩm khác số dư tài khoản).
+- **Dồn trượt (stampede)**: khoá phổ biến hết hạn, hàng nghìn request cùng trượt và cùng truy vấn DB. Giảm bằng một request duy nhất được phép làm mới (khoá), TTL có độ lệch ngẫu nhiên, hoặc phục vụ bản cũ trong lúc làm mới.
+- **Dữ liệu riêng tư** không được vào cache dùng chung.
+
+<WorkedExample id="we-cache-load" />
+
+<Quiz id="q-w5s-hit" />
+
+## Hàng đợi và job nền
+
+Việc chậm hoặc không cần xong ngay (gửi email, tạo báo cáo, gọi đối tác chậm) đẩy vào **hàng đợi**; request trả lời ngay; **worker** xử lý theo năng lực. Lợi: đỉnh tải thành hàng chờ thay vì lỗi; lỗi của đối tác không làm hỏng request của người dùng.
+
+Cái giá:
+
+- **Giao ít nhất một lần**: tài liệu Amazon SQS nói rõ không có bảo đảm tuyệt đối một message không bị giao hơn một lần (visibility timeout mặc định 30 giây — worker xử lý lâu hơn mà không gia hạn thì message có thể được giao cho worker khác). → **Consumer idempotent** (bài idempotency).
+- **Hàng đợi lỗi (DLQ)** cho message thất bại nhiều lần — có người theo dõi.
+- **Áp lực ngược**: nếu tốc độ vào > tốc độ xử lý lâu dài, hàng dài vô hạn (bài hàng đợi và định luật Little). Theo dõi **độ dài hàng** và **tuổi message cũ nhất**, scale worker theo đó.
+
+<Quiz id="q-w5s-queue" />
+
+## Mở rộng ngang
+
+Thêm máy chạy song song sau bộ cân bằng tải — chỉ hiệu quả khi ứng dụng **không giữ trạng thái cục bộ**:
+
+- Phiên đăng nhập ở kho dùng chung hoặc token (bài xác thực), không trong bộ nhớ một máy.
+- File tải lên ở object storage, không trên đĩa máy.
+- Job định kỳ không chạy trùng trên mọi máy (khoá phân tán hoặc bộ lập lịch riêng).
+- **Kiểm tra sức khoẻ** để bộ cân bằng tải bỏ máy hỏng.
+
+Rồi điểm nghẽn **dời sang database**: giới hạn kết nối (dùng pool, proxy kết nối), truy vấn chậm (index, N+1 — chặng W3), đọc nhiều → **replica đọc** (chấp nhận độ trễ sao chép), cache. Chia shard là bước cuối cùng, đắt nhất.
+
+Ở quy mô lớn, độ trễ đuôi của một thành phần chậm bị khuếch đại khi một request gọi nhiều thành phần (bài *The Tail at Scale*, chặng W5).
+
+<Quiz id="q-w5s-state" />
+
+<Callout kind="field" title="Đo trước, thêm máy sau">
+Trước khi đề xuất thêm máy chủ, tôi luôn hỏi ba số cho request chậm nhất: bao nhiêu truy vấn DB, tổng thời gian chờ DB, và tỉ lệ cache hit. Trong phần lớn trường hợp tôi gặp, sửa N+1 hoặc thêm một cache có TTL ngắn cho một truy vấn nóng đem lại nhiều hơn gấp đôi số máy — và rẻ hơn nhiều.
+</Callout>

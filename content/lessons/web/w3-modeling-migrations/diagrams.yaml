@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-expand-contract
+    kind: sequence
+    title: "Đổi tên cột theo mở rộng – thu hẹp"
+    caption: "Mỗi bước là một lần triển khai độc lập, tương thích với phiên bản code trước và sau nó."
+    actors:
+      - { id: db, label: "Database" }
+      - { id: app-old, label: "Code cũ" }
+      - { id: app-new, label: "Code mới" }
+      - { id: job, label: "Job backfill" }
+    steps:
+      - { from: app-new, to: db, label: "1. Thêm cột first_name, last_name (NULL được)" }
+      - { from: app-old, to: db, label: "Vẫn đọc/ghi name — không bị ảnh hưởng" }
+      - { from: app-new, to: db, label: "2. Ghi kép: name + cột mới" }
+      - { from: job, to: db, label: "3. Backfill dòng cũ theo lô" }
+      - { from: app-new, to: db, label: "4. Chuyển đọc sang cột mới" }
+      - { from: app-new, to: db, label: "5. Dừng ghi name" }
+      - { from: app-new, to: db, label: "6. Lần triển khai sau: xoá cột name" }

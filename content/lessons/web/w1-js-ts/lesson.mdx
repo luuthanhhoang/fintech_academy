@@ -1,0 +1,88 @@
+---
+id: w1-js-ts
+track: web
+stage: w1
+order: 1
+title: { vi: "JavaScript bất đồng bộ và TypeScript", en: "Async JavaScript and TypeScript" }
+summary: "JavaScript chạy trên một luồng với event loop: mỗi vòng chạy một task, rồi chạy hết các microtask (callback của Promise), rồi mới vẽ lại. Hiểu thứ tự đó giải thích được vì sao UI bị treo, vì sao log ra 'sai thứ tự', và cách viết async/await đúng: chạy song song khi được, huỷ request cũ, không nuốt lỗi. TypeScript thêm kiểu tĩnh để bắt lỗi trước khi chạy — nhưng kiểu bị xoá lúc chạy, nên dữ liệu từ bên ngoài vẫn phải được kiểm tra bằng schema."
+concepts: [javascript-async, typescript-types]
+estMinutes: 45
+whyQuestion: "Ô tìm kiếm gửi request mỗi lần gõ phím. Người dùng gõ 'ngân hàng', nhưng kết quả hiển thị lại là của 'ngân'. Vì sao — và TypeScript có cứu được không?"
+devMapping:
+  - finance: "Event loop"
+    dev: "Một worker xử lý hàng đợi tuần tự"
+    explanation: "Một việc chạy lâu chặn mọi việc phía sau — kể cả vẽ lại màn hình và xử lý click."
+  - finance: "Promise"
+    dev: "Future: giá trị sẽ có, hoặc lỗi"
+    explanation: "Gắn tiếp bước bằng then/await; lỗi không bắt sẽ thành unhandled rejection."
+  - finance: "Kiểu TypeScript"
+    dev: "Hợp đồng kiểm tra lúc biên dịch"
+    explanation: "Không tồn tại lúc chạy — dữ liệu từ mạng phải parse/validate để có kiểu thật."
+pretest: [q-w1j-order, q-w1j-any]
+applications:
+  - id: app-w1j-search
+    title: "Ô tìm kiếm không bị kết quả cũ ghi đè"
+    context: "Một ô tìm kiếm gọi API mỗi khi người dùng gõ."
+    task: "Thêm debounce; huỷ request trước bằng AbortController khi có request mới; bỏ qua phản hồi không còn khớp truy vấn hiện tại; parse phản hồi bằng schema (lỗi schema hiển thị thông báo, không làm sập); kiểu kết quả suy ra từ schema; viết test cho trường hợp phản hồi đến sai thứ tự."
+    deliverable: "Component + hàm fetch có kiểu + test thứ tự phản hồi."
+sources: [mdn-microtasks, ts-handbook]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích event loop, cách viết async/await đúng, và vì sao TypeScript không thay thế được việc kiểm tra dữ liệu lúc chạy."
+  rubric:
+    - { id: loop, criterion: "Một task → hết microtask → render; việc đồng bộ dài chặn UI" }
+    - { id: async, criterion: "await tuần tự vs Promise.all song song; bắt lỗi; huỷ bằng AbortController; xử lý phản hồi đến sai thứ tự" }
+    - { id: types, criterion: "Union + thu hẹp kiểu, union có nhãn, unknown thay cho any" }
+    - { id: runtime, criterion: "Kiểu bị xoá lúc chạy; dữ liệu ngoài phải validate bằng schema rồi mới có kiểu" }
+---
+
+<Callout kind="story" title="Kết quả của chữ gõ dở">
+Một ô tìm kiếm giả định gọi API mỗi lần gõ. Người dùng gõ nhanh "ngân hàng". Request cho "ngân" đi tới một máy chủ chậm, request cho "ngân hàng" tới máy chủ nhanh. Kết quả "ngân hàng" hiện trước — rồi bị kết quả "ngân" đến muộn ghi đè. Code không có lỗi kiểu nào; TypeScript hài lòng. Lỗi nằm ở thời gian.
+</Callout>
+
+## Event loop
+
+Theo MDN, mỗi vòng event loop chạy **tối đa một task** (ví dụ callback của `setTimeout`, sự kiện click), rồi chạy **hết các microtask** đang chờ — kể cả microtask mới được thêm trong lúc chạy — rồi mới **vẽ lại** màn hình nếu cần. Callback của Promise (`then`, phần sau `await`) là microtask.
+
+```js
+console.log("A")
+setTimeout(() => console.log("B"))       // task
+Promise.resolve().then(() => console.log("C"))  // microtask
+console.log("D")
+// A, D, C, B
+```
+
+Hệ quả:
+
+- Code đồng bộ chạy lâu (vòng lặp lớn, parse JSON khổng lồ) **chặn** click và vẽ lại → UI treo. Chia nhỏ việc, hoặc chuyển sang Web Worker.
+- Chuỗi microtask vô tận cũng chặn vẽ lại.
+
+<Quiz id="q-w1j-order" />
+
+## async/await đúng cách
+
+- **Song song khi độc lập**: `await a(); await b();` chạy tuần tự; `await Promise.all([a(), b()])` chạy song song. Dùng `Promise.allSettled` khi muốn lấy kết quả của cả những cái thành công.
+- **Bắt lỗi**: mọi `await` có thể ném lỗi; Promise bị từ chối mà không ai bắt thành *unhandled rejection*. Đừng `catch` rồi nuốt im lặng.
+- **Huỷ**: `AbortController` huỷ `fetch` khi không còn cần (người dùng gõ tiếp, rời trang).
+- **Phản hồi đến sai thứ tự**: gắn mỗi request với truy vấn/phiên bản của nó, chỉ áp phản hồi nếu còn khớp — đúng cách sửa câu chuyện đầu bài.
+
+<Quiz id="q-w1j-parallel" />
+
+## TypeScript: kiểu tĩnh
+
+Sổ tay TypeScript mô tả hệ kiểu **cấu trúc**: hai kiểu tương thích nếu cùng hình dạng, không cần cùng tên. Những công cụ dùng nhiều nhất:
+
+- **Union và thu hẹp kiểu**: `string | number`, rồi `typeof`, `in`, so sánh để thu hẹp trong từng nhánh.
+- **Union có nhãn** cho trạng thái: `{ status: "loading" } | { status: "ok"; data: T } | { status: "error"; message: string }` — không thể truy cập `data` khi chưa kiểm tra `status`.
+- **`unknown` thay cho `any`**: `any` tắt kiểm tra; `unknown` bắt bạn kiểm tra trước khi dùng.
+
+<Quiz id="q-w1j-any" />
+
+## Kiểu bị xoá lúc chạy
+
+TypeScript biên dịch ra JavaScript; **kiểu không tồn tại lúc chạy**. `const user = await res.json() as User` chỉ là lời hứa với trình biên dịch — nếu API trả dữ liệu khác, chương trình vẫn chạy với dữ liệu sai. Ở **biên giới** (phản hồi API, file, localStorage, input người dùng): parse bằng **schema** (ví dụ zod — chính website này dùng nó để kiểm tra mọi file nội dung lúc build), và để kiểu được **suy ra từ schema** thay vì viết hai lần.
+
+<Callout kind="field" title="Một nguồn sự thật cho kiểu và kiểm tra">
+Tôi từng gặp nhiều lỗi do interface TypeScript và hàm validate viết tay lệch nhau sau vài lần sửa. Từ đó tôi chỉ viết schema, rồi suy ra kiểu từ schema. Đổi một trường là đổi một chỗ; trình biên dịch chỉ ra mọi chỗ dùng cần sửa, và dữ liệu sai từ bên ngoài bị chặn ngay ở cửa thay vì nổ ở một component cách đó năm lớp gọi hàm.
+</Callout>

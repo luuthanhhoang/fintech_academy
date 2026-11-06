@@ -1,0 +1,31 @@
+items:
+  - id: q-w7c-vm
+    type: mcq
+    conceptId: containers-docker
+    prompt: "Khác biệt cơ bản giữa container và máy ảo?"
+    options:
+      - { id: a, text: "Container là tiến trình cô lập bằng namespace, giới hạn bằng cgroup, dùng chung nhân máy chủ; máy ảo chạy nhân hệ điều hành riêng" }
+      - { id: b, text: "Container luôn an toàn hơn máy ảo" }
+      - { id: c, text: "Máy ảo không chạy được trên Linux" }
+    correct: [a]
+    explanation: "Dùng chung nhân làm container nhẹ và nhanh, nhưng mức cô lập yếu hơn máy ảo."
+  - id: q-w7c-layers
+    type: mcq
+    conceptId: containers-docker
+    prompt: "Mỗi lần sửa một dòng code, build image mất nhiều phút vì cài lại toàn bộ dependency. Sửa Dockerfile thế nào?"
+    options:
+      - { id: a, text: "Chép lockfile và cài dependency trước, rồi mới chép phần code còn lại" }
+      - { id: b, text: "Gộp mọi lệnh vào một RUN" }
+      - { id: c, text: "Tắt cache build" }
+    correct: [a]
+    explanation: "Lớp cài dependency chỉ phụ thuộc lockfile nên được dùng lại khi chỉ code thay đổi."
+  - id: q-w7c-secret
+    type: mcq
+    conceptId: containers-docker
+    prompt: "Dockerfile chép file `.env` có khoá API vào image rồi xoá nó ở bước sau. Khoá có còn trong image không?"
+    options:
+      - { id: a, text: "Không, vì đã xoá" }
+      - { id: b, text: "Có — nó vẫn nằm trong lớp được tạo ở bước chép và có thể trích ra từ image" }
+      - { id: c, text: "Chỉ còn nếu image được đẩy lên registry công khai" }
+    correct: [b]
+    explanation: "Các lớp là bất biến; bước xoá chỉ thêm lớp mới che file. Bí mật phải đưa vào lúc chạy."

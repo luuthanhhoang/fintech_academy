@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w1h-form
+    conceptId: semantic-html-a11y
+    prompt: "Viết lại form đăng nhập gồm `div` làm nút, input email chỉ có placeholder, và thông báo lỗi chỉ đổi viền đỏ, sao cho đạt các tiêu chí a11y cơ bản."
+    hint: "label, button type=submit, liên kết lỗi với trường, không chỉ dựa vào màu."
+    solution: "Dùng `form`; mỗi input có `label for`/`id` (placeholder chỉ là gợi ý); `input type=\"email\" autocomplete=\"email\" required`; nút `button type=\"submit\"`; khi lỗi: thông báo bằng chữ (\"Email chưa đúng định dạng, ví dụ ten@congty.vn\") đặt cạnh trường, liên kết bằng `aria-describedby`, đặt `aria-invalid=\"true\"`, và chuyển tiêu điểm tới trường lỗi đầu tiên; không chỉ dựa vào màu đỏ. Kiểm tra bằng bàn phím và trình đọc màn hình."
+  - id: ex-w1h-layout
+    conceptId: css-layout
+    prompt: "Dàn trang dashboard: thanh tiêu đề trên cùng, cột điều hướng bên trái rộng cố định, vùng nội dung co giãn; trên màn hình hẹp, điều hướng xuống dưới tiêu đề. Viết CSS bằng Grid."
+    hint: "grid-template-areas và một media query."
+    solution: "`.app { display: grid; grid-template-columns: 16rem 1fr; grid-template-rows: auto 1fr; grid-template-areas: \"header header\" \"nav main\"; min-height: 100dvh; }` gán `header`, `nav`, `main` vào vùng tương ứng; `@media (max-width: 48rem) { .app { grid-template-columns: 1fr; grid-template-areas: \"header\" \"nav\" \"main\"; } }`. Thứ tự trong HTML: header, nav, main — khớp thứ tự đọc ở cả hai bố cục."

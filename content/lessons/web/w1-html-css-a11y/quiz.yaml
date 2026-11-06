@@ -1,0 +1,29 @@
+items:
+  - id: q-w1h-div
+    type: mcq
+    conceptId: semantic-html-a11y
+    prompt: "So với `button`, một `div` có onClick thiếu những gì? (chọn tất cả)"
+    options:
+      - { id: a, text: "Không nhận tiêu điểm bằng Tab theo mặc định" }
+      - { id: b, text: "Không kích hoạt bằng Enter/Space theo mặc định" }
+      - { id: c, text: "Không được công nghệ hỗ trợ nhận diện là nút" }
+      - { id: d, text: "Không đổi được màu nền" }
+    correct: [a, b, c]
+    explanation: "`button` cho sẵn tiêu điểm, phím, vai trò; tự cài lại cho `div` vừa tốn công vừa dễ thiếu."
+  - id: q-w1h-layout
+    type: mcq
+    conceptId: css-layout
+    prompt: "Bạn cần lưới thẻ sản phẩm tự đổi số cột theo bề rộng màn hình, các hàng thẳng cột với nhau. Chọn gì?"
+    options:
+      - { id: a, text: "CSS Grid với repeat(auto-fit, minmax(...))" }
+      - { id: b, text: "Float và tính phần trăm bằng tay" }
+      - { id: c, text: "Bảng HTML `table`" }
+    correct: [a]
+    explanation: "Bố cục hai chiều, co giãn: Grid. `table` dành cho dữ liệu dạng bảng, không phải để dàn trang."
+  - id: q-w1h-contrast
+    type: numeric
+    conceptId: semantic-html-a11y
+    prompt: "Chữ trắng (độ chói tương đối 1) trên nền xám có độ chói tương đối 0,2. Tỉ lệ tương phản (L₁ + 0,05)/(L₂ + 0,05) là bao nhiêu? (2 chữ số thập phân) Có đạt 4,5:1 cho chữ thường không?"
+    answer: 4.2
+    tolerance: { kind: abs, value: 0.01 }
+    explanation: "1,05 / 0,25 = 4,20 < 4,5 → không đạt cho chữ thường (đạt 3:1 cho chữ lớn). Không làm tròn khi so ngưỡng."

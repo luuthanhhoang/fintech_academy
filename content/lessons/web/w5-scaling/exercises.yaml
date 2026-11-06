@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w5s-stampede
+    conceptId: caching-layers-cdn
+    prompt: "Khoá cache 'trang chủ' có TTL 60 giây, trang nhận 5.000 request/giây, truy vấn dựng trang mất 800 ms. Mô tả chuyện gì xảy ra mỗi lần khoá hết hạn và đề xuất hai cách sửa."
+    hint: "Bao nhiêu request trượt trong 800 ms?"
+    solution: "Khi hết hạn, trong 800 ms truy vấn đầu tiên chạy, khoảng 5.000 × 0,8 = 4.000 request cũng trượt và cùng chạy truy vấn đắt → DB quá tải, mọi thứ chậm thêm. Sửa: (1) chỉ một request được làm mới (khoá ngắn trên khoá cache), các request khác dùng bản cũ hoặc chờ; (2) phục vụ bản cũ trong lúc làm mới nền (stale-while-revalidate) và thêm độ lệch ngẫu nhiên vào TTL để các khoá không hết hạn cùng lúc."
+  - id: ex-w5s-workers
+    conceptId: message-queues-jobs
+    prompt: "Hàng đợi tạo PDF nhận trung bình 30 việc/giây vào giờ cao điểm; mỗi việc mất 2 giây với một worker. Cần tối thiểu bao nhiêu worker để hàng không dài ra mãi? Nên chạy bao nhiêu và vì sao?"
+    hint: "Năng lực = số worker / thời gian mỗi việc."
+    solution: "Mỗi worker xử lý 0,5 việc/giây; cần 30 / 0,5 = 60 worker chỉ để bằng tốc độ vào (mức sử dụng 100% → hàng đợi dài vô hạn theo lý thuyết hàng đợi). Nên chạy nhiều hơn để mức sử dụng thấp hơn đáng kể (ví dụ 75–80 worker), theo dõi độ dài hàng và tuổi message cũ nhất, autoscale theo đó."

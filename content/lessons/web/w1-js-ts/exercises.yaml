@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w1j-latest
+    conceptId: javascript-async
+    prompt: "Viết hàm `searchLatest(query)` đảm bảo chỉ kết quả của truy vấn mới nhất được hiển thị, huỷ request cũ, và không báo lỗi cho request bị huỷ."
+    hint: "Giữ AbortController của request trước ở ngoài hàm; phân biệt AbortError."
+    solution: "Giữ biến `current` lưu AbortController đang chạy. Mỗi lần gọi: `current?.abort()`, tạo controller mới, gọi `fetch(url, signal)`. Trong catch: nếu `err.name === \"AbortError\"` thì bỏ qua; lỗi khác thì hiển thị. Sau khi có dữ liệu, kiểm tra controller vẫn là `current` (hoặc truy vấn vẫn là truy vấn hiện tại) rồi mới cập nhật UI. Test: giả lập hai request, cái đầu trả về sau; khẳng định UI hiển thị kết quả cái sau."
+  - id: ex-w1j-state
+    conceptId: typescript-types
+    prompt: "Định nghĩa kiểu cho trạng thái tải dữ liệu (đang tải, thành công kèm dữ liệu, lỗi kèm thông báo) sao cho không thể đọc dữ liệu khi đang lỗi, và viết hàm render dùng thu hẹp kiểu."
+    hint: "Union có nhãn theo trường status; switch đầy đủ."
+    solution: "Kiểu: union ba nhánh với trường `status` là \"loading\" | \"ok\" | \"error\"; nhánh ok có `data`, nhánh error có `message`. Hàm render: `switch (s.status)` — trong nhánh \"ok\" mới truy cập được `s.data`; thêm nhánh `default` gán `s` vào biến kiểu `never` để trình biên dịch báo khi thêm trạng thái mới mà quên xử lý."

@@ -1,0 +1,97 @@
+---
+id: w3-modeling-migrations
+track: web
+stage: w3
+order: 1
+title: { vi: "Mô hình dữ liệu, migration không downtime và N+1", en: "Data modeling, zero-downtime migrations and N+1" }
+summary: "Mô hình quan hệ tách dữ liệu khỏi cách lưu trữ: bảng, khoá chính, khoá ngoại, ràng buộc — và chuẩn hoá để mỗi sự thật nằm một chỗ. Schema sẽ thay đổi; migration an toàn đi theo mẫu mở rộng–thu hẹp (expand/contract), tránh khoá bảng lâu, backfill theo lô, và tương thích với cả code cũ lẫn mới trong lúc triển khai. ORM tiện nhưng dễ sinh N+1 truy vấn — phát hiện bằng log truy vấn, sửa bằng eager loading hoặc batching."
+concepts: [relational-modeling, schema-migrations, orm-n-plus-one]
+estMinutes: 50
+whyQuestion: "Bạn cần đổi cột `name` thành `first_name` và `last_name` trên bảng 20 triệu dòng đang nhận đơn liên tục. Làm sao để không có phút nào API báo lỗi?"
+devMapping:
+  - finance: "Chuẩn hoá"
+    dev: "DRY cho dữ liệu"
+    explanation: "Mỗi sự thật lưu một chỗ; sửa một lần, không lệch giữa các bản sao."
+  - finance: "Expand/contract"
+    dev: "Thay đổi API tương thích ngược, áp cho schema"
+    explanation: "Thêm cái mới song song, chuyển dần, rồi mới gỡ cái cũ — mỗi bước triển khai độc lập được."
+  - finance: "N+1"
+    dev: "Gọi mạng trong vòng lặp"
+    explanation: "Một truy vấn lấy danh sách + một truy vấn cho mỗi phần tử; chậm tuyến tính theo kích thước danh sách."
+pretest: [q-w3m-normal, q-w3m-nplus1]
+applications:
+  - id: app-w3m-migration
+    title: "Kế hoạch migration không downtime"
+    context: "Một thay đổi schema thật trong dự án của bạn (đổi tên cột, tách bảng, thêm ràng buộc NOT NULL)."
+    task: "Viết kế hoạch theo các bước expand/contract, mỗi bước là một lần triển khai độc lập: migration gì, code đọc/ghi thế nào, backfill theo lô bao nhiêu dòng mỗi lần, kiểm tra gì trước khi sang bước tiếp, cách quay lui ở từng bước; đo thời gian khoá dự kiến trên bản sao dữ liệu."
+    deliverable: "Tài liệu kế hoạch + các file migration + script backfill có giới hạn tốc độ."
+scenarios: [migration-lock]
+sources: [codd-1970, pg-create-index, pg-indexes, pg-isolation]
+lastVerified: 2026-11-06
+status: verified
+selfExplain:
+  prompt: "Giải thích cách mô hình hoá dữ liệu quan hệ, cách thực hiện một migration không downtime, và cách phát hiện, sửa N+1."
+  rubric:
+    - { id: model, criterion: "Bảng, khoá chính/ngoại, ràng buộc; chuẩn hoá để tránh dị thường cập nhật; phi chuẩn hoá có chủ đích khi đo được lợi ích" }
+    - { id: expand, criterion: "Expand/contract: thêm mới song song, ghi kép/backfill, chuyển đọc, gỡ cũ — mỗi bước tương thích code cũ và mới" }
+    - { id: locks, criterion: "Tránh khoá lâu: tạo index không chặn ghi, backfill theo lô, đặt lock timeout" }
+    - { id: nplus1, criterion: "N+1: phát hiện qua số truy vấn mỗi request; sửa bằng eager loading/JOIN/batching" }
+---
+
+<Callout kind="story" title="Một dòng ALTER lúc 10 giờ sáng">
+Một đội giả định thêm ràng buộc và một index vào bảng `orders` trong cùng migration, chạy lúc giờ cao điểm. Câu lệnh chờ khoá, các truy vấn đặt hàng xếp hàng sau nó, pool kết nối cạn, API timeout. Migration chạy trên bản dev với vài nghìn dòng mất một giây; trên production có hàng chục triệu dòng.
+</Callout>
+
+## Mô hình quan hệ
+
+Bài báo của Codd (Communications of the ACM, 1970) đặt nền cho mô hình quan hệ với mục tiêu **độc lập dữ liệu**: ứng dụng không phụ thuộc cách dữ liệu được lưu bên trong. Trong thực hành:
+
+- **Bảng** cho mỗi loại thực thể; **khoá chính** ổn định (thường là id thay thế, không phải dữ liệu nghiệp vụ có thể đổi như email).
+- **Khoá ngoại** cho quan hệ; **ràng buộc** (NOT NULL, UNIQUE, CHECK) để cơ sở dữ liệu chặn dữ liệu sai thay vì tin code.
+- **Chuẩn hoá**: mỗi sự thật lưu **một chỗ** — địa chỉ khách nằm ở bảng khách, không chép vào mỗi đơn (trừ khi bạn cần "địa chỉ giao hàng tại thời điểm đặt" — đó là một sự thật khác).
+- **Phi chuẩn hoá có chủ đích** (cột tổng hợp, bảng đọc) khi đo được lợi ích, kèm cơ chế giữ đồng bộ.
+
+<Quiz id="q-w3m-normal" />
+
+## Migration không downtime: mở rộng – thu hẹp
+
+Trong lúc triển khai, **code cũ và code mới chạy cùng lúc**. Mỗi migration phải tương thích với cả hai. Ví dụ đổi `name` thành `first_name` + `last_name`:
+
+<Diagram id="dg-expand-contract" />
+
+1. **Mở rộng**: thêm cột mới (cho phép NULL). Không ai đọc chúng.
+2. **Ghi kép**: code mới ghi cả cột cũ và mới.
+3. **Backfill theo lô**: cập nhật các dòng cũ từng lô nhỏ, có nghỉ giữa các lô.
+4. **Chuyển đọc** sang cột mới; theo dõi.
+5. **Thu hẹp**: dừng ghi cột cũ, rồi xoá cột cũ ở một lần triển khai sau.
+
+Chi tiết khoá với PostgreSQL (theo tài liệu và các hướng dẫn vận hành):
+
+- `CREATE INDEX CONCURRENTLY` không chặn ghi, đổi lại chậm hơn và không chạy được trong khối giao dịch.
+- Từ PostgreSQL 11, thêm cột có **giá trị mặc định là hằng** không viết lại cả bảng; giá trị mặc định biến đổi (như hàm ngẫu nhiên) vẫn viết lại.
+- `ALTER TABLE` vẫn cần khoá mạnh trong chốc lát — nếu có giao dịch dài đang giữ bảng, câu lệnh sẽ chờ và **mọi truy vấn sau nó cũng chờ**. Đặt `lock_timeout` ngắn và thử lại thay vì để hàng đợi khoá dồn lên (câu chuyện đầu bài).
+
+<Quiz id="q-w3m-expand" />
+
+Thử xử lý sự cố trong tình huống giả định:
+
+<Scenario id="migration-lock" />
+
+## N+1 với ORM
+
+```js
+const orders = await Order.findAll({ limit: 50 })      // 1 truy vấn
+for (const o of orders) {
+  o.customer = await Customer.findByPk(o.customerId)    // +50 truy vấn
+}
+```
+
+- **Phát hiện**: đếm số truy vấn mỗi request trong log/trace (bài quan sát hệ thống); cảnh báo trong test khi vượt ngưỡng.
+- **Sửa**: eager loading (`include`, JOIN), hoặc một truy vấn `WHERE id IN (...)` rồi ghép trong bộ nhớ (batching) — cùng ý tưởng DataLoader ở bài GraphQL.
+- Cẩn thận chiều ngược lại: eager load mọi thứ kéo về dữ liệu không cần.
+
+<Quiz id="q-w3m-nplus1" />
+
+<Callout kind="field" title="Chạy migration trên bản sao có dữ liệu thật về kích thước">
+Tôi không duyệt một migration trên bảng lớn nếu chưa ai chạy nó trên bản sao có số dòng tương đương production và ghi lại thời gian chạy cùng loại khoá nó lấy. Migration "một giây trên máy tôi" là loại nguy hiểm nhất, vì nó tạo cảm giác an toàn mà không đo gì cả.
+</Callout>

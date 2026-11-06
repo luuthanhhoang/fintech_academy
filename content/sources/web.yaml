@@ -164,3 +164,71 @@ sources:
     publisher: Cloudflare
     accessed: 2026-11-06
     note: Chưa mở được bài gốc; chi tiết đối chiếu qua nhiều nguồn thứ cấp nhất quán (regex WAF backtracking làm cạn CPU, triển khai đồng loạt).
+  - id: wcag-22
+    title: "Web Content Accessibility Guidelines (WCAG) 2.2 — W3C Recommendation (05/10/2023)"
+    url: https://www.w3.org/TR/WCAG22/
+    publisher: W3C
+    accessed: 2026-11-06
+  - id: wcag-22-contrast
+    title: "Understanding Success Criterion 1.4.3: Contrast (Minimum) — WCAG 2.2"
+    url: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html
+    publisher: W3C WAI
+    accessed: 2026-11-06
+    note: "Tỉ lệ tương phản tối thiểu 4,5:1 cho chữ thường, 3:1 cho chữ lớn (từ 18pt hoặc 14pt đậm); không làm tròn khi so ngưỡng."
+  - id: mdn-css-layout
+    title: "CSS layout — Flexbox and Grid (MDN Learn)"
+    url: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout
+    publisher: MDN Web Docs
+    accessed: 2026-11-06
+  - id: mdn-microtasks
+    title: "In depth: Microtasks and the JavaScript runtime environment"
+    url: https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide/In_depth
+    publisher: MDN Web Docs
+    accessed: 2026-11-06
+    note: Mỗi vòng event loop chạy tối đa một task, rồi chạy hết microtask đang chờ (kể cả microtask mới thêm), rồi mới render.
+  - id: ts-handbook
+    title: "The TypeScript Handbook"
+    url: https://www.typescriptlang.org/docs/handbook/intro.html
+    publisher: Microsoft / TypeScript
+    accessed: 2026-11-06
+  - id: graphql-spec-2021
+    title: "GraphQL Specification — October 2021 Edition"
+    url: https://spec.graphql.org/October2021/
+    publisher: GraphQL Foundation
+    accessed: 2026-11-06
+    note: Bản đặc tả đầu tiên được GraphQL Foundation phê chuẩn.
+  - id: grpc-intro-2015
+    title: "Introducing gRPC, a new open source HTTP/2 RPC Framework (02/2015)"
+    url: https://developers.googleblog.com/en/introducing-grpc-a-new-open-source-http2-rpc-framework/
+    publisher: Google Developers Blog
+    accessed: 2026-11-06
+    note: gRPC dựa trên HTTP/2 (streaming hai chiều, ghép kênh trên một kết nối) và Protocol Buffers (tuần tự hoá nhị phân, sinh client từ định nghĩa dịch vụ).
+  - id: standard-webhooks
+    title: "Standard Webhooks specification"
+    url: https://www.standardwebhooks.com/
+    publisher: Standard Webhooks
+    accessed: 2026-11-06
+    note: Ba header webhook-id, webhook-timestamp, webhook-signature; HMAC-SHA256 trên id.timestamp.body; kiểm tra timestamp trong ngưỡng để chống phát lại (ngưỡng do bên triển khai chọn). Đối chiếu qua thư viện và tài liệu thứ cấp.
+  - id: codd-1970
+    title: "A Relational Model of Data for Large Shared Data Banks — Communications of the ACM 13(6), 377–387 (1970)"
+    url: https://doi.org/10.1145/362384.362685
+    publisher: E. F. Codd / ACM
+    accessed: 2026-11-06
+  - id: pg-create-index
+    title: "PostgreSQL: CREATE INDEX (Building Indexes Concurrently) and ALTER TABLE"
+    url: https://www.postgresql.org/docs/current/sql-createindex.html
+    publisher: PostgreSQL Global Development Group
+    accessed: 2026-11-06
+    note: CONCURRENTLY không chặn ghi nhưng chậm hơn, không chạy trong khối giao dịch; từ PostgreSQL 11, thêm cột có giá trị mặc định hằng không viết lại bảng. Đối chiếu qua tài liệu thứ cấp, chưa đọc trực tiếp trang postgresql.org.
+  - id: aws-sqs-visibility
+    title: "Amazon SQS visibility timeout — Amazon SQS Developer Guide"
+    url: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html
+    publisher: Amazon Web Services
+    accessed: 2026-11-06
+    note: Do mô hình giao ít nhất một lần, không có bảo đảm tuyệt đối message không bị giao hơn một lần; visibility timeout mặc định 30 giây.
+  - id: oci-specs
+    title: "Open Container Initiative — image, runtime and distribution specifications"
+    url: https://opencontainers.org/
+    publisher: Open Container Initiative (Linux Foundation)
+    accessed: 2026-11-06
+    note: Lập năm 2015; image spec (lớp filesystem + cấu hình), runtime spec (namespace, cgroup trên Linux), distribution spec (API registry). Đối chiếu qua repo opencontainers và nguồn thứ cấp.

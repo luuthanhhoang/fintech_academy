@@ -1,8 +1,2 @@
 track: web
-lessons:
-  - { id: "w1-html-css-a11y", stage: "w1", order: 0, title: { vi: "HTML ngữ nghĩa, CSS layout và khả năng tiếp cận", en: "Semantic HTML, CSS layout and accessibility" }, concepts: [semantic-html-a11y, css-layout] }
-  - { id: "w1-js-ts", stage: "w1", order: 1, title: { vi: "JavaScript bất đồng bộ và TypeScript", en: "Async JavaScript and TypeScript" }, concepts: [javascript-async, typescript-types] }
-  - { id: "w2-graphql-webhooks", stage: "w2", order: 2, title: { vi: "GraphQL, gRPC và webhook", en: "GraphQL, gRPC and webhooks" }, concepts: [graphql-grpc, webhooks-async-api] }
-  - { id: "w3-modeling-migrations", stage: "w3", order: 1, title: { vi: "Mô hình dữ liệu, migration và N+1", en: "Data modeling, migrations and N+1" }, concepts: [relational-modeling, schema-migrations, orm-n-plus-one] }
-  - { id: "w5-scaling", stage: "w5", order: 1, title: { vi: "Cache, hàng đợi và mở rộng ngang", en: "Caching, queues and horizontal scaling" }, concepts: [caching-layers-cdn, message-queues-jobs, horizontal-scaling] }
-  - { id: "w7-containers", stage: "w7", order: 0, title: { vi: "Container và Docker", en: "Containers and Docker" }, concepts: [containers-docker] }
+lessons: []

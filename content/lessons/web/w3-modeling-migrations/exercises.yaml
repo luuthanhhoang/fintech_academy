@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w3m-backfill
+    conceptId: schema-migrations
+    prompt: "Viết script backfill `first_name`/`last_name` từ `name` cho bảng 20 triệu dòng mà không làm nghẽn hệ thống. Nêu cách chọn kích thước lô và cách tiếp tục khi script dừng giữa chừng."
+    hint: "Theo khoá chính tăng dần; lô nhỏ; nghỉ; điểm tiếp tục."
+    solution: "Lặp theo khoá chính: `UPDATE ... WHERE id > last_id AND id <= last_id + N AND first_name IS NULL`, commit mỗi lô, lưu last_id vào bảng tiến độ để chạy lại tiếp từ đó (idempotent nhờ điều kiện IS NULL). Kích thước lô: bắt đầu nhỏ, đo thời gian mỗi lô và độ trễ replica, giữ mỗi lô ngắn; nghỉ giữa các lô; dừng tự động khi độ trễ API hoặc replica vượt ngưỡng. Chạy ngoài giờ cao điểm. Kiểm tra cuối: đếm số dòng còn NULL bằng 0."
+  - id: ex-w3m-model
+    conceptId: relational-modeling
+    prompt: "Thiết kế bảng cho: khách hàng, đơn hàng, dòng đơn hàng, sản phẩm; giá sản phẩm có thể thay đổi nhưng đơn cũ phải giữ giá lúc mua. Nêu khoá và ràng buộc."
+    hint: "Giá tại thời điểm mua là sự thật của dòng đơn."
+    solution: "customers(id PK, email UNIQUE NOT NULL, ...); products(id PK, sku UNIQUE NOT NULL, current_price NOT NULL CHECK > 0); orders(id PK, customer_id FK NOT NULL, created_at NOT NULL, status NOT NULL CHECK trong tập giá trị); order_items(order_id FK, product_id FK, quantity CHECK > 0, unit_price_at_purchase NOT NULL, PK (order_id, product_id)). Tiền lưu số nguyên đơn vị nhỏ nhất (bài sổ cái). Index theo customer_id trên orders cho truy vấn 'đơn của khách'."

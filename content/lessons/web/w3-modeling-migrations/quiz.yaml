@@ -1,0 +1,29 @@
+items:
+  - id: q-w3m-normal
+    type: mcq
+    conceptId: relational-modeling
+    prompt: "Bảng `orders` lưu cả `customer_email`. Khách đổi email; một số đơn cũ còn email cũ, báo cáo theo khách bị tách đôi. Cách sửa mô hình?"
+    options:
+      - { id: a, text: "Lưu `customer_id` (khoá ngoại tới bảng khách), lấy email từ bảng khách; nếu cần email tại thời điểm đặt, lưu riêng với tên rõ nghĩa" }
+      - { id: b, text: "Viết job cập nhật email trong mọi đơn mỗi đêm" }
+      - { id: c, text: "Dùng email làm khoá chính của khách" }
+    correct: [a]
+    explanation: "Chuẩn hoá: email là sự thật của khách, lưu một chỗ; khoá chính không nên là dữ liệu có thể đổi."
+  - id: q-w3m-expand
+    type: mcq
+    conceptId: schema-migrations
+    prompt: "Thứ tự an toàn để đổi tên cột trên bảng đang dùng liên tục?"
+    options:
+      - { id: a, text: "RENAME COLUMN rồi triển khai code mới" }
+      - { id: b, text: "Thêm cột mới → ghi kép → backfill theo lô → chuyển đọc → dừng ghi cột cũ → xoá cột cũ ở lần triển khai sau" }
+      - { id: c, text: "Xoá cột cũ, thêm cột mới, khôi phục dữ liệu từ backup" }
+    correct: [b]
+    explanation: "Mỗi bước tương thích với cả code cũ lẫn mới đang chạy song song trong lúc triển khai."
+  - id: q-w3m-nplus1
+    type: numeric
+    conceptId: orm-n-plus-one
+    prompt: "Trang hiển thị 50 đơn hàng, mỗi đơn lấy khách hàng và danh sách sản phẩm bằng truy vấn riêng. Tổng số truy vấn là bao nhiêu? (1 truy vấn lấy danh sách đơn)"
+    answer: 101
+    tolerance: { kind: abs, value: 0 }
+    unit: "truy vấn"
+    explanation: "1 + 50 (khách) + 50 (sản phẩm) = 101. Batching đưa về 3 truy vấn."

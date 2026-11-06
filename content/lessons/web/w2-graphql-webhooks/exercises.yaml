@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w2g-verify
+    conceptId: webhooks-async-api
+    prompt: "Viết (giả mã) hàm xác minh webhook theo Standard Webhooks: đầu vào là header và body thô, bí mật dùng chung; đầu ra là chấp nhận/từ chối kèm lý do."
+    hint: "Ghép id.timestamp.body; HMAC-SHA256; base64; so với từng chữ ký trong header; kiểm tra timestamp."
+    solution: "1) Đọc webhook-id, webhook-timestamp, webhook-signature; thiếu → từ chối. 2) Nếu chênh lệch |now − timestamp| vượt ngưỡng đã chọn → từ chối (phát lại). 3) signed = id + \".\" + timestamp + \".\" + body_thô; expected = base64(HMAC_SHA256(secret, signed)). 4) Header có thể chứa nhiều chữ ký cách nhau bởi khoảng trắng (khi xoay vòng bí mật), mỗi cái dạng `v1,<chữ ký>`; chấp nhận nếu bất kỳ cái nào khớp bằng so sánh thời gian hằng. 5) Kiểm tra id đã xử lý chưa → trùng thì trả 2xx mà không xử lý lại."
+  - id: ex-w2g-order
+    conceptId: webhooks-async-api
+    prompt: "Bạn nhận 'payment.refunded' trước 'payment.succeeded' cho cùng một thanh toán. Thiết kế worker xử lý đúng."
+    hint: "Trạng thái hiện tại từ nguồn; máy trạng thái chỉ đi tiến."
+    solution: "Không áp sự kiện theo thứ tự đến. Khi nhận bất kỳ sự kiện nào của thanh toán X: gọi API nhà cung cấp lấy trạng thái hiện tại của X (hoặc so sánh timestamp/phiên bản trong sự kiện); cập nhật bản ghi nội bộ chỉ khi trạng thái mới 'tiến' hơn theo máy trạng thái (succeeded → refunded, không lùi). Sự kiện succeeded đến sau refunded sẽ bị bỏ qua vì trạng thái đã ở refunded. Ghi log quyết định."
