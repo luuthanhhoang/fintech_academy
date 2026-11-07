@@ -1,0 +1,31 @@
+items:
+  - id: q-w2r-choose
+    type: mcq
+    conceptId: realtime-websocket-sse
+    prompt: "Màn hình theo dõi trạng thái đơn hàng chỉ cần nhận cập nhật từ server. Lựa chọn đơn giản và phù hợp nhất?"
+    options:
+      - { id: a, text: "Server-Sent Events" }
+      - { id: b, text: "WebSocket với giao thức tin nhắn tự thiết kế" }
+      - { id: c, text: "Polling mỗi 100 ms" }
+    correct: [a]
+    explanation: "Luồng một chiều; SSE chạy trên HTTP và có sẵn cơ chế nối lại với Last-Event-ID."
+  - id: q-w2r-resume
+    type: mcq
+    conceptId: realtime-websocket-sse
+    prompt: "Client SSE mất kết nối rồi nối lại. Server cần gì để gửi lại đúng các sự kiện bị lỡ?"
+    options:
+      - { id: a, text: "Mỗi sự kiện có id; server giữ bộ đệm sự kiện gần đây và phát lại các sự kiện sau giá trị Last-Event-ID client gửi" }
+      - { id: b, text: "Không cần gì, trình duyệt tự lưu sự kiện bị lỡ" }
+      - { id: c, text: "Gửi lại toàn bộ sự kiện từ đầu ngày" }
+    correct: [a]
+    explanation: "Trình duyệt chỉ gửi id cuối; việc phát lại là của server. Nếu id quá cũ, client đồng bộ lại trạng thái qua API."
+  - id: q-w2r-backpressure
+    type: mcq
+    conceptId: realtime-websocket-sse
+    prompt: "Một client trên mạng yếu không đọc kịp luồng giá cập nhật 10 lần/giây; bộ đệm gửi trên server tăng mãi. Cách xử lý hợp lý? (chọn tất cả)"
+    options:
+      - { id: a, text: "Gộp cập nhật: chỉ giữ giá mới nhất cho mỗi mã, bỏ các giá trung gian chưa gửi" }
+      - { id: b, text: "Đặt giới hạn bộ đệm; vượt quá thì ngắt kết nối để client nối lại và đồng bộ trạng thái" }
+      - { id: c, text: "Tăng bộ nhớ server không giới hạn" }
+    correct: [a, b]
+    explanation: "Áp lực ngược phải có giới hạn; với dữ liệu kiểu 'giá mới nhất', bỏ giá trung gian là chấp nhận được."

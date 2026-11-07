@@ -1,0 +1,12 @@
+id: var-es
+title: { vi: "VaR và Expected Shortfall lịch sử", en: "Historical VaR and Expected Shortfall" }
+summary: Tự viết VaR lịch sử, Expected Shortfall và VaR tham số chuẩn từ chuỗi lãi/lỗ, rồi đếm số lần vượt VaR khi kiểm định ngược — không dùng thư viện.
+concepts: [market-risk-var]
+timeoutMs: 8000
+instructions: |-
+  Dữ liệu là list lãi/lỗ theo ngày (số dương là lãi, âm là lỗ). Trả về giá trị LỖ dưới dạng số dương.
+  1. historical_var(pnl, level): sắp lỗ giảm dần; với n ngày, k = ceil(n × (1 − level)); VaR là lỗ lớn thứ k (quy ước của bài học). Ví dụ n = 1000, level = 0.99 → k = 10.
+  2. expected_shortfall(pnl, level): trung bình của k lỗ lớn nhất (cùng k như trên).
+  3. parametric_var(pnl, z): z × độ lệch chuẩn MẪU của pnl, trừ đi trung bình (VaR = z·s − mean), làm tròn không cần.
+  4. count_breaches(pnl, var_value): số ngày có lỗ (−pnl) lớn hơn var_value.
+  5. raise ValueError nếu pnl rỗng hoặc level không nằm trong (0, 1).

@@ -1,0 +1,87 @@
+---
+id: w2-realtime
+track: web
+stage: w2
+order: 3
+title: { vi: "Thời gian thực: polling, SSE và WebSocket", en: "Realtime: polling, SSE and WebSocket" }
+summary: "HTTP thông thường là client hỏi, server trả lời. Khi server cần đẩy thông tin ngay (giá cập nhật, thông báo, chat), có ba cách: hỏi định kỳ (polling), Server-Sent Events (một chiều server → client trên HTTP, tự kết nối lại với Last-Event-ID), và WebSocket (hai chiều, kết nối lâu dài, RFC 6455). Phần khó không phải mở kết nối, mà là vận hành: kết nối lại không mất tin, mở rộng nhiều máy qua pub/sub, giới hạn, xác thực, và áp lực ngược khi client chậm."
+concepts: [realtime-websocket-sse]
+estMinutes: 45
+whyQuestion: "Bảng giá trên ứng dụng cần cập nhật mỗi giây cho 50.000 người xem. Polling, SSE hay WebSocket — và khi một người mất mạng 10 giây rồi vào lại, họ có bị thiếu cập nhật không?"
+devMapping:
+  - finance: "SSE"
+    dev: "Luồng sự kiện một chiều trên HTTP, như tail -f qua mạng"
+    explanation: "Đơn giản, đi qua proxy dễ, trình duyệt tự kết nối lại và gửi id sự kiện cuối cùng đã nhận."
+  - finance: "WebSocket"
+    dev: "Socket hai chiều sau một lần nâng cấp từ HTTP"
+    explanation: "Hợp khi client cũng gửi nhiều (chat, cộng tác); phải tự lo giao thức tin nhắn, kết nối lại, ping."
+  - finance: "Pub/sub giữa các máy"
+    dev: "Bus sự kiện để mọi máy giữ kết nối đều nhận cùng tin"
+    explanation: "Người dùng nối vào máy A, sự kiện phát sinh ở máy B — cần một kênh chung."
+pretest: [q-w2r-choose, q-w2r-resume]
+applications:
+  - id: app-w2r-feed
+    title: "Luồng cập nhật có thể nối lại không mất tin"
+    context: "Một màn hình cần cập nhật trạng thái đơn hàng hoặc giá theo thời gian thực."
+    task: "Cài SSE: mỗi sự kiện có id tăng dần; server giữ bộ đệm sự kiện gần đây để phát lại khi client gửi Last-Event-ID; nhiều máy nhận sự kiện qua pub/sub; heartbeat định kỳ; giới hạn số kết nối mỗi người dùng; xác thực trước khi mở luồng; test: ngắt mạng client 10 giây rồi nối lại, khẳng định không thiếu sự kiện."
+    deliverable: "Server + client + test nối lại + số đo kết nối đồng thời trên một máy."
+sources: [rfc6455, whatwg-sse, rfc9110, aws-sqs-visibility]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "So sánh polling, SSE và WebSocket, và mô tả cách vận hành tính năng thời gian thực ở quy mô nhiều máy."
+  rubric:
+    - { id: compare, criterion: "Polling đơn giản nhưng trễ/tốn; SSE một chiều trên HTTP, tự nối lại; WebSocket hai chiều, kết nối lâu dài" }
+    - { id: resume, criterion: "Id sự kiện + bộ đệm phát lại (Last-Event-ID) hoặc lấy trạng thái mới nhất khi nối lại" }
+    - { id: scale, criterion: "Nhiều máy cần pub/sub; kết nối lâu dài ảnh hưởng cân bằng tải và triển khai" }
+    - { id: ops, criterion: "Xác thực, giới hạn kết nối, heartbeat, áp lực ngược với client chậm" }
+---
+
+<Callout kind="story" title="Mất mười giây, mất luôn lệnh khớp">
+Một ứng dụng giao dịch giả định đẩy thông báo "lệnh đã khớp" qua WebSocket. Người dùng đi vào thang máy, mất mạng 10 giây; ứng dụng tự kết nối lại — nhưng server chỉ gửi sự kiện mới, không gửi lại sự kiện đã phát trong lúc mất kết nối. Màn hình vẫn hiện "đang chờ khớp" cho tới khi người dùng tải lại trang.
+</Callout>
+
+## Ba cách đẩy dữ liệu
+
+| | Polling | SSE | WebSocket |
+|---|---|---|---|
+| Hướng | Client hỏi định kỳ | Server → client | Hai chiều |
+| Giao thức | HTTP thường | HTTP, `text/event-stream` | Nâng cấp từ HTTP (RFC 6455) |
+| Kết nối lại | Không cần | Trình duyệt tự làm, gửi `Last-Event-ID` | Tự cài |
+| Hợp với | Cập nhật thưa | Thông báo, giá, tiến độ | Chat, cộng tác, game |
+
+- **Polling** (hoặc long polling): đơn giản, dễ cache, nhưng trễ bằng chu kỳ hỏi và tốn request khi không có gì mới.
+- **SSE**: theo đặc tả HTML của WHATWG, `EventSource` giữ một kết nối HTTP, nhận các sự kiện văn bản; khi nối lại, trình duyệt gửi header `Last-Event-ID` với id sự kiện cuối cùng đã nhận.
+- **WebSocket** (RFC 6455, 2011): sau một lần bắt tay HTTP, kết nối chuyển thành kênh hai chiều lâu dài; bạn tự định nghĩa định dạng tin nhắn, ping/pong, kết nối lại.
+
+<Quiz id="q-w2r-choose" />
+
+## Nối lại không mất tin
+
+Mất kết nối là chuyện thường (mạng di động, ngủ máy, triển khai server). Hai chiến lược:
+
+1. **Phát lại**: mỗi sự kiện có **id tăng dần**; server giữ bộ đệm sự kiện gần đây; client nối lại với id cuối cùng → server gửi phần thiếu. SSE có sẵn cơ chế `Last-Event-ID`.
+2. **Đồng bộ lại trạng thái**: khi nối lại (hoặc khi id quá cũ, ngoài bộ đệm), client gọi API lấy **trạng thái hiện tại** rồi mới nghe tiếp. Đơn giản và bền — kênh thời gian thực chỉ là "gợi ý có thay đổi", API là nguồn sự thật (giống webhook ở bài trước).
+
+<Diagram id="dg-sse-resume" />
+
+<Quiz id="q-w2r-resume" />
+
+## Mở rộng nhiều máy
+
+- Kết nối **lâu dài** gắn với một máy; sự kiện có thể phát sinh ở máy khác → cần **pub/sub** (Redis, message broker) để mọi máy giữ kết nối nhận được.
+- **Cân bằng tải** phải hỗ trợ kết nối lâu; khi triển khai, máy cũ đóng kết nối và client nối lại vào máy mới — nên phải chịu được làn sóng nối lại cùng lúc (thêm độ trễ ngẫu nhiên).
+- Mỗi kết nối chiếm bộ nhớ và file descriptor — đo số kết nối một máy chịu được.
+
+## Vận hành an toàn
+
+- **Xác thực** trước khi mở luồng; kiểm tra quyền với từng kênh đăng ký (người dùng A không nghe được đơn của B).
+- **Giới hạn** số kết nối mỗi người dùng, kích thước và tần suất tin nhắn từ client (WebSocket).
+- **Heartbeat** để phát hiện kết nối chết sau proxy.
+- **Áp lực ngược**: client chậm làm bộ đệm gửi phình ra — đặt giới hạn, gộp cập nhật (chỉ gửi giá mới nhất), hoặc ngắt kết nối.
+
+<Quiz id="q-w2r-backpressure" />
+
+<Callout kind="field" title="Bắt đầu bằng SSE nếu chỉ cần một chiều">
+Với phần lớn tính năng "cập nhật trực tiếp" tôi từng làm — thông báo, trạng thái đơn, tiến độ job, giá — luồng chỉ đi một chiều, và SSE đủ dùng: chạy trên HTTP bình thường, đi qua proxy và CDN dễ hơn, trình duyệt tự nối lại với id cuối cùng. Tôi chỉ chuyển sang WebSocket khi client thật sự cần gửi nhiều tin nhắn liên tục.
+</Callout>

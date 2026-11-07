@@ -1,0 +1,80 @@
+---
+id: a5-mlops
+track: ai
+stage: a5
+order: 2
+title: { vi: "MLOps: đưa mô hình vào vận hành mà không tích nợ kỹ thuật", en: "MLOps: running models in production without hidden debt" }
+summary: "Đưa một mô hình ML hay một hệ thống LLM vào vận hành kéo theo nhiều thứ hơn code mô hình: dữ liệu có phiên bản, thí nghiệm được ghi lại, sổ đăng ký mô hình, triển khai có kiểm soát, giám sát dữ liệu và chất lượng, và quy trình huấn luyện lại. Sculley và cộng sự (NeurIPS 2015) gọi những chi phí ẩn này là nợ kỹ thuật của hệ thống ML: phụ thuộc dữ liệu, vòng phản hồi ẩn, người dùng không khai báo, cấu hình phức tạp. MLOps là kỷ luật để trả món nợ đó trước khi nó đến hạn."
+concepts: [mlops-lifecycle]
+estMinutes: 45
+whyQuestion: "Mô hình chạy tốt sáu tháng rồi xấu dần. Không ai biết nó được huấn luyện từ dữ liệu nào, với code phiên bản nào. Làm sao để lần sau trả lời được trong năm phút?"
+devMapping:
+  - finance: "Sổ đăng ký mô hình"
+    dev: "Registry artifact có phiên bản, như registry image container"
+    explanation: "Mỗi phiên bản mô hình gắn với dữ liệu, code, tham số, kết quả eval và trạng thái (staging/production)."
+  - finance: "Lệch huấn luyện–phục vụ"
+    dev: "Hai cài đặt khác nhau của cùng một logic tính đặc trưng"
+    explanation: "Đặc trưng tính một kiểu lúc huấn luyện (batch) và kiểu khác lúc phục vụ (online) — mô hình nhận dữ liệu nó chưa từng thấy."
+  - finance: "Vòng phản hồi ẩn"
+    dev: "Output của hệ thống thành input huấn luyện của chính nó"
+    explanation: "Mô hình gợi ý thứ người dùng click, rồi học từ click — tự củng cố thiên lệch."
+pretest: [q-a5m-reproduce, q-a5m-skew]
+applications:
+  - id: app-a5m-registry
+    title: "Tái lập được một mô hình đang chạy"
+    context: "Một mô hình ML hoặc một hệ thống prompt/LLM bạn đang vận hành."
+    task: "Với phiên bản đang chạy, ghi: phiên bản dữ liệu (snapshot hoặc truy vấn + thời điểm), commit code, tham số/prompt, môi trường, kết quả eval; thiết lập registry với trạng thái và người duyệt; một test 'huấn luyện lại từ registry cho cùng kết quả trong sai số'; giám sát phân phối đầu vào và chất lượng online; định nghĩa điều kiện kích hoạt huấn luyện lại."
+    deliverable: "Bản ghi registry đầy đủ + test tái lập + dashboard giám sát + chính sách huấn luyện lại."
+sources: [sculley-ml-debt-2015, anthropic-agent-evals, claude-develop-tests]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Mô tả vòng đời một mô hình từ thí nghiệm tới vận hành và các nguồn nợ kỹ thuật cần kiểm soát."
+  rubric:
+    - { id: version, criterion: "Phiên bản hoá dữ liệu, code, tham số/prompt, môi trường; ghi lại thí nghiệm" }
+    - { id: registry, criterion: "Sổ đăng ký mô hình với kết quả eval, trạng thái, người duyệt; triển khai từng phần, rollback" }
+    - { id: monitor, criterion: "Giám sát trôi dạt dữ liệu, chất lượng online, lệch huấn luyện–phục vụ; điều kiện huấn luyện lại" }
+    - { id: debt, criterion: "Nợ kỹ thuật ML: phụ thuộc dữ liệu, vòng phản hồi ẩn, người dùng không khai báo, cấu hình" }
+---
+
+<Callout kind="story" title="Mô hình không ai tái lập được">
+Một mô hình phân loại giả định được một nhà khoa học dữ liệu huấn luyện trong notebook, xuất file, và đội backend nhúng vào dịch vụ. Một năm sau, chất lượng giảm; người viết notebook đã chuyển đội. Dữ liệu huấn luyện là một truy vấn chạy trên bảng đã thay đổi; thư viện đã lên nhiều phiên bản. Không ai tạo lại được mô hình cũ để so sánh — chỉ còn cách làm lại từ đầu.
+</Callout>
+
+## Nợ kỹ thuật của hệ thống ML
+
+Sculley và cộng sự (*Hidden Technical Debt in Machine Learning Systems*, NeurIPS 2015) chỉ ra rằng các hệ thống ML thực tế thường kéo theo **chi phí bảo trì lớn và liên tục**, và liệt kê các yếu tố rủi ro đặc thù:
+
+- **Xói mòn ranh giới và vướng víu**: thay đổi một đặc trưng làm thay đổi mọi thứ.
+- **Vòng phản hồi ẩn**: đầu ra của mô hình ảnh hưởng tới dữ liệu huấn luyện tương lai của chính nó.
+- **Người dùng không khai báo**: hệ thống khác âm thầm dùng đầu ra của mô hình; đổi mô hình làm hỏng họ.
+- **Phụ thuộc dữ liệu**: tín hiệu đầu vào không ổn định, thay đổi mà không báo.
+- **Cấu hình**: tham số, ngưỡng, danh sách đặc trưng phình ra và khó kiểm soát.
+- **Thế giới thay đổi**: phân phối dữ liệu trôi theo thời gian.
+
+<Quiz id="q-a5m-feedback" />
+
+## Vòng đời
+
+<Diagram id="dg-mlops" />
+
+1. **Dữ liệu có phiên bản**: snapshot hoặc truy vấn kèm thời điểm, có kiểm tra schema và phân phối.
+2. **Thí nghiệm được ghi lại**: code commit, tham số, môi trường, kết quả eval — mọi lần chạy.
+3. **Sổ đăng ký mô hình**: mỗi phiên bản gắn với (dữ liệu, code, tham số, eval), có trạng thái và người duyệt.
+4. **Triển khai có kiểm soát**: eval offline đạt cổng → phát hành từng phần → so với bản cũ (chặng A5).
+5. **Giám sát**: trôi dạt đầu vào (ví dụ PSI — chặng F6), chất lượng online, độ trễ, chi phí.
+6. **Huấn luyện lại** theo điều kiện đã định, không theo cảm hứng.
+
+Với hệ thống LLM dùng qua API, "mô hình" là tổ hợp **phiên bản mô hình nền + prompt + công cụ + cấu hình truy xuất** — cùng kỷ luật áp dụng: phiên bản hoá, eval trước khi đổi, giám sát online.
+
+<Quiz id="q-a5m-reproduce" />
+
+## Lệch huấn luyện–phục vụ
+
+Đặc trưng thường được tính **hai lần**: trong pipeline batch để huấn luyện, và trong dịch vụ online để dự đoán. Hai cài đặt khác nhau (múi giờ, cách làm tròn, cửa sổ thời gian, giá trị thiếu) → mô hình nhận dữ liệu khác lúc học. Cách giảm: **một định nghĩa đặc trưng dùng chung** cho cả hai đường (đó là mục đích của "feature store"), ghi lại đặc trưng đã dùng khi phục vụ để huấn luyện lại, và kiểm tra định kỳ phân phối hai bên.
+
+<Quiz id="q-a5m-skew" />
+
+<Callout kind="field" title="Bắt đầu nhỏ, nhưng bắt đầu từ ngày đầu">
+Không cần một nền tảng MLOps đầy đủ để bắt đầu. Tôi luôn yêu cầu ba thứ từ mô hình đầu tiên: dữ liệu huấn luyện được lưu bất biến cùng thời điểm, mỗi lần huấn luyện ghi commit và tham số vào một bảng, và một test so sánh kết quả eval của bản mới với bản đang chạy. Ba thứ đó trả lời được hầu hết câu hỏi "chuyện gì đã xảy ra" về sau, và lớn dần thành nền tảng khi thật sự cần.
+</Callout>

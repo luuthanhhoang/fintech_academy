@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a6d-zero
+    conceptId: distributed-training
+    prompt: "Mô hình 7 tỉ tham số, 8 GPU song song dữ liệu. Dùng ước lượng 2 byte tham số + 2 byte gradient + 12 byte trạng thái tối ưu. Tính bộ nhớ trạng thái mô hình mỗi GPU khi: không phân mảnh; phân mảnh trạng thái tối ưu; phân mảnh cả trạng thái tối ưu và gradient; phân mảnh cả ba."
+    hint: "Phần được phân mảnh chia cho 8."
+    solution: "Không phân mảnh: 7 × 16 = 112 GB. Phân mảnh trạng thái tối ưu: 7 × (2 + 2 + 12/8) = 7 × 5,5 = 38,5 GB. Thêm gradient: 7 × (2 + 2/8 + 12/8) = 7 × 3,75 = 26,25 GB. Cả ba: 7 × 16/8 = 14 GB. Chưa tính activation; mỗi mức cao hơn tăng lượng giao tiếp."
+  - id: ex-a6d-ckpt
+    conceptId: distributed-training
+    prompt: "Đợt huấn luyện dự kiến 10 ngày trên 64 GPU; mỗi lần lưu checkpoint mất 10 phút. Đề xuất tần suất checkpoint và giải thích đánh đổi."
+    hint: "Chi phí lưu so với lượng công việc mất khi lỗi."
+    solution: "Lưu quá thưa: một lỗi phần cứng làm mất nhiều giờ công của cả 64 GPU. Lưu quá dày: tốn thời gian lưu. Một mức hợp lý ban đầu: vài giờ một lần (ví dụ mỗi 2–3 giờ → mất tối đa vài giờ khi lỗi, tốn khoảng 5–8% thời gian cho lưu), rồi hiệu chỉnh theo tần suất lỗi quan sát được; dùng lưu bất đồng bộ nếu framework hỗ trợ; kiểm tra định kỳ rằng checkpoint khôi phục được."

@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-k8s-rollout
+    kind: sequence
+    title: "Cập nhật cuốn chiếu với readiness"
+    caption: "Luồng khái niệm của Deployment; tham số tốc độ cập nhật và thời gian chờ do cấu hình quyết định."
+    actors:
+      - { id: dev, label: "Kỹ sư / CI" }
+      - { id: deploy, label: "Deployment controller" }
+      - { id: new-pod, label: "Pod bản mới" }
+      - { id: svc, label: "Service" }
+      - { id: old-pod, label: "Pod bản cũ" }
+    steps:
+      - { from: dev, to: deploy, label: "Đổi image → trạng thái mong muốn mới" }
+      - { from: deploy, to: new-pod, label: "Tạo Pod mới" }
+      - { from: new-pod, to: new-pod, label: "Startup → readiness thành công" }
+      - { from: svc, to: new-pod, label: "Bắt đầu gửi traffic" }
+      - { from: deploy, to: old-pod, label: "Dừng một Pod cũ" }
+      - { from: deploy, to: deploy, label: "Lặp tới khi mọi Pod là bản mới" }
+      - { from: new-pod, to: deploy, label: "(Nếu readiness thất bại: dừng cập nhật, rollback)" }

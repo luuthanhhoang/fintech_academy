@@ -1,0 +1,99 @@
+---
+id: a1-multimodal
+track: ai
+stage: a1
+order: 3
+title: { vi: "Mô hình đa phương thức: khi LLM nhìn được ảnh và tài liệu", en: "Multimodal models: when LLMs see images and documents" }
+summary: "Mô hình đa phương thức nhận ảnh, ảnh chụp tài liệu, PDF cùng với văn bản. Ảnh được chia thành các ô và biến thành 'token hình ảnh' — nên ảnh tốn token, có giới hạn kích thước và bị thu nhỏ khi quá lớn. Ý tưởng nền: học biểu diễn chung cho ảnh và chữ (như CLIP học từ hàng trăm triệu cặp ảnh–chú thích). Dùng tốt cho đọc tài liệu, biểu đồ, ảnh chụp màn hình; yếu ở đếm chính xác, toạ độ, ảnh nhỏ hoặc mờ — nên vẫn cần kiểm tra bằng code và eval."
+concepts: [multimodal-models]
+estMinutes: 40
+whyQuestion: "Bạn muốn trích xuất số tiền từ ảnh chụp hoá đơn bằng LLM. Ảnh nên chụp/xử lý thế nào, tốn bao nhiêu, và làm sao biết con số đọc ra là đúng?"
+facts:
+  - id: vision-token-cost
+    text: "Cách Claude tính chi phí ảnh theo tài liệu Vision"
+    value: "mỗi visual token là một ô 28×28 px; chi phí ≈ ⌈rộng/28⌉ × ⌈cao/28⌉ token, ảnh vượt giới hạn của mô hình bị thu nhỏ trước khi xử lý"
+    sourceId: claude-vision
+    asOf: 2026-11-07
+    status: verified
+  - id: vision-limits
+    text: "Giới hạn ảnh trên Claude API theo tài liệu Vision"
+    value: "định dạng JPEG, PNG, GIF, WebP; tối đa 8000×8000 px mỗi ảnh; tối đa 10 MB (base64) mỗi ảnh"
+    sourceId: claude-vision
+    asOf: 2026-11-07
+    status: verified
+  - id: clip-data
+    text: "Dữ liệu huấn luyện của CLIP (Radford và cộng sự, ICML 2021)"
+    value: "400 triệu cặp (ảnh, văn bản)"
+    sourceId: radford-clip-2021
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Token hình ảnh"
+    dev: "Ảnh bị chia lưới, mỗi ô thành một vector — giống token văn bản"
+    explanation: "Ảnh lớn = nhiều token = đắt và chậm hơn; kích thước ảnh là một tham số chi phí."
+  - finance: "Biểu diễn chung ảnh–chữ"
+    dev: "Embedding đặt ảnh và câu mô tả gần nhau trong cùng không gian"
+    explanation: "Cho phép tìm ảnh bằng chữ, phân loại ảnh theo nhãn chưa từng huấn luyện."
+  - finance: "Kiểm tra sau trích xuất"
+    dev: "Validator cho output không tất định"
+    explanation: "Tổng dòng = tổng tiền, ngày hợp lệ, mã số đúng định dạng — bắt lỗi đọc sai của mô hình."
+pretest: [q-a1m-tokens, q-a1m-weak]
+applications:
+  - id: app-a1m-invoice
+    title: "Trích xuất hoá đơn từ ảnh có kiểm chứng"
+    context: "30 ảnh hoá đơn mẫu (tự tạo hoặc công khai, đã che dữ liệu cá nhân) kèm nhãn đúng."
+    task: "Chuẩn hoá ảnh (xoay đúng chiều, cắt viền, kích thước vừa giới hạn); gọi mô hình với đầu ra có cấu trúc; kiểm tra bằng code (tổng dòng = tổng cộng, định dạng ngày và mã số thuế); đo độ chính xác theo từng trường và chi phí token mỗi ảnh ở hai kích thước ảnh khác nhau; trường không chắc → gắn cờ cho người kiểm."
+    deliverable: "Pipeline + bảng độ chính xác/chi phí theo kích thước ảnh + danh sách ca cần người kiểm."
+sources: [claude-vision, radford-clip-2021, claude-structured-outputs]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích mô hình xử lý ảnh như thế nào, chi phí ảnh tính ra sao, và cách xây hệ thống đọc tài liệu từ ảnh đáng tin cậy."
+  rubric:
+    - { id: patches, criterion: "Ảnh chia thành ô → token hình ảnh; ảnh quá lớn bị thu nhỏ; chi phí theo số ô" }
+    - { id: joint, criterion: "Biểu diễn chung ảnh–văn bản học từ cặp ảnh–chú thích (ví dụ CLIP, học tương phản)" }
+    - { id: limits, criterion: "Yếu ở đếm, toạ độ, ảnh nhỏ/mờ/xoay; không nhận diện người" }
+    - { id: verify, criterion: "Tiền xử lý ảnh, đầu ra có cấu trúc, kiểm tra bằng code, eval theo trường, người kiểm cho ca không chắc" }
+---
+
+<Callout kind="story" title="Hoá đơn chụp nghiêng">
+Một đội giả định gửi thẳng ảnh chụp hoá đơn từ điện thoại khách (12 megapixel, chụp nghiêng, có bóng) cho mô hình để đọc tổng tiền. Kết quả đúng phần lớn thời gian, nhưng thỉnh thoảng nhầm một chữ số — và vì ảnh rất lớn bị thu nhỏ trước khi xử lý, chữ nhỏ ở dòng tổng càng khó đọc. Không có bước nào kiểm tra tổng tiền có bằng tổng các dòng không.
+</Callout>
+
+## Ảnh trở thành token như thế nào
+
+Mô hình đa phương thức không "nhìn" như người. Theo tài liệu Vision của Claude, ảnh được xử lý theo **ô** chứ không theo điểm ảnh: <Fact id="vision-token-cost" />. Mỗi ô biến thành một vector đi cùng các token văn bản vào transformer (chặng A1).
+
+Hệ quả thực tế:
+
+- **Ảnh là chi phí**: ảnh lớn hơn = nhiều token hơn = đắt và chậm hơn — tới khi chạm giới hạn và bị thu nhỏ.
+- **Thu nhỏ làm mất chi tiết**: chữ nhỏ trên ảnh rất lớn có thể khó đọc hơn sau khi bị thu nhỏ — cắt vùng quan trọng thường tốt hơn gửi cả ảnh khổng lồ.
+- **Giới hạn**: <Fact id="vision-limits" />.
+
+<WorkedExample id="we-image-tokens" />
+
+<Quiz id="q-a1m-tokens" />
+
+## Ý tưởng nền: biểu diễn chung ảnh và chữ
+
+CLIP (Radford và cộng sự, ICML 2021) học bằng cách dự đoán chú thích nào đi với ảnh nào trên <Fact id="clip-data" />, đặt ảnh và văn bản vào **cùng một không gian embedding** (bài embeddings, chặng A3). Kết quả: phân loại ảnh theo nhãn mô tả bằng chữ mà không cần huấn luyện lại cho từng bộ dữ liệu. Các mô hình đa phương thức hiện đại kết hợp phần mã hoá ảnh như vậy với một mô hình ngôn ngữ để trả lời câu hỏi về ảnh.
+
+## Mạnh ở đâu, yếu ở đâu
+
+Hợp với: đọc tài liệu, hoá đơn, biểu đồ, bảng; mô tả ảnh chụp màn hình; so sánh hai ảnh; trích xuất có cấu trúc từ ảnh.
+
+Tài liệu Claude liệt kê các hạn chế cần biết: **đếm** nhiều vật nhỏ chỉ xấp xỉ; **toạ độ, vị trí** chỉ gần đúng; ảnh **chất lượng thấp, xoay, rất nhỏ** dễ đọc sai; không dùng để **nhận diện người**; không phân biệt được ảnh do AI tạo; không thay thế chẩn đoán y khoa chuyên sâu.
+
+<Quiz id="q-a1m-weak" />
+
+## Xây hệ thống đọc ảnh đáng tin
+
+1. **Tiền xử lý**: xoay đúng chiều, cắt vùng cần đọc, kích thước vừa giới hạn của mô hình.
+2. **Đầu ra có cấu trúc** theo schema (chặng A2).
+3. **Kiểm tra bằng code**: tổng dòng = tổng cộng, ngày hợp lệ, mã số đúng định dạng.
+4. **Eval theo từng trường** trên bộ ảnh có nhãn (chặng A5), gồm ảnh xấu thật từ người dùng.
+5. **Người kiểm** cho ca không chắc hoặc giá trị lớn.
+
+<Callout kind="field" title="Thử hai kích thước trước khi chọn">
+Với mọi tính năng đọc ảnh, tôi chạy eval ở ít nhất hai kích thước ảnh và so độ chính xác với chi phí token. Thường có một điểm mà tăng kích thước không còn làm tốt hơn — và đôi khi cắt đúng vùng chứa thông tin cần đọc cho kết quả tốt hơn hẳn gửi cả trang với độ phân giải cao, với chi phí chỉ bằng một phần nhỏ.
+</Callout>

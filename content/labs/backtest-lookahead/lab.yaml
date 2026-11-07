@@ -1,0 +1,11 @@
+id: backtest-lookahead
+title: { vi: "Backtest không nhìn trước", en: "Backtesting without look-ahead" }
+summary: Viết backtest chiến lược giao cắt trung bình động chỉ dùng dữ liệu đến hôm qua, tính chi phí giao dịch theo số lần đổi vị thế — và thấy bằng test vì sao nhìn trước làm kết quả đẹp giả.
+concepts: [backtesting]
+timeoutMs: 8000
+instructions: |-
+  prices là list giá đóng cửa theo ngày (dữ liệu tổng hợp trong test).
+  1. sma(prices, n, t): trung bình n giá đóng cửa kết thúc TẠI ngày t (gồm t). raise ValueError nếu t < n − 1.
+  2. signals(prices, fast, slow): list cùng độ dài; vị thế cho NGÀY t (nắm giữ từ đóng cửa t−1 đến đóng cửa t) chỉ được quyết định bằng dữ liệu đến ngày t−1: 1 nếu sma(fast, t−1) > sma(slow, t−1), ngược lại 0. Ngày chưa đủ dữ liệu (t − 1 < slow − 1) → 0.
+  3. backtest(prices, positions, cost_rate): lợi suất ngày t = positions[t] × (prices[t]/prices[t−1] − 1) trừ cost_rate × |positions[t] − positions[t−1]| (với positions[−1] coi là 0). Trả về giá trị tài sản cuối cùng bắt đầu từ 1.0 (nhân dồn), bỏ qua ngày 0.
+  4. Không được dùng prices[t] khi quyết định vị thế cho ngày t.

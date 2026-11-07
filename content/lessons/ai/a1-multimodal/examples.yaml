@@ -1,0 +1,20 @@
+examples:
+  - id: we-image-tokens
+    title: "Ước lượng token hình ảnh và chi phí"
+    conceptId: multimodal-models
+    problem: "Theo công thức trong tài liệu Vision: token ≈ ⌈rộng/28⌉ × ⌈cao/28⌉ (với ảnh chưa vượt giới hạn). Tính token cho ảnh 200 × 200 px và ảnh 800 × 600 px; rồi chi phí cho 10.000 ảnh 800 × 600 nếu giá đầu vào giả định là 3 USD mỗi triệu token."
+    steps:
+      - text: "200 × 200: ⌈200/28⌉ = 8 → 8 × 8 = 64 token."
+      - text: "800 × 600: ⌈800/28⌉ = 29, ⌈600/28⌉ = 22 → 29 × 22 = 638 token."
+        faded: true
+        prompt: "Ảnh 800 × 600 tốn bao nhiêu token?"
+        answer: 638
+        tolerance: { kind: abs, value: 0 }
+        unit: "token"
+      - text: "10.000 ảnh × 638 = 6,38 triệu token × 3 USD/triệu = 19,14 USD (giá giả định, chỉ để minh hoạ cách tính)."
+        faded: true
+        prompt: "Chi phí cho 10.000 ảnh là bao nhiêu USD? (2 chữ số thập phân)"
+        answer: 19.14
+        tolerance: { kind: abs, value: 0.01 }
+        unit: "USD"
+    takeaway: "Chi phí ảnh tăng theo diện tích; giảm kích thước hoặc cắt vùng là đòn bẩy chi phí lớn nhất."

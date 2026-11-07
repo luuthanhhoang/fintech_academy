@@ -25,6 +25,7 @@ applications:
     context: "Một nhà cung cấp gửi webhook sự kiện thanh toán tới hệ thống của bạn."
     task: "Viết endpoint: đọc body thô; xác minh chữ ký HMAC bằng so sánh thời gian hằng; từ chối timestamp ngoài ngưỡng; ghi webhook-id vào bảng chống trùng; đẩy sự kiện vào hàng đợi rồi trả 2xx ngay; worker xử lý idempotent, chịu được sự kiện đến sai thứ tự (tra trạng thái hiện tại từ API nhà cung cấp khi cần); test với chữ ký sai, gửi lại, sai thứ tự."
     deliverable: "Endpoint + worker + bộ test cho từng trường hợp."
+labs: [webhook-signature]
 sources: [graphql-spec-2021, grpc-intro-2015, standard-webhooks, stripe-idempotency, aws-sqs-visibility]
 lastVerified: 2026-11-06
 status: verified
@@ -87,6 +88,10 @@ Checklist bên nhận:
 5. **Sai thứ tự**: không giả định sự kiện đến đúng thứ tự; khi cần, tra trạng thái hiện tại từ API của nhà cung cấp.
 
 <Quiz id="q-w2g-sig" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="webhook-signature" />
 
 <Callout kind="field" title="Webhook là gợi ý, API là sự thật">
 Với sự kiện quan trọng (thanh toán, hoàn tiền), tôi coi webhook là tín hiệu "có gì đó thay đổi", rồi gọi API của nhà cung cấp để lấy trạng thái hiện tại trước khi hành động. Cách này tự xử lý được sai thứ tự và sự kiện bị mất, và một webhook giả lọt qua cũng không làm được gì vì trạng thái thật lấy từ nguồn. Kèm theo một job đối soát định kỳ để bắt những sự kiện không bao giờ tới.

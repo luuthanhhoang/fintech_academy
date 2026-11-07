@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-iac-flow
+    kind: sequence
+    title: "Một thay đổi hạ tầng từ pull request tới production"
+    caption: "Quy trình khái niệm; công cụ và nơi lưu trạng thái tuỳ tổ chức."
+    actors:
+      - { id: eng, label: "Kỹ sư" }
+      - { id: ci, label: "CI" }
+      - { id: state, label: "Trạng thái (từ xa, có khoá)" }
+      - { id: cloud, label: "Nhà cung cấp đám mây" }
+    steps:
+      - { from: eng, to: ci, label: "Pull request sửa code hạ tầng" }
+      - { from: ci, to: state, label: "Đọc trạng thái" }
+      - { from: ci, to: cloud, label: "Đọc thực tế" }
+      - { from: ci, to: eng, label: "Đăng plan: tạo / sửa / xoá / thay thế" }
+      - { from: eng, to: ci, label: "Review plan, phê duyệt, merge" }
+      - { from: ci, to: state, label: "Lấy khoá" }
+      - { from: ci, to: cloud, label: "Apply đúng plan đã duyệt" }
+      - { from: ci, to: state, label: "Ghi trạng thái mới, nhả khoá" }

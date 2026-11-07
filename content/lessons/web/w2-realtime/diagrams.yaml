@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-sse-resume
+    kind: sequence
+    title: "SSE nối lại không mất sự kiện"
+    caption: "Luồng khái niệm; kích thước bộ đệm phát lại và cách đồng bộ khi id quá cũ do bên triển khai chọn."
+    actors:
+      - { id: client, label: "Trình duyệt (EventSource)" }
+      - { id: server, label: "Máy chủ SSE" }
+      - { id: bus, label: "Pub/sub" }
+    steps:
+      - { from: bus, to: server, label: "Sự kiện 40, 41" }
+      - { from: server, to: client, label: "id 40, 41" }
+      - { from: client, to: client, label: "Mất mạng" }
+      - { from: bus, to: server, label: "Sự kiện 42, 43 (giữ trong bộ đệm)" }
+      - { from: client, to: server, label: "Nối lại, Last-Event-ID: 41" }
+      - { from: server, to: client, label: "Phát lại 42, 43" }
+      - { from: bus, to: server, label: "Sự kiện 44" }
+      - { from: server, to: client, label: "id 44" }

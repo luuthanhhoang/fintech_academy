@@ -1,0 +1,83 @@
+---
+id: w7-kubernetes
+track: web
+stage: w7
+order: 2
+title: { vi: "Kubernetes cơ bản: khai báo trạng thái mong muốn", en: "Kubernetes basics: declaring the desired state" }
+summary: "Kubernetes chạy container trên một cụm máy theo mô hình khai báo: bạn mô tả trạng thái mong muốn (chạy 3 bản của image X, mở cổng Y), các bộ điều khiển liên tục kéo trạng thái thật về đúng như vậy. Các khái niệm cốt lõi: Pod (đơn vị chạy nhỏ nhất), Deployment (quản lý bản sao và cập nhật cuốn chiếu), Service (địa chỉ ổn định), probe (sẵn sàng, còn sống, khởi động), cấu hình và bí mật, yêu cầu và giới hạn tài nguyên. Nó mạnh nhưng phức tạp — không phải đội nào cũng cần."
+concepts: [kubernetes-basics]
+estMinutes: 50
+whyQuestion: "Bạn triển khai bản mới, Kubernetes báo mọi Pod đang chạy, nhưng người dùng nhận lỗi trong 30 giây đầu. Kubernetes đã gửi traffic tới đâu quá sớm — và cấu hình nào ngăn được?"
+devMapping:
+  - finance: "Trạng thái mong muốn"
+    dev: "Vòng lặp điều hoà (reconcile loop)"
+    explanation: "Bộ điều khiển so trạng thái thật với mong muốn và hành động để thu hẹp khoảng cách — liên tục, không chỉ lúc triển khai."
+  - finance: "Readiness probe"
+    dev: "Health check của bộ cân bằng tải"
+    explanation: "Pod chỉ nhận traffic khi báo sẵn sàng; thất bại thì bị rút khỏi Service, không bị khởi động lại."
+  - finance: "Requests / limits"
+    dev: "Đặt chỗ và trần tài nguyên"
+    explanation: "Bộ lập lịch xếp Pod theo phần đặt chỗ; vượt trần bộ nhớ thì container bị dừng."
+pretest: [q-w7k-probe, q-w7k-declare]
+applications:
+  - id: app-w7k-deploy
+    title: "Triển khai một service lên Kubernetes đúng cách"
+    context: "Image container của service ở bài Docker, một cụm Kubernetes cục bộ để thử."
+    task: "Viết Deployment (3 bản, image ghim theo tag commit, requests/limits, readiness/liveness/startup probe phân biệt rõ), Service, cấu hình qua ConfigMap và bí mật qua Secret; cập nhật cuốn chiếu và quan sát; thử một bản lỗi không qua readiness để thấy cập nhật dừng lại; rollback; ghi lại mọi quan sát."
+    deliverable: "Manifest + nhật ký thử nghiệm (cập nhật, bản lỗi, rollback)."
+sources: [k8s-concepts, oci-specs, sre-book]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích mô hình khai báo của Kubernetes và vai trò của Pod, Deployment, Service, các probe và tài nguyên."
+  rubric:
+    - { id: declare, criterion: "Khai báo trạng thái mong muốn; bộ điều khiển liên tục điều hoà trạng thái thật" }
+    - { id: objects, criterion: "Pod là đơn vị chạy nhỏ nhất; Deployment quản lý bản sao và cập nhật cuốn chiếu, rollback; Service cho địa chỉ ổn định" }
+    - { id: probes, criterion: "Readiness rút khỏi Service; liveness khởi động lại; startup trì hoãn hai probe kia khi app khởi động chậm" }
+    - { id: ops, criterion: "Requests/limits, ConfigMap/Secret, image ghim phiên bản; cân nhắc độ phức tạp so với nền tảng đơn giản hơn" }
+---
+
+<Callout kind="story" title="Sẵn sàng trước khi sẵn sàng">
+Một đội giả định triển khai service lên Kubernetes không có readiness probe. Container khởi động, tiến trình chạy, Kubernetes coi Pod là sẵn sàng và gửi traffic ngay — trong khi ứng dụng còn đang nạp cấu hình và mở kết nối database. 30 giây đầu của mỗi lần triển khai là 30 giây lỗi.
+</Callout>
+
+## Mô hình khai báo
+
+Bạn không ra lệnh "chạy container này trên máy kia". Bạn gửi **trạng thái mong muốn**: "Deployment `api`, 3 bản sao, image `api:abc123`". Các **bộ điều khiển** liên tục so sánh trạng thái thật với mong muốn và hành động: một Pod chết → tạo Pod mới; đổi image → thay dần các Pod.
+
+<Quiz id="q-w7k-declare" />
+
+## Các đối tượng cốt lõi
+
+- **Pod**: đơn vị triển khai nhỏ nhất, gồm một hoặc vài container chạy cùng nhau. Pod là tạm thời — có thể bị xoá và tạo lại ở máy khác với địa chỉ khác.
+- **Deployment**: quản lý một nhóm Pod giống nhau (qua ReplicaSet), giữ đúng số bản sao, **cập nhật cuốn chiếu** và **rollback**.
+- **Service**: địa chỉ mạng **ổn định** trỏ tới các Pod đang sẵn sàng — Pod đến rồi đi, Service ở lại.
+- **ConfigMap / Secret**: cấu hình và bí mật đưa vào lúc chạy (đúng nguyên tắc ở bài Docker).
+
+<Diagram id="dg-k8s-rollout" />
+
+## Probe: ba câu hỏi khác nhau
+
+| Probe | Câu hỏi | Thất bại thì |
+|---|---|---|
+| **Readiness** | Có nhận traffic được chưa? | Bị rút khỏi Service, **không** khởi động lại |
+| **Liveness** | Có bị treo không? | Container bị **khởi động lại** |
+| **Startup** | Đã khởi động xong chưa? | Trì hoãn hai probe kia cho app khởi động chậm |
+
+Lỗi hay gặp: dùng cùng một endpoint kiểm tra cả database cho liveness → database chậm làm mọi Pod bị khởi động lại cùng lúc, biến sự cố nhỏ thành sập toàn bộ. Liveness chỉ nên kiểm tra **chính tiến trình**.
+
+<Quiz id="q-w7k-probe" />
+
+## Tài nguyên
+
+- **Requests**: phần đặt chỗ — bộ lập lịch dùng để chọn máy.
+- **Limits**: trần — vượt trần bộ nhớ thì container bị dừng; vượt CPU thì bị giới hạn tốc độ.
+- Không đặt gì → Pod có thể chiếm tài nguyên của Pod khác, hoặc bị dừng đầu tiên khi máy thiếu bộ nhớ.
+
+## Có cần Kubernetes không?
+
+Kubernetes giải quyết bài toán chạy **nhiều service** trên **nhiều máy** với tự phục hồi, cập nhật cuốn chiếu, tự mở rộng. Đổi lại là độ phức tạp vận hành đáng kể (mạng, lưu trữ, bảo mật cụm, nâng cấp). Với một vài service, nền tảng chạy container được quản lý hoặc PaaS thường đủ và rẻ hơn về công vận hành.
+
+<Callout kind="field" title="Readiness đúng quan trọng hơn mọi tối ưu khác">
+Khi review manifest Kubernetes, tôi kiểm tra probe trước tiên: readiness có phản ánh đúng "app đã phục vụ được" chưa, liveness có đang vô tình phụ thuộc vào database hay dịch vụ ngoài không. Phần lớn sự cố triển khai trên Kubernetes tôi từng gặp không đến từ cấu hình phức tạp, mà từ hai dòng probe viết sai.
+</Callout>

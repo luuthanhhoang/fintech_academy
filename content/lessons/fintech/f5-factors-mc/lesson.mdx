@@ -26,6 +26,7 @@ applications:
     task: "Viết mô phỏng có seed: lợi suất tháng lấy từ một phân phối giả định (thử cả chuẩn và một phân phối đuôi dày hoặc bootstrap từ dữ liệu lịch sử có nguồn); chạy N kịch bản; báo cáo phân vị 5%, 50%, 95% của giá trị cuối kỳ và xác suất không đạt mục tiêu; vẽ sai số của ước lượng theo N; so kết quả giữa hai giả định phân phối."
     deliverable: "Notebook + biểu đồ phân vị + bảng so sánh giả định + ghi chú hạn chế."
 simulators: [portfolio]
+labs: [monte-carlo]
 sources: [fama-french-1993, glasserman-mc-2003, markowitz-1952]
 lastVerified: 2026-11-06
 status: verified
@@ -84,6 +85,10 @@ Sai số chuẩn của ước lượng trung bình ≈ σ / √N (giáo trình c
 Thử mô phỏng: simulator dưới đây sinh lợi suất tổng hợp có seed cố định và vẽ đám mây danh mục ngẫu nhiên.
 
 <Simulator id="portfolio" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="monte-carlo" />
 
 ## Giới hạn
 

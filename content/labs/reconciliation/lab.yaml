@@ -1,0 +1,18 @@
+id: reconciliation
+title: { vi: "Đối soát giao dịch với sao kê", en: "Transaction reconciliation" }
+summary: Ghép giao dịch sổ nội bộ với sao kê bên ngoài theo mã tham chiếu rồi theo khoá phụ, phân loại chênh lệch (thiếu nội bộ, thiếu bên ngoài, lệch số tiền) — tiền là số nguyên đơn vị nhỏ nhất.
+concepts: [reconciliation, idempotency]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện hàm reconcile(internal, external). Mỗi phần tử là dict:
+  {"ref": chuỗi hoặc None, "amount": số nguyên (đơn vị nhỏ nhất), "account": chuỗi, "date": "YYYY-MM-DD"}.
+  Trả về dict có 4 khoá, mỗi khoá là list:
+  - "matched": các cặp (i, e) — chỉ số phần tử nội bộ và bên ngoài đã ghép, số tiền khớp.
+  - "amount_mismatch": các cặp (i, e) ghép được nhưng số tiền khác nhau.
+  - "missing_external": chỉ số nội bộ không ghép được.
+  - "missing_internal": chỉ số bên ngoài không ghép được.
+  Quy tắc:
+  1. Tầng 1: ghép theo "ref" khi ref khác None và bằng nhau (mỗi phần tử ghép tối đa một lần).
+  2. Tầng 2 cho phần còn lại: ghép khi cùng (account, amount, date) và chỉ có ĐÚNG MỘT ứng viên bên ngoài còn trống; nhiều ứng viên → không ghép (để người xem).
+  3. Mọi list sắp xếp tăng dần.
+  4. Không dùng số thực cho tiền.

@@ -1,0 +1,32 @@
+items:
+  - id: q-w1m-update
+    type: mcq
+    conceptId: mobile-apps
+    prompt: "Phát hiện lỗi tính phí trong app di động. Ngoài phát hành bản sửa, cần sẵn sàng gì để bảo vệ người dùng đang chạy bản cũ? (chọn tất cả)"
+    options:
+      - { id: a, text: "Feature flag tắt tính năng lỗi từ server" }
+      - { id: b, text: "Cấu hình phiên bản tối thiểu để buộc cập nhật" }
+      - { id: c, text: "Server nhận diện phiên bản app trong request để xử lý riêng" }
+      - { id: d, text: "Tải code JavaScript mới từ server để thay đổi logic tính năng trong bản đã duyệt" }
+    correct: [a, b, c]
+    explanation: "Tải code thay đổi tính năng vi phạm quy định cửa hàng; ba cơ chế còn lại là cách đúng."
+  - id: q-w1m-choose
+    type: mcq
+    conceptId: mobile-apps
+    prompt: "Ứng dụng nội bộ nhiều màn hình nhập liệu, đội 3 người, cần chạy cả iOS và Android, thay đổi nghiệp vụ hằng tuần. Lựa chọn hợp lý nhất?"
+    options:
+      - { id: a, text: "Hai ứng dụng native riêng" }
+      - { id: b, text: "Đa nền tảng hoặc web/PWA, tuỳ yêu cầu API thiết bị" }
+      - { id: c, text: "Không làm mobile" }
+    correct: [b]
+    explanation: "Đội nhỏ, thay đổi thường xuyên, màn hình nghiệp vụ: một codebase giảm chi phí; web cập nhật tức thì nếu đủ API thiết bị."
+  - id: q-w1m-secret
+    type: mcq
+    conceptId: mobile-apps
+    prompt: "Khoá API của đối tác thanh toán nên đặt ở đâu?"
+    options:
+      - { id: a, text: "Nhúng trong code ứng dụng di động, có làm rối mã" }
+      - { id: b, text: "Ở server; app gọi server của bạn, server gọi đối tác" }
+      - { id: c, text: "Trong file cấu hình đi kèm app" }
+    correct: [b]
+    explanation: "Mọi thứ trong app có thể bị dịch ngược; bí mật thật phải nằm ở server."

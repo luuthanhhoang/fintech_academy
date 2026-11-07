@@ -1,0 +1,31 @@
+items:
+  - id: q-w7i-plan
+    type: mcq
+    conceptId: infrastructure-as-code
+    prompt: "Pull request đổi tên một tài nguyên database trong code IaC. Plan ghi '1 to add, 1 to destroy'. Điều này nghĩa là gì?"
+    options:
+      - { id: a, text: "Công cụ sẽ xoá database cũ và tạo database mới rỗng — mất dữ liệu nếu apply" }
+      - { id: b, text: "Chỉ đổi tên hiển thị, không ảnh hưởng dữ liệu" }
+      - { id: c, text: "Công cụ sẽ sao chép dữ liệu sang database mới" }
+    correct: [a]
+    explanation: "Đổi tên trong code bị hiểu là tài nguyên khác; phải dùng cơ chế chuyển trạng thái (move) thay vì để công cụ xoá–tạo."
+  - id: q-w7i-state
+    type: mcq
+    conceptId: infrastructure-as-code
+    prompt: "Nên lưu file trạng thái IaC ở đâu?"
+    options:
+      - { id: a, text: "Commit vào repo cho tiện" }
+      - { id: b, text: "Kho từ xa có mã hoá, phân quyền và khoá chống chạy đồng thời" }
+      - { id: c, text: "Trên máy của kỹ sư chạy apply gần nhất" }
+    correct: [b]
+    explanation: "Trạng thái chứa thông tin nhạy cảm và là bản đồ duy nhất; cần dùng chung an toàn và chống ghi đồng thời."
+  - id: q-w7i-drift
+    type: mcq
+    conceptId: infrastructure-as-code
+    prompt: "Trong sự cố, một kỹ sư tăng kích thước database trực tiếp trên console. Việc nên làm sau đó?"
+    options:
+      - { id: a, text: "Cập nhật code IaC cho khớp ngay và chạy plan xác nhận không còn khác biệt" }
+      - { id: b, text: "Không cần làm gì" }
+      - { id: c, text: "Chạy apply bản code cũ để đưa về như trước" }
+    correct: [a]
+    explanation: "Không cập nhật code thì lần apply sau sẽ thu nhỏ database trở lại — lệch phải được xử lý ngay."

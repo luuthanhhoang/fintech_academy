@@ -25,7 +25,7 @@ applications:
     context: "Sổ cái nội bộ của bạn và file sao kê/quyết toán của một đối tác (dữ liệu tổng hợp dán nhãn mô phỏng)."
     task: "Viết job đọc hai nguồn, chuẩn hoá (tiền tệ, đơn vị nhỏ, múi giờ), ghép theo mã tham chiếu rồi theo khoá phụ (số tiền + ngày + tài khoản) cho các dòng còn lại; phân loại break (thiếu bên nội bộ, thiếu bên ngoài, lệch số tiền, lệch ngày); lưu break với tuổi và người phụ trách; báo cáo tổng hợp và cảnh báo khi break quá hạn."
     deliverable: "Job + bảng break + báo cáo mẫu + test cho từng loại break."
-labs: [idempotency-store]
+labs: [idempotency-store, reconciliation]
 sources: [stripe-idempotency, idempotency-key-draft, aws-backoff-jitter]
 lastVerified: 2026-11-06
 status: verified
@@ -90,6 +90,10 @@ Nguyên tắc vận hành:
 - Theo dõi **xu hướng**: số break mới mỗi ngày và tuổi break cũ nhất là KRI (bài rủi ro vận hành).
 
 <Quiz id="q-f4i-match" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="reconciliation" />
 
 <Callout kind="field" title="Khoá idempotency là của thao tác, không phải của request HTTP">
 Lỗi thiết kế tôi gặp nhiều nhất: client sinh khoá mới mỗi lần thử lại (vì sinh trong hàm gửi request), thế là cơ chế chống trùng vô dụng. Khoá phải sinh **một lần** khi người dùng quyết định thực hiện thao tác (bấm "Chuyển"), lưu lại phía client, và gửi kèm mọi lần thử lại — kể cả sau khi app bị tắt và mở lại.

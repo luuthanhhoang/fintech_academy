@@ -1,0 +1,92 @@
+---
+id: a6-distributed-training
+track: ai
+stage: a6
+order: 2
+title: { vi: "Huấn luyện phân tán: khi một GPU không đủ", en: "Distributed training: when one GPU is not enough" }
+summary: "Mô hình lớn không vừa bộ nhớ một GPU, và huấn luyện trên một GPU quá chậm. Ba cách chia việc: song song dữ liệu (mỗi GPU một phần dữ liệu, cùng mô hình, đồng bộ gradient), song song mô hình theo tensor (chia từng phép nhân ma trận), song song pipeline (chia các lớp thành từng chặng). ZeRO giảm bộ nhớ của song song dữ liệu bằng cách phân mảnh trạng thái tối ưu, gradient và tham số thay vì sao chép. Nút thắt thật thường là bộ nhớ và băng thông giao tiếp, không phải phép tính."
+concepts: [distributed-training]
+estMinutes: 45
+whyQuestion: "Mô hình 7 tỉ tham số chỉ nặng khoảng 14 GB ở 16-bit, nhưng fine-tune đầy đủ trên GPU 80 GB vẫn báo hết bộ nhớ. Bộ nhớ đi đâu?"
+devMapping:
+  - finance: "Song song dữ liệu"
+    dev: "Map-reduce: mỗi worker xử lý một phần dữ liệu, rồi gộp kết quả (all-reduce gradient)"
+    explanation: "Tăng thông lượng gần tuyến tính khi giao tiếp không là nút thắt."
+  - finance: "ZeRO"
+    dev: "Sharding thay vì replication"
+    explanation: "Mỗi worker chỉ giữ một phần trạng thái, lấy phần còn lại khi cần — đổi bộ nhớ lấy giao tiếp."
+  - finance: "Pipeline parallel"
+    dev: "Dây chuyền xử lý nhiều giai đoạn"
+    explanation: "Mỗi GPU giữ một nhóm lớp; chia lô thành micro-batch để các chặng cùng bận."
+pretest: [q-a6d-memory, q-a6d-choose]
+applications:
+  - id: app-a6d-plan
+    title: "Ước lượng bộ nhớ và chọn chiến lược song song"
+    context: "Một kế hoạch fine-tune một mô hình mở trên cụm GPU bạn có (thông số giả định nếu chưa có cụm thật)."
+    task: "Ước lượng bộ nhớ cho tham số, gradient, trạng thái tối ưu và activation; so sánh fine-tune đầy đủ với LoRA/QLoRA (chặng A6); chọn chiến lược song song (dữ liệu, ZeRO giai đoạn nào, tensor/pipeline nếu cần); ghi giả định băng thông kết nối giữa GPU; chạy thử một bước huấn luyện nhỏ và so bộ nhớ thực tế với ước lượng."
+    deliverable: "Bảng ước lượng bộ nhớ + lựa chọn chiến lược kèm lý do + số đo thực tế."
+sources: [rajbhandari-zero-2020, hu-lora-2022, dettmers-qlora-2023]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích bộ nhớ khi huấn luyện gồm những gì, ba kiểu song song, và ZeRO giải quyết vấn đề gì."
+  rubric:
+    - { id: memory, criterion: "Bộ nhớ: tham số + gradient + trạng thái tối ưu (Adam giữ thêm hai đại lượng mỗi tham số, thường ở độ chính xác cao) + activation" }
+    - { id: dp, criterion: "Song song dữ liệu: mô hình sao chép, chia dữ liệu, all-reduce gradient" }
+    - { id: mp, criterion: "Tensor parallel chia phép tính trong một lớp; pipeline chia lớp theo chặng với micro-batch" }
+    - { id: zero, criterion: "ZeRO phân mảnh trạng thái tối ưu, gradient, tham số giữa các GPU song song dữ liệu; đổi bộ nhớ lấy giao tiếp" }
+---
+
+<Callout kind="story" title="80 GB vẫn không đủ cho 14 GB">
+Một kỹ sư giả định thử fine-tune đầy đủ một mô hình 7 tỉ tham số trên một GPU 80 GB, nghĩ rằng 14 GB trọng số là quá thoải mái. Bước đầu tiên đã báo hết bộ nhớ. Trọng số chỉ là phần nhỏ: còn gradient, trạng thái của bộ tối ưu, và activation của mọi lớp cho lần lan truyền ngược.
+</Callout>
+
+## Bộ nhớ huấn luyện đi đâu
+
+Với huấn luyện độ chính xác hỗn hợp dùng Adam, mỗi tham số cần nhiều hơn chính nó:
+
+- **Tham số** (16-bit): 2 byte.
+- **Gradient** (16-bit): 2 byte.
+- **Trạng thái tối ưu**: bản sao tham số độ chính xác cao và hai mômen của Adam — bài ZeRO dùng ước lượng 12 byte mỗi tham số cho phần này.
+- **Activation**: tăng theo kích thước lô và độ dài chuỗi.
+
+Tổng ~16 byte/tham số chưa tính activation → mô hình 7 tỉ tham số cần khoảng 112 GB chỉ cho trạng thái mô hình. Vì thế có LoRA/QLoRA (chỉ học ít tham số) và huấn luyện phân tán.
+
+<WorkedExample id="we-training-memory" />
+
+<Quiz id="q-a6d-memory" />
+
+## Ba kiểu song song
+
+| Kiểu | Chia gì | Giao tiếp | Hợp khi |
+|---|---|---|---|
+| **Dữ liệu** | Mỗi GPU một phần lô dữ liệu, mô hình đầy đủ | All-reduce gradient mỗi bước | Mô hình vừa một GPU |
+| **Tensor** | Chia từng phép nhân ma trận trong một lớp | Rất nhiều, mỗi lớp | GPU trong cùng máy, kết nối nhanh |
+| **Pipeline** | Chia các lớp thành chặng trên các GPU | Activation giữa chặng | Mô hình quá sâu; cần micro-batch để giảm thời gian chờ |
+
+Hệ thống lớn thường kết hợp cả ba.
+
+<Quiz id="q-a6d-choose" />
+
+## ZeRO: bỏ sao chép thừa
+
+Song song dữ liệu thuần **sao chép** toàn bộ trạng thái mô hình lên mọi GPU — lãng phí. ZeRO (Rajbhandari và cộng sự, SC20) **phân mảnh** trạng thái giữa các GPU song song dữ liệu theo ba mức:
+
+1. Phân mảnh **trạng thái tối ưu**.
+2. Thêm **gradient**.
+3. Thêm **tham số** — mỗi GPU chỉ giữ một phần, lấy phần còn lại qua mạng khi cần.
+
+Bộ nhớ mỗi GPU giảm gần tuyến tính theo số GPU, đổi lại **thêm giao tiếp** — nên băng thông kết nối giữa các GPU trở thành yếu tố quyết định.
+
+<Diagram id="dg-zero" />
+
+## Vấn đề thực tế
+
+- **Giao tiếp là nút thắt**: kết nối giữa máy chậm hơn nhiều kết nối trong máy — đặt tensor parallel trong máy, song song dữ liệu giữa máy.
+- **Lỗi phần cứng**: chạy dài trên nhiều GPU gần như chắc chắn gặp lỗi → lưu checkpoint định kỳ, có khả năng tiếp tục.
+- **Tái lập**: seed, phiên bản dữ liệu và code, cấu hình song song ghi lại (bài MLOps).
+- **Có thật cần huấn luyện không?**: với phần lớn đội ứng dụng, LoRA trên một GPU hoặc API của nhà cung cấp là đủ (chặng A6).
+
+<Callout kind="field" title="Ước lượng bộ nhớ trước khi thuê cụm">
+Trước mọi đợt huấn luyện, tôi làm một bảng tính bộ nhớ đơn giản theo từng thành phần và chạy thử một bước với lô nhỏ để so với ước lượng. Năm phút đó thường chỉ ra rằng LoRA đủ dùng, hoặc rằng cần ZeRO giai đoạn cao hơn, trước khi trả tiền cho cả cụm GPU chạy rồi báo hết bộ nhớ ở bước đầu tiên.
+</Callout>

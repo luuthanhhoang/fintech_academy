@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w7i-review
+    conceptId: infrastructure-as-code
+    prompt: "Viết checklist review cho pull request hạ tầng."
+    hint: "Plan, xoá/thay thế, bí mật, quyền, chi phí."
+    solution: "(1) Có kết quả plan mới nhất đính kèm. (2) Mọi destroy/replace được giải thích; tài nguyên dữ liệu không bị xoá/thay thế trừ khi có kế hoạch di chuyển dữ liệu và backup đã kiểm tra. (3) Không có bí mật dạng chữ trong code; bí mật lấy từ kho bí mật. (4) Quyền truy cập theo nguyên tắc tối thiểu, không mở mạng ra internet ngoài ý muốn. (5) Ước lượng thay đổi chi phí. (6) Module/phiên bản provider ghim cố định. (7) Có kế hoạch quay lui."
+  - id: ex-w7i-rename
+    conceptId: infrastructure-as-code
+    prompt: "Bạn thật sự cần đổi tên một tài nguyên database trong code mà không xoá database. Mô tả cách làm."
+    hint: "Di chuyển địa chỉ trong trạng thái."
+    solution: "Dùng cơ chế di chuyển trạng thái của công cụ (khai báo moved trong code hoặc lệnh chuyển địa chỉ trong trạng thái) để báo rằng tài nguyên tên cũ chính là tài nguyên tên mới. Chạy plan: kết quả phải là không có thay đổi nào với database (0 to destroy). Thêm bảo vệ chống xoá cho database. Review plan trước khi merge."

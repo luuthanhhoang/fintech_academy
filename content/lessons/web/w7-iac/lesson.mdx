@@ -1,0 +1,94 @@
+---
+id: w7-iac
+track: web
+stage: w7
+order: 3
+title: { vi: "Hạ tầng dưới dạng code: plan, apply và trạng thái", en: "Infrastructure as code: plan, apply and state" }
+summary: "Hạ tầng dưới dạng code (IaC) mô tả mạng, máy chủ, database, quyền truy cập bằng file khai báo nằm trong repo, review qua pull request và áp dụng bằng công cụ. Công cụ phổ biến như Terraform (và bản fork mã nguồn mở OpenTofu) so sánh code với một file trạng thái để lập kế hoạch thay đổi (plan) trước khi áp dụng (apply). Lợi ích: tái lập, review, lịch sử. Rủi ro: file trạng thái chứa bí mật và là điểm hỏng chung, sửa tay gây lệch, và một dòng thay đổi có thể xoá cả database."
+concepts: [infrastructure-as-code]
+estMinutes: 40
+whyQuestion: "Một kỹ sư đổi tên một tài nguyên database trong code hạ tầng và mở pull request trông rất nhỏ. Vì sao reviewer phải đọc kết quả plan chứ không chỉ đọc diff code?"
+facts:
+  - id: tf-license
+    text: "HashiCorp chuyển giấy phép các bản Terraform tương lai từ MPL 2.0 sang Business Source License 1.1 ngày 10/08/2023; bản fork OpenTofu được Linux Foundation tiếp nhận ngày"
+    value: "20/09/2023 (giữ giấy phép MPL 2.0)"
+    sourceId: opentofu-2023
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Plan"
+    dev: "Dry-run / diff của thay đổi hạ tầng"
+    explanation: "Cho biết chính xác cái gì sẽ được tạo, sửa, xoá — trước khi chạm vào môi trường thật."
+  - finance: "File trạng thái"
+    dev: "Bản đồ giữa tên trong code và tài nguyên thật"
+    explanation: "Mất hoặc hỏng nó thì công cụ không biết mình quản lý gì; nó thường chứa thông tin nhạy cảm."
+  - finance: "Lệch (drift)"
+    dev: "Cấu hình thật khác cấu hình trong repo"
+    explanation: "Ai đó sửa tay trên console — lần apply sau có thể ghi đè hoặc xung đột."
+pretest: [q-w7i-plan, q-w7i-state]
+applications:
+  - id: app-w7i-pipeline
+    title: "Pipeline IaC an toàn"
+    context: "Một môi trường nhỏ (một bucket lưu trữ, một database, một service) trên tài khoản thử nghiệm."
+    task: "Viết code IaC theo module; trạng thái lưu từ xa có khoá chống chạy đồng thời và mã hoá; CI chạy plan trên mỗi pull request và đăng kết quả plan để review; apply chỉ chạy từ CI sau khi merge, có phê duyệt cho môi trường production; chặn plan có thao tác xoá tài nguyên dữ liệu trừ khi có cờ cho phép rõ ràng; job phát hiện lệch định kỳ."
+    deliverable: "Repo IaC + cấu hình CI + ví dụ pull request có plan được review."
+sources: [opentofu-2023, sre-book, gitlab-postmortem-2017]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích IaC hoạt động thế nào (plan, apply, trạng thái), lợi ích, và các kiểm soát để tránh sự cố."
+  rubric:
+    - { id: declare, criterion: "Khai báo hạ tầng trong repo; công cụ so sánh code với trạng thái để lập kế hoạch thay đổi" }
+    - { id: plan, criterion: "Review kết quả plan (tạo/sửa/xoá), không chỉ diff code; một số thay đổi buộc thay thế tài nguyên" }
+    - { id: state, criterion: "Trạng thái lưu từ xa, có khoá, mã hoá, kiểm soát truy cập; không commit vào repo" }
+    - { id: guard, criterion: "Apply chỉ từ CI, phê duyệt production, chặn xoá tài nguyên dữ liệu, phát hiện lệch, không sửa tay" }
+---
+
+<Callout kind="story" title="Đổi tên là xoá rồi tạo lại">
+Một kỹ sư giả định đổi tên một tài nguyên database trong code hạ tầng cho dễ đọc. Diff trong pull request chỉ có một dòng, reviewer duyệt nhanh. Công cụ hiểu rằng tài nguyên tên cũ không còn trong code (cần xoá) và tài nguyên tên mới chưa tồn tại (cần tạo). Kết quả plan ghi rõ "1 to destroy" — nhưng không ai đọc plan.
+</Callout>
+
+## Hạ tầng dưới dạng code
+
+Thay vì bấm trên console của nhà cung cấp đám mây, bạn mô tả hạ tầng trong file khai báo, để trong repo:
+
+- **Tái lập**: dựng lại môi trường giống hệt (staging giống production).
+- **Review**: thay đổi hạ tầng qua pull request như code.
+- **Lịch sử**: ai đổi gì, khi nào, vì sao — có trong git.
+
+Terraform là công cụ phổ biến; <Fact id="tf-license" />. Hai công cụ dùng cùng mô hình plan/apply/trạng thái.
+
+## Plan, apply và trạng thái
+
+1. **Code** mô tả trạng thái mong muốn.
+2. **Trạng thái** (state file) ghi lại tài nguyên thật nào tương ứng với khai báo nào.
+3. **Plan**: so code với trạng thái (và với thực tế) → danh sách tạo / sửa / **xoá** / **thay thế**.
+4. **Apply**: thực hiện plan.
+
+Một số thay đổi không sửa tại chỗ được mà buộc **xoá rồi tạo lại** — đổi tên tài nguyên, đổi một thuộc tính không thay đổi được. Với database, đó là mất dữ liệu. Vì vậy reviewer phải đọc **plan**, không chỉ diff code.
+
+<Diagram id="dg-iac-flow" />
+
+<Quiz id="q-w7i-plan" />
+
+## File trạng thái
+
+- Là **bản đồ** duy nhất giữa code và tài nguyên thật — mất nó, công cụ không biết mình quản lý gì.
+- Thường chứa **giá trị nhạy cảm** (mật khẩu được sinh, chuỗi kết nối).
+- → Lưu **từ xa**, **mã hoá**, **phân quyền**, có **khoá** để hai người không apply cùng lúc; **không commit** vào repo.
+
+<Quiz id="q-w7i-state" />
+
+## Kiểm soát an toàn
+
+- **Apply chỉ từ CI** với danh tính riêng; người không có quyền ghi trực tiếp vào production.
+- **Plan trên mỗi pull request**, đăng kết quả để review; **phê duyệt** cho production.
+- **Chặn xoá tài nguyên dữ liệu** (cờ bảo vệ chống xoá, chính sách kiểm tra plan).
+- **Không sửa tay** trên console; nếu buộc phải sửa khi có sự cố, đưa lại vào code ngay sau đó. Chạy **phát hiện lệch** định kỳ.
+- **Sao lưu đã thử khôi phục** cho dữ liệu — IaC không thay thế backup (xem case GitLab 2017 ở bài triển khai).
+
+<Quiz id="q-w7i-drift" />
+
+<Callout kind="field" title="Plan là thứ được duyệt, không phải code">
+Quy tắc tôi đặt cho mọi repo hạ tầng: pull request phải có kết quả plan đính kèm, và bất kỳ dòng "destroy" hay "replace" nào trên tài nguyên có dữ liệu phải được người duyệt ghi rõ đã đọc và đồng ý. Diff code cho biết bạn định làm gì; plan cho biết công cụ sẽ thật sự làm gì.
+</Callout>

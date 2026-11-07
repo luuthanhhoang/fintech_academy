@@ -1,0 +1,14 @@
+id: webhook-signature
+title: { vi: "Xác minh chữ ký webhook", en: "Verifying webhook signatures" }
+summary: Cài xác minh webhook theo kiểu Standard Webhooks — HMAC-SHA256 trên id.timestamp.body thô, so sánh thời gian hằng, chấp nhận nhiều chữ ký khi xoay vòng bí mật, chống phát lại bằng timestamp và chống trùng bằng id.
+concepts: [webhooks-async-api]
+timeoutMs: 8000
+instructions: |-
+  Hoàn thiện lớp WebhookVerifier(secret: bytes, tolerance_seconds: int).
+  verify(headers, body: bytes, now: int) trả về chuỗi kết quả:
+  1. Thiếu bất kỳ header nào trong "webhook-id", "webhook-timestamp", "webhook-signature" → "missing_headers".
+  2. |now − timestamp| > tolerance_seconds → "timestamp_out_of_range".
+  3. Chuỗi ký = webhook-id + "." + webhook-timestamp + "." + body (bytes thô). Chữ ký mong đợi = base64(HMAC-SHA256(secret, chuỗi ký)).
+  4. Header webhook-signature có thể chứa nhiều mục cách nhau bởi khoảng trắng, mỗi mục dạng "v1,<chữ ký base64>". Khớp bất kỳ mục v1 nào (so sánh bằng hmac.compare_digest) → hợp lệ; không khớp → "invalid_signature".
+  5. Hợp lệ nhưng webhook-id đã được xử lý trước đó → "duplicate"; lần đầu → "ok" (ghi nhớ id).
+  Dùng thư viện chuẩn: hmac, hashlib, base64.

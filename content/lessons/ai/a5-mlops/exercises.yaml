@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a5m-record
+    conceptId: mlops-lifecycle
+    prompt: "Thiết kế schema bản ghi sổ đăng ký mô hình cho cả mô hình ML truyền thống và hệ thống LLM dùng qua API."
+    hint: "Trường chung và trường riêng; trạng thái; liên kết eval."
+    solution: "Chung: id, version, created_at, created_by, status (candidate/staging/production/retired), approved_by, eval_report_id (kết quả theo từng tiêu chí), code_commit, environment, intended_use, known_limitations. ML: training_data_ref (snapshot/truy vấn + thời điểm), hyperparameters, seed, artifact_uri, feature_definitions_version. LLM: base_model_version, prompt_version (băm nội dung), tool_definitions_version, retrieval_config_version. Mọi chuyển trạng thái ghi sự kiện kèm người duyệt."
+  - id: ex-a5m-retrain
+    conceptId: mlops-lifecycle
+    prompt: "Viết chính sách huấn luyện lại cho mô hình chấm điểm: điều kiện kích hoạt, các bước, cổng chấp nhận."
+    hint: "Theo lịch + theo tín hiệu; eval so với bản đang chạy."
+    solution: "Kích hoạt: định kỳ (theo tổ chức đặt), hoặc khi PSI của điểm/đặc trưng chính vượt ngưỡng, hoặc khi chất lượng online trên dữ liệu đã có nhãn giảm quá ngưỡng. Bước: snapshot dữ liệu mới, huấn luyện với cấu hình đã đăng ký, eval trên tập kiểm tra theo thời gian và các nhóm khách hàng, so với bản đang chạy. Cổng: không kém bản cũ ở tiêu chí chính quá ngưỡng, không xấu đi ở công bằng theo nhóm (chặng F6), người duyệt ký. Triển khai từng phần, theo dõi, giữ bản cũ để rollback."

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w1m-api
+    conceptId: mobile-apps
+    prompt: "API đang trả trường `fee` (số nguyên VND). Bạn cần hỗ trợ phí đa tiền tệ. Thiết kế thay đổi để app cũ không hỏng."
+    hint: "Thay đổi cộng thêm; không đổi ý nghĩa trường cũ."
+    solution: "Giữ nguyên `fee` với ý nghĩa cũ (VND) cho mọi client; thêm trường mới `fee_amount` (số nguyên đơn vị nhỏ nhất) và `fee_currency`. App mới dùng trường mới; app cũ không bị ảnh hưởng. Với giao dịch không phải VND mà app cũ không hiển thị đúng được: dựa vào header phiên bản, server chặn tính năng đó cho bản cũ hoặc trả cấu hình buộc cập nhật. Chỉ gỡ `fee` khi phân bố phiên bản cho thấy không còn bản cũ đáng kể."
+  - id: ex-w1m-offline
+    conceptId: mobile-apps
+    prompt: "Người dùng bấm 'Chuyển tiền' khi mạng yếu; app không nhận được phản hồi. Mô tả luồng xử lý đúng ở app và server."
+    hint: "Khoá idempotency sinh một lần; trạng thái chưa rõ; tra soát."
+    solution: "App sinh khoá idempotency khi người dùng bấm, lưu cục bộ cùng nội dung lệnh, gửi request. Timeout → hiển thị 'đang xử lý', thử lại với cùng khoá (backoff), kể cả sau khi app bị tắt và mở lại. Server: khoá đã thấy → trả kết quả đã lưu, không chuyển lần hai. App chỉ báo thành công/thất bại khi có phản hồi xác định; không cho người dùng tạo lệnh mới trùng nội dung khi lệnh cũ còn chưa rõ."

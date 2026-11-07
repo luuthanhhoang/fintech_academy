@@ -1,0 +1,30 @@
+items:
+  - id: q-a1m-tokens
+    type: numeric
+    conceptId: multimodal-models
+    prompt: "Theo công thức ⌈rộng/28⌉ × ⌈cao/28⌉, ảnh 1000 × 1000 px (không bị thu nhỏ) tốn bao nhiêu token hình ảnh?"
+    answer: 1296
+    tolerance: { kind: abs, value: 0 }
+    unit: "token"
+    explanation: "⌈1000/28⌉ = 36; 36 × 36 = 1.296 — khớp bảng ví dụ trong tài liệu Vision."
+  - id: q-a1m-weak
+    type: mcq
+    conceptId: multimodal-models
+    prompt: "Việc nào KHÔNG nên giao cho mô hình đa phương thức mà không có kiểm tra bổ sung? (chọn tất cả)"
+    options:
+      - { id: a, text: "Đếm chính xác 347 linh kiện nhỏ trong một ảnh" }
+      - { id: b, text: "Xác định danh tính một người trong ảnh" }
+      - { id: c, text: "Tóm tắt nội dung một biểu đồ cột rõ nét" }
+      - { id: d, text: "Đọc số tiền trên ảnh hoá đơn mờ, chụp nghiêng để tự động chuyển tiền" }
+    correct: [a, b, d]
+    explanation: "Đếm nhiều vật nhỏ chỉ xấp xỉ, nhận diện người không được hỗ trợ, ảnh xấu dễ đọc sai — đặc biệt nguy hiểm khi gắn với hành động tài chính."
+  - id: q-a1m-clip
+    type: mcq
+    conceptId: multimodal-models
+    prompt: "CLIP học cách liên kết ảnh và văn bản bằng nhiệm vụ huấn luyện nào?"
+    options:
+      - { id: a, text: "Dự đoán chú thích nào đi với ảnh nào trong một lô (học tương phản)" }
+      - { id: b, text: "Dự đoán điểm ảnh tiếp theo" }
+      - { id: c, text: "Phân loại ảnh vào 1.000 nhãn cố định" }
+    correct: [a]
+    explanation: "Học tương phản trên cặp ảnh–văn bản đặt hai loại dữ liệu vào cùng không gian embedding."

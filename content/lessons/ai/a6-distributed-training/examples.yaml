@@ -1,0 +1,20 @@
+examples:
+  - id: we-training-memory
+    title: "Ước lượng bộ nhớ trạng thái mô hình khi huấn luyện"
+    conceptId: distributed-training
+    problem: "Mô hình 13 tỉ tham số, huấn luyện độ chính xác hỗn hợp với Adam; ước lượng 16 byte/tham số cho tham số + gradient + trạng thái tối ưu (theo cách tính của bài ZeRO). So sánh với 8 GPU dùng phân mảnh cả ba thành phần (1 GB = 10⁹ byte)."
+    steps:
+      - text: "Không phân mảnh: 13 × 10⁹ × 16 = 208 GB trên mỗi GPU — không GPU đơn lẻ nào chứa nổi."
+        faded: true
+        prompt: "Bộ nhớ trạng thái mô hình khi không phân mảnh (GB)?"
+        answer: 208
+        tolerance: { kind: abs, value: 0 }
+        unit: "GB"
+      - text: "Phân mảnh cả ba trên 8 GPU: 208 / 8 = 26 GB mỗi GPU, cộng activation."
+        faded: true
+        prompt: "Mỗi GPU cần bao nhiêu GB cho trạng thái mô hình?"
+        answer: 26
+        tolerance: { kind: abs, value: 0 }
+        unit: "GB"
+      - text: "Đổi lại, mỗi bước phải truyền tham số và gradient giữa GPU — băng thông kết nối quyết định tốc độ."
+    takeaway: "Trọng số chỉ là một phần tám bộ nhớ huấn luyện; phân mảnh là chìa khoá để mô hình lớn vừa cụm GPU."

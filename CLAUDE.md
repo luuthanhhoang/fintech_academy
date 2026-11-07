@@ -52,6 +52,7 @@ tests/       Vitest cho lib/
 
 ## Lệnh
 - `npm run check` — lines + validate + typecheck + lint + test (phải xanh trước khi commit).
+- `npm run labs` — chạy test của mọi lab với lời giải mẫu (phải qua) và code khởi đầu (phải chưa qua hết); CI chạy cùng `check`.
 - `npm run build` — prebuild (lines, validate, pyodide) rồi `next build` → `out/`.
 - `npm run dev` — chép Pyodide rồi chạy dev server.
 

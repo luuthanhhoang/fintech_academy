@@ -62,6 +62,12 @@ const EXPECTED: Record<string, number[]> = {
   'we-ecl-stages': [0.015 * 0.45 * 200, (0.015 + 0.025 + 0.035) * 0.45 * 200],
   // Custody reconciliation: obligations include in-flight withdrawals and pending deposits.
   'we-custody-recon': [5000 + 40 + 50, 4600 + 380 - (5000 + 40 + 50)],
+  // Vision tokens ≈ ceil(w/28) × ceil(h/28); cost = tokens × price per million.
+  'we-image-tokens': [Math.ceil(800 / 28) * Math.ceil(600 / 28), ((10000 * Math.ceil(800 / 28) * Math.ceil(600 / 28)) / 1e6) * 3],
+  // Training memory ≈ params × 16 bytes (mixed precision + Adam); ZeRO-3 divides by data-parallel degree.
+  'we-training-memory': [13 * 16, (13 * 16) / 8],
+  // BM25 IDF: ln((N − n + 0.5)/(n + 0.5) + 1).
+  'we-idf': [Math.log((10000 - 6000 + 0.5) / (6000 + 0.5) + 1), Math.log((10000 - 20 + 0.5) / (20 + 0.5) + 1)],
 }
 
 describe('worked examples match the tested libraries', () => {

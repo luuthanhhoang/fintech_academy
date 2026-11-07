@@ -1,0 +1,11 @@
+id: monte-carlo
+title: { vi: "Mô phỏng Monte Carlo có seed và sai số", en: "Seeded Monte Carlo with error estimates" }
+summary: Mô phỏng giá trị danh mục sau 12 tháng với bộ sinh có seed, ước lượng xác suất lỗ vượt ngưỡng kèm sai số chuẩn, và kiểm tra sai số giảm theo căn bậc hai số kịch bản.
+concepts: [monte-carlo]
+timeoutMs: 15000
+instructions: |-
+  Dùng random.Random(seed) — KHÔNG dùng random toàn cục — để kết quả tái lập được.
+  1. simulate_final(seed, n, months, mu, sigma): n kịch bản; mỗi tháng lợi suất ~ Normal(mu, sigma) (dùng rng.gauss); giá trị bắt đầu 1.0, nhân (1 + r) mỗi tháng. Trả list n giá trị cuối.
+  2. prob_below(values, threshold): tỉ lệ giá trị < threshold.
+  3. std_error(p, n): sai số chuẩn của tỉ lệ = sqrt(p(1 − p)/n).
+  4. percentile(values, q): giá trị tại vị trí floor(q × (n − 1)) sau khi sắp tăng dần (0 ≤ q ≤ 1).

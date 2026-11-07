@@ -1,0 +1,29 @@
+items:
+  - id: q-a6d-memory
+    type: numeric
+    conceptId: distributed-training
+    prompt: "Theo ước lượng ~16 byte mỗi tham số cho trạng thái mô hình khi huấn luyện độ chính xác hỗn hợp với Adam (chưa tính activation), mô hình 3 tỉ tham số cần bao nhiêu GB (1 GB = 10⁹ byte)?"
+    answer: 48
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "GB"
+    explanation: "3 × 10⁹ × 16 = 48 × 10⁹ byte = 48 GB — gấp 8 lần 6 GB trọng số 16-bit."
+  - id: q-a6d-choose
+    type: mcq
+    conceptId: distributed-training
+    prompt: "Mô hình vừa bộ nhớ một GPU, bạn muốn huấn luyện nhanh hơn trên 8 GPU. Cách đơn giản nhất?"
+    options:
+      - { id: a, text: "Song song dữ liệu: mỗi GPU xử lý một phần lô, đồng bộ gradient" }
+      - { id: b, text: "Pipeline parallel chia mô hình thành 8 chặng" }
+      - { id: c, text: "Tensor parallel trên 8 máy khác nhau" }
+    correct: [a]
+    explanation: "Khi mô hình vừa một GPU, song song dữ liệu đơn giản và hiệu quả nhất."
+  - id: q-a6d-zero
+    type: mcq
+    conceptId: distributed-training
+    prompt: "ZeRO giảm bộ nhớ mỗi GPU bằng cách nào, và cái giá là gì?"
+    options:
+      - { id: a, text: "Phân mảnh trạng thái tối ưu, gradient, tham số giữa các GPU thay vì sao chép; cái giá là thêm giao tiếp" }
+      - { id: b, text: "Lượng tử hoá mô hình xuống 4-bit; cái giá là độ chính xác" }
+      - { id: c, text: "Bỏ bớt lớp của mô hình" }
+    correct: [a]
+    explanation: "Sharding thay vì replication — bộ nhớ giảm theo số GPU, băng thông kết nối quan trọng hơn."

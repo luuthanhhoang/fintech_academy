@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w7k-probes
+    conceptId: kubernetes-basics
+    prompt: "Viết đặc tả (bằng lời hoặc YAML) cho ba probe của một API Node.js: khởi động mất tới 60 giây, phụ thuộc PostgreSQL và Redis."
+    hint: "Liveness không phụ thuộc dịch vụ ngoài."
+    solution: "Startup: gọi /healthz/started, cho phép đủ lần thất bại để phủ 60 giây (ví dụ mỗi 5 giây, tối đa 15 lần) — trong lúc này liveness/readiness chưa chạy. Liveness: /healthz/live chỉ kiểm tra tiến trình phản hồi được (event loop không treo), không gọi PostgreSQL/Redis. Readiness: /healthz/ready kiểm tra đã nạp cấu hình và có kết nối được tới PostgreSQL (Redis tuỳ — nếu app vẫn phục vụ được khi Redis lỗi thì không đưa vào). Như vậy database chậm chỉ làm Pod tạm rút khỏi Service, không bị khởi động lại hàng loạt."
+  - id: ex-w7k-rollout
+    conceptId: kubernetes-basics
+    prompt: "Deployment 4 bản sao, cập nhật cuốn chiếu với tối đa 1 Pod không sẵn sàng và tối đa 1 Pod vượt số mong muốn. Mô tả các bước khi bản mới có lỗi khiến readiness luôn thất bại."
+    hint: "Pod mới không bao giờ sẵn sàng thì sao?"
+    solution: "Kubernetes tạo 1 Pod mới (tổng 5) và có thể dừng 1 Pod cũ (còn 3 cũ sẵn sàng). Pod mới không qua readiness → không nhận traffic, cập nhật không tiến thêm vì vượt giới hạn không sẵn sàng. Người dùng vẫn được 3 Pod cũ phục vụ. Cập nhật treo tới hạn thời gian → báo thất bại; rollback về ReplicaSet cũ. Đây là lý do readiness đúng là lưới an toàn của mọi lần triển khai."

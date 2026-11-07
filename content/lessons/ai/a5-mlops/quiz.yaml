@@ -1,0 +1,32 @@
+items:
+  - id: q-a5m-reproduce
+    type: mcq
+    conceptId: mlops-lifecycle
+    prompt: "Để tái lập được một mô hình đang chạy, cần lưu những gì? (chọn tất cả)"
+    options:
+      - { id: a, text: "Phiên bản dữ liệu huấn luyện (snapshot hoặc truy vấn + thời điểm)" }
+      - { id: b, text: "Commit code và phiên bản thư viện/môi trường" }
+      - { id: c, text: "Tham số huấn luyện và seed" }
+      - { id: d, text: "Chỉ file trọng số mô hình" }
+    correct: [a, b, c]
+    explanation: "File trọng số cho phép chạy, nhưng không cho phép tạo lại, so sánh hay hiểu vì sao mô hình như vậy."
+  - id: q-a5m-skew
+    type: mcq
+    conceptId: mlops-lifecycle
+    prompt: "Đặc trưng 'số giao dịch trong 7 ngày' được tính theo giờ UTC khi huấn luyện và theo giờ Việt Nam khi phục vụ. Hiện tượng này gọi là gì và sửa thế nào?"
+    options:
+      - { id: a, text: "Lệch huấn luyện–phục vụ; dùng một định nghĩa đặc trưng chung cho cả hai đường và kiểm tra phân phối" }
+      - { id: b, text: "Overfitting; tăng dữ liệu huấn luyện" }
+      - { id: c, text: "Không ảnh hưởng gì" }
+    correct: [a]
+    explanation: "Hai cài đặt khác nhau của cùng một đặc trưng khiến mô hình nhận đầu vào khác lúc học."
+  - id: q-a5m-feedback
+    type: mcq
+    conceptId: mlops-lifecycle
+    prompt: "Mô hình chống gian lận chặn giao dịch có điểm cao; mô hình mới được huấn luyện chỉ từ giao dịch không bị chặn. Rủi ro gì?"
+    options:
+      - { id: a, text: "Vòng phản hồi ẩn: mô hình không bao giờ thấy kết quả của giao dịch bị chặn, dữ liệu huấn luyện bị lệch bởi chính quyết định của nó" }
+      - { id: b, text: "Không có rủi ro" }
+      - { id: c, text: "Mô hình sẽ chặn nhiều hơn một cách ngẫu nhiên" }
+    correct: [a]
+    explanation: "Giữ một nhóm đối chứng nhỏ có kiểm soát hoặc ghi nhận kết quả xem xét thủ công giúp phá vòng lặp."

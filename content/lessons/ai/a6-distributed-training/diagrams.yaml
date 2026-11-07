@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-zero
+    kind: sequence
+    title: "Một bước huấn luyện song song dữ liệu với phân mảnh"
+    caption: "Mô hình khái niệm của song song dữ liệu kiểu ZeRO trên 2 GPU; triển khai thật có nhiều tối ưu chồng giao tiếp lên tính toán."
+    actors:
+      - { id: data, label: "Bộ nạp dữ liệu" }
+      - { id: gpu-a, label: "GPU A (mảnh 1)" }
+      - { id: gpu-b, label: "GPU B (mảnh 2)" }
+    steps:
+      - { from: data, to: gpu-a, label: "Micro-batch 1" }
+      - { from: data, to: gpu-b, label: "Micro-batch 2" }
+      - { from: gpu-a, to: gpu-b, label: "Trao đổi mảnh tham số cần cho lớp hiện tại" }
+      - { from: gpu-a, to: gpu-a, label: "Lan truyền xuôi + ngược" }
+      - { from: gpu-b, to: gpu-b, label: "Lan truyền xuôi + ngược" }
+      - { from: gpu-a, to: gpu-b, label: "Reduce-scatter gradient: mỗi GPU nhận phần gradient của mảnh mình" }
+      - { from: gpu-a, to: gpu-a, label: "Cập nhật mảnh tham số 1 bằng trạng thái tối ưu cục bộ" }
+      - { from: gpu-b, to: gpu-b, label: "Cập nhật mảnh tham số 2" }

@@ -1,0 +1,83 @@
+---
+id: w1-mobile
+track: web
+stage: w1
+order: 3
+title: { vi: "Ứng dụng di động: native, đa nền tảng hay web", en: "Mobile apps: native, cross-platform or web" }
+summary: "Ứng dụng di động khác web ở một điểm quyết định: bạn không kiểm soát khi nào người dùng cập nhật. Phiên bản cũ sống nhiều tháng, mỗi bản phát hành qua duyệt của cửa hàng, và quy định cửa hàng hạn chế việc tải code mới để đổi tính năng. Hệ quả kỹ thuật: API phải tương thích ngược lâu dài, cấu hình và feature flag từ server, cơ chế buộc cập nhật, xử lý ngoại tuyến và mạng chập chờn, thông báo đẩy, và bảo mật dữ liệu trên thiết bị."
+concepts: [mobile-apps]
+estMinutes: 40
+whyQuestion: "Bạn sửa một lỗi tính phí trong ứng dụng di động và phát hành ngay hôm nay. Sau một tuần, bao nhiêu phần trăm người dùng vẫn chạy bản có lỗi — và bạn làm gì với họ?"
+devMapping:
+  - finance: "Bản app cũ trên máy người dùng"
+    dev: "Client bạn không thể deploy lại"
+    explanation: "Như phát hành một SDK: mỗi phiên bản đã ra là một hợp đồng phải giữ nhiều tháng."
+  - finance: "Cấu hình từ xa / feature flag"
+    dev: "Thay đổi hành vi mà không cần phát hành bản mới"
+    explanation: "Bật/tắt tính năng, đổi tham số — nhưng không được dùng để tải code thay đổi tính năng trái quy định cửa hàng."
+  - finance: "Ngoại tuyến trước"
+    dev: "Hàng đợi thao tác cục bộ + đồng bộ khi có mạng"
+    explanation: "Thao tác phải idempotent để gửi lại an toàn khi mạng chập chờn."
+pretest: [q-w1m-update, q-w1m-choose]
+applications:
+  - id: app-w1m-compat
+    title: "Chính sách tương thích phiên bản app"
+    context: "Một ứng dụng di động gọi API của bạn."
+    task: "Gửi phiên bản app và nền tảng trong mọi request; đo phân bố phiên bản đang dùng; định nghĩa phiên bản tối thiểu được hỗ trợ và cơ chế buộc cập nhật (cấu hình từ server); quy tắc thay đổi API cộng thêm; kill switch cho tính năng lỗi qua feature flag; thao tác thanh toán có khoá idempotency để chịu mạng chập chờn."
+    deliverable: "Tài liệu chính sách + dashboard phân bố phiên bản + cấu hình buộc cập nhật."
+sources: [apple-review-guidelines, rfc9110, stripe-idempotency, owasp-top10-2025]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "So sánh native, đa nền tảng và web cho ứng dụng di động, và mô tả các yêu cầu kỹ thuật do vòng đời phát hành qua cửa hàng gây ra."
+  rubric:
+    - { id: options, criterion: "Native (hiệu năng, API thiết bị), đa nền tảng (một codebase), web/PWA (cập nhật tức thì, hạn chế API thiết bị)" }
+    - { id: release, criterion: "Phát hành qua duyệt cửa hàng; người dùng cập nhật chậm; không tải code thay đổi tính năng trái quy định" }
+    - { id: compat, criterion: "API tương thích ngược, gửi phiên bản app, phiên bản tối thiểu và buộc cập nhật, feature flag/kill switch" }
+    - { id: device, criterion: "Ngoại tuyến và mạng chập chờn (idempotency), thông báo đẩy, lưu trữ an toàn trên thiết bị" }
+---
+
+<Callout kind="story" title="Bản lỗi sống mãi">
+Một ứng dụng ví giả định phát hành bản sửa lỗi hiển thị sai phí. Một tháng sau, log cho thấy vẫn còn một phần đáng kể người dùng chạy bản cũ — tắt tự động cập nhật, máy cũ không lên được hệ điều hành mới, hoặc đơn giản là không mở cửa hàng ứng dụng. Server không có cách nào biết request đến từ bản nào, nên không thể chặn hay cảnh báo riêng nhóm đó.
+</Callout>
+
+## Ba lựa chọn
+
+| | Native | Đa nền tảng | Web / PWA |
+|---|---|---|---|
+| Codebase | Mỗi nền tảng một | Một (chủ yếu) | Một (web) |
+| API thiết bị, hiệu năng | Đầy đủ | Phần lớn, qua cầu nối | Hạn chế hơn |
+| Phát hành | Qua cửa hàng | Qua cửa hàng | Tức thì, như web |
+| Hợp với | Trải nghiệm đòi hỏi cao, tính năng thiết bị sâu | Đội nhỏ, nhiều màn hình nghiệp vụ | Nội dung, công cụ, kênh phụ |
+
+Không có lựa chọn đúng chung: quyết định theo yêu cầu thiết bị, đội ngũ và tần suất thay đổi.
+
+<Quiz id="q-w1m-choose" />
+
+## Vòng đời phát hành khác web
+
+- Mỗi bản qua **duyệt của cửa hàng**; sửa lỗi không tức thì.
+- **Người dùng cập nhật chậm** và không đều — nhiều phiên bản cùng chạy.
+- **Quy định cửa hàng**: theo App Store Review Guidelines (mục 2.5.2), ứng dụng không được tải và chạy code mới làm thay đổi tính năng (có ngoại lệ hẹp cho ứng dụng học/phát triển code). Nghĩa là "hotfix bằng cách tải code từ server" không phải lối thoát; cấu hình và feature flag thì được — nhưng phải nằm trong phạm vi hành vi đã có sẵn trong bản đã duyệt.
+
+<Quiz id="q-w1m-update" />
+
+## Yêu cầu kỹ thuật phía server
+
+- **Gửi phiên bản app và nền tảng** trong mọi request; đo phân bố phiên bản.
+- **API tương thích ngược** lâu dài: chỉ thay đổi cộng thêm (bài thiết kế API); không đổi ý nghĩa trường cũ.
+- **Phiên bản tối thiểu + buộc cập nhật**: server trả cấu hình cho biết bản nào phải cập nhật (bắt buộc với lỗi bảo mật/tài chính).
+- **Feature flag / kill switch**: tắt tính năng lỗi trên mọi phiên bản đang chạy.
+
+## Thiết bị và mạng
+
+- **Mạng chập chờn**: timeout, thử lại với **khoá idempotency** cho thao tác tiền (bài idempotency) — thử lại trên di động xảy ra rất thường xuyên.
+- **Ngoại tuyến**: hàng đợi thao tác cục bộ, đồng bộ khi có mạng, xử lý xung đột.
+- **Thông báo đẩy**: không đảm bảo tới, không đảm bảo thứ tự — chỉ là gợi ý để app tải trạng thái mới (giống webhook).
+- **Bảo mật trên thiết bị**: token trong kho bảo mật của hệ điều hành, không trong bộ nhớ thường; không log dữ liệu nhạy cảm; coi mọi thứ trong app là có thể bị dịch ngược — bí mật thật nằm ở server.
+
+<Quiz id="q-w1m-secret" />
+
+<Callout kind="field" title="Kill switch phải có trước tính năng đầu tiên">
+Tôi coi hai thứ là bắt buộc trước khi app di động đầu tiên ra mắt: header phiên bản trên mọi request và cơ chế cấu hình từ server có khả năng buộc cập nhật. Thêm chúng sau thì đã muộn — những bản đầu tiên không có chúng sẽ sống rất lâu và không bao giờ nghe lệnh.
+</Callout>

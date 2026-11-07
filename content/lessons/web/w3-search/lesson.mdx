@@ -1,0 +1,88 @@
+---
+id: w3-search
+track: web
+stage: w3
+order: 2
+title: { vi: "Tìm kiếm toàn văn: chỉ mục đảo ngược, BM25 và tiếng Việt", en: "Full-text search: inverted indexes, BM25 and Vietnamese" }
+summary: "LIKE '%từ khoá%' quét cả bảng và không xếp hạng. Tìm kiếm toàn văn tách văn bản thành từ, chuẩn hoá (chữ thường, bỏ dấu, gốc từ), lưu chỉ mục đảo ngược từ → danh sách tài liệu, rồi xếp hạng kết quả bằng các công thức như BM25 (tần suất từ có bão hoà, độ hiếm của từ, độ dài tài liệu). Với tiếng Việt, cách xử lý dấu và từ ghép quyết định chất lượng. Đo chất lượng bằng bộ truy vấn có nhãn, như truy xuất trong RAG."
+concepts: [full-text-search]
+estMinutes: 45
+whyQuestion: "Người dùng gõ 'tiet kiem lai suat' không dấu, sản phẩm tên 'Tiết kiệm lãi suất thả nổi'. Truy vấn LIKE trả về rỗng. Hệ thống tìm kiếm cần làm gì khác?"
+devMapping:
+  - finance: "Chỉ mục đảo ngược"
+    dev: "Map từ → danh sách id tài liệu (posting list)"
+    explanation: "Như mục lục cuối sách: tra từ để ra trang, thay vì đọc cả cuốn."
+  - finance: "BM25"
+    dev: "Hàm chấm điểm liên quan có tham số"
+    explanation: "Từ hiếm quan trọng hơn từ phổ biến; lặp lại một từ có lợi nhưng bão hoà; tài liệu dài bị điều chỉnh."
+  - finance: "Bộ phân tích (analyzer)"
+    dev: "Pipeline chuẩn hoá văn bản phải giống nhau khi lập chỉ mục và khi truy vấn"
+    explanation: "Lệch một bước (bỏ dấu ở một bên) là trượt toàn bộ."
+pretest: [q-w3s-like, q-w3s-idf]
+applications:
+  - id: app-w3s-search
+    title: "Tìm kiếm sản phẩm tiếng Việt có đo chất lượng"
+    context: "Danh mục sản phẩm/bài viết của bạn (hoặc dữ liệu tổng hợp)."
+    task: "Xây tìm kiếm với một công cụ có sẵn (full-text search của database hoặc một search engine): bộ phân tích bỏ dấu + giữ bản có dấu, chữ thường; chỉ mục trên tiêu đề (trọng số cao) và mô tả; xử lý gõ sai nhẹ; tạo 50 truy vấn thật có nhãn tài liệu đúng; đo recall@5 và MRR trước/sau mỗi thay đổi; ghi log truy vấn không có kết quả."
+    deliverable: "Cấu hình chỉ mục + bộ truy vấn có nhãn + bảng chỉ số theo phiên bản."
+sources: [robertson-bm25-2009, pg-full-text, pg-indexes]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích cách một hệ thống tìm kiếm toàn văn lập chỉ mục và xếp hạng, và những điểm riêng khi tìm kiếm tiếng Việt."
+  rubric:
+    - { id: index, criterion: "Phân tích văn bản (tách từ, chuẩn hoá) → chỉ mục đảo ngược từ → tài liệu; cùng bộ phân tích cho truy vấn" }
+    - { id: bm25, criterion: "BM25: tần suất từ có bão hoà, IDF (từ hiếm nặng ký hơn), chuẩn hoá theo độ dài" }
+    - { id: vi, criterion: "Tiếng Việt: dấu (gõ không dấu), từ ghép nhiều âm tiết; lập chỉ mục cả bản bỏ dấu" }
+    - { id: eval, criterion: "Đo bằng bộ truy vấn có nhãn (recall@k, MRR); theo dõi truy vấn không có kết quả" }
+---
+
+<Callout kind="story" title="Không tìm thấy gì">
+Ô tìm kiếm của một ứng dụng giả định dùng `WHERE name LIKE '%từ khoá%'`. Người dùng gõ không dấu — không ra gì. Gõ đúng dấu nhưng sai thứ tự từ — không ra gì. Gõ một từ phổ biến — ra 3.000 kết quả theo thứ tự id. Và với bảng một triệu dòng, mỗi lần gõ phím là một lần quét toàn bảng.
+</Callout>
+
+## Vì sao LIKE không đủ
+
+- Không dùng được chỉ mục B-tree thông thường với `%...%` → quét toàn bảng (bài index).
+- Không hiểu "từ": thứ tự, biến thể, dấu.
+- **Không xếp hạng** theo mức liên quan.
+
+## Chỉ mục đảo ngược
+
+1. **Phân tích văn bản** (analyzer): tách thành token, chữ thường, chuẩn hoá (bỏ dấu, gốc từ với ngôn ngữ có biến hình), bỏ từ dừng nếu phù hợp.
+2. **Lập chỉ mục**: với mỗi token, danh sách tài liệu chứa nó (kèm tần suất, vị trí).
+3. **Truy vấn**: phân tích truy vấn **bằng cùng bộ phân tích**, lấy danh sách tài liệu của từng token, kết hợp, rồi xếp hạng.
+
+Ví dụ trong PostgreSQL: `tsvector` lưu văn bản đã phân tích, `tsquery` là truy vấn, chỉ mục GIN cho truy vấn nhanh. Theo các tài liệu thứ cấp, hàm xếp hạng có sẵn không dùng thống kê toàn kho như BM25 — với nhu cầu xếp hạng cao, dùng extension hoặc search engine chuyên dụng.
+
+<Quiz id="q-w3s-like" />
+
+## Xếp hạng: BM25
+
+BM25 (khung xác suất liên quan, Robertson và Zaragoza 2009) chấm điểm tài liệu D cho truy vấn Q bằng tổng theo từng từ:
+
+- **IDF**: từ **hiếm** trong kho mang nhiều thông tin hơn từ phổ biến. idf(t) ≈ ln((N − n + 0,5)/(n + 0,5) + 1), N là số tài liệu, n là số tài liệu chứa t.
+- **Tần suất từ có bão hoà**: lặp từ nhiều lần có lợi nhưng giảm dần (tham số k₁).
+- **Chuẩn hoá độ dài**: tài liệu dài tự nhiên chứa nhiều từ hơn, bị điều chỉnh (tham số b).
+
+Đây cũng chính là "BM25" trong truy xuất lai của RAG (chặng A3).
+
+<WorkedExample id="we-idf" />
+
+<Quiz id="q-w3s-idf" />
+
+## Tiếng Việt
+
+- **Dấu**: nhiều người gõ không dấu. Lập chỉ mục **cả bản có dấu và bản bỏ dấu**; khớp có dấu được ưu tiên hơn khi người dùng có gõ dấu.
+- **Từ ghép nhiều âm tiết**: "lãi suất", "tiết kiệm" — tách theo âm tiết làm khớp lẻ tẻ; dùng tìm theo cụm (phrase/n-gram) hoặc bộ tách từ tiếng Việt, và đo xem cách nào tốt hơn trên dữ liệu của bạn.
+- **Gõ sai**: khớp mờ theo khoảng cách chỉnh sửa, có giới hạn để không ra quá nhiều kết quả lạ.
+
+## Đo chất lượng
+
+Như truy xuất trong RAG: bộ truy vấn thật có nhãn tài liệu đúng; đo **recall@k** và **MRR** (thứ hạng nghịch đảo của kết quả đúng đầu tiên); theo dõi **truy vấn không có kết quả** và truy vấn người dùng phải sửa lại.
+
+<Quiz id="q-w3s-mrr" />
+
+<Callout kind="field" title="Log truy vấn không có kết quả là mỏ vàng">
+Thứ đầu tiên tôi xem khi cải thiện tìm kiếm là danh sách truy vấn trả về rỗng trong tuần qua, sắp theo số lần. Gần như lần nào cũng thấy cùng vài nguyên nhân: gõ không dấu, viết tắt, tên gọi khác của sản phẩm. Sửa vài nguyên nhân đó (đồng nghĩa, bỏ dấu, viết tắt phổ biến) thường đem lại nhiều hơn mọi tinh chỉnh tham số xếp hạng.
+</Callout>

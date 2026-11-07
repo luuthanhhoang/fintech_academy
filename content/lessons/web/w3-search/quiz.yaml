@@ -1,0 +1,29 @@
+items:
+  - id: q-w3s-like
+    type: mcq
+    conceptId: full-text-search
+    prompt: "Vì sao `LIKE '%lai suat%'` không phải giải pháp tìm kiếm tốt cho bảng lớn? (chọn tất cả)"
+    options:
+      - { id: a, text: "Ký tự đại diện ở đầu khiến chỉ mục B-tree thông thường không dùng được, phải quét bảng" }
+      - { id: b, text: "Không xếp hạng kết quả theo mức liên quan" }
+      - { id: c, text: "Không khớp được khi khác dấu hoặc khác thứ tự từ" }
+      - { id: d, text: "LIKE không chạy được trên PostgreSQL" }
+    correct: [a, b, c]
+    explanation: "LIKE chạy được nhưng chậm, không hiểu ngôn ngữ và không xếp hạng."
+  - id: q-w3s-idf
+    type: mcq
+    conceptId: full-text-search
+    prompt: "Kho có 10.000 tài liệu. Từ 'ngân hàng' xuất hiện trong 6.000 tài liệu, từ 'VietQR' trong 20. Theo IDF, từ nào đóng góp nhiều hơn vào điểm liên quan khi khớp?"
+    options:
+      - { id: a, text: "'VietQR' — từ hiếm mang nhiều thông tin hơn" }
+      - { id: b, text: "'ngân hàng' — vì xuất hiện nhiều hơn" }
+      - { id: c, text: "Như nhau" }
+    correct: [a]
+    explanation: "IDF lớn khi từ hiếm; từ có mặt ở hầu hết tài liệu ít giúp phân biệt."
+  - id: q-w3s-mrr
+    type: numeric
+    conceptId: full-text-search
+    prompt: "Ba truy vấn có kết quả đúng đầu tiên ở các hạng 1, 4 và 2. MRR (trung bình của 1/hạng) bằng bao nhiêu? (3 chữ số thập phân)"
+    answer: 0.583
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "(1 + 0,25 + 0,5) / 3 = 1,75 / 3 ≈ 0,583."

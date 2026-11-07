@@ -1,0 +1,31 @@
+items:
+  - id: q-w7k-probe
+    type: mcq
+    conceptId: kubernetes-basics
+    prompt: "App cần 20 giây sau khi khởi động để nạp cấu hình trước khi phục vụ được. Cấu hình nào ngăn traffic đến quá sớm?"
+    options:
+      - { id: a, text: "Readiness probe kiểm tra endpoint chỉ trả thành công khi app đã sẵn sàng phục vụ" }
+      - { id: b, text: "Liveness probe kiểm tra database" }
+      - { id: c, text: "Tăng số bản sao" }
+    correct: [a]
+    explanation: "Pod chỉ được đưa vào Service khi readiness thành công; liveness phụ thuộc database còn gây khởi động lại hàng loạt."
+  - id: q-w7k-declare
+    type: mcq
+    conceptId: kubernetes-basics
+    prompt: "Một máy trong cụm hỏng, mất 1 trong 3 Pod của Deployment. Điều gì xảy ra?"
+    options:
+      - { id: a, text: "Bộ điều khiển thấy trạng thái thật (2) khác mong muốn (3) và tạo Pod mới trên máy khác" }
+      - { id: b, text: "Không có gì, phải triển khai lại bằng tay" }
+      - { id: c, text: "Cả Deployment bị xoá" }
+    correct: [a]
+    explanation: "Vòng lặp điều hoà liên tục kéo trạng thái thật về trạng thái mong muốn."
+  - id: q-w7k-limits
+    type: mcq
+    conceptId: kubernetes-basics
+    prompt: "Container vượt giới hạn bộ nhớ (memory limit) thì sao?"
+    options:
+      - { id: a, text: "Bị dừng (và thường được khởi động lại)" }
+      - { id: b, text: "Chạy chậm hơn" }
+      - { id: c, text: "Được cấp thêm bộ nhớ tự động" }
+    correct: [a]
+    explanation: "Vượt trần bộ nhớ là bị dừng; vượt trần CPU chỉ bị giới hạn tốc độ."

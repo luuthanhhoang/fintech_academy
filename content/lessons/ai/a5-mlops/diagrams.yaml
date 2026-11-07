@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-mlops
+    kind: sequence
+    title: "Vòng đời một phiên bản mô hình"
+    caption: "Luồng khái niệm; công cụ cụ thể (registry, feature store, giám sát) tuỳ tổ chức."
+    actors:
+      - { id: data, label: "Dữ liệu có phiên bản" }
+      - { id: train, label: "Huấn luyện / thí nghiệm" }
+      - { id: registry, label: "Sổ đăng ký mô hình" }
+      - { id: serve, label: "Phục vụ" }
+      - { id: monitor, label: "Giám sát" }
+    steps:
+      - { from: data, to: train, label: "Snapshot + định nghĩa đặc trưng" }
+      - { from: train, to: registry, label: "Phiên bản + code + tham số + eval" }
+      - { from: registry, to: registry, label: "Cổng: eval đạt, người duyệt" }
+      - { from: registry, to: serve, label: "Triển khai từng phần" }
+      - { from: serve, to: monitor, label: "Đầu vào, đầu ra, độ trễ, chất lượng" }
+      - { from: monitor, to: train, label: "Trôi dạt/chất lượng giảm → kích hoạt huấn luyện lại" }
+      - { from: serve, to: data, label: "Ghi đặc trưng đã dùng để huấn luyện lần sau" }

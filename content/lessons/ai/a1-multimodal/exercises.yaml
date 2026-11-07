@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-a1m-cost
+    conceptId: multimodal-models
+    prompt: "Bạn xử lý 100.000 ảnh hoá đơn mỗi tháng. So sánh số token hình ảnh khi gửi ảnh 1092 × 1092 px với khi cắt chỉ vùng tổng tiền 560 × 280 px. Nêu đánh đổi."
+    hint: "Áp công thức ô 28 × 28 cho từng kích thước."
+    solution: "1092 × 1092: ⌈1092/28⌉ = 39 → 39 × 39 = 1.521 token/ảnh → 152,1 triệu token/tháng. 560 × 280: 20 × 10 = 200 token/ảnh → 20 triệu token/tháng, giảm khoảng 7,6 lần. Đánh đổi: phải định vị đúng vùng tổng tiền (thêm một bước, có thể sai), mất ngữ cảnh để kiểm tra chéo với các dòng. Đo độ chính xác cả hai cách trên bộ eval trước khi quyết định."
+  - id: ex-a1m-pipeline
+    conceptId: multimodal-models
+    prompt: "Thiết kế các bước kiểm tra sau khi mô hình trích xuất JSON từ ảnh hoá đơn (nhà cung cấp, ngày, các dòng hàng, tổng tiền) trước khi ghi vào hệ thống kế toán."
+    hint: "Kiểm tra số học, định dạng, đối chiếu dữ liệu đã biết."
+    solution: "(1) Schema hợp lệ. (2) Tổng các dòng (số lượng × đơn giá) = tổng trước thuế; cộng thuế = tổng cộng (với dung sai làm tròn). (3) Ngày hợp lệ, không ở tương lai. (4) Mã số thuế đúng định dạng và có trong danh mục nhà cung cấp. (5) Tổng tiền trong khoảng hợp lý so với lịch sử nhà cung cấp. Bất kỳ kiểm tra nào thất bại → hàng đợi người kiểm kèm ảnh và trường lỗi; không tự động ghi sổ."

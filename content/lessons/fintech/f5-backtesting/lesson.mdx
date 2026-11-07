@@ -32,6 +32,7 @@ applications:
     context: "Một ý tưởng chiến lược đơn giản trên dữ liệu công khai (ghi nguồn) — mục đích là học phương pháp, không phải tìm chiến lược để giao dịch."
     task: "Viết giao thức trước khi chạy: giả thuyết, dữ liệu theo thời điểm, vũ trụ tài sản gồm cả mã đã huỷ niêm yết (nếu có dữ liệu; nếu không, ghi rõ hạn chế), mô hình chi phí, giai đoạn train/validation/holdout; ghi lại mọi cấu hình đã thử; chạy holdout đúng một lần ở cuối; báo cáo kết quả kèm số lần thử."
     deliverable: "Tài liệu giao thức + nhật ký thử nghiệm + báo cáo holdout."
+labs: [backtest-lookahead]
 sources: [bailey-backtest-2014, bailey-pbo-2017, harvey-liu-zhu-2016]
 lastVerified: 2026-11-06
 status: verified
@@ -78,6 +79,10 @@ Nếu mỗi chiến lược vô dụng có xác suất 5% trông "có ý nghĩa 
 - **Kiểm tra độ bền**: tham số lân cận có cho kết quả tương tự không? Kết quả chỉ đẹp ở đúng một điểm là dấu hiệu overfit.
 
 <Quiz id="q-f5b-robust" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="backtest-lookahead" />
 
 <Callout kind="field" title="Holdout là tài nguyên dùng một lần">
 Quy tắc tôi giữ chặt nhất: tập holdout chỉ được mở khi mọi quyết định đã chốt, và chỉ mở một lần. Ngay khi ai đó nhìn kết quả holdout rồi "chỉnh nhẹ một tham số", holdout đã thành dữ liệu train và cần một holdout mới — thường là chờ dữ liệu tương lai. Nghe chậm, nhưng rẻ hơn rất nhiều so với phát hiện điều đó bằng tiền thật.

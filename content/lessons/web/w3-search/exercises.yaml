@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-w3s-analyzer
+    conceptId: full-text-search
+    prompt: "Thiết kế bộ phân tích cho tìm kiếm sản phẩm ngân hàng tiếng Việt, và mô tả cách truy vấn 'tiet kiem online' khớp với 'Tiết kiệm trực tuyến (Online)'."
+    hint: "Hai trường: có dấu và bỏ dấu; chữ thường; đồng nghĩa."
+    solution: "Lập chỉ mục hai trường: (1) chữ thường, giữ dấu; (2) chữ thường, bỏ dấu (Tiết kiệm → tiet kiem). Truy vấn cũng qua cùng hai bộ phân tích; tìm trên cả hai trường, trọng số trường có dấu cao hơn khi truy vấn có dấu. 'online' khớp vì token 'online' có trong tiêu đề; thêm từ điển đồng nghĩa 'online ↔ trực tuyến' để khớp cả khi tiêu đề chỉ ghi 'trực tuyến'. Ưu tiên khớp cụm 'tiet kiem' liền nhau hơn khớp rời."
+  - id: ex-w3s-eval
+    conceptId: full-text-search
+    prompt: "Bạn đổi cách tách từ từ theo âm tiết sang theo từ ghép. Lập kế hoạch đánh giá thay đổi này."
+    hint: "Bộ truy vấn có nhãn; chỉ số; phân nhóm truy vấn."
+    solution: "Lấy truy vấn thật từ log (đã che dữ liệu cá nhân), gán nhãn tài liệu đúng cho 100–200 truy vấn, chia nhóm: có dấu, không dấu, mã/tên riêng, truy vấn dài. Chạy cả hai cấu hình, đo recall@5, MRR và tỉ lệ không có kết quả theo từng nhóm. Chỉ chuyển khi không nhóm nào giảm quá ngưỡng đặt trước; xem kỹ các truy vấn đổi từ đúng sang sai. Sau khi chuyển, theo dõi tỉ lệ truy vấn không kết quả và tỉ lệ click."
