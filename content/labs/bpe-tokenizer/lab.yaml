@@ -1,0 +1,11 @@
+id: bpe-tokenizer
+title: { vi: "Tokenizer BPE thu nhỏ", en: "A tiny BPE tokenizer" }
+summary: Tự huấn luyện Byte Pair Encoding trên một kho chữ nhỏ — đếm cặp kề nhau, gộp cặp phổ biến nhất, áp các phép gộp để mã hoá từ mới — và thấy vì sao từ hiếm bị tách thành nhiều token.
+concepts: [tokenization]
+timeoutMs: 8000
+instructions: |-
+  Biểu diễn mỗi từ là tuple ký tự, ví dụ "low" → ("l", "o", "w"). Kho là dict {từ: số lần xuất hiện}.
+  1. pair_counts(vocab): vocab là dict {tuple ký hiệu: tần suất}; trả dict {(a, b): tổng tần suất} của mọi cặp kề nhau.
+  2. merge(vocab, pair): thay mọi lần xuất hiện liên tiếp (a, b) bằng ký hiệu a + b (quét trái sang phải, không chồng lấn); trả vocab mới.
+  3. train(corpus, num_merges): khởi tạo vocab từ corpus (dict từ → số lần); lặp num_merges lần: chọn cặp tần suất cao nhất (hoà thì chọn cặp nhỏ nhất theo thứ tự tuple), gộp; dừng sớm khi không còn cặp. Trả list các cặp đã gộp theo thứ tự.
+  4. encode(word, merges): tách thành ký tự rồi áp lần lượt từng phép gộp theo thứ tự đã học; trả list ký hiệu.

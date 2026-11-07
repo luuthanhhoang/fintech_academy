@@ -25,6 +25,7 @@ applications:
     context: "Một trang hoặc API trong dự án của bạn dự kiến có đỉnh tải gấp nhiều lần bình thường."
     task: "Đo hiện trạng (p50/p95, số truy vấn DB mỗi request, tỉ lệ cache hit); xác định phần cache được ở CDN, phần cache ứng dụng với TTL và cách vô hiệu hoá; chuyển việc chậm (gửi email, tạo PDF) sang hàng đợi với worker idempotent và hàng đợi lỗi; kiểm tra ứng dụng không giữ trạng thái cục bộ; load test trước/sau."
     deliverable: "Bảng số đo trước/sau + thay đổi cấu hình/code + kết quả load test."
+labs: [lru-cache]
 sources: [rfc9111, aws-sqs-visibility, tail-at-scale, sre-book, mm1-queue]
 lastVerified: 2026-11-06
 status: verified
@@ -88,6 +89,10 @@ Rồi điểm nghẽn **dời sang database**: giới hạn kết nối (dùng p
 Ở quy mô lớn, độ trễ đuôi của một thành phần chậm bị khuếch đại khi một request gọi nhiều thành phần (bài *The Tail at Scale*, chặng W5).
 
 <Quiz id="q-w5s-state" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="lru-cache" />
 
 <Callout kind="field" title="Đo trước, thêm máy sau">
 Trước khi đề xuất thêm máy chủ, tôi luôn hỏi ba số cho request chậm nhất: bao nhiêu truy vấn DB, tổng thời gian chờ DB, và tỉ lệ cache hit. Trong phần lớn trường hợp tôi gặp, sửa N+1 hoặc thêm một cache có TTL ngắn cho một truy vấn nóng đem lại nhiều hơn gấp đôi số máy — và rẻ hơn nhiều.

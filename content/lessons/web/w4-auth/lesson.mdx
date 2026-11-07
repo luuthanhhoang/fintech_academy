@@ -25,6 +25,7 @@ applications:
     context: "Ứng dụng có đăng nhập bằng mật khẩu và có thể có 'Đăng nhập với Google'."
     task: "Kiểm tra: thuật toán hash và tham số; cookie phiên có HttpOnly/Secure/SameSite; đăng xuất có huỷ phiên phía server; đổi mật khẩu có huỷ các phiên khác; thời hạn token; luồng OAuth dùng authorization code + PKCE, kiểm tra state; giới hạn số lần thử đăng nhập."
     deliverable: "Bảng kiểm có kết quả từng mục + danh sách sửa theo mức độ nghiêm trọng."
+labs: [jwt-verify]
 sources: [owasp-password-storage, owasp-session, rfc7519, rfc9700, oidc-core]
 facts:
   - id: owasp-argon2id-min
@@ -93,6 +94,10 @@ RFC 9700 tổng hợp khuyến nghị bảo mật cho OAuth (<Fact id="rfc9700-d
 <Diagram id="dg-oauth-pkce" />
 
 <Quiz id="q-w4-pkce" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="jwt-verify" />
 
 <Callout kind="field" title="Những lỗi OAuth tôi thấy lặp lại">
 Không kiểm tra tham số `state` (mở cửa cho CSRF trong luồng đăng nhập). Cho phép `redirect_uri` khớp lỏng (wildcard) — kẻ tấn công nhận được code. Dùng access token của Google như "bằng chứng đăng nhập" thay vì ID token đã kiểm audience. Và tự viết thư viện OAuth thay vì dùng thư viện đã được kiểm chứng.

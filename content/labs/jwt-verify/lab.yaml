@@ -1,0 +1,14 @@
+id: jwt-verify
+title: { vi: "Xác minh JWT HS256 an toàn", en: "Verifying HS256 JWTs safely" }
+summary: Tự xác minh JWT ký HMAC-SHA256 — giải mã base64url, chỉ chấp nhận thuật toán đã định, so chữ ký thời gian hằng, kiểm tra hết hạn, thời điểm hiệu lực và audience.
+concepts: [jwt-tokens]
+timeoutMs: 8000
+instructions: |-
+  verify(token, secret: bytes, now: int, audience: str) trả về (True, payload) hoặc (False, lý_do) với lý_do là một trong:
+  "malformed", "bad_alg", "bad_signature", "expired", "not_yet_valid", "bad_audience".
+  1. Token gồm 3 phần base64url (không padding) ngăn bởi dấu chấm; sai cấu trúc/JSON → "malformed".
+  2. Header phải có "alg" đúng bằng "HS256" (từ chối "none" và mọi thuật toán khác) → nếu không: "bad_alg".
+  3. Chữ ký = HMAC-SHA256(secret, header_b64 + "." + payload_b64); so bằng hmac.compare_digest → sai: "bad_signature".
+  4. "exp" (nếu có): now ≥ exp → "expired". "nbf" (nếu có): now < nbf → "not_yet_valid".
+  5. "aud" phải bằng audience → nếu không: "bad_audience".
+  Thứ tự kiểm tra như trên. Hàm b64url_decode(s) tự thêm padding.

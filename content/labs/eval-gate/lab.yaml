@@ -1,0 +1,11 @@
+id: eval-gate
+title: { vi: "Cổng eval hồi quy", en: "An eval regression gate" }
+summary: Viết bộ chấm bằng code cho đầu ra JSON, đo đồng thuận giữa giám khảo và người, tính sai số chuẩn và quyết định chặn phát hành khi một tiêu chí tụt vượt nhiễu.
+concepts: [eval-datasets, prompt-regression, llm-as-judge]
+timeoutMs: 8000
+instructions: |-
+  1. grade_json(output, expected_order_id): output là chuỗi; trả dict {"valid_json": bool, "has_order_id": bool, "short": bool}. valid_json: json.loads thành dict; has_order_id: dict có khoá "order_id" bằng expected_order_id; short: trường "summary" (nếu có) không quá 80 từ (tách theo khoảng trắng), thiếu "summary" thì False. JSON lỗi → cả ba False.
+  2. pass_rate(grades, criterion): tỉ lệ phần tử có grades[i][criterion] là True.
+  3. agreement(judge, human): tỉ lệ vị trí hai list bool giống nhau; độ dài khác nhau → ValueError.
+  4. std_error(p, n) = sqrt(p(1 − p)/n).
+  5. gate(baseline, candidate, n, z=2.0): baseline/candidate là dict {tiêu chí: tỉ lệ đạt}; trả list tiêu chí bị CHẶN, tức candidate < baseline − z × std_error(baseline, n); sắp tăng dần.

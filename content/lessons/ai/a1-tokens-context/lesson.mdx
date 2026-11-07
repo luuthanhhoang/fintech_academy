@@ -32,6 +32,7 @@ applications:
     context: "Bạn sắp ra mắt tính năng 'tóm tắt hội thoại hỗ trợ khách hàng' dùng LLM."
     task: "Lấy 20 hội thoại thật (đã ẩn danh), đếm token đầu vào/đầu ra bằng API đếm token của nhà cung cấp, tính phân vị 50/95, nhân với giá hiện hành để ra chi phí mỗi tháng ở lưu lượng dự kiến; đặt giới hạn cắt bớt hoặc tóm tắt khi hội thoại vượt ngưỡng."
     deliverable: "Bảng token p50/p95, chi phí ước tính, và quy tắc xử lý hội thoại quá dài."
+labs: [bpe-tokenizer]
 sources: [sennrich-bpe-2016, claude-context-windows, liu-lost-middle-2024, anthropic-context-engineering]
 lastVerified: 2026-11-06
 status: verified
@@ -75,6 +76,10 @@ Theo tài liệu Anthropic, cửa sổ ngữ cảnh là toàn bộ văn bản m�
 Tài liệu Anthropic gọi hiện tượng này là **context rot**: khi số token tăng, độ chính xác và khả năng nhớ lại giảm. Nghiên cứu *Lost in the Middle* (Liu và cộng sự, TACL 2024) đo trên bài hỏi đáp nhiều tài liệu và truy xuất khoá–giá trị: hiệu năng giảm khi thông tin liên quan nằm **ở giữa** một ngữ cảnh dài, kể cả với mô hình được thiết kế cho ngữ cảnh dài.
 
 <Quiz id="q-a1t-middle" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="bpe-tokenizer" />
 
 <Callout kind="field" title="Quy tắc ngữ cảnh tôi áp dụng cho mọi tính năng LLM">
 **Gửi ít nhất có thể, nhưng đủ**: lấy đúng đoạn liên quan (truy xuất — chặng A3) thay vì cả tài liệu. **Đặt chỉ dẫn và câu hỏi rõ ràng**, tài liệu dài thì bọc trong thẻ và đặt câu hỏi sau tài liệu. **Đo bằng token thật**, theo phân vị 95, không theo trung bình — hội thoại dài nhất mới làm vỡ ngân sách. **Có chính sách khi đầy**: cắt lịch sử cũ, tóm tắt, hoặc bắt đầu phiên mới. Agent chạy lâu cần cả chiến lược nén ngữ cảnh — bạn sẽ gặp ở chặng A4.

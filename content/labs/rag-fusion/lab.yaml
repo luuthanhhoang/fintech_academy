@@ -1,0 +1,12 @@
+id: rag-fusion
+title: { vi: "Truy xuất lai: BM25 + RRF + recall@k", en: "Hybrid retrieval: BM25 + RRF + recall@k" }
+summary: Tự viết điểm BM25, gộp hai bảng xếp hạng bằng Reciprocal Rank Fusion và đo recall@k trên bộ câu hỏi có nhãn — đúng các khâu của pipeline RAG.
+concepts: [hybrid-retrieval, chunking]
+timeoutMs: 8000
+instructions: |-
+  docs là dict {doc_id: list token (đã chữ thường)}.
+  1. idf(docs, term) = ln((N − n + 0,5)/(n + 0,5) + 1), N số tài liệu, n số tài liệu chứa term.
+  2. bm25(docs, query_terms, k1=1.5, b=0.75): trả dict {doc_id: điểm} với điểm = Σ idf(t) · f·(k1+1) / (f + k1·(1 − b + b·|D|/avgdl)), f là số lần t trong D.
+  3. rank(scores): list doc_id theo điểm giảm dần (hoà thì doc_id tăng dần).
+  4. rrf(rankings, k=60): rankings là list các list doc_id; điểm(d) = Σ 1/(k + hạng), hạng bắt đầu từ 1; trả list doc_id theo điểm giảm dần (hoà thì doc_id tăng dần).
+  5. recall_at_k(results, relevant, k): results là dict {qid: list doc_id}, relevant là dict {qid: doc_id đúng}; tỉ lệ câu hỏi có doc đúng trong k kết quả đầu.

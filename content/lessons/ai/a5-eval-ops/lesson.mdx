@@ -25,6 +25,7 @@ applications:
     context: "Bạn đã có bộ eval (bài trước) và repo chứa prompt dưới dạng file."
     task: "Viết job CI chạy eval khi file prompt, cấu hình mô hình hoặc định nghĩa công cụ thay đổi; lưu điểm của nhánh chính làm mốc; chạy mỗi ví dụ vài lần để ước lượng dao động; fail job khi một tiêu chí tụt quá ngưỡng; in bảng các ví dụ đổi từ PASS sang FAIL."
     deliverable: "Cấu hình CI + báo cáo so sánh mẫu trên một pull request thử."
+labs: [eval-gate]
 sources: [claude-develop-tests, anthropic-agent-evals]
 lastVerified: 2026-11-06
 status: verified
@@ -81,6 +82,10 @@ Bộ offline phản ánh những gì bạn *đã nghĩ tới*. Lưu lượng th�
 Vòng khép kín: lỗi tìm thấy online → thành ví dụ mới trong bộ offline → lần sau CI bắt được.
 
 <Quiz id="q-a5o-loop" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="eval-gate" />
 
 <Callout kind="field" title="Chia bộ eval thành tầng">
 Tôi giữ hai tầng: một bộ nhỏ (vài chục ca quan trọng nhất, chấm bằng code là chính) chạy trên mỗi pull request trong vài phút, và một bộ lớn chạy hằng đêm hoặc trước khi đổi mô hình. Bộ nhỏ để không ai lười chạy; bộ lớn để đủ ví dụ mà phân biệt được khác biệt nhỏ. Bộ nào cũng có "ca vàng" — những lỗi từng lọt ra production — và không ca vàng nào được phép đỏ.

@@ -38,6 +38,7 @@ applications:
     context: "Bạn đã có bộ câu hỏi thật kèm đoạn đúng (bài trước) và một kho tài liệu nội bộ."
     task: "Dựng pipeline: chia đoạn theo cấu trúc tài liệu kèm metadata; truy xuất lai BM25 + vector gộp bằng RRF; rerank lấy 5 đoạn tốt nhất; prompt yêu cầu trích dẫn và cho phép 'không tìm thấy'. Đo recall@20 sau truy xuất, recall@5 sau rerank, tỉ lệ trả lời đúng có trích dẫn hợp lệ, tỉ lệ từ chối đúng — cho từng thay đổi."
     deliverable: "Pipeline chạy được + bảng chỉ số theo từng khâu và từng phiên bản."
+labs: [rag-fusion]
 sources: [lewis-rag-2020, cormack-rrf-2009, anthropic-contextual-retrieval, claude-prompting-best-practices]
 lastVerified: 2026-11-06
 status: verified
@@ -95,6 +96,10 @@ Prompt cho bước sinh (nhắc lại bài viết prompt):
 - **Kiểm tra ở code**: trích dẫn có trỏ tới đoạn thật đã đưa vào không; trích nguyên văn có xuất hiện trong đoạn đó không.
 
 <Quiz id="q-a3p-ground" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="rag-fusion" />
 
 <Callout kind="field" title="Gỡ lỗi RAG theo từng khâu, không theo cảm giác">
 Câu trả lời sai → mở log của câu hỏi đó: **(1)** đoạn đúng có trong top-k truy xuất không? Không → lỗi chia đoạn/embedding/BM25. **(2)** Có, nhưng bị rerank loại? → lỗi rerank hoặc k quá nhỏ. **(3)** Đoạn đúng đã ở trong ngữ cảnh mà vẫn sai → lỗi prompt hoặc mô hình. Tôi log đủ thông tin cho cả ba câu hỏi ở mọi request; không có log này, mọi buổi "cải thiện RAG" chỉ là đổi prompt rồi hy vọng.

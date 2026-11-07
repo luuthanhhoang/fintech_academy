@@ -26,6 +26,7 @@ applications:
     task: "Viết kế hoạch theo các bước expand/contract, mỗi bước là một lần triển khai độc lập: migration gì, code đọc/ghi thế nào, backfill theo lô bao nhiêu dòng mỗi lần, kiểm tra gì trước khi sang bước tiếp, cách quay lui ở từng bước; đo thời gian khoá dự kiến trên bản sao dữ liệu."
     deliverable: "Tài liệu kế hoạch + các file migration + script backfill có giới hạn tốc độ."
 scenarios: [migration-lock]
+labs: [batch-loader]
 sources: [codd-1970, pg-create-index, pg-indexes, pg-isolation]
 lastVerified: 2026-11-06
 status: verified
@@ -91,6 +92,10 @@ for (const o of orders) {
 - Cẩn thận chiều ngược lại: eager load mọi thứ kéo về dữ liệu không cần.
 
 <Quiz id="q-w3m-nplus1" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="batch-loader" />
 
 <Callout kind="field" title="Chạy migration trên bản sao có dữ liệu thật về kích thước">
 Tôi không duyệt một migration trên bảng lớn nếu chưa ai chạy nó trên bản sao có số dòng tương đương production và ghi lại thời gian chạy cùng loại khoá nó lấy. Migration "một giây trên máy tôi" là loại nguy hiểm nhất, vì nó tạo cảm giác an toàn mà không đo gì cả.

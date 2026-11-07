@@ -1,0 +1,12 @@
+id: batch-loader
+title: { vi: "Gộp truy vấn chống N+1", en: "Batching to beat N+1" }
+summary: Viết bộ nạp gộp (kiểu DataLoader) — thu các id được yêu cầu trong một lượt, gọi nguồn một lần cho cả lô, cache theo id — và đếm số truy vấn trước/sau khi gộp.
+concepts: [orm-n-plus-one, graphql-grpc]
+timeoutMs: 8000
+instructions: |-
+  Nguồn dữ liệu được giả lập bởi FakeDB trong test (đếm số lần query). batch_fn(ids) nhận list id, trả dict {id: bản ghi}.
+  Lớp BatchLoader(batch_fn):
+  1. load(id): ghi nhận id vào lô đang chờ, trả một hàm get() — gọi get() sau dispatch() sẽ trả bản ghi (hoặc None nếu nguồn không có id đó).
+  2. dispatch(): gọi batch_fn ĐÚNG MỘT LẦN với các id đang chờ CHƯA có trong cache, không trùng, giữ thứ tự xuất hiện đầu tiên; lưu kết quả vào cache; xoá lô chờ. Không có id mới thì không gọi batch_fn.
+  3. Id đã có trong cache không được truy vấn lại ở lần dispatch sau.
+  Ngoài ra viết naive_load_customers(db, orders): trả list khách hàng của từng đơn bằng cách gọi db.query([customer_id]) cho TỪNG đơn (cách N+1, để so sánh).

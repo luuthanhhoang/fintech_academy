@@ -1,0 +1,12 @@
+id: lru-cache
+title: { vi: "Cache LRU có TTL", en: "LRU cache with TTL" }
+summary: Cài cache cho kết quả truy vấn đắt — giới hạn dung lượng theo LRU, hết hạn theo TTL, đếm hit/miss, và mẫu cache-aside chỉ gọi nguồn khi trượt.
+concepts: [caching-layers-cdn]
+timeoutMs: 8000
+instructions: |-
+  Lớp LRUCache(capacity, ttl_seconds, clock). clock là hàm trả thời gian hiện tại (giây) — dùng nó, KHÔNG dùng time.time(), để test điều khiển được thời gian.
+  1. get(key): trả giá trị nếu có và chưa hết hạn (now − lúc ghi < ttl); hết hạn thì xoá và coi như trượt. Trả None khi trượt. get thành công làm key thành "dùng gần nhất".
+  2. set(key, value): ghi (cập nhật thời điểm ghi); vượt capacity thì loại key ít được dùng gần đây nhất.
+  3. hits, misses: số lần get trúng/trượt.
+  4. get_or_load(key, loader): cache-aside — trúng thì trả luôn; trượt thì gọi loader() đúng một lần, ghi vào cache rồi trả.
+  Gợi ý: collections.OrderedDict.
