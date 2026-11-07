@@ -1,0 +1,30 @@
+items:
+  - id: q-f0s-dupont
+    type: numeric
+    conceptId: financial-ratio-analysis
+    prompt: "Biên lợi nhuận ròng 5%, vòng quay tài sản 1,6 lần, tổng tài sản / vốn chủ = 2,5. ROE bằng bao nhiêu phần trăm?"
+    answer: 20
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "5% × 1,6 × 2,5 = 20%."
+  - id: q-f0s-cash
+    type: mcq
+    conceptId: financial-ratio-analysis
+    prompt: "Dấu hiệu nào gợi ý lợi nhuận báo cáo có thể không chuyển thành tiền? (chọn tất cả)"
+    options:
+      - { id: a, text: "Dòng tiền hoạt động thấp hơn lợi nhuận ròng nhiều năm liền" }
+      - { id: b, text: "Phải thu khách hàng tăng nhanh hơn nhiều so với doanh thu" }
+      - { id: c, text: "Tồn kho tăng nhanh hơn giá vốn hàng bán" }
+      - { id: d, text: "Doanh nghiệp trả cổ tức đều đặn bằng tiền từ hoạt động kinh doanh" }
+    correct: [a, b, c]
+    explanation: "Ba dấu hiệu đầu cho thấy lợi nhuận bị 'kẹt' trong phải thu, tồn kho; (d) là tín hiệu ngược lại."
+  - id: q-f0s-compare
+    type: mcq
+    conceptId: financial-ratio-analysis
+    prompt: "Tỉ số nợ/vốn chủ của một ngân hàng cao hơn nhiều so với một công ty phần mềm. Kết luận nào hợp lý?"
+    options:
+      - { id: a, text: "Ngân hàng chắc chắn sắp phá sản" }
+      - { id: b, text: "Cấu trúc ngành khác nhau (tiền gửi là nợ của ngân hàng); phải so với doanh nghiệp cùng ngành và theo thời gian" }
+      - { id: c, text: "Công ty phần mềm quản trị kém vì không vay nợ" }
+    correct: [b]
+    explanation: "Tỉ số chỉ có nghĩa khi so cùng ngành, cùng chuẩn mực kế toán và theo xu hướng."

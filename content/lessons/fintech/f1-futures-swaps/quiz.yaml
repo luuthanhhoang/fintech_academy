@@ -1,0 +1,29 @@
+items:
+  - id: q-f1f-margin
+    type: numeric
+    conceptId: futures-margining
+    prompt: "Vị thế mua hợp đồng tương lai trị giá 1.000 triệu, ký quỹ ban đầu 100 triệu, ngưỡng duy trì 75 triệu (giả định). Giá giảm 3% trong ngày. Số dư ký quỹ cuối ngày là bao nhiêu triệu, và có bị gọi ký quỹ không? Nhập số dư."
+    answer: 70
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "triệu"
+    explanation: "Lỗ 3% × 1.000 = 30 triệu → số dư 70 triệu, dưới ngưỡng 75 → gọi ký quỹ nộp thêm 30 triệu về mức ban đầu."
+  - id: q-f1f-swap
+    type: mcq
+    conceptId: interest-rate-swaps
+    prompt: "Ngân hàng có nhiều khoản vay mua nhà lãi cố định dài hạn và lo lãi suất tăng. Vị thế hoán đổi nào giúp phòng ngừa?"
+    options:
+      - { id: a, text: "Trả cố định, nhận thả nổi" }
+      - { id: b, text: "Trả thả nổi, nhận cố định" }
+      - { id: c, text: "Không cần hoán đổi" }
+    correct: [a]
+    explanation: "Khi lãi suất tăng, dòng nhận thả nổi tăng, bù cho tài sản cố định mất giá; khe hở duration giảm."
+  - id: q-f1f-daily
+    type: mcq
+    conceptId: futures-margining
+    prompt: "Vì sao hợp đồng tương lai được quyết toán lãi lỗ hằng ngày thay vì chỉ lúc đáo hạn?"
+    options:
+      - { id: a, text: "Để nghĩa vụ chưa thanh toán giữa các bên không tích luỹ quá một ngày, giới hạn rủi ro đối tác" }
+      - { id: b, text: "Để tính phí giao dịch nhiều hơn" }
+      - { id: c, text: "Vì giá chỉ được công bố mỗi ngày" }
+    correct: [a]
+    explanation: "Đánh giá theo thị trường hằng ngày + ký quỹ ban đầu giới hạn tổn thất nếu một bên vỡ nợ."

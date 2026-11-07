@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f0s-ratios
+    conceptId: financial-ratio-analysis
+    prompt: "Công ty giả định: doanh thu 1.000 tỉ, giá vốn 700 tỉ, EBIT 120 tỉ, lãi vay 30 tỉ, lợi nhuận ròng 70 tỉ, tổng tài sản 800 tỉ, vốn chủ 320 tỉ, tài sản ngắn hạn 300 tỉ, nợ ngắn hạn 250 tỉ, dòng tiền hoạt động 40 tỉ. Tính biên gộp, biên ròng, ROA, ROE, thanh toán hiện hành, nợ/vốn chủ, khả năng trả lãi và nhận xét."
+    hint: "Nợ = tổng tài sản − vốn chủ."
+    solution: "Biên gộp 30%; biên ròng 7%; ROA 70/800 = 8,75%; ROE 70/320 = 21,9%; thanh toán hiện hành 300/250 = 1,2; nợ 480 tỉ, nợ/vốn chủ = 1,5; khả năng trả lãi 120/30 = 4 lần. Nhận xét: sinh lời tốt, đòn bẩy vừa phải, nhưng dòng tiền hoạt động 40 tỉ chỉ bằng khoảng 57% lợi nhuận ròng — cần xem phải thu, tồn kho đang tăng thế nào trước khi kết luận."
+  - id: ex-f0s-dupont2
+    conceptId: financial-ratio-analysis
+    prompt: "Năm trước: biên ròng 8%, vòng quay 1,2, đòn bẩy 2,0. Năm nay: biên ròng 6%, vòng quay 1,2, đòn bẩy 3,0. ROE thay đổi thế nào và nguồn thay đổi là gì?"
+    hint: "Tính ROE hai năm."
+    solution: "Năm trước 8% × 1,2 × 2,0 = 19,2%; năm nay 6% × 1,2 × 3,0 = 21,6%. ROE tăng nhưng hoàn toàn nhờ vay thêm nợ, trong khi khả năng sinh lời từ hoạt động giảm. Với người cho vay, đây là tín hiệu xấu đi, không phải tốt lên."

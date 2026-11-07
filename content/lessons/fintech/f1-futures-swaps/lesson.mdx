@@ -1,0 +1,93 @@
+---
+id: f1-futures-swaps
+track: fintech
+stage: f1
+order: 9
+title: { vi: "Hợp đồng tương lai và hoán đổi lãi suất", en: "Futures and interest rate swaps" }
+summary: "Hợp đồng tương lai là cam kết mua/bán một tài sản ở giá định trước vào ngày tương lai, chuẩn hoá và bù trừ qua tổ chức bù trừ. Rủi ro đối tác được kiểm soát bằng ký quỹ ban đầu và đánh giá theo thị trường hằng ngày: lãi lỗ được quyết toán bằng tiền mỗi ngày qua ký quỹ biến động. Hoán đổi lãi suất đổi dòng lãi cố định lấy dòng lãi thả nổi trên một số tiền danh nghĩa; ngân hàng dùng nó để phòng ngừa rủi ro lãi suất (bài ALM). Lãi suất tham chiếu USD đã chuyển từ LIBOR sang SOFR."
+concepts: [futures-margining, interest-rate-swaps]
+estMinutes: 50
+whyQuestion: "Bạn mua hợp đồng tương lai trị giá 1 tỉ chỉ với 100 triệu ký quỹ. Giá giảm 3% trong một ngày. Chuyện gì xảy ra với tài khoản của bạn trước khi hợp đồng đáo hạn?"
+facts:
+  - id: libor-end
+    text: "Ban xác định lãi suất USD LIBOR ngừng hoạt động; phái sinh chuyển sang lãi suất dựa trên SOFR, sau ngày"
+    value: "30/06/2023"
+    sourceId: fca-usd-libor-2023
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Đánh giá theo thị trường hằng ngày"
+    dev: "Quyết toán thường xuyên thay vì một lần cuối kỳ"
+    explanation: "Như đồng bộ trạng thái mỗi ngày: không để nghĩa vụ chưa thanh toán tích luỹ quá một ngày."
+  - finance: "Ký quỹ ban đầu"
+    dev: "Tiền đặt cọc cho biến động xấu nhất dự kiến trong khoảng thời gian thu hồi"
+    explanation: "Đủ trang trải lỗ trong thời gian bù trừ đóng vị thế nếu bên kia không nộp ký quỹ biến động."
+  - finance: "Hoán đổi lãi suất"
+    dev: "Đổi một dòng tiền thay đổi lấy một dòng tiền cố định"
+    explanation: "Không đổi tiền gốc; chỉ trao đổi chênh lệch lãi trên số tiền danh nghĩa mỗi kỳ."
+pretest: [q-f1f-margin, q-f1f-swap]
+applications:
+  - id: app-f1f-margin
+    title: "Mô phỏng tài khoản ký quỹ hợp đồng tương lai"
+    context: "Chuỗi giá thanh toán hằng ngày tổng hợp (dán nhãn mô phỏng) cho một hợp đồng tương lai."
+    task: "Cài mô phỏng: ký quỹ ban đầu, ngưỡng ký quỹ duy trì (tham số giả định), mỗi ngày tính lãi/lỗ theo giá thanh toán và cập nhật số dư; khi số dư dưới ngưỡng duy trì phát lệnh gọi ký quỹ về mức ban đầu; nếu không nộp thì đóng vị thế; ghi mọi bút toán ký quỹ biến động; so tổng lãi lỗ hằng ngày với (giá đóng vị thế − giá vào) × quy mô."
+    deliverable: "Mô phỏng + nhật ký gọi ký quỹ + kiểm tra tổng lãi lỗ."
+sources: [cftc-variation-margin, fca-usd-libor-2023, bis-pfmi-summary, sec-interest-rate-risk]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích cơ chế ký quỹ của hợp đồng tương lai và cách một hoán đổi lãi suất giúp ngân hàng phòng ngừa rủi ro lãi suất."
+  rubric:
+    - { id: futures, criterion: "Hợp đồng chuẩn hoá, bù trừ qua CCP; đòn bẩy từ ký quỹ nhỏ so với giá trị hợp đồng" }
+    - { id: margin, criterion: "Ký quỹ ban đầu, đánh giá theo thị trường hằng ngày, ký quỹ biến động bằng tiền, gọi ký quỹ khi dưới ngưỡng duy trì" }
+    - { id: swap, criterion: "Đổi lãi cố định lấy thả nổi trên số tiền danh nghĩa; trao đổi phần chênh mỗi kỳ; giá trị thay đổi theo lãi suất" }
+    - { id: hedge, criterion: "Dùng để giảm khe hở duration/định giá lại (ALM); lãi suất tham chiếu USD chuyển từ LIBOR sang SOFR" }
+---
+
+<Callout kind="story" title="Đúng hướng mà vẫn bị đóng vị thế">
+Một nhà đầu tư giả định mua hợp đồng tương lai vì tin giá sẽ tăng trong ba tháng. Tuần đầu giá giảm mạnh; tài khoản ký quỹ tụt dưới ngưỡng, có lệnh gọi ký quỹ, anh không nộp kịp và vị thế bị đóng. Hai tháng sau giá tăng đúng như anh dự đoán — nhưng anh đã không còn vị thế. Phái sinh có ký quỹ trả bạn về đúng hay sai **mỗi ngày**, không chỉ lúc đáo hạn.
+</Callout>
+
+## Hợp đồng tương lai
+
+- **Cam kết** mua/bán một lượng tài sản ở giá định trước vào ngày tương lai.
+- **Chuẩn hoá** (quy mô, ngày đáo hạn) và giao dịch trên sàn; **bù trừ qua CCP** (bài bù trừ và thanh toán).
+- **Đòn bẩy**: chỉ cần nộp ký quỹ bằng một phần giá trị hợp đồng (bài đòn bẩy).
+
+## Ký quỹ và đánh giá theo thị trường
+
+Theo quy định của CFTC, tổ chức bù trừ phải quyết toán **hằng ngày** mọi nghĩa vụ, gồm ký quỹ biến động:
+
+1. **Ký quỹ ban đầu** khi mở vị thế — bảo đảm cho nghĩa vụ ký quỹ biến động nếu bên kia không trả.
+2. **Cuối mỗi ngày**, vị thế được định giá lại theo **giá thanh toán**; lãi được cộng, lỗ bị trừ vào tài khoản bằng tiền (**ký quỹ biến động**).
+3. Số dư dưới **ngưỡng duy trì** → **gọi ký quỹ**; không nộp → bị đóng vị thế.
+
+Kết quả: không bên nào tích luỹ nghĩa vụ chưa thanh toán quá một ngày — rủi ro đối tác được giới hạn.
+
+<WorkedExample id="we-futures-margin" />
+
+<Diagram id="dg-futures-daily" />
+
+<Quiz id="q-f1f-margin" />
+
+## Hoán đổi lãi suất
+
+Hai bên đổi dòng lãi trên một **số tiền danh nghĩa** (không trao đổi gốc):
+
+- Bên A **trả cố định**, nhận thả nổi.
+- Bên B **trả thả nổi**, nhận cố định.
+- Mỗi kỳ chỉ thanh toán **phần chênh**.
+
+Giá trị của hoán đổi = giá trị hiện tại của dòng nhận − giá trị hiện tại của dòng trả. Khi lãi suất thị trường tăng, bên trả cố định/nhận thả nổi được lợi.
+
+**Lãi suất tham chiếu**: <Fact id="libor-end" />. Hợp đồng USD hiện tham chiếu SOFR — lãi suất qua đêm có bảo đảm, khác bản chất LIBOR (có yếu tố tín dụng của ngân hàng và kỳ hạn), nên hệ thống định giá phải xử lý cách tính lãi cộng dồn qua đêm.
+
+<Quiz id="q-f1f-swap" />
+
+## Phòng ngừa rủi ro lãi suất
+
+Nhắc lại bài ALM: ngân hàng có tài sản lãi cố định dài hạn, nợ định giá lại nhanh → lãi suất tăng làm vốn chủ kinh tế giảm. Ký hoán đổi **trả cố định, nhận thả nổi** biến một phần tài sản lãi cố định thành thả nổi về kinh tế → khe hở duration giảm. Cái giá: rủi ro đối tác (giảm bằng bù trừ trung tâm và ký quỹ), yêu cầu ký quỹ khi lãi suất đi ngược, và phức tạp kế toán phòng ngừa.
+
+<Callout kind="field" title="Thanh khoản để nộp ký quỹ là một phần của phòng ngừa">
+Một chiến lược phòng ngừa đúng về kinh tế vẫn có thể gây khủng hoảng thanh khoản: khi thị trường đi ngược vị thế phòng ngừa, phải nộp ký quỹ biến động bằng tiền ngay, trong khi khoản lãi bù trừ ở phía tài sản được phòng ngừa chưa thành tiền. Khi review một chương trình phòng ngừa, tôi luôn hỏi: trong kịch bản lãi suất đi ngược mạnh, cần bao nhiêu tiền mặt cho ký quỹ trong một tuần, và tiền đó đến từ đâu.
+</Callout>

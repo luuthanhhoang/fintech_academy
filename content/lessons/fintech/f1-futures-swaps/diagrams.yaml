@@ -1,0 +1,17 @@
+diagrams:
+  - id: dg-futures-daily
+    kind: sequence
+    title: "Quyết toán hằng ngày của hợp đồng tương lai"
+    caption: "Luồng khái niệm; ngưỡng ký quỹ, giờ quyết toán và gọi ký quỹ trong ngày theo quy tắc của từng tổ chức bù trừ."
+    actors:
+      - { id: buyer, label: "Bên mua" }
+      - { id: ccp, label: "Tổ chức bù trừ" }
+      - { id: seller, label: "Bên bán" }
+    steps:
+      - { from: buyer, to: ccp, label: "Nộp ký quỹ ban đầu" }
+      - { from: seller, to: ccp, label: "Nộp ký quỹ ban đầu" }
+      - { from: ccp, to: ccp, label: "Cuối ngày: định giá theo giá thanh toán" }
+      - { from: buyer, to: ccp, label: "Giá giảm → trả ký quỹ biến động" }
+      - { from: ccp, to: seller, label: "Chuyển lãi cho bên bán" }
+      - { from: ccp, to: buyer, label: "Dưới ngưỡng duy trì → gọi ký quỹ" }
+      - { from: ccp, to: ccp, label: "Không nộp → đóng vị thế, dùng ký quỹ ban đầu bù lỗ" }

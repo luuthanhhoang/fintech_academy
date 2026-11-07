@@ -1,0 +1,88 @@
+---
+id: f0-statement-analysis
+track: fintech
+stage: f0
+order: 8
+title: { vi: "Phân tích báo cáo tài chính: đọc sức khoẻ doanh nghiệp từ ba bảng", en: "Financial statement analysis: reading a company's health from three statements" }
+summary: "Ba báo cáo — kết quả kinh doanh, cân đối kế toán, lưu chuyển tiền tệ — trả lời ba câu hỏi khác nhau: có lãi không, sở hữu và nợ gì, tiền thật đi đâu. Tỉ số tài chính biến chúng thành thứ so sánh được: sinh lời (biên lợi nhuận, ROA, ROE), hiệu quả (vòng quay), thanh khoản (khả năng thanh toán ngắn hạn), đòn bẩy (nợ trên vốn, khả năng trả lãi). Phân rã DuPont cho biết ROE cao đến từ đâu; so lợi nhuận với dòng tiền hoạt động cho biết lợi nhuận có 'thật' không."
+concepts: [financial-ratio-analysis]
+estMinutes: 45
+whyQuestion: "Hai công ty cùng có ROE 20%. Một công ty bán hàng biên lãi cao, công ty kia vay nợ rất nhiều. Làm sao nhìn ra khác biệt đó, và vì sao nó quan trọng với người cho vay?"
+devMapping:
+  - finance: "Tỉ số tài chính"
+    dev: "Metric chuẩn hoá theo quy mô"
+    explanation: "Như lỗi trên mỗi nghìn request thay vì tổng số lỗi — so được giữa các hệ thống khác cỡ."
+  - finance: "Phân rã DuPont"
+    dev: "Phân rã một KPI thành tích các yếu tố"
+    explanation: "ROE = biên lợi nhuận × vòng quay tài sản × đòn bẩy — tìm yếu tố nào đang thay đổi."
+  - finance: "Lợi nhuận so với dòng tiền"
+    dev: "Số liệu báo cáo so với số đo thực tế"
+    explanation: "Lợi nhuận kế toán có phán đoán; dòng tiền khó 'trang điểm' hơn — chênh lệch kéo dài là tín hiệu cần điều tra."
+pretest: [q-f0s-dupont, q-f0s-cash]
+applications:
+  - id: app-f0s-dashboard
+    title: "Bảng phân tích tỉ số cho một công ty niêm yết"
+    context: "Báo cáo tài chính công khai 3 năm của một công ty bạn chọn (ghi nguồn và kỳ báo cáo)."
+    task: "Nhập số liệu ba báo cáo; tính biên lợi nhuận gộp/ròng, ROA, ROE và phân rã DuPont, vòng quay phải thu và tồn kho, tỉ số thanh toán hiện hành, nợ/vốn chủ, khả năng trả lãi, dòng tiền hoạt động so với lợi nhuận ròng; ghi xu hướng 3 năm; viết nhận xét chỉ dựa trên số đã tính."
+    deliverable: "Bảng tính có trích nguồn + nhận xét + danh sách câu hỏi cần hỏi thêm."
+sources: [openstax-accounting, openstax-finance]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích cách dùng tỉ số tài chính để đánh giá một doanh nghiệp và vì sao phải đọc cùng báo cáo lưu chuyển tiền tệ."
+  rubric:
+    - { id: groups, criterion: "Bốn nhóm tỉ số: sinh lời, hiệu quả, thanh khoản, đòn bẩy/khả năng trả nợ" }
+    - { id: dupont, criterion: "ROE = biên lợi nhuận ròng × vòng quay tài sản × đòn bẩy tài chính; biết yếu tố nào tạo ROE" }
+    - { id: cash, criterion: "So dòng tiền hoạt động với lợi nhuận; phải thu/tồn kho tăng nhanh hơn doanh thu là tín hiệu cảnh báo" }
+    - { id: compare, criterion: "So theo thời gian và với doanh nghiệp cùng ngành; tỉ số không có nghĩa khi đứng một mình" }
+---
+
+<Callout kind="story" title="Lãi to, hết tiền">
+Một nhà phân phối giả định báo lợi nhuận tăng ba năm liền. Người cho vay chỉ nhìn báo cáo kết quả kinh doanh và tăng hạn mức. Nhưng phải thu khách hàng tăng gấp đôi tốc độ doanh thu, hàng tồn kho chất đầy kho, và dòng tiền từ hoạt động kinh doanh âm cả ba năm. Lợi nhuận có thật trên sổ — tiền thì không.
+</Callout>
+
+## Ba báo cáo, ba câu hỏi
+
+Nhắc lại bài báo cáo tài chính:
+
+- **Kết quả kinh doanh**: trong kỳ, doanh nghiệp tạo ra bao nhiêu lợi nhuận (theo kế toán dồn tích — bài sau).
+- **Cân đối kế toán**: tại một thời điểm, doanh nghiệp sở hữu gì, nợ gì, vốn chủ bao nhiêu.
+- **Lưu chuyển tiền tệ**: tiền thật vào/ra từ hoạt động kinh doanh, đầu tư, tài chính.
+
+## Bốn nhóm tỉ số
+
+| Nhóm | Tỉ số | Câu hỏi |
+|---|---|---|
+| Sinh lời | Biên lợi nhuận gộp, biên lợi nhuận ròng, ROA, ROE | Mỗi đồng doanh thu/tài sản/vốn tạo bao nhiêu lợi nhuận? |
+| Hiệu quả | Vòng quay tài sản, số ngày phải thu, số ngày tồn kho | Doanh nghiệp dùng tài sản nhanh và gọn tới đâu? |
+| Thanh khoản | Thanh toán hiện hành, thanh toán nhanh | Có trả được nợ ngắn hạn không? |
+| Đòn bẩy, trả nợ | Nợ/vốn chủ, khả năng trả lãi (EBIT/lãi vay) | Dựa vào nợ tới đâu, trả lãi có thoải mái không? |
+
+Tỉ số **đứng một mình gần như vô nghĩa**: so theo thời gian (xu hướng) và với doanh nghiệp cùng ngành (ngân hàng và công ty phần mềm có cấu trúc rất khác nhau).
+
+## Phân rã DuPont
+
+ROE = Lợi nhuận ròng / Vốn chủ = (LN ròng / Doanh thu) × (Doanh thu / Tổng tài sản) × (Tổng tài sản / Vốn chủ)
+
+= **biên lợi nhuận** × **vòng quay tài sản** × **đòn bẩy**.
+
+Cùng ROE 20% có thể đến từ biên lợi nhuận cao, từ quay vòng tài sản nhanh, hoặc từ vay nợ nhiều — và với người cho vay, trường hợp cuối rủi ro hơn hẳn.
+
+<WorkedExample id="we-dupont" />
+
+<Quiz id="q-f0s-dupont" />
+
+## Lợi nhuận có thật không?
+
+Lợi nhuận kế toán chứa nhiều phán đoán (khi nào ghi doanh thu, dự phòng, khấu hao). Dòng tiền khó điều chỉnh hơn. Tín hiệu cần điều tra:
+
+- **Dòng tiền hoạt động thấp hơn lợi nhuận ròng kéo dài** nhiều kỳ.
+- **Phải thu tăng nhanh hơn doanh thu**: bán chịu dễ dãi, hoặc doanh thu ghi sớm.
+- **Tồn kho tăng nhanh hơn giá vốn**: hàng khó bán.
+- Lợi nhuận đến chủ yếu từ khoản **bất thường** (bán tài sản, đánh giá lại).
+
+<Quiz id="q-f0s-cash" />
+
+<Callout kind="field" title="Đọc lưu chuyển tiền tệ trước">
+Khi được đưa báo cáo của một doanh nghiệp, tôi mở báo cáo lưu chuyển tiền tệ trước, rồi mới tới kết quả kinh doanh. Dòng tiền hoạt động ba năm liền, đặt cạnh lợi nhuận ròng, thường kể câu chuyện thật nhanh hơn mọi tỉ số khác — và cho tôi biết phải hỏi gì khi đọc các tỉ số còn lại.
+</Callout>

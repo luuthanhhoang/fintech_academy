@@ -1,0 +1,88 @@
+---
+id: f3-corporate-credit
+track: fintech
+stage: f3
+order: 6
+title: { vi: "Thẩm định tín dụng doanh nghiệp: trả nợ bằng dòng tiền", en: "Corporate credit analysis: repayment from cash flow" }
+summary: "Cho doanh nghiệp vay là đặt cược vào khả năng trả nợ từ dòng tiền tương lai, không phải vào tài sản bảo đảm. Thẩm định tập trung vào: dòng tiền có đủ trả gốc và lãi không (hệ số khả năng trả nợ DSCR), đòn bẩy (nợ trên EBITDA), khả năng trả lãi, thanh khoản, chất lượng lợi nhuận, rủi ro ngành và quản trị. Điều khoản ràng buộc (covenant) biến các chỉ số đó thành cảnh báo sớm có hiệu lực pháp lý; tài sản bảo đảm giảm tổn thất khi vỡ nợ (LGD) chứ không làm khoản vay tốt lên. Mô hình chấm điểm như Altman Z-score cho thấy tỉ số tài chính có sức dự báo — và giới hạn của chúng."
+concepts: [corporate-credit-analysis]
+estMinutes: 50
+whyQuestion: "Một doanh nghiệp có nhà xưởng trị giá gấp đôi khoản vay đề nghị, nhưng dòng tiền hoạt động âm. Tài sản bảo đảm lớn như vậy có làm khoản vay an toàn không?"
+devMapping:
+  - finance: "DSCR"
+    dev: "Tỉ số dung lượng trên tải"
+    explanation: "Dòng tiền dành trả nợ chia cho nghĩa vụ trả nợ trong kỳ; dưới 1 là không đủ."
+  - finance: "Covenant"
+    dev: "Ngưỡng cảnh báo có hành động tự động"
+    explanation: "Vi phạm cho phép bên cho vay yêu cầu điều chỉnh trước khi doanh nghiệp vỡ nợ."
+  - finance: "Kịch bản căng thẳng"
+    dev: "Load test cho dòng tiền"
+    explanation: "Doanh thu giảm, chi phí tăng, lãi suất tăng — doanh nghiệp còn trả được nợ không?"
+pretest: [q-f3k-dscr, q-f3k-collateral]
+applications:
+  - id: app-f3k-memo
+    title: "Tờ trình tín dụng có kịch bản căng thẳng"
+    context: "Báo cáo tài chính công khai của một doanh nghiệp (ghi nguồn) hoặc dữ liệu tổng hợp dán nhãn mô phỏng, và một khoản vay giả định."
+    task: "Tính EBITDA, nợ/EBITDA, khả năng trả lãi, DSCR, thanh toán hiện hành, dòng tiền hoạt động so với lợi nhuận; dựng ba kịch bản (cơ sở, doanh thu −20%, lãi suất +3 điểm) và tính lại DSCR; đề xuất cấu trúc khoản vay (kỳ hạn, lịch trả, tài sản bảo đảm) và 3 covenant có ngưỡng (ghi rõ là đề xuất); nêu rủi ro chính và câu hỏi cần làm rõ."
+    deliverable: "Tờ trình 2 trang + bảng tính kịch bản."
+sources: [altman-1968, bcbs-basel2-2004, openstax-finance, openstax-accounting]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Mô hình hoá cách bạn thẩm định một khoản vay doanh nghiệp: chỉ số nào, kịch bản nào, cấu trúc và điều khoản nào."
+  rubric:
+    - { id: cash, criterion: "Nguồn trả nợ chính là dòng tiền hoạt động; DSCR, khả năng trả lãi, nợ/EBITDA" }
+    - { id: stress, criterion: "Kịch bản căng thẳng doanh thu, chi phí, lãi suất; tìm ngưỡng DSCR xuống dưới 1" }
+    - { id: structure, criterion: "Cấu trúc kỳ hạn/lịch trả khớp dòng tiền; covenant làm cảnh báo sớm; tài sản bảo đảm giảm LGD, không thay thế khả năng trả nợ" }
+    - { id: qual, criterion: "Rủi ro ngành, quản trị, khách hàng/nhà cung cấp tập trung, chất lượng số liệu; mô hình chấm điểm có giới hạn" }
+---
+
+<Callout kind="story" title="Nhà xưởng không trả được lãi">
+Một ngân hàng giả định cho một nhà sản xuất vay dựa trên nhà xưởng định giá gấp đôi khoản vay. Hai năm sau, doanh nghiệp mất khách hàng lớn nhất, không trả được lãi. Khi xử lý tài sản, nhà xưởng chuyên dụng ở khu công nghiệp xa chỉ bán được một phần định giá, sau một năm thủ tục. Tài sản bảo đảm giảm tổn thất — nhưng không làm khoản vay trở thành khoản vay tốt.
+</Callout>
+
+## Nguồn trả nợ đầu tiên là dòng tiền
+
+Thứ tự ưu tiên của người cho vay:
+
+1. **Dòng tiền hoạt động** — nguồn trả nợ chính.
+2. **Tái cấp vốn** — khả năng vay mới để trả cũ (phụ thuộc thị trường).
+3. **Tài sản bảo đảm** — nguồn cuối cùng; giảm **LGD** (bài rủi ro tín dụng) nhưng không giảm **PD**.
+
+## Các chỉ số cốt lõi
+
+- **EBITDA** — lợi nhuận trước lãi, thuế, khấu hao: xấp xỉ dòng tiền từ hoạt động trước vốn lưu động và đầu tư.
+- **Nợ / EBITDA** — cần bao nhiêu năm EBITDA để trả hết nợ.
+- **Khả năng trả lãi** = EBITDA (hoặc EBIT) / chi phí lãi vay.
+- **DSCR** (hệ số khả năng trả nợ) = dòng tiền dành trả nợ / (gốc + lãi đến hạn trong kỳ). Dưới 1: không đủ trả bằng dòng tiền.
+- **Thanh khoản**, **chất lượng lợi nhuận** (bài phân tích báo cáo tài chính): dòng tiền hoạt động so với lợi nhuận, phải thu, tồn kho.
+
+<WorkedExample id="we-dscr" />
+
+<Quiz id="q-f3k-dscr" />
+
+## Kịch bản căng thẳng
+
+Hỏi "nếu…thì sao": doanh thu giảm 20%, biên lợi nhuận co lại, lãi suất thả nổi tăng 3 điểm (nhắc bài ALM, hoán đổi). Tìm **điểm gãy**: doanh thu giảm bao nhiêu thì DSCR xuống dưới 1. Khoản vay tốt có khoảng đệm rộng trước điểm gãy.
+
+## Cấu trúc và điều khoản
+
+- **Kỳ hạn và lịch trả** khớp với dòng tiền của tài sản được tài trợ (vốn lưu động: ngắn; nhà máy: dài).
+- **Covenant** — ví dụ nợ/EBITDA tối đa, DSCR tối thiểu, hạn chế chia cổ tức, nghĩa vụ báo cáo định kỳ. Vi phạm là **cảnh báo sớm** cho phép đàm phán lại trước khi vỡ nợ.
+- **Tài sản bảo đảm**: định giá thận trọng (giá bán nhanh, chi phí xử lý, thời gian), theo dõi định kỳ.
+
+<Quiz id="q-f3k-collateral" />
+
+## Mô hình chấm điểm
+
+Altman (Journal of Finance, 1968) dùng **phân tích phân biệt** kết hợp nhiều tỉ số tài chính để phân biệt doanh nghiệp sản xuất phá sản và không phá sản — chứng minh tỉ số tài chính có sức dự báo khi được kết hợp có hệ thống. Bài không nêu hệ số của công thức vì chưa đối chiếu bản gốc. Giới hạn chung của mọi mô hình kiểu này: hiệu chuẩn trên một mẫu (ngành, thời kỳ, quốc gia) cụ thể; dùng cho mẫu khác cần kiểm định lại (chặng F6 — quản trị rủi ro mô hình).
+
+## Yếu tố định tính
+
+Ngành (chu kỳ, cạnh tranh, quy định), quản trị và minh bạch, phụ thuộc vào vài khách hàng/nhà cung cấp, chất lượng và độ tin cậy của số liệu (báo cáo đã kiểm toán hay chưa), quan hệ với các bên liên quan.
+
+<Quiz id="q-f3k-qual" />
+
+<Callout kind="field" title="Tìm điểm gãy trước khi tìm tài sản bảo đảm">
+Câu hỏi đầu tiên tôi đặt cho mọi tờ trình tín dụng doanh nghiệp không phải "tài sản bảo đảm là gì", mà "doanh thu giảm bao nhiêu thì doanh nghiệp không trả nổi lãi". Nếu câu trả lời là 10%, không lượng tài sản bảo đảm nào làm tôi yên tâm; nếu là 40%, tài sản bảo đảm là lớp đệm thứ hai đúng nghĩa của nó.
+</Callout>

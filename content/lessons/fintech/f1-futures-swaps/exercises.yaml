@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f1f-days
+    conceptId: futures-margining
+    prompt: "Bán khống 2 hợp đồng, mỗi hợp đồng 100 đơn vị, giá vào 500. Ký quỹ ban đầu 10.000, duy trì 7.000 (giả định). Giá thanh toán ba ngày: 505, 520, 490. Tính lãi lỗ hằng ngày, số dư và các lần gọi ký quỹ (nộp về mức ban đầu)."
+    hint: "Bán khống: lãi khi giá giảm. Lãi lỗ ngày = −(giá mới − giá cũ) × 200."
+    solution: "Ngày 1: −(5) × 200 = −1.000 → 9.000. Ngày 2: −(15) × 200 = −3.000 → 6.000 < 7.000 → gọi ký quỹ 4.000 → 10.000. Ngày 3: −(−30) × 200 = +6.000 → 16.000. Tổng lãi lỗ = −1.000 − 3.000 + 6.000 = +2.000 = (500 − 490) × 200 ✓."
+  - id: ex-f1f-swapcash
+    conceptId: interest-rate-swaps
+    prompt: "Hoán đổi danh nghĩa 100 tỉ, kỳ thanh toán năm: bên A trả cố định 5%, nhận thả nổi. Lãi thả nổi năm 1 là 4,2%, năm 2 là 5,6%. Tính khoản thanh toán ròng mỗi năm và ai trả."
+    hint: "Ròng = (thả nổi − cố định) × danh nghĩa."
+    solution: "Năm 1: (4,2% − 5%) × 100 = −0,8 tỉ → A trả B 0,8 tỉ. Năm 2: (5,6% − 5%) × 100 = +0,6 tỉ → B trả A 0,6 tỉ. Không có trao đổi 100 tỉ tiền gốc."

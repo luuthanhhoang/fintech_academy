@@ -1,0 +1,29 @@
+items:
+  - id: q-f3k-dscr
+    type: numeric
+    conceptId: corporate-credit-analysis
+    prompt: "Dòng tiền dành trả nợ năm tới 18 tỉ; gốc đến hạn 10 tỉ, lãi 5 tỉ. DSCR bằng bao nhiêu?"
+    answer: 1.2
+    tolerance: { kind: abs, value: 0.001 }
+    explanation: "18 / (10 + 5) = 1,2 — đủ trả với đệm 20%."
+  - id: q-f3k-collateral
+    type: mcq
+    conceptId: corporate-credit-analysis
+    prompt: "Tài sản bảo đảm giá trị lớn tác động thế nào tới rủi ro của khoản vay doanh nghiệp?"
+    options:
+      - { id: a, text: "Giảm tổn thất khi vỡ nợ (LGD), không làm giảm xác suất vỡ nợ (PD)" }
+      - { id: b, text: "Loại bỏ rủi ro tín dụng hoàn toàn" }
+      - { id: c, text: "Làm tăng dòng tiền hoạt động" }
+    correct: [a]
+    explanation: "Khả năng trả nợ đến từ dòng tiền; tài sản bảo đảm là nguồn thu hồi cuối cùng, thường thấp hơn định giá và tốn thời gian."
+  - id: q-f3k-qual
+    type: mcq
+    conceptId: corporate-credit-analysis
+    prompt: "Yếu tố nào làm rủi ro tín dụng của một doanh nghiệp tăng dù các tỉ số hiện tại đều tốt? (chọn tất cả)"
+    options:
+      - { id: a, text: "70% doanh thu đến từ một khách hàng" }
+      - { id: b, text: "Báo cáo tài chính chưa được kiểm toán" }
+      - { id: c, text: "Khoản vay lãi thả nổi trong khi biên lợi nhuận mỏng" }
+      - { id: d, text: "Doanh nghiệp có nhiều khách hàng nhỏ phân tán" }
+    correct: [a, b, c]
+    explanation: "Tập trung khách hàng, độ tin cậy số liệu và độ nhạy với lãi suất là rủi ro không hiện trên tỉ số hôm nay."

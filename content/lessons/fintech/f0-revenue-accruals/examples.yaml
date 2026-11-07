@@ -1,0 +1,20 @@
+examples:
+  - id: we-revenue-allocation
+    title: "Phân bổ giá gói và ghi nhận theo thời gian"
+    conceptId: revenue-recognition-accruals
+    problem: "Dữ liệu tổng hợp (mô phỏng): gói 3.000.000 đ gồm phí mở tài khoản (giá bán riêng lẻ 1.000.000, thực hiện ngay) và 12 tháng dịch vụ (giá bán riêng lẻ 3.000.000). Phân bổ giá và tính doanh thu tháng đầu."
+    steps:
+      - text: "Tổng giá bán riêng lẻ = 4.000.000. Phí mở: 3.000.000 × 1/4 = 750.000 đ."
+        faded: true
+        prompt: "Phần giá phân bổ cho phí mở tài khoản là bao nhiêu đồng?"
+        answer: 750000
+        tolerance: { kind: abs, value: 0 }
+        unit: "đ"
+      - text: "Dịch vụ: 3.000.000 × 3/4 = 2.250.000 đ, ghi dần 187.500 đ mỗi tháng."
+      - text: "Doanh thu tháng đầu = 750.000 + 187.500 = 937.500 đ; doanh thu chưa thực hiện cuối tháng = 2.062.500 đ."
+        faded: true
+        prompt: "Doanh thu tháng đầu là bao nhiêu đồng?"
+        answer: 937500
+        tolerance: { kind: abs, value: 0 }
+        unit: "đ"
+    takeaway: "Ghi cả 3.000.000 đ vào tháng đầu sẽ thổi phồng doanh thu tháng đó và làm các tháng sau trông như sụt giảm."

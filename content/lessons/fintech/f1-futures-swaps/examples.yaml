@@ -1,0 +1,19 @@
+examples:
+  - id: we-futures-margin
+    title: "Ba ngày của một tài khoản ký quỹ"
+    conceptId: futures-margining
+    problem: "Dữ liệu tổng hợp (mô phỏng): mua 1 hợp đồng quy mô 1.000 đơn vị ở giá 50. Ký quỹ ban đầu 5.000, ngưỡng duy trì 3.500. Giá thanh toán: ngày 1 là 48,5; ngày 2 là 47; ngày 3 là 49."
+    steps:
+      - text: "Ngày 1: (48,5 − 50) × 1.000 = −1.500 → số dư 3.500 (bằng ngưỡng, chưa gọi)."
+      - text: "Ngày 2: (47 − 48,5) × 1.000 = −1.500 → 2.000 < 3.500 → gọi ký quỹ nộp 3.000 về 5.000."
+        faded: true
+        prompt: "Số tiền phải nộp khi bị gọi ký quỹ ngày 2?"
+        answer: 3000
+        tolerance: { kind: abs, value: 0 }
+      - text: "Ngày 3: (49 − 47) × 1.000 = +2.000 → số dư 7.000."
+        faded: true
+        prompt: "Số dư cuối ngày 3?"
+        answer: 7000
+        tolerance: { kind: abs, value: 0 }
+      - text: "Kiểm tra: tổng lãi lỗ −1.500 − 1.500 + 2.000 = −1.000 = (49 − 50) × 1.000."
+    takeaway: "Vị thế mới lỗ 1.000 nhưng đã cần nộp thêm 3.000 tiền mặt giữa chừng — thanh khoản là một phần của rủi ro phái sinh."

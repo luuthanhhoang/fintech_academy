@@ -117,3 +117,27 @@ sources:
     publisher: Apple
     accessed: 2026-11-07
     note: "Mục 2.5.2 — ứng dụng không được tải và chạy code làm thay đổi tính năng (ngoại lệ hẹp cho ứng dụng học/phát triển code). Đối chiếu qua nguồn thứ cấp; xem bản hiện hành."
+  - id: acca-ifrs15
+    title: "Revenue revisited (IFRS 15) — ACCA technical article"
+    url: https://www.accaglobal.com/gb/en/student/exam-support-resources/fundamentals-exams-study-resources/f7/technical-articles/revenue-revisited.html
+    publisher: ACCA
+    accessed: 2026-11-07
+    note: Mô hình 5 bước của IFRS 15 (xác định hợp đồng, nghĩa vụ thực hiện, giá giao dịch, phân bổ theo giá bán riêng lẻ, ghi nhận khi/trong khi thực hiện nghĩa vụ). Nguồn diễn giải, chưa đọc trực tiếp chuẩn mực của IASB.
+  - id: cftc-variation-margin
+    title: "Daily settlement and variation margin of derivatives clearing organizations (CFTC rules and interpretation)"
+    url: https://www.govinfo.gov/content/pkg/FR-2016-01-06/pdf/2015-32320.pdf
+    publisher: Commodity Futures Trading Commission (Federal Register)
+    accessed: 2026-11-07
+    note: Tổ chức bù trừ phải quyết toán hằng ngày mọi nghĩa vụ, gồm thanh toán ký quỹ biến động; ký quỹ ban đầu bảo đảm cho nghĩa vụ ký quỹ biến động. Kiểm tra qua trích đoạn tìm kiếm và tài liệu sàn.
+  - id: fca-usd-libor-2023
+    title: "The USD LIBOR panel ceases at end-June 2023: Are you ready?"
+    url: https://www.fca.org.uk/news/news-stories/usd-libor-panel-ceases-end-june-2023-are-you-ready
+    publisher: Financial Conduct Authority / Bank of England
+    accessed: 2026-11-07
+    note: Ban USD LIBOR ngừng sau 30/06/2023; phái sinh chuyển sang lãi suất dựa trên SOFR (fallback của ISDA, chuyển đổi tại CCP, Đạo luật LIBOR của Mỹ).
+  - id: altman-1968
+    title: "Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy — Journal of Finance 23(4), 589–609 (1968)"
+    url: https://doi.org/10.2307/2978933
+    publisher: Edward I. Altman
+    accessed: 2026-11-07
+    note: Dùng phân tích phân biệt kết hợp nhiều tỉ số tài chính để dự báo phá sản, mẫu doanh nghiệp sản xuất. Hệ số cụ thể của công thức chưa đối chiếu bản gốc — bài không nêu.

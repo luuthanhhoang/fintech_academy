@@ -1,0 +1,21 @@
+examples:
+  - id: we-dupont
+    title: "Hai công ty cùng ROE, khác rủi ro"
+    conceptId: financial-ratio-analysis
+    problem: "Dữ liệu tổng hợp (mô phỏng). Công ty A: biên ròng 12,5%, vòng quay tài sản 1,0, tài sản/vốn chủ 1,6. Công ty B: biên ròng 4%, vòng quay tài sản 1,0, tài sản/vốn chủ 5,0. Tính ROE và tỉ lệ nợ trên tổng tài sản."
+    steps:
+      - text: "ROE A = 12,5% × 1,0 × 1,6 = 20%."
+        faded: true
+        prompt: "ROE của A bằng bao nhiêu %?"
+        answer: 20
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "%"
+      - text: "ROE B = 4% × 1,0 × 5,0 = 20%."
+      - text: "Nợ/tổng tài sản = 1 − vốn chủ/tài sản: A = 1 − 1/1,6 = 37,5%; B = 1 − 1/5 = 80%."
+        faded: true
+        prompt: "Tỉ lệ nợ trên tổng tài sản của B là bao nhiêu %?"
+        answer: 80
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "%"
+      - text: "Cùng ROE, nhưng B chỉ cần tài sản mất giá 20% là hết vốn chủ; A có tấm đệm dày hơn nhiều."
+    takeaway: "ROE cao không phân biệt được kỹ năng kinh doanh với đòn bẩy; DuPont tách hai thứ đó ra."

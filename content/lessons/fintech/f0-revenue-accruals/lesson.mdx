@@ -1,0 +1,86 @@
+---
+id: f0-revenue-accruals
+track: fintech
+stage: f0
+order: 9
+title: { vi: "Ghi nhận doanh thu và kế toán dồn tích", en: "Revenue recognition and accrual accounting" }
+summary: "Kế toán dồn tích ghi doanh thu khi doanh nghiệp đã thực hiện nghĩa vụ với khách, ghi chi phí khi phát sinh — không theo lúc tiền vào hay ra. IFRS 15 chuẩn hoá việc ghi nhận doanh thu bằng mô hình 5 bước: xác định hợp đồng, nghĩa vụ thực hiện, giá giao dịch, phân bổ giá, ghi nhận khi hoặc trong khi thực hiện nghĩa vụ. Với một công ty thu phí trước (gói thuê bao, phí mở thẻ, phí bảo hiểm), tiền nhận trước là nợ phải trả (doanh thu chưa thực hiện) cho tới khi dịch vụ được cung cấp."
+concepts: [revenue-recognition-accruals]
+estMinutes: 45
+whyQuestion: "Ứng dụng của bạn bán gói thuê bao 12 tháng, khách trả 1,2 triệu ngay hôm nay. Doanh thu tháng này là 1,2 triệu hay 100 nghìn — và hệ thống phải ghi những bút toán nào?"
+devMapping:
+  - finance: "Doanh thu chưa thực hiện"
+    dev: "Nghĩa vụ còn nợ khách, giảm dần theo lịch"
+    explanation: "Như số dư dịch vụ trả trước: tiền đã vào nhưng dịch vụ chưa giao."
+  - finance: "Ghi nhận theo thời gian"
+    dev: "Job phân bổ định kỳ, tạo bút toán mỗi kỳ"
+    explanation: "Mỗi cuối tháng chuyển một phần từ nợ phải trả sang doanh thu — tái lập được từ hợp đồng."
+  - finance: "Phân bổ giá cho nghĩa vụ"
+    dev: "Chia tổng tiền cho nhiều thành phần theo trọng số"
+    explanation: "Gói gồm thiết bị + dịch vụ: chia giá theo giá bán riêng lẻ, phân bổ phần dư không mất đồng nào (bài sổ cái)."
+pretest: [q-f0r-sub, q-f0r-steps]
+applications:
+  - id: app-f0r-billing
+    title: "Lịch ghi nhận doanh thu cho hệ thống thuê bao"
+    context: "Hệ thống thanh toán thuê bao của bạn (dữ liệu tổng hợp dán nhãn mô phỏng)."
+    task: "Thiết kế bảng hợp đồng và lịch ghi nhận: khi thu tiền ghi doanh thu chưa thực hiện; cuối mỗi kỳ chuyển phần đã thực hiện sang doanh thu; xử lý nâng cấp giữa kỳ, hoàn tiền, huỷ; gói nhiều thành phần phân bổ theo giá bán riêng lẻ với phần dư phân bổ chính xác; báo cáo đối chiếu tổng doanh thu chưa thực hiện với tổng hợp đồng còn hiệu lực."
+    deliverable: "Schema + job ghi nhận định kỳ + bút toán mẫu + test bất biến (tổng ghi nhận theo hợp đồng = giá hợp đồng)."
+sources: [acca-ifrs15, openstax-accounting]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích kế toán dồn tích, mô hình 5 bước của IFRS 15, và cách một hệ thống thuê bao ghi nhận doanh thu."
+  rubric:
+    - { id: accrual, criterion: "Doanh thu ghi khi thực hiện nghĩa vụ, chi phí khi phát sinh — không theo dòng tiền" }
+    - { id: steps, criterion: "5 bước: hợp đồng, nghĩa vụ thực hiện, giá giao dịch, phân bổ theo giá bán riêng lẻ, ghi nhận khi/trong khi thực hiện" }
+    - { id: deferred, criterion: "Tiền thu trước là doanh thu chưa thực hiện (nợ phải trả), chuyển dần sang doanh thu" }
+    - { id: system, criterion: "Lịch ghi nhận tái lập được, xử lý thay đổi hợp đồng, phân bổ không mất đồng nào, đối chiếu" }
+---
+
+<Callout kind="story" title="Tháng một kỷ lục">
+Một startup giả định chạy chiến dịch bán gói năm với giá ưu đãi vào tháng 1 và báo cáo "doanh thu tháng 1 gấp 10 lần tháng 12". Đến tháng 4, doanh thu giảm mạnh và nhà đầu tư lo lắng. Thực ra không có gì sụp đổ: tiền của gói năm đã bị ghi hết vào tháng 1, trong khi dịch vụ còn phải cung cấp thêm 11 tháng. Báo cáo đúng phải ghi một phần mười hai mỗi tháng.
+</Callout>
+
+## Dồn tích và tiền mặt
+
+- **Kế toán tiền mặt**: ghi khi tiền vào/ra — đơn giản nhưng phản ánh sai hiệu quả kinh doanh theo kỳ.
+- **Kế toán dồn tích**: ghi **doanh thu khi đã thực hiện nghĩa vụ** với khách, ghi **chi phí khi phát sinh** (gắn với doanh thu tương ứng), bất kể tiền đi lúc nào.
+
+Chênh lệch giữa hai cách tạo ra các khoản mục trên bảng cân đối: **phải thu** (đã ghi doanh thu, chưa thu tiền), **doanh thu chưa thực hiện** (đã thu tiền, chưa giao dịch vụ), **chi phí phải trả**, **chi phí trả trước**. Đó cũng là lý do lợi nhuận và dòng tiền khác nhau (bài trước).
+
+<Quiz id="q-f0r-sub" />
+
+## IFRS 15: mô hình 5 bước
+
+Theo các tài liệu diễn giải IFRS 15:
+
+1. **Xác định hợp đồng** với khách — thoả thuận tạo quyền và nghĩa vụ có hiệu lực.
+2. **Xác định các nghĩa vụ thực hiện** — mỗi hàng hoá/dịch vụ "riêng biệt" đã hứa.
+3. **Xác định giá giao dịch** — số tiền kỳ vọng được hưởng; khoản biến đổi (chiết khấu theo doanh số, thưởng) chỉ đưa vào khi khả năng đảo ngược đáng kể là rất thấp.
+4. **Phân bổ giá** cho các nghĩa vụ theo **giá bán riêng lẻ** tương đối.
+5. **Ghi nhận doanh thu khi (hoặc trong khi)** từng nghĩa vụ được thực hiện — tại một thời điểm (giao hàng) hoặc theo thời gian (thuê bao).
+
+<WorkedExample id="we-revenue-allocation" />
+
+<Quiz id="q-f0r-steps" />
+
+## Bút toán cho thuê bao
+
+Gói 12 tháng, thu 1.200.000 đ ngày 1:
+
+- Khi thu tiền: Nợ Tiền 1.200.000 / Có **Doanh thu chưa thực hiện** 1.200.000.
+- Cuối mỗi tháng: Nợ Doanh thu chưa thực hiện 100.000 / Có **Doanh thu** 100.000.
+- Khách huỷ sau 3 tháng và được hoàn phần chưa dùng: Nợ Doanh thu chưa thực hiện 900.000 / Có Tiền 900.000.
+
+Mọi bút toán sinh ra từ dữ liệu hợp đồng bởi một job định kỳ — tái lập được, đối chiếu được (bài sổ cái, event sourcing).
+
+## Trong fintech
+
+- **Phí mở thẻ, phí thường niên** thu trước → phân bổ theo thời gian dịch vụ.
+- **Phí giao dịch** → ghi khi giao dịch hoàn tất (tại một thời điểm).
+- **Gói kèm thiết bị** (máy POS + phần mềm) → hai nghĩa vụ, phân bổ giá.
+- **Hoàn tiền dự kiến, khuyến mãi** → ảnh hưởng giá giao dịch, cần ước tính.
+
+<Callout kind="field" title="Doanh thu là thứ tính ra, không phải thứ nhập vào">
+Trong các hệ thống thanh toán thuê bao tôi từng làm, nguyên tắc vững nhất là không cho ai "nhập doanh thu". Doanh thu luôn được tính ra từ hợp đồng và lịch ghi nhận bằng một job tất định, có test bất biến: cộng mọi khoản đã ghi nhận của một hợp đồng phải đúng bằng giá hợp đồng trừ phần hoàn. Nhờ vậy kiểm toán hỏi về bất kỳ con số nào, ta đều chạy lại được.
+</Callout>

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3k-break
+    conceptId: corporate-credit-analysis
+    prompt: "Doanh nghiệp giả định: doanh thu 500 tỉ, biên EBITDA 12% (coi như dòng tiền dành trả nợ = EBITDA − thuế và đầu tư duy trì 20 tỉ), nghĩa vụ trả nợ năm 30 tỉ. Tính DSCR hiện tại và doanh thu giảm bao nhiêu phần trăm thì DSCR = 1 (giữ biên EBITDA và khoản 20 tỉ không đổi)."
+    hint: "Dòng tiền = 0,12 × doanh thu − 20."
+    solution: "Hiện tại: 0,12 × 500 − 20 = 40 tỉ; DSCR = 40/30 ≈ 1,33. DSCR = 1 khi 0,12 × D − 20 = 30 → D = 416,7 tỉ, tức doanh thu giảm khoảng 16,7%. Đệm mỏng; nếu biên cũng co lại khi doanh thu giảm (thường xảy ra vì chi phí cố định), điểm gãy còn gần hơn."
+  - id: ex-f3k-covenant
+    conceptId: corporate-credit-analysis
+    prompt: "Đề xuất 3 covenant cho khoản vay ở bài trên, kèm cách theo dõi bằng hệ thống và hành động khi vi phạm."
+    hint: "Đòn bẩy, khả năng trả nợ, chia cổ tức; dữ liệu báo cáo định kỳ."
+    solution: "(1) DSCR tối thiểu (ví dụ 1,2, đo theo 12 tháng gần nhất từ báo cáo quý). (2) Nợ/EBITDA tối đa (ngưỡng theo ngành, đặt trong hợp đồng). (3) Không chia cổ tức khi DSCR dưới ngưỡng. Hệ thống: nhập báo cáo quý theo mẫu chuẩn, tính tự động, lưu căn cứ và phiên bản công thức; cảnh báo khi tiến gần ngưỡng; vi phạm → quy trình đàm phán lại, tăng tần suất giám sát, chuyển nhóm theo dõi (liên hệ IFRS 9: dấu hiệu tăng đáng kể rủi ro). Ngưỡng là đề xuất, do chính sách tín dụng quyết định."

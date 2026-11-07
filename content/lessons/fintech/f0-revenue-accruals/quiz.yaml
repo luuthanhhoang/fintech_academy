@@ -1,0 +1,29 @@
+items:
+  - id: q-f0r-sub
+    type: numeric
+    conceptId: revenue-recognition-accruals
+    prompt: "Ngày 1/1 khách trả 2.400.000 đ cho gói 12 tháng. Theo kế toán dồn tích, số dư doanh thu chưa thực hiện cuối ngày 31/3 là bao nhiêu đồng?"
+    answer: 1800000
+    tolerance: { kind: abs, value: 0 }
+    unit: "đ"
+    explanation: "Đã thực hiện 3/12 = 600.000 đ; còn nợ khách 9 tháng dịch vụ = 1.800.000 đ."
+  - id: q-f0r-steps
+    type: mcq
+    conceptId: revenue-recognition-accruals
+    prompt: "Gói bán máy POS kèm 2 năm phần mềm với một giá chung. Theo IFRS 15, giá được chia cho hai phần thế nào?"
+    options:
+      - { id: a, text: "Theo giá bán riêng lẻ tương đối của máy POS và của phần mềm" }
+      - { id: b, text: "Ghi toàn bộ vào doanh thu ngày giao máy" }
+      - { id: c, text: "Chia đôi" }
+    correct: [a]
+    explanation: "Bước 4: phân bổ giá giao dịch cho các nghĩa vụ theo giá bán riêng lẻ; máy ghi khi giao, phần mềm ghi dần theo thời gian."
+  - id: q-f0r-cash
+    type: mcq
+    conceptId: revenue-recognition-accruals
+    prompt: "Khoản nào là nợ phải trả trên bảng cân đối của công ty bán thuê bao?"
+    options:
+      - { id: a, text: "Doanh thu chưa thực hiện từ gói năm khách đã trả trước" }
+      - { id: b, text: "Phải thu khách hàng" }
+      - { id: c, text: "Tiền gửi ngân hàng của công ty" }
+    correct: [a]
+    explanation: "Tiền nhận trước là nghĩa vụ cung cấp dịch vụ (hoặc hoàn tiền) cho khách."

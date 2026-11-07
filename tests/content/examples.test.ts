@@ -68,6 +68,14 @@ const EXPECTED: Record<string, number[]> = {
   'we-training-memory': [13 * 16, (13 * 16) / 8],
   // BM25 IDF: ln((N − n + 0.5)/(n + 0.5) + 1).
   'we-idf': [Math.log((10000 - 6000 + 0.5) / (6000 + 0.5) + 1), Math.log((10000 - 20 + 0.5) / (20 + 0.5) + 1)],
+  // DuPont: ROE = margin × turnover × leverage; debt/assets = 1 − 1/leverage.
+  'we-dupont': [0.125 * 1.0 * 1.6 * 100, (1 - 1 / 5) * 100],
+  // IFRS 15 allocation by relative stand-alone selling price.
+  'we-revenue-allocation': [3000000 * (1000000 / 4000000), 3000000 * (1000000 / 4000000) + (3000000 * (3000000 / 4000000)) / 12],
+  // Futures margin: daily P&L = Δprice × size; call restores initial margin.
+  'we-futures-margin': [5000 - (5000 - 1500 - 1500), 5000 + (49 - 47) * 1000],
+  // DSCR = cash available for debt service / (principal + interest).
+  'we-dscr': [(60 - 15) / (20 + 0.08 * 200), (60 * 0.85 - 15) / (20 + 0.11 * 200)],
 }
 
 describe('worked examples match the tested libraries', () => {

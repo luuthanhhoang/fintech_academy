@@ -1,0 +1,18 @@
+examples:
+  - id: we-dscr
+    title: "DSCR dưới kịch bản cơ sở và căng thẳng"
+    conceptId: corporate-credit-analysis
+    problem: "Dữ liệu tổng hợp (mô phỏng): EBITDA 60 tỉ; thuế và đầu tư duy trì 15 tỉ; nợ 200 tỉ lãi thả nổi 8%, trả gốc 20 tỉ/năm. Tính DSCR hiện tại và khi lãi suất tăng 3 điểm cùng EBITDA giảm 15%."
+    steps:
+      - text: "Dòng tiền dành trả nợ = 60 − 15 = 45. Nghĩa vụ = 20 + 8% × 200 = 36. DSCR = 45/36 = 1,25."
+        faded: true
+        prompt: "DSCR cơ sở?"
+        answer: 1.25
+        tolerance: { kind: abs, value: 0.001 }
+      - text: "Căng thẳng: EBITDA 51 → dòng tiền 36; nghĩa vụ = 20 + 11% × 200 = 42."
+      - text: "DSCR = 36/42 ≈ 0,857 < 1: không trả đủ bằng dòng tiền."
+        faded: true
+        prompt: "DSCR căng thẳng (3 chữ số thập phân)?"
+        answer: 0.857
+        tolerance: { kind: abs, value: 0.001 }
+    takeaway: "Hai cú sốc vừa phải cùng lúc đủ đẩy một khoản vay 'ổn' xuống dưới điểm gãy — lý do phải kiểm tra kịch bản kết hợp."
