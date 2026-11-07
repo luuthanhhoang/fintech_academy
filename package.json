@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "check": "npm run lines && npm run validate && npm run typecheck && npm run lint && npm run test",
-    "labs": "python3 -I scripts/check-labs.py"
+    "labs": "python3 -I scripts/check-labs.py",
+    "book": "tsx scripts/book/build.ts"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.4",
