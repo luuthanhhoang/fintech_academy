@@ -1,0 +1,12 @@
+id: dscr-stress
+title: { vi: "DSCR và điểm gãy theo kịch bản", en: "DSCR and break-even under stress" }
+summary: Tính hệ số khả năng trả nợ của khoản vay doanh nghiệp dưới các kịch bản doanh thu và lãi suất, tìm mức giảm doanh thu làm DSCR chạm 1, và kiểm tra covenant.
+concepts: [corporate-credit-analysis]
+timeoutMs: 8000
+instructions: |-
+  1. cash_for_debt(revenue, ebitda_margin, fixed_outflows) = revenue × ebitda_margin − fixed_outflows (thuế + đầu tư duy trì).
+  2. debt_service(debt, rate, principal) = principal + rate × debt.
+  3. dscr(...) = cash_for_debt / debt_service — tham số: revenue, ebitda_margin, fixed_outflows, debt, rate, principal.
+  4. stress(base, revenue_drop, rate_shock): base là dict có các khoá trên; trả DSCR khi revenue × (1 − revenue_drop) và rate + rate_shock.
+  5. break_even_drop(base): mức giảm doanh thu (tỉ lệ, 0..1) làm DSCR = 1, giữ nguyên các tham số khác; nếu ngay cả doanh thu hiện tại DSCR đã < 1 thì trả 0.0.
+  6. covenant_breaches(base, scenarios, min_dscr): scenarios là dict {tên: (revenue_drop, rate_shock)}; trả list tên kịch bản có DSCR < min_dscr, sắp tăng dần.

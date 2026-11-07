@@ -1,0 +1,12 @@
+id: futures-margin
+title: { vi: "Tài khoản ký quỹ hợp đồng tương lai", en: "A futures margin account" }
+summary: Mô phỏng quyết toán hằng ngày của hợp đồng tương lai — lãi lỗ theo giá thanh toán, gọi ký quỹ khi dưới ngưỡng duy trì, đóng vị thế khi không nộp — và kiểm tra tổng lãi lỗ khớp với giá đóng trừ giá vào.
+concepts: [futures-margining]
+timeoutMs: 8000
+instructions: |-
+  simulate(entry, settles, size, side, initial, maintenance, can_pay) trả về dict:
+  {"balances": số dư cuối mỗi ngày (sau khi nộp nếu có), "calls": list (ngày, số tiền gọi), "closed_day": ngày bị đóng vị thế hoặc None, "total_pnl": tổng lãi lỗ}.
+  - side = 1 (mua) hoặc −1 (bán). Ngày đánh số từ 0 theo settles.
+  - Lãi lỗ ngày t = side × (settles[t] − giá hôm trước) × size, giá hôm trước của ngày 0 là entry.
+  - Số dư mới < maintenance → gọi ký quỹ số tiền đưa số dư về đúng initial. Nếu can_pay(t) trả True thì nộp; nếu False thì đóng vị thế ngày đó (closed_day = t) và dừng mô phỏng (số dư ngày đó vẫn ghi, không nộp).
+  - total_pnl = tổng lãi lỗ các ngày đã mô phỏng. Số dư bằng maintenance thì KHÔNG gọi.

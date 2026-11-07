@@ -1,0 +1,13 @@
+id: ratio-analysis
+title: { vi: "Phân tích tỉ số và DuPont", en: "Ratio analysis and DuPont" }
+summary: Tính các tỉ số tài chính từ ba báo cáo, phân rã ROE theo DuPont, và gắn cờ cảnh báo chất lượng lợi nhuận khi dòng tiền không theo kịp lợi nhuận hoặc phải thu tăng nhanh hơn doanh thu.
+concepts: [financial-ratio-analysis]
+timeoutMs: 8000
+instructions: |-
+  fs là dict số liệu một năm với các khoá: revenue, cogs, ebit, interest, net_income, total_assets, equity, current_assets, current_liabilities, cfo (dòng tiền hoạt động), receivables.
+  1. ratios(fs): trả dict {"gross_margin", "net_margin", "roa", "roe", "current_ratio", "debt_to_equity", "interest_cover"}; nợ = total_assets − equity; interest_cover = ebit / interest (interest = 0 → None).
+  2. dupont(fs): trả (net_margin, asset_turnover, leverage) với leverage = total_assets / equity; tích ba số phải bằng roe.
+  3. quality_flags(prev, cur): list cờ (chuỗi) sắp tăng dần trong các cờ:
+     "cfo_below_profit" nếu cur.cfo < cur.net_income;
+     "receivables_outpace_sales" nếu tăng trưởng phải thu > tăng trưởng doanh thu + 0,10 (10 điểm %);
+     "leverage_driven_roe" nếu roe tăng nhưng net_margin giảm so với prev.

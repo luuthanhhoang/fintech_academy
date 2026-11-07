@@ -25,6 +25,7 @@ applications:
     context: "Hệ thống thanh toán thuê bao của bạn (dữ liệu tổng hợp dán nhãn mô phỏng)."
     task: "Thiết kế bảng hợp đồng và lịch ghi nhận: khi thu tiền ghi doanh thu chưa thực hiện; cuối mỗi kỳ chuyển phần đã thực hiện sang doanh thu; xử lý nâng cấp giữa kỳ, hoàn tiền, huỷ; gói nhiều thành phần phân bổ theo giá bán riêng lẻ với phần dư phân bổ chính xác; báo cáo đối chiếu tổng doanh thu chưa thực hiện với tổng hợp đồng còn hiệu lực."
     deliverable: "Schema + job ghi nhận định kỳ + bút toán mẫu + test bất biến (tổng ghi nhận theo hợp đồng = giá hợp đồng)."
+labs: [revenue-schedule]
 sources: [acca-ifrs15, openstax-accounting]
 lastVerified: 2026-11-07
 status: verified
@@ -80,6 +81,10 @@ Mọi bút toán sinh ra từ dữ liệu hợp đồng bởi một job định 
 - **Phí giao dịch** → ghi khi giao dịch hoàn tất (tại một thời điểm).
 - **Gói kèm thiết bị** (máy POS + phần mềm) → hai nghĩa vụ, phân bổ giá.
 - **Hoàn tiền dự kiến, khuyến mãi** → ảnh hưởng giá giao dịch, cần ước tính.
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="revenue-schedule" />
 
 <Callout kind="field" title="Doanh thu là thứ tính ra, không phải thứ nhập vào">
 Trong các hệ thống thanh toán thuê bao tôi từng làm, nguyên tắc vững nhất là không cho ai "nhập doanh thu". Doanh thu luôn được tính ra từ hợp đồng và lịch ghi nhận bằng một job tất định, có test bất biến: cộng mọi khoản đã ghi nhận của một hợp đồng phải đúng bằng giá hợp đồng trừ phần hoàn. Nhờ vậy kiểm toán hỏi về bất kỳ con số nào, ta đều chạy lại được.

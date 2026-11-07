@@ -1,0 +1,11 @@
+id: revenue-schedule
+title: { vi: "Lịch ghi nhận doanh thu thuê bao", en: "Subscription revenue schedule" }
+summary: Phân bổ giá gói theo giá bán riêng lẻ, lập lịch ghi nhận doanh thu theo tháng bằng số nguyên không mất đồng nào, và tính doanh thu chưa thực hiện tại mọi thời điểm.
+concepts: [revenue-recognition-accruals]
+timeoutMs: 8000
+instructions: |-
+  Tiền là số nguyên (đồng).
+  1. allocate(price, ssp): ssp là list giá bán riêng lẻ; chia price theo tỉ lệ, làm tròn xuống từng phần rồi cộng phần dư lần lượt (mỗi phần +1) cho các phần có phần lẻ lớn nhất (hoà thì chỉ số nhỏ trước). Tổng phải đúng bằng price.
+  2. schedule(amount, months): chia amount thành months khoản nguyên, phần dư cộng vào các tháng đầu (mỗi tháng +1). Tổng đúng bằng amount.
+  3. deferred_after(amount, months, elapsed): doanh thu chưa thực hiện sau khi đã qua elapsed tháng = amount − tổng elapsed khoản đầu của schedule.
+  4. recognized(components, month): components là list dict {"amount": ..., "months": ...} (months = 0 nghĩa là ghi nhận ngay toàn bộ ở tháng 1); trả doanh thu ghi nhận trong tháng thứ month (bắt đầu từ 1).

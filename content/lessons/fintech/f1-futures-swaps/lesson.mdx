@@ -32,6 +32,7 @@ applications:
     context: "Chuỗi giá thanh toán hằng ngày tổng hợp (dán nhãn mô phỏng) cho một hợp đồng tương lai."
     task: "Cài mô phỏng: ký quỹ ban đầu, ngưỡng ký quỹ duy trì (tham số giả định), mỗi ngày tính lãi/lỗ theo giá thanh toán và cập nhật số dư; khi số dư dưới ngưỡng duy trì phát lệnh gọi ký quỹ về mức ban đầu; nếu không nộp thì đóng vị thế; ghi mọi bút toán ký quỹ biến động; so tổng lãi lỗ hằng ngày với (giá đóng vị thế − giá vào) × quy mô."
     deliverable: "Mô phỏng + nhật ký gọi ký quỹ + kiểm tra tổng lãi lỗ."
+labs: [futures-margin]
 sources: [cftc-variation-margin, fca-usd-libor-2023, bis-pfmi-summary, sec-interest-rate-risk]
 lastVerified: 2026-11-07
 status: verified
@@ -87,6 +88,10 @@ Giá trị của hoán đổi = giá trị hiện tại của dòng nhận − g
 ## Phòng ngừa rủi ro lãi suất
 
 Nhắc lại bài ALM: ngân hàng có tài sản lãi cố định dài hạn, nợ định giá lại nhanh → lãi suất tăng làm vốn chủ kinh tế giảm. Ký hoán đổi **trả cố định, nhận thả nổi** biến một phần tài sản lãi cố định thành thả nổi về kinh tế → khe hở duration giảm. Cái giá: rủi ro đối tác (giảm bằng bù trừ trung tâm và ký quỹ), yêu cầu ký quỹ khi lãi suất đi ngược, và phức tạp kế toán phòng ngừa.
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="futures-margin" />
 
 <Callout kind="field" title="Thanh khoản để nộp ký quỹ là một phần của phòng ngừa">
 Một chiến lược phòng ngừa đúng về kinh tế vẫn có thể gây khủng hoảng thanh khoản: khi thị trường đi ngược vị thế phòng ngừa, phải nộp ký quỹ biến động bằng tiền ngay, trong khi khoản lãi bù trừ ở phía tài sản được phòng ngừa chưa thành tiền. Khi review một chương trình phòng ngừa, tôi luôn hỏi: trong kịch bản lãi suất đi ngược mạnh, cần bao nhiêu tiền mặt cho ký quỹ trong một tuần, và tiền đó đến từ đâu.

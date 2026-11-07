@@ -25,6 +25,7 @@ applications:
     context: "Báo cáo tài chính công khai của một doanh nghiệp (ghi nguồn) hoặc dữ liệu tổng hợp dán nhãn mô phỏng, và một khoản vay giả định."
     task: "Tính EBITDA, nợ/EBITDA, khả năng trả lãi, DSCR, thanh toán hiện hành, dòng tiền hoạt động so với lợi nhuận; dựng ba kịch bản (cơ sở, doanh thu −20%, lãi suất +3 điểm) và tính lại DSCR; đề xuất cấu trúc khoản vay (kỳ hạn, lịch trả, tài sản bảo đảm) và 3 covenant có ngưỡng (ghi rõ là đề xuất); nêu rủi ro chính và câu hỏi cần làm rõ."
     deliverable: "Tờ trình 2 trang + bảng tính kịch bản."
+labs: [dscr-stress]
 sources: [altman-1968, bcbs-basel2-2004, openstax-finance, openstax-accounting]
 lastVerified: 2026-11-07
 status: verified
@@ -82,6 +83,10 @@ Altman (Journal of Finance, 1968) dùng **phân tích phân biệt** kết hợp
 Ngành (chu kỳ, cạnh tranh, quy định), quản trị và minh bạch, phụ thuộc vào vài khách hàng/nhà cung cấp, chất lượng và độ tin cậy của số liệu (báo cáo đã kiểm toán hay chưa), quan hệ với các bên liên quan.
 
 <Quiz id="q-f3k-qual" />
+
+Tự tay làm: bài lab tự chấm dưới đây chạy Python ngay trong trình duyệt.
+
+<Lab id="dscr-stress" />
 
 <Callout kind="field" title="Tìm điểm gãy trước khi tìm tài sản bảo đảm">
 Câu hỏi đầu tiên tôi đặt cho mọi tờ trình tín dụng doanh nghiệp không phải "tài sản bảo đảm là gì", mà "doanh thu giảm bao nhiêu thì doanh nghiệp không trả nổi lãi". Nếu câu trả lời là 10%, không lượng tài sản bảo đảm nào làm tôi yên tâm; nếu là 40%, tài sản bảo đảm là lớp đệm thứ hai đúng nghĩa của nó.
