@@ -1,0 +1,96 @@
+---
+id: f7-blockchain
+track: fintech
+stage: f7
+order: 0
+title: { vi: "Blockchain và hợp đồng thông minh: sổ cái không cần người giữ sổ", en: "Blockchain and smart contracts: a ledger without a bookkeeper" }
+summary: "Blockchain là một sổ cái chỉ-thêm được nhiều bên cùng giữ, nơi không ai tin ai mà vẫn đồng ý được thứ tự giao dịch. Nó ghép ba thứ quen thuộc: hàm băm nối các khối, chữ ký số chứng minh quyền chi tiêu, và một cơ chế đồng thuận (proof of work, proof of stake) để chống chi tiêu hai lần. Hợp đồng thông minh là chương trình chạy trên chuỗi — mạnh vì ai cũng kiểm chứng được, nguy hiểm vì sửa lỗi sau triển khai rất khó. Với kỹ sư fintech, câu hỏi đầu tiên luôn là: bài toán này có thật sự cần một sổ cái không có bên tin cậy không?"
+concepts: [blockchain-basics, smart-contracts]
+estMinutes: 50
+whyQuestion: "Ngân hàng đã có sổ cái kế toán kép hoạt động tốt hàng trăm năm. Blockchain giải quyết vấn đề gì mà sổ cái của ngân hàng không giải quyết — và khi nào nó chỉ làm mọi thứ chậm và đắt hơn?"
+facts:
+  - id: merge-date
+    text: "Ethereum chuyển cơ chế đồng thuận từ proof of work sang proof of stake (sự kiện 'The Merge') ngày"
+    value: "15/09/2022"
+    sourceId: ethereum-merge-2022
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Chuỗi khối băm"
+    dev: "Git: mỗi commit chứa băm của commit trước"
+    explanation: "Sửa một khối cũ làm thay đổi mọi băm phía sau — giống viết lại lịch sử Git."
+  - finance: "Đồng thuận"
+    dev: "Bài toán thống nhất trong hệ phân tán có nút gian lận"
+    explanation: "Như Raft/Paxos nhưng phải chịu được cả nút cố ý nói dối, và ai cũng có thể tham gia."
+  - finance: "Hợp đồng thông minh"
+    dev: "Code triển khai lên production không thể hotfix, ai cũng đọc và gọi được"
+    explanation: "Mọi lỗi là lỗi công khai; tiền nằm trong chính chương trình đó."
+pretest: [q-f7b-double, q-f7b-need]
+applications:
+  - id: app-f7b-decision
+    title: "Phiếu quyết định: có cần blockchain không?"
+    context: "Một đề xuất 'dùng blockchain' trong tổ chức của bạn (hoặc giả định: truy xuất nguồn gốc, thanh toán liên công ty, chứng chỉ số)."
+    task: "Trả lời bằng bằng chứng: có nhiều bên cùng ghi không? Các bên có tin một bên trung gian không? Có cần ai cũng kiểm chứng được không? Dữ liệu có phải công khai không? So sánh với phương án cơ sở dữ liệu tập trung + nhật ký kiểm toán (event sourcing có chuỗi băm) về chi phí, tốc độ, quyền riêng tư, vận hành, khả năng sửa sai."
+    deliverable: "Một trang phân tích kèm khuyến nghị và lý do."
+sources: [nakamoto-2008, ethereum-merge-2022, fowler-event-sourcing]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích cách blockchain chống chi tiêu hai lần không cần bên trung gian, hợp đồng thông minh là gì, và khi nào không nên dùng blockchain."
+  rubric:
+    - { id: chain, criterion: "Khối chứa băm khối trước; sửa quá khứ phải làm lại mọi khối sau" }
+    - { id: sig, criterion: "Chữ ký số bằng khoá riêng chứng minh quyền chi tiêu; mất khoá là mất tài sản" }
+    - { id: consensus, criterion: "Đồng thuận (PoW/PoS) quyết định thứ tự giao dịch khi các bên không tin nhau; tính cuối cùng có thể là xác suất" }
+    - { id: when, criterion: "Hợp đồng thông minh khó sửa, lỗi công khai; chỉ dùng blockchain khi thật sự cần nhiều bên không tin nhau cùng ghi một sổ" }
+---
+
+<Callout kind="story" title="Dự án blockchain không cần blockchain">
+Một công ty giả định xây "nền tảng blockchain" để theo dõi hoá đơn giữa các chi nhánh của chính mình. Sau một năm: mọi nút do một đội vận hành, chỉ công ty ghi dữ liệu, và khi nhập sai một hoá đơn, không ai biết sửa thế nào. Một bảng cơ sở dữ liệu có nhật ký kiểm toán chỉ-thêm sẽ làm được việc đó nhanh hơn, rẻ hơn, sửa sai được.
+</Callout>
+
+## Bài toán: chi tiêu hai lần
+
+Tiền số là dữ liệu — sao chép được. Hệ thống thanh toán truyền thống chống chi tiêu hai lần nhờ **một bên giữ sổ tin cậy** (ngân hàng, bài thanh toán). Bài báo của Nakamoto (2008) đề xuất một hệ thống tiền điện tử **ngang hàng** giải quyết chi tiêu hai lần **không cần bên trung gian tin cậy**, bằng một chuỗi bằng chứng công việc (proof of work).
+
+## Ba mảnh ghép
+
+1. **Hàm băm và chuỗi khối**: mỗi khối chứa băm của khối trước. Sửa một giao dịch cũ làm đổi băm khối đó và mọi khối sau — cùng ý tưởng với chuỗi băm trong bài event sourcing.
+2. **Chữ ký số**: quyền chi tiêu một khoản thuộc về ai giữ **khoá riêng**. Không có "quên mật khẩu": mất khoá là mất tài sản; lộ khoá là mất tài sản (bài lưu ký).
+3. **Đồng thuận**: nhiều nút không tin nhau cần thống nhất **thứ tự** giao dịch.
+   - **Proof of work**: quyền thêm khối đi kèm chi phí tính toán; viết lại lịch sử đòi lượng tính toán vượt phần còn lại của mạng.
+   - **Proof of stake**: quyền đề xuất/xác nhận khối gắn với tài sản đặt cọc, có thể bị phạt khi gian lận. <Fact id="merge-date" />.
+
+<Diagram id="dg-blockchain-tx" />
+
+<Quiz id="q-f7b-double" />
+
+## Tính cuối cùng
+
+Với đồng thuận kiểu proof of work, một giao dịch "an toàn hơn" khi có thêm nhiều khối phía sau — tính cuối cùng mang tính **xác suất**. Hệ thống chấp nhận tiền gửi từ blockchain phải chọn số xác nhận chờ theo giá trị giao dịch; so với tính cuối cùng **pháp lý** của hệ thống thanh toán ngân hàng trung ương (bài đường ray thanh toán), đây là khác biệt lớn cho kế toán và đối soát.
+
+<Quiz id="q-f7b-final" />
+
+## Hợp đồng thông minh
+
+Chương trình được triển khai lên chuỗi, chạy theo giao dịch gọi tới nó, trạng thái lưu trên chuỗi; mỗi thao tác tốn phí (gas).
+
+- **Lợi**: ai cũng đọc code và kiểm chứng; nhiều bên dùng chung logic không cần tin nhau.
+- **Rủi ro**: code thường **không sửa được** sau triển khai (hoặc chỉ qua cơ chế nâng cấp do chính nó định nghĩa — và cơ chế đó lại là một rủi ro tập trung); lỗi là công khai và tiền nằm ngay trong hợp đồng; dữ liệu ngoài chuỗi (giá, tỉ giá) phải qua "oracle" — một điểm tin cậy mới.
+- **Kỷ luật**: kiểm toán code độc lập, kiểm thử hình thức khi có thể, giới hạn giá trị, cơ chế tạm dừng khẩn cấp có quản trị rõ ràng.
+
+## Khi nào không cần blockchain
+
+Hỏi theo thứ tự:
+
+1. Có **nhiều bên cùng ghi** vào một sổ không?
+2. Các bên có **không muốn tin** một bên trung gian (kể cả một bên trung lập) không?
+3. Có cần **ai cũng kiểm chứng** được không?
+4. Dữ liệu có chấp nhận được **tính công khai** hoặc chi phí bảo mật bổ sung không?
+
+Câu trả lời "không" ở bước 1 hoặc 2 thường nghĩa là một cơ sở dữ liệu có nhật ký kiểm toán chỉ-thêm là đủ — và sửa sai được.
+
+<Quiz id="q-f7b-need" />
+
+<Callout kind="field" title="Kỹ thuật tốt nhất của blockchain dùng được ở mọi nơi">
+Dù hiếm khi đề xuất blockchain công khai cho hệ thống nội bộ, tôi vẫn mang về vài ý tưởng của nó: nhật ký chỉ-thêm có chuỗi băm, công bố băm mốc ra nơi độc lập để phát hiện sửa lén, và chữ ký số cho các phê duyệt quan trọng. Các kỹ thuật đó tăng khả năng kiểm toán đáng kể mà không cần đồng thuận phân tán.
+</Callout>

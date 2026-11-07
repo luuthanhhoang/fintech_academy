@@ -1,0 +1,21 @@
+examples:
+  - id: we-ecl-stages
+    title: "ECL 12 tháng và toàn kỳ cho cùng một khoản vay"
+    conceptId: ecl-provisioning
+    problem: "Dữ liệu tổng hợp (mô phỏng): khoản vay 3 năm, EAD 200 triệu không đổi, LGD 45%, PD biên từng năm 1,5% / 2,5% / 3,5%. Bỏ qua chiết khấu. Tính ECL nếu khoản vay ở giai đoạn 1 và nếu chuyển sang giai đoạn 2."
+    steps:
+      - text: "Tổn thất nếu vỡ nợ mỗi năm = 0,45 × 200 = 90 triệu."
+      - text: "Giai đoạn 1 (12 tháng): 0,015 × 90 = 1,35 triệu."
+        faded: true
+        prompt: "ECL 12 tháng là bao nhiêu triệu?"
+        answer: 1.35
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "triệu"
+      - text: "Giai đoạn 2 (toàn kỳ): (0,015 + 0,025 + 0,035) × 90 = 6,75 triệu."
+        faded: true
+        prompt: "ECL toàn kỳ là bao nhiêu triệu?"
+        answer: 6.75
+        tolerance: { kind: abs, value: 0.001 }
+        unit: "triệu"
+      - text: "Chuyển giai đoạn làm dự phòng tăng gấp 5 lần dù khoản vay chưa quá hạn ngày nào."
+    takeaway: "Quy tắc chuyển giai đoạn có tác động lớn tới lợi nhuận — vì thế nó phải rõ ràng, tài liệu hoá và kiểm định."

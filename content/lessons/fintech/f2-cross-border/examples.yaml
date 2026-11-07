@@ -1,0 +1,18 @@
+examples:
+  - id: we-fx-forward
+    title: "Tỉ giá kỳ hạn theo ngang giá lãi suất (giả định)"
+    conceptId: fx-basics
+    problem: "Dữ liệu tổng hợp (mô phỏng): giao ngay 25.000 VND/USD; lãi suất VND 6%/năm, USD 4%/năm. Tính tỉ giá kỳ hạn 1 năm và 6 tháng (lãi đơn theo kỳ)."
+    steps:
+      - text: "1 năm: F = 25.000 × 1,06 / 1,04 ≈ 25.480,77."
+        faded: true
+        prompt: "Tỉ giá kỳ hạn 1 năm (2 chữ số thập phân)?"
+        answer: 25480.77
+        tolerance: { kind: abs, value: 0.01 }
+      - text: "6 tháng: F = 25.000 × 1,03 / 1,02 ≈ 25.245,10."
+        faded: true
+        prompt: "Tỉ giá kỳ hạn 6 tháng (2 chữ số thập phân)?"
+        answer: 25245.1
+        tolerance: { kind: abs, value: 0.01 }
+      - text: "Điểm kỳ hạn (F − S) phản ánh chênh lệch lãi suất, không phải dự báo tỉ giá tương lai."
+    takeaway: "Giá kỳ hạn được quyết định bởi chênh lệch lãi suất qua lập luận không chênh lệch giá."

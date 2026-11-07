@@ -1,0 +1,29 @@
+items:
+  - id: q-f3e-stage
+    type: mcq
+    conceptId: ecl-provisioning
+    prompt: "Khoản vay chưa quá hạn, nhưng PD 12 tháng của khách tăng từ 1% lúc giải ngân lên 6% và vượt ngưỡng tăng đáng kể theo chính sách. Khoản vay thuộc giai đoạn nào và dự phòng thế nào?"
+    options:
+      - { id: a, text: "Giai đoạn 1, ECL 12 tháng, vì chưa quá hạn" }
+      - { id: b, text: "Giai đoạn 2, ECL toàn kỳ" }
+      - { id: c, text: "Giai đoạn 3, xoá nợ" }
+    correct: [b]
+    explanation: "Tăng đáng kể so với lúc ghi nhận ban đầu → giai đoạn 2, dù chưa quá hạn ngày nào."
+  - id: q-f3e-lifetime
+    type: numeric
+    conceptId: ecl-provisioning
+    prompt: "Khoản vay 3 năm, EAD 100 triệu không đổi, LGD 50%, PD biên từng năm 2%, 3%, 4%. Bỏ qua chiết khấu. ECL toàn kỳ là bao nhiêu triệu?"
+    answer: 4.5
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "triệu"
+    explanation: "(0,02 + 0,03 + 0,04) × 0,5 × 100 = 4,5 triệu; ECL 12 tháng chỉ là 0,02 × 0,5 × 100 = 1 triệu."
+  - id: q-f3e-data
+    type: mcq
+    conceptId: ecl-provisioning
+    prompt: "Dữ liệu nào bắt buộc phải lưu để xác định 'tăng đáng kể rủi ro tín dụng'?"
+    options:
+      - { id: a, text: "Rủi ro tín dụng (PD/xếp hạng) tại thời điểm ghi nhận ban đầu của từng khoản" }
+      - { id: b, text: "Màu sắc giao diện ứng dụng" }
+      - { id: c, text: "Chỉ số dư hiện tại" }
+    correct: [a]
+    explanation: "So sánh là tương đối với lúc khởi tạo; thiếu baseline thì không áp dụng được quy tắc."

@@ -1,0 +1,82 @@
+---
+id: f1-insurance
+track: fintech
+stage: f1
+order: 8
+title: { vi: "Bảo hiểm: gộp rủi ro, phí và tỉ lệ kết hợp", en: "Insurance: risk pooling, premiums and the combined ratio" }
+summary: "Bảo hiểm biến một tổn thất lớn, hiếm, khó đoán của một người thành một khoản phí nhỏ, chắc chắn, nhờ gộp nhiều rủi ro độc lập lại với nhau. Phí phải bù tổn thất kỳ vọng, chi phí và lợi nhuận; công ty bảo hiểm sống nhờ khai thác (tỉ lệ kết hợp dưới 100%) và đầu tư tiền phí trong lúc chờ bồi thường. Rủi ro đặc thù: lựa chọn bất lợi, rủi ro đạo đức, tổn thất tương quan (thiên tai), và dự phòng bồi thường đánh giá sai."
+concepts: [insurance-basics]
+estMinutes: 40
+whyQuestion: "Một ứng dụng bán bảo hiểm điện thoại với phí rất thấp và tăng trưởng nhanh. Làm sao biết nó đang lãi — hay đang 'mua' khách bằng tiền bồi thường tương lai?"
+devMapping:
+  - finance: "Gộp rủi ro"
+    dev: "Luật số lớn: trung bình của nhiều biến độc lập ổn định hơn từng biến"
+    explanation: "Như dự phòng dung lượng: một máy hỏng khó đoán, nhưng tỉ lệ hỏng của 10.000 máy khá ổn định."
+  - finance: "Tỉ lệ kết hợp"
+    dev: "Chi phí trên mỗi đồng doanh thu của sản phẩm"
+    explanation: "Bồi thường + chi phí chia cho phí bảo hiểm; dưới 100% là sản phẩm tự nuôi được."
+  - finance: "Tổn thất tương quan"
+    dev: "Sự cố đồng loạt (correlated failure)"
+    explanation: "Thiên tai làm hàng nghìn hợp đồng bồi thường cùng lúc — luật số lớn không còn che chở."
+pretest: [q-f1i-pool, q-f1i-combined]
+applications:
+  - id: app-f1i-embedded
+    title: "Phân tích một sản phẩm bảo hiểm nhúng"
+    context: "Một sản phẩm bảo hiểm bán kèm trong ứng dụng (vé, điện thoại, đơn hàng) — dùng dữ liệu tổng hợp dán nhãn mô phỏng."
+    task: "Ước lượng tần suất và mức bồi thường trung bình, tính phí thuần (tổn thất kỳ vọng), cộng chi phí phân phối và vận hành; tính tỉ lệ tổn thất, tỉ lệ chi phí, tỉ lệ kết hợp theo tháng phát hành (cohort); kiểm tra dấu hiệu lựa chọn bất lợi (khách mua ngay trước khi có sự cố)."
+    deliverable: "Bảng định giá + chỉ số theo cohort + danh sách kiểm soát chống lựa chọn bất lợi."
+sources: [naic-glossary, openstax-finance]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích vì sao bảo hiểm hoạt động được, cách định giá phí, và các chỉ số đánh giá một sản phẩm bảo hiểm."
+  rubric:
+    - { id: pool, criterion: "Gộp nhiều rủi ro độc lập làm tổn thất bình quân ổn định (luật số lớn); không hiệu quả với tổn thất tương quan" }
+    - { id: price, criterion: "Phí = tổn thất kỳ vọng (tần suất × mức độ) + chi phí + biên lợi nhuận/vốn" }
+    - { id: ratios, criterion: "Tỉ lệ tổn thất, tỉ lệ chi phí, tỉ lệ kết hợp; thu nhập đầu tư từ tiền phí" }
+    - { id: risks, criterion: "Lựa chọn bất lợi, rủi ro đạo đức, dự phòng bồi thường đánh giá sai, tổn thất thảm hoạ" }
+---
+
+<Callout kind="story" title="Bảo hiểm màn hình giá rẻ">
+Một ứng dụng giả định bán bảo hiểm vỡ màn hình kèm mỗi chiếc điện thoại, phí thấp hơn đối thủ một nửa. Doanh số tăng vọt. Ba tháng đầu, rất ít yêu cầu bồi thường — ban điều hành ăn mừng. Đến tháng thứ sáu, các hợp đồng đầu tiên bắt đầu "chín": điện thoại đã đủ cũ để rơi vỡ, và có cả những khách chỉ mua bảo hiểm sau khi màn hình đã nứt.
+</Callout>
+
+## Gộp rủi ro
+
+Một người không biết năm nay có gặp tai nạn hay không. Nhưng với 100.000 người có rủi ro **độc lập** và giống nhau, tỉ lệ gặp tai nạn của cả nhóm khá ổn định (luật số lớn — bài kỳ vọng và phương sai). Bảo hiểm bán sự ổn định đó: mỗi người trả một khoản phí nhỏ chắc chắn thay cho một tổn thất lớn không chắc chắn.
+
+Điều kiện để gộp có tác dụng: rủi ro **đủ nhiều**, **gần độc lập**, **đo được**, và tổn thất **không do người được bảo hiểm tự quyết định**.
+
+<Quiz id="q-f1i-pool" />
+
+## Định giá phí
+
+**Phí thuần** = tổn thất kỳ vọng = tần suất × mức bồi thường trung bình (cùng ý tưởng với EL = PD × LGD × EAD ở rủi ro tín dụng). Phí thực tế cộng thêm chi phí phân phối, vận hành, xử lý bồi thường, và biên cho vốn/lợi nhuận.
+
+<WorkedExample id="we-insurance-premium" />
+
+## Đọc kết quả kinh doanh
+
+Theo bảng thuật ngữ của NAIC:
+
+- **Tỉ lệ tổn thất** = (bồi thường phát sinh + chi phí giám định) / phí bảo hiểm.
+- **Tỉ lệ chi phí** = chi phí hoạt động / phí (mẫu số có thể là phí đã thu hoặc phí được hưởng tuỳ cách báo cáo — luôn ghi rõ).
+- **Tỉ lệ kết hợp** = tỉ lệ tổn thất + tỉ lệ chi phí. Dưới 100%: lãi từ khai thác; trên 100%: lỗ khai thác — vẫn có thể có lãi tổng nếu thu nhập đầu tư từ tiền phí bù được.
+
+Bẫy trong câu chuyện đầu bài: bồi thường đến **sau** phí. Nhìn tỉ lệ tổn thất trên danh mục đang tăng nhanh sẽ thấy đẹp giả — phải theo dõi theo **cohort** (tháng bán), giống vintage của khoản vay.
+
+<Quiz id="q-f1i-combined" />
+
+## Rủi ro đặc thù
+
+- **Lựa chọn bất lợi**: người biết mình rủi ro cao có xu hướng mua nhiều hơn → thời gian chờ, câu hỏi thẩm định, giá theo nhóm rủi ro.
+- **Rủi ro đạo đức**: có bảo hiểm thì bớt cẩn thận → mức khấu trừ, đồng chi trả.
+- **Tổn thất tương quan**: thiên tai, dịch bệnh → giới hạn tập trung, tái bảo hiểm.
+- **Dự phòng bồi thường**: tổn thất đã xảy ra nhưng chưa báo cáo vẫn là nghĩa vụ; ước lượng thấp làm lợi nhuận hôm nay đẹp giả.
+- **Gian lận bồi thường**: kỹ thuật giống phát hiện gian lận thanh toán (chặng F6).
+
+<Quiz id="q-f1i-adverse" />
+
+<Callout kind="field" title="Insurtech vẫn là bảo hiểm">
+Các sản phẩm bảo hiểm nhúng trong ứng dụng làm trải nghiệm mua nhanh hơn rất nhiều, nhưng không làm thay đổi toán học bên dưới. Khi review một sản phẩm như vậy, tôi hỏi trước tiên: bồi thường theo cohort trông thế nào sau đủ thời gian, ai gánh rủi ro thật (công ty bảo hiểm đối tác hay chính nền tảng), và có cơ chế nào ngăn khách mua bảo hiểm cho một sự cố đã xảy ra.
+</Callout>

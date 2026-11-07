@@ -1,0 +1,91 @@
+---
+id: f2-cross-border
+track: fintech
+stage: f2
+order: 5
+title: { vi: "Ngoại hối và thanh toán xuyên biên giới", en: "FX and cross-border payments" }
+summary: "Chuyển tiền ra nước ngoài là hai việc gộp một: đổi tiền (ngoại hối) và chuyển tiền qua chuỗi ngân hàng ở nhiều nước (ngân hàng đại lý). Tỉ giá có chênh lệch mua–bán; tỉ giá kỳ hạn gắn với chênh lệch lãi suất giữa hai đồng tiền. Chuỗi đại lý làm khoản tiền chậm, đắt và khó theo dõi; chuẩn tin nhắn ISO 20022 và các mục tiêu G20 nhằm cải thiện điều đó. Với kỹ sư: dữ liệu có cấu trúc, phí minh bạch, theo dõi trạng thái, sàng lọc cấm vận và đối soát đa tiền tệ."
+concepts: [fx-basics, cross-border-payments]
+estMinutes: 45
+whyQuestion: "Khách gửi 1.000 USD từ Mỹ về Việt Nam; người nhận được ít hơn dự kiến và sau ba ngày. Tiền 'rơi' ở những đâu, và ai lấy phần chênh lệch?"
+facts:
+  - id: iso20022-cutover
+    text: "Swift kết thúc giai đoạn cùng tồn tại tin nhắn MT và ISO 20022 cho lệnh thanh toán xuyên biên giới giữa các tổ chức tài chính vào ngày"
+    value: "22/11/2025"
+    sourceId: swift-iso20022
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Ngân hàng đại lý"
+    dev: "Chuỗi proxy, mỗi chặng có thể giữ, trừ phí, đổi định dạng"
+    explanation: "Mỗi chặng thêm độ trễ, chi phí và điểm có thể mất thông tin."
+  - finance: "ISO 20022"
+    dev: "Chuyển từ định dạng text cố định sang message có cấu trúc giàu dữ liệu (XML)"
+    explanation: "Trường có cấu trúc cho tên, địa chỉ, mục đích — sàng lọc và đối soát tự động tốt hơn."
+  - finance: "Chênh lệch tỉ giá"
+    dev: "Phí ẩn trong phép chuyển đổi đơn vị"
+    explanation: "Phí không nằm ở dòng 'phí' mà ở tỉ giá kém hơn tỉ giá thị trường."
+pretest: [q-f2x-spread, q-f2x-forward]
+applications:
+  - id: app-f2x-quote
+    title: "Báo giá chuyển tiền minh bạch"
+    context: "Một tính năng gửi tiền ra nước ngoài (dữ liệu tỉ giá tổng hợp, dán nhãn mô phỏng)."
+    task: "Thiết kế API báo giá trả về: tỉ giá áp dụng, tỉ giá tham chiếu và nguồn của nó, chênh lệch so với tham chiếu, mọi khoản phí (người gửi, trung gian dự kiến), số tiền người nhận chắc chắn nhận, thời gian dự kiến, thời hạn hiệu lực của báo giá; lưu báo giá bất biến để đối soát; máy trạng thái theo dõi lệnh qua từng chặng."
+    deliverable: "Schema báo giá + máy trạng thái + bút toán đa tiền tệ cho một lệnh."
+sources: [swift-iso20022, fsb-g20-targets, iso-4217, fatf-recommendations]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích chuyện gì xảy ra với một khoản chuyển tiền quốc tế, từ tỉ giá tới ngân hàng đại lý và chuẩn tin nhắn."
+  rubric:
+    - { id: fx, criterion: "Tỉ giá mua/bán, chênh lệch là phí; tỉ giá kỳ hạn theo ngang giá lãi suất" }
+    - { id: corr, criterion: "Ngân hàng đại lý, tài khoản nostro/vostro; mỗi chặng thêm phí, độ trễ, kiểm tra tuân thủ" }
+    - { id: iso, criterion: "ISO 20022 mang dữ liệu có cấu trúc thay thế MT cho lệnh thanh toán xuyên biên giới" }
+    - { id: eng, criterion: "Báo giá minh bạch, theo dõi trạng thái, sàng lọc cấm vận, đối soát đa tiền tệ" }
+---
+
+<Callout kind="story" title="Thiếu 38 đô">
+Một freelancer giả định nhận 1.000 USD từ khách hàng ở nước ngoài. Ngân hàng của khách trừ phí gửi; một ngân hàng trung gian trừ thêm phí; ngân hàng Việt Nam đổi sang VND ở tỉ giá kém hơn tỉ giá cô thấy trên mạng. Không chỗ nào ghi "mất 38 đô" — khoản chênh lệch nằm rải rác ở ba nơi, và tiền đến sau ba ngày làm việc.
+</Callout>
+
+## Ngoại hối cơ bản
+
+- **Niêm yết**: USD/VND = số VND cho 1 USD. Ngân hàng niêm yết giá **mua** (họ mua USD của bạn) thấp hơn giá **bán**; chênh lệch là thu nhập.
+- **Phí ẩn trong tỉ giá**: so tỉ giá áp dụng với một tỉ giá tham chiếu để thấy phí thật.
+- **Giao ngay** (spot) và **kỳ hạn** (forward): khoá tỉ giá cho một ngày tương lai để doanh nghiệp tránh rủi ro tỉ giá.
+- **Ngang giá lãi suất có phòng ngừa**: F = S × (1 + i_định giá × t) / (1 + i_cơ sở × t) — đồng tiền lãi suất cao hơn thường có giá kỳ hạn yếu hơn giá giao ngay, nếu không sẽ có cơ hội kinh doanh chênh lệch không rủi ro.
+
+<WorkedExample id="we-fx-forward" />
+
+<Quiz id="q-f2x-spread" />
+
+## Ngân hàng đại lý
+
+Không có một "hệ thống thanh toán toàn cầu" chung. Ngân hàng ở hai nước thường không có tài khoản trực tiếp với nhau, nên đi qua **ngân hàng đại lý**: ngân hàng A giữ tài khoản (nostro — "tài khoản của chúng tôi ở chỗ các bạn") tại ngân hàng B bằng đồng tiền của nước B. Một lệnh có thể đi qua nhiều chặng; mỗi chặng:
+
+- có thể **trừ phí** (tuỳ lựa chọn ai chịu phí),
+- **kiểm tra tuân thủ**: sàng lọc cấm vận, AML (bài KYC/AML),
+- thêm **độ trễ**, nhất là khi lệch giờ làm việc hay thiếu thông tin.
+
+<Diagram id="dg-correspondent" />
+
+<Quiz id="q-f2x-chain" />
+
+## Chuẩn tin nhắn: ISO 20022
+
+Swift chuyển lệnh thanh toán xuyên biên giới từ tin nhắn MT (định dạng text cũ) sang **ISO 20022** — dữ liệu có cấu trúc, giàu hơn (tên, địa chỉ có cấu trúc, mục đích thanh toán, tham chiếu). <Fact id="iso20022-cutover" />. Lợi ích kỹ thuật: sàng lọc cấm vận ít báo nhầm hơn, đối soát tự động tốt hơn, ít thông tin bị cắt cụt qua các chặng.
+
+## Mục tiêu cải thiện
+
+G20 cùng Hội đồng Ổn định Tài chính (FSB) đặt các mục tiêu định lượng đến cuối 2027 cho bốn vấn đề của thanh toán xuyên biên giới: **chi phí, tốc độ, minh bạch, khả năng tiếp cận**. Theo các báo cáo tiến độ được trích lại, việc đạt mục tiêu đúng hạn là khó; bài không nêu con số mục tiêu vì chưa đối chiếu được văn bản gốc.
+
+## Với kỹ sư
+
+- **Báo giá minh bạch**: số tiền người nhận chắc chắn nhận, tỉ giá, phí, thời gian dự kiến — trước khi khách xác nhận.
+- **Theo dõi trạng thái** qua từng chặng; mã tham chiếu duy nhất đi suốt chuỗi.
+- **Đối soát đa tiền tệ** (bài sổ cái): mỗi tiền tệ cân riêng, ghi tỉ giá, xử lý chênh lệch tỉ giá giữa lúc báo giá và lúc quyết toán.
+- **Tuân thủ**: sàng lọc cấm vận trên mọi bên, giữ dữ liệu người gửi/người nhận theo yêu cầu chuyển tiền của FATF.
+
+<Callout kind="field" title="Ghi tỉ giá như một sự kiện, không như một cấu hình">
+Lỗi đối soát ngoại tệ tôi thấy nhiều nhất đến từ việc chỉ lưu "tỉ giá hiện tại" trong một bảng cấu hình. Mỗi báo giá, mỗi lần quy đổi phải lưu tỉ giá đã dùng, nguồn, thời điểm, và thời hạn hiệu lực ngay trên giao dịch. Khi kế toán hỏi "vì sao lệnh này lệch 2 USD", câu trả lời phải nằm sẵn trong dữ liệu.
+</Callout>

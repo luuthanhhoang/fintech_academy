@@ -54,6 +54,14 @@ const EXPECTED: Record<string, number[]> = {
   'we-psi': [0.1 * Math.log(0.4 / 0.3), -0.1 * Math.log(0.2 / 0.3) + 0.1 * Math.log(0.4 / 0.3)],
   // Cache: DB load = rps × miss rate; mean latency = hit × cache + miss × db.
   'we-cache-load': [3000 * 0.02, 0.98 * 1 + 0.02 * 40],
+  // Insurance: pure premium = frequency × severity; gross premium = pure / (1 − loadings).
+  'we-insurance-premium': [0.08 * 1500000, (0.08 * 1500000) / 0.65],
+  // Covered interest parity: F = S × (1 + i_quote·t) / (1 + i_base·t).
+  'we-fx-forward': [(25000 * 1.06) / 1.04, (25000 * 1.03) / 1.02],
+  // IFRS 9: 12-month ECL uses year-1 marginal PD; lifetime sums all years.
+  'we-ecl-stages': [0.015 * 0.45 * 200, (0.015 + 0.025 + 0.035) * 0.45 * 200],
+  // Custody reconciliation: obligations include in-flight withdrawals and pending deposits.
+  'we-custody-recon': [5000 + 40 + 50, 4600 + 380 - (5000 + 40 + 50)],
 }
 
 describe('worked examples match the tested libraries', () => {

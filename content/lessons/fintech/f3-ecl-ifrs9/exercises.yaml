@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f3e-discount
+    conceptId: ecl-provisioning
+    prompt: "Khoản vay 2 năm, EAD năm 1 là 100 triệu, năm 2 là 60 triệu (trả dần); LGD 40%; PD biên 3% năm 1, 5% năm 2; lãi suất chiết khấu 10%/năm, tổn thất coi như xảy ra cuối năm. Tính ECL 12 tháng và toàn kỳ."
+    hint: "Mỗi kỳ: PD × LGD × EAD / (1,1)^t."
+    solution: "Năm 1: 0,03 × 0,4 × 100 / 1,1 ≈ 1,091 triệu. Năm 2: 0,05 × 0,4 × 60 / 1,21 ≈ 0,992 triệu. ECL 12 tháng ≈ 1,091 triệu (giai đoạn 1). ECL toàn kỳ ≈ 2,083 triệu (giai đoạn 2/3). Chuyển giai đoạn làm dự phòng gần gấp đôi."
+  - id: ex-f3e-scenarios
+    conceptId: ecl-provisioning
+    prompt: "ECL danh mục dưới ba kịch bản: cơ sở 50 tỉ, tốt 35 tỉ, xấu 90 tỉ; trọng số 60%, 20%, 20% (giả định). Tính ECL có trọng số và giải thích vì sao không chỉ dùng kịch bản cơ sở."
+    hint: "Trung bình có trọng số."
+    solution: "0,6 × 50 + 0,2 × 35 + 0,2 × 90 = 30 + 7 + 18 = 55 tỉ. Cao hơn kịch bản cơ sở vì tổn thất phi tuyến: kịch bản xấu làm tổn thất tăng nhiều hơn mức kịch bản tốt làm giảm. Chỉ dùng kịch bản cơ sở sẽ đánh giá thấp dự phòng."

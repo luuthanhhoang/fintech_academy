@@ -1,0 +1,30 @@
+items:
+  - id: q-f1i-pool
+    type: mcq
+    conceptId: insurance-basics
+    prompt: "Loại rủi ro nào khó bảo hiểm nhất bằng cách gộp nhiều hợp đồng?"
+    options:
+      - { id: a, text: "Vỡ màn hình điện thoại của hàng trăm nghìn khách độc lập" }
+      - { id: b, text: "Ngập lụt nhà ở trong cùng một thành phố ven sông" }
+      - { id: c, text: "Mất hành lý của nhiều hành khách khác chuyến bay" }
+    correct: [b]
+    explanation: "Ngập lụt xảy ra đồng loạt cho nhiều hợp đồng — tổn thất tương quan làm luật số lớn mất tác dụng."
+  - id: q-f1i-combined
+    type: numeric
+    conceptId: insurance-basics
+    prompt: "Phí bảo hiểm 200 tỉ; bồi thường và chi phí giám định 130 tỉ; chi phí hoạt động 80 tỉ. Tỉ lệ kết hợp là bao nhiêu phần trăm?"
+    answer: 105
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "Tỉ lệ tổn thất 65% + tỉ lệ chi phí 40% = 105%: lỗ khai thác 5% phí."
+  - id: q-f1i-adverse
+    type: mcq
+    conceptId: insurance-basics
+    prompt: "Khách mua bảo hiểm màn hình ngay sau khi màn hình đã nứt rồi báo bồi thường. Kiểm soát nào phù hợp? (chọn tất cả)"
+    options:
+      - { id: a, text: "Thời gian chờ trước khi bảo hiểm có hiệu lực" }
+      - { id: b, text: "Kiểm tra tình trạng máy (ảnh chụp có kiểm tra) khi mua sau thời điểm mua máy" }
+      - { id: c, text: "Mô hình phát hiện bất thường cho bồi thường sớm" }
+      - { id: d, text: "Giảm phí cho mọi người" }
+    correct: [a, b, c]
+    explanation: "Đây là lựa chọn bất lợi kèm gian lận; thời gian chờ, thẩm định và phát hiện bất thường xử lý trực tiếp."

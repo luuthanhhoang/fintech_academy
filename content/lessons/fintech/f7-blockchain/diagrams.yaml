@@ -1,0 +1,18 @@
+diagrams:
+  - id: dg-blockchain-tx
+    kind: sequence
+    title: "Từ giao dịch được ký tới khối được xác nhận"
+    caption: "Mô hình khái niệm chung; chi tiết khác nhau giữa proof of work và proof of stake và giữa các mạng."
+    actors:
+      - { id: user, label: "Người dùng (khoá riêng)" }
+      - { id: node, label: "Nút mạng" }
+      - { id: producer, label: "Bên tạo khối" }
+      - { id: chain, label: "Chuỗi khối" }
+    steps:
+      - { from: user, to: user, label: "Ký giao dịch bằng khoá riêng" }
+      - { from: user, to: node, label: "Phát giao dịch" }
+      - { from: node, to: node, label: "Kiểm tra chữ ký và số dư (chưa chi)" }
+      - { from: node, to: producer, label: "Lan truyền vào hàng chờ" }
+      - { from: producer, to: chain, label: "Gộp vào khối mới (băm khối trước)" }
+      - { from: chain, to: node, label: "Các nút kiểm tra và chấp nhận khối" }
+      - { from: chain, to: user, label: "Thêm khối phía sau → xác nhận tăng dần" }

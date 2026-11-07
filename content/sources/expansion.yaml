@@ -1,0 +1,119 @@
+sources:
+  - id: vn-decree-52-2024
+    title: "Nghị định 52/2024/NĐ-CP quy định về thanh toán không dùng tiền mặt"
+    url: https://thuvienphapluat.vn/van-ban/Tien-te-Ngan-hang/Decree-52-2024-ND-CP-regulations-on-cashless-payments-613117.aspx
+    publisher: Chính phủ (bản đăng trên Thư viện Pháp luật; tóm tắt của Deloitte Việt Nam)
+    accessed: 2026-11-07
+    note: Ban hành 15/05/2024, hiệu lực 01/07/2024, thay thế Nghị định 101/2012 và 80/2016; quy định tài khoản thanh toán, dịch vụ thanh toán, trung gian thanh toán, tiền điện tử và ví điện tử. Có thông tin về dự thảo sửa đổi năm 2026 chưa xác nhận — chi tiết thủ tục needs_verification.
+  - id: ifrs9-bis-summary
+    title: "IFRS 9 and expected loss provisioning — FSI Executive Summary"
+    url: https://www.bis.org/fsi/fsisummaries/ifrs9.pdf
+    publisher: Financial Stability Institute / BIS
+    accessed: 2026-11-07
+    note: Mô hình ba giai đoạn (12 tháng; toàn kỳ khi rủi ro tín dụng tăng đáng kể; toàn kỳ khi đã suy giảm). Đối chiếu qua trích đoạn tìm kiếm và tài liệu thứ cấp, chưa đọc trực tiếp chuẩn mực trên trang IFRS Foundation.
+  - id: swift-iso20022
+    title: "ISO 20022 for financial institutions — coexistence and migration"
+    url: https://www.swift.com/standards/iso-20022
+    publisher: Swift
+    accessed: 2026-11-07
+    note: Giai đoạn cùng tồn tại MT/ISO 20022 cho lệnh thanh toán xuyên biên giới giữa các tổ chức tài chính kết thúc ngày 22/11/2025 (đã xác nhận lại 06/2024). Phạm vi các loại message khác còn khác nhau giữa các nguồn.
+  - id: fsb-g20-targets
+    title: "Targets for Addressing the Four Challenges of Cross-Border Payments (FSB, 10/2021)"
+    url: https://www.fsb.org/uploads/P131021-2.pdf
+    publisher: Financial Stability Board
+    accessed: 2026-11-07
+    note: Mục tiêu đến cuối 2027 về chi phí, tốc độ, minh bạch, khả năng tiếp cận. Các con số mục tiêu và tiến độ chỉ đối chiếu qua nguồn thứ cấp — needs_verification, bài không nêu con số.
+  - id: nakamoto-2008
+    title: "Bitcoin: A Peer-to-Peer Electronic Cash System (2008)"
+    url: https://bitcoin.org/bitcoin.pdf
+    publisher: Satoshi Nakamoto
+    accessed: 2026-11-07
+    note: Hệ thống tiền điện tử ngang hàng giải bài toán chi tiêu hai lần bằng chuỗi proof-of-work, không cần bên trung gian tin cậy.
+  - id: ethereum-merge-2022
+    title: "Ethereum completes Merge upgrade, shifts to proof of stake (15/09/2022)"
+    url: https://fortune.com/crypto/2022/09/15/ethereum-completes-merge-upgrade-shifts-to-proof-of-stake/
+    publisher: Fortune
+    accessed: 2026-11-07
+    note: Ethereum chuyển từ proof of work sang proof of stake ngày 15/09/2022; nhiều nguồn nhất quán. Số liệu giảm tiêu thụ năng lượng khác nhau giữa các nguồn — bài không nêu.
+  - id: eu-mica-2023
+    title: "Regulation (EU) 2023/1114 on markets in crypto-assets (MiCA)"
+    url: https://eur-lex.europa.eu/eli/reg/2023/1114/oj
+    publisher: European Parliament and Council (EUR-Lex)
+    accessed: 2026-11-07
+    note: Quy định về token tham chiếu tài sản và token tiền điện tử áp dụng từ 30/06/2024; phần còn lại từ 30/12/2024. Đối chiếu qua thông báo của AMF và các hãng luật.
+  - id: bcbs-crypto-2022
+    title: "Prudential treatment of cryptoasset exposures (BCBS, 12/2022) và các sửa đổi 2024"
+    url: https://www.bis.org/press/p240717.htm
+    publisher: Basel Committee on Banking Supervision / BIS
+    accessed: 2026-11-07
+    note: Hạn triển khai lùi tới 01/01/2026; 02/2026 Uỷ ban đẩy nhanh rà soát một số phần của chuẩn — tình trạng sau rà soát needs_verification.
+  - id: naic-glossary
+    title: "NAIC Glossary of Insurance Terms (combined ratio, loss ratio)"
+    url: https://content.naic.org/glossary-insurance-terms
+    publisher: National Association of Insurance Commissioners
+    accessed: 2026-11-07
+    note: Tỉ lệ kết hợp = tỉ lệ tổn thất + tỉ lệ chi phí; dưới 100% là lãi khai thác. Mẫu số của tỉ lệ chi phí khác nhau theo cách báo cáo. Đối chiếu qua trích dẫn thứ cấp.
+  - id: claude-vision
+    title: "Vision — Claude Platform docs"
+    url: https://platform.claude.com/docs/en/build-with-claude/vision
+    publisher: Anthropic (Claude Platform docs)
+    accessed: 2026-11-07
+    note: Định dạng JPEG/PNG/GIF/WebP; tối đa 8000x8000 px; mỗi visual token là một ô 28×28 px, chi phí ⌈w/28⌉ × ⌈h/28⌉; giới hạn và các hạn chế (đếm, toạ độ, ảnh nhỏ, nhận diện người).
+  - id: radford-clip-2021
+    title: "Learning Transferable Visual Models From Natural Language Supervision (CLIP) — ICML 2021"
+    url: https://icml.cc/virtual/2021/poster/9193
+    publisher: Radford et al. / ICML
+    accessed: 2026-11-07
+    note: Học tương phản trên 400 triệu cặp ảnh–văn bản; zero-shot trên hơn 30 bộ dữ liệu thị giác.
+  - id: rajbhandari-zero-2020
+    title: "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models — SC20"
+    url: https://sc20.supercomputing.org/proceedings/tech_paper/tech_paper_pages/pap379.html
+    publisher: Rajbhandari, Rasley, Ruwase & He / SC20
+    accessed: 2026-11-07
+    note: Phân mảnh trạng thái tối ưu, gradient và tham số giữa các thiết bị song song dữ liệu thay vì sao chép.
+  - id: sculley-ml-debt-2015
+    title: "Hidden Technical Debt in Machine Learning Systems — NeurIPS 2015"
+    url: https://proceedings.neurips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
+    publisher: Sculley et al. / NeurIPS
+    accessed: 2026-11-07
+    note: Chi phí bảo trì lớn và liên tục của hệ thống ML; rủi ro như xói mòn ranh giới, vướng víu, vòng phản hồi ẩn, người dùng không khai báo, phụ thuộc dữ liệu, cấu hình.
+  - id: rfc6455
+    title: "RFC 6455: The WebSocket Protocol (2011)"
+    url: https://www.rfc-editor.org/rfc/rfc6455
+    publisher: IETF
+    accessed: 2026-11-07
+  - id: whatwg-sse
+    title: "HTML Standard — Server-sent events"
+    url: https://html.spec.whatwg.org/multipage/server-sent-events.html
+    publisher: WHATWG
+    accessed: 2026-11-07
+    note: EventSource, header Last-Event-ID khi kết nối lại, sự kiện chỉ phát khi gặp dòng trống.
+  - id: robertson-bm25-2009
+    title: "The Probabilistic Relevance Framework: BM25 and Beyond — Foundations and Trends in IR 3(4), 333–389 (2009)"
+    url: https://doi.org/10.1561/1500000019
+    publisher: Stephen Robertson & Hugo Zaragoza
+    accessed: 2026-11-07
+  - id: pg-full-text
+    title: "PostgreSQL: Full Text Search (tsvector, tsquery, GIN)"
+    url: https://www.postgresql.org/docs/current/textsearch.html
+    publisher: PostgreSQL Global Development Group
+    accessed: 2026-11-07
+    note: Chưa đọc trực tiếp trang postgresql.org; ts_rank không dùng thống kê toàn kho theo các nguồn thứ cấp.
+  - id: k8s-concepts
+    title: "Kubernetes Documentation — Concepts (Workloads, Services, Probes)"
+    url: https://kubernetes.io/docs/concepts/
+    publisher: The Kubernetes Authors / CNCF
+    accessed: 2026-11-07
+    note: "Đối chiếu qua nguồn thứ cấp — Pod là đơn vị triển khai nhỏ nhất; Deployment quản lý ReplicaSet, rolling update; Service cho điểm truy cập ổn định; liveness khởi động lại, readiness rút khỏi Service, startup trì hoãn hai probe kia."
+  - id: opentofu-2023
+    title: "OpenTofu joins the Linux Foundation (fork of Terraform after license change)"
+    url: https://opentofu.org/
+    publisher: OpenTofu / Linux Foundation
+    accessed: 2026-11-07
+    note: HashiCorp đổi giấy phép Terraform từ MPL 2.0 sang BSL 1.1 (10/08/2023); OpenTofu được Linux Foundation tiếp nhận 20/09/2023, giữ MPL 2.0. Đối chiếu qua nhiều nguồn thứ cấp nhất quán.
+  - id: apple-review-guidelines
+    title: "App Store Review Guidelines"
+    url: https://developer.apple.com/app-store/review/guidelines/
+    publisher: Apple
+    accessed: 2026-11-07
+    note: "Mục 2.5.2 — ứng dụng không được tải và chạy code làm thay đổi tính năng (ngoại lệ hẹp cho ứng dụng học/phát triển code). Đối chiếu qua nguồn thứ cấp; xem bản hiện hành."

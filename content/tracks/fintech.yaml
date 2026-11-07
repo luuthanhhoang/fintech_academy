@@ -12,3 +12,4 @@ stages:
   - { id: "f4", order: 4, title: { vi: "Kỹ thuật hệ thống tài chính", en: "Financial systems engineering" }, summary: "Thiết kế sổ cái, idempotency, đối soát, biểu diễn tiền, kiến trúc giao dịch độ trễ thấp." }
   - { id: "f5", order: 5, title: { vi: "Quant & dữ liệu", en: "Quant & data" }, summary: "Thống kê lợi suất, chuỗi thời gian, backtest, mô hình nhân tố, Monte Carlo." }
   - { id: "f6", order: 6, title: { vi: "AI trong fintech", en: "AI in fintech" }, summary: "Chấm điểm tín dụng, phát hiện gian lận, LLM trong tài chính, quản trị rủi ro mô hình." }
+  - { id: "f7", order: 7, title: { vi: "Thanh toán quốc tế & tài sản số", en: "Cross-border payments & digital assets" }, summary: "Blockchain và hợp đồng thông minh, stablecoin, lưu ký tài sản số và khung quản lý." }

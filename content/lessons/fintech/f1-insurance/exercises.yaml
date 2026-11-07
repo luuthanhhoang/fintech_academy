@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f1i-cohort
+    conceptId: insurance-basics
+    prompt: "Tháng 1 bán 10.000 hợp đồng (phí 100.000 đ), tháng 2 bán 30.000 hợp đồng. Đến cuối tháng 2: bồi thường của cohort tháng 1 là 300 triệu, cohort tháng 2 là 60 triệu. Tính tỉ lệ tổn thất gộp và theo cohort, rồi giải thích vì sao gộp gây hiểu nhầm."
+    hint: "Phí cohort 1 = 1 tỉ, cohort 2 = 3 tỉ."
+    solution: "Gộp: 360 triệu / 4 tỉ = 9%. Cohort 1: 300 / 1.000 = 30% sau hai tháng; cohort 2: 60 / 3.000 = 2% sau một tháng. Cohort mới chiếm phần lớn phí nhưng chưa kịp phát sinh bồi thường, kéo tỉ lệ gộp xuống. Cohort 1 cho thấy xu hướng thật; nếu tiếp tục tăng, sản phẩm có thể lỗ."
+  - id: ex-f1i-price
+    conceptId: insurance-basics
+    prompt: "Bảo hiểm trễ chuyến bay: xác suất trễ trên 3 giờ ước lượng 4% (giả định), bồi thường cố định 500.000 đ. Chi phí phân phối 20% phí, vận hành 10% phí, biên lợi nhuận mục tiêu 5% phí. Phí tối thiểu bao nhiêu?"
+    hint: "Phí × (1 − 35%) = tổn thất kỳ vọng."
+    solution: "Tổn thất kỳ vọng = 0,04 × 500.000 = 20.000 đ. Phí × 0,65 = 20.000 → phí ≈ 30.770 đ. Lưu ý tương quan: bão làm trễ cả loạt chuyến cùng ngày → cần hạn mức tập trung theo sân bay/ngày hoặc tái bảo hiểm."

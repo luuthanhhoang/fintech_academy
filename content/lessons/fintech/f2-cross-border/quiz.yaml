@@ -1,0 +1,30 @@
+items:
+  - id: q-f2x-spread
+    type: numeric
+    conceptId: fx-basics
+    prompt: "Tỉ giá tham chiếu 25.000 VND/USD. Ngân hàng mua USD của bạn ở 24.600. Phí ẩn trong tỉ giá là bao nhiêu phần trăm so với tham chiếu?"
+    answer: 1.6
+    tolerance: { kind: abs, value: 0.01 }
+    unit: "%"
+    explanation: "(25.000 − 24.600) / 25.000 = 1,6% — không xuất hiện ở dòng 'phí' nào."
+  - id: q-f2x-forward
+    type: mcq
+    conceptId: fx-basics
+    prompt: "Lãi suất VND cao hơn lãi suất USD. Theo ngang giá lãi suất có phòng ngừa, tỉ giá kỳ hạn USD/VND 1 năm so với giao ngay thường thế nào?"
+    options:
+      - { id: a, text: "Cao hơn giao ngay (cần nhiều VND hơn cho 1 USD giao sau)" }
+      - { id: b, text: "Thấp hơn giao ngay" }
+      - { id: c, text: "Bằng giao ngay" }
+    correct: [a]
+    explanation: "F = S × (1 + i_VND) / (1 + i_USD) > S khi i_VND > i_USD; ngược lại sẽ có chênh lệch không rủi ro."
+  - id: q-f2x-chain
+    type: mcq
+    conceptId: cross-border-payments
+    prompt: "Vì sao chuyển tiền qua chuỗi ngân hàng đại lý thường chậm và khó dự đoán chi phí? (chọn tất cả)"
+    options:
+      - { id: a, text: "Mỗi chặng có thể trừ phí riêng" }
+      - { id: b, text: "Mỗi chặng kiểm tra tuân thủ và có thể giữ lệnh khi thiếu thông tin" }
+      - { id: c, text: "Lệch giờ làm việc và ngày nghỉ giữa các nước" }
+      - { id: d, text: "Vì tiền phải vận chuyển vật lý qua biên giới" }
+    correct: [a, b, c]
+    explanation: "Tiền di chuyển bằng bút toán trên tài khoản đại lý, không vận chuyển vật lý."

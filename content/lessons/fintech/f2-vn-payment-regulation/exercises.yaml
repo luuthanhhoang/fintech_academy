@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2v-matrix
+    conceptId: vn-payment-regulation
+    prompt: "Lập 5 dòng mẫu cho ma trận tuân thủ của tính năng ví (cột: nhóm nghĩa vụ, văn bản, yêu cầu hệ thống, bằng chứng, người chịu trách nhiệm). Để trống số điều khoản cụ thể cho pháp chế điền."
+    hint: "Đảm bảo số dư, định danh, hạn mức, giám sát, lưu trữ."
+    solution: "(1) Đảm bảo số dư ví — Nghị định 52/2024 [điều khoản: pháp chế điền] — job đối soát tổng số dư ví với tài khoản bảo đảm hằng ngày, cảnh báo chênh lệch — báo cáo đối soát lưu trữ — vận hành tài chính. (2) Định danh khách hàng — Nghị định 52/2024, Luật 14/2022 — luồng eKYC, trạng thái hồ sơ — log xác minh — sản phẩm + tuân thủ. (3) Hạn mức — văn bản hướng dẫn hiện hành — cấu hình có phiên bản, kiểm tra trước giao dịch — test hạn mức + lịch sử cấu hình — kỹ thuật. (4) Giám sát giao dịch đáng ngờ — Luật 14/2022 — quy tắc giám sát, hàng đợi cảnh báo — dấu vết xử lý cảnh báo — tuân thủ. (5) Lưu trữ hồ sơ — Luật 14/2022 và văn bản hướng dẫn — chính sách lưu trữ, không xoá trước hạn — kiểm tra định kỳ — kỹ thuật dữ liệu."
+  - id: ex-f2v-change
+    conceptId: vn-payment-regulation
+    prompt: "Một văn bản sửa đổi thay đổi hạn mức giao dịch ví, có hiệu lực sau 45 ngày. Mô tả quy trình triển khai thay đổi."
+    hint: "Cấu hình có ngày hiệu lực; thông báo khách; test."
+    solution: "Pháp chế xác nhận nội dung và ngày hiệu lực → tạo phiên bản cấu hình mới với effectiveFrom = ngày hiệu lực và căn cứ văn bản → review, test với ngày giả lập trước/sau mốc → triển khai sớm (cấu hình chờ tới ngày tự áp dụng) → cập nhật nội dung hiển thị và thông báo khách theo yêu cầu → sau mốc, kiểm tra log từ chối giao dịch theo hạn mức mới → cập nhật ma trận tuân thủ."

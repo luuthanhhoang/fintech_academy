@@ -1,0 +1,31 @@
+items:
+  - id: q-f7b-double
+    type: mcq
+    conceptId: blockchain-basics
+    prompt: "Trong một blockchain công khai, điều gì ngăn một người chi tiêu cùng một đồng tiền hai lần?"
+    options:
+      - { id: a, text: "Một ngân hàng trung tâm kiểm tra mọi giao dịch" }
+      - { id: b, text: "Cơ chế đồng thuận thống nhất một thứ tự giao dịch duy nhất; giao dịch thứ hai chi cùng khoản bị coi là không hợp lệ" }
+      - { id: c, text: "Mã hoá dữ liệu giao dịch" }
+    correct: [b]
+    explanation: "Vấn đề là thứ tự; đồng thuận phân tán thay thế bên giữ sổ tin cậy."
+  - id: q-f7b-final
+    type: mcq
+    conceptId: blockchain-basics
+    prompt: "Sàn của bạn nhận tiền gửi từ một blockchain proof of work. Vì sao không ghi có cho khách ngay khi thấy giao dịch trong khối đầu tiên với khoản tiền lớn?"
+    options:
+      - { id: a, text: "Vì tính cuối cùng mang tính xác suất; khối có thể bị thay thế khi chuỗi tổ chức lại, nên cần chờ thêm xác nhận theo giá trị" }
+      - { id: b, text: "Vì phí gas chưa được trả" }
+      - { id: c, text: "Không có lý do, nên ghi có ngay" }
+    correct: [a]
+    explanation: "Mỗi khối thêm phía sau làm việc đảo ngược khó hơn; số xác nhận chờ là quyết định quản trị rủi ro."
+  - id: q-f7b-need
+    type: mcq
+    conceptId: smart-contracts
+    prompt: "Trường hợp nào có lý do rõ ràng nhất để cân nhắc một sổ cái phân tán thay cho cơ sở dữ liệu tập trung?"
+    options:
+      - { id: a, text: "Một công ty theo dõi kho hàng nội bộ của chính mình" }
+      - { id: b, text: "Nhiều tổ chức độc lập, không muốn một bên nắm quyền ghi, cùng cần ghi và kiểm chứng một sổ chung" }
+      - { id: c, text: "Một ứng dụng cần truy vấn rất nhanh và xoá dữ liệu cá nhân theo yêu cầu" }
+    correct: [b]
+    explanation: "Giá trị của blockchain là bỏ bên trung gian tin cậy; nếu đã có bên tin cậy, cơ sở dữ liệu thường tốt hơn."

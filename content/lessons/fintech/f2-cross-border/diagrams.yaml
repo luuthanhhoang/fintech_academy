@@ -1,0 +1,19 @@
+diagrams:
+  - id: dg-correspondent
+    kind: sequence
+    title: "Một khoản chuyển tiền qua ngân hàng đại lý"
+    caption: "Mô hình khái niệm; số chặng, ai chịu phí và thời gian tuỳ từng tuyến và từng ngân hàng."
+    actors:
+      - { id: sender, label: "Người gửi" }
+      - { id: bank-us, label: "NH gửi (Mỹ)" }
+      - { id: corr, label: "NH đại lý" }
+      - { id: bank-vn, label: "NH nhận (VN)" }
+      - { id: receiver, label: "Người nhận" }
+    steps:
+      - { from: sender, to: bank-us, label: "Lệnh 1.000 USD + thông tin người nhận" }
+      - { from: bank-us, to: bank-us, label: "Sàng lọc, trừ phí gửi" }
+      - { from: bank-us, to: corr, label: "Lệnh ISO 20022 (pacs.008)" }
+      - { from: corr, to: corr, label: "Sàng lọc, có thể trừ phí; ghi Nợ/Có tài khoản đại lý" }
+      - { from: corr, to: bank-vn, label: "Chuyển tiếp lệnh" }
+      - { from: bank-vn, to: bank-vn, label: "Sàng lọc, đổi USD → VND" }
+      - { from: bank-vn, to: receiver, label: "Báo có VND" }

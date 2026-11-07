@@ -1,0 +1,85 @@
+---
+id: f3-ecl-ifrs9
+track: fintech
+stage: f3
+order: 5
+title: { vi: "Dự phòng tổn thất tín dụng kỳ vọng theo IFRS 9", en: "Expected credit loss provisioning under IFRS 9" }
+summary: "IFRS 9 yêu cầu ghi nhận dự phòng cho tổn thất tín dụng kỳ vọng ngay từ đầu, không chờ khoản vay hỏng. Mô hình ba giai đoạn: giai đoạn 1 dự phòng tổn thất kỳ vọng 12 tháng; khi rủi ro tín dụng tăng đáng kể so với lúc ghi nhận ban đầu (giai đoạn 2) hoặc khoản vay đã suy giảm (giai đoạn 3) thì dự phòng tổn thất toàn kỳ. Kỹ thuật cốt lõi: PD theo thời gian, quy tắc chuyển giai đoạn, kịch bản kinh tế có trọng số và một pipeline tái lập được."
+concepts: [ecl-provisioning]
+estMinutes: 45
+whyQuestion: "Một khoản vay chưa trễ hạn ngày nào nhưng khách vừa mất việc. Theo IFRS 9, dự phòng cho khoản đó có nên tăng ngay không — và tăng tới đâu?"
+devMapping:
+  - finance: "Giai đoạn 1/2/3"
+    dev: "Máy trạng thái của khoản vay"
+    explanation: "Quy tắc chuyển trạng thái rõ ràng, có thể đi lui; mỗi trạng thái quyết định công thức dự phòng."
+  - finance: "Tăng đáng kể rủi ro tín dụng (SICR)"
+    dev: "Ngưỡng phát hiện suy giảm so với baseline lúc tạo"
+    explanation: "So rủi ro hiện tại với rủi ro tại thời điểm khởi tạo, không với một ngưỡng tuyệt đối chung."
+  - finance: "Kịch bản kinh tế có trọng số"
+    dev: "Chạy mô hình dưới nhiều cấu hình đầu vào, lấy trung bình có trọng số"
+    explanation: "Dự phòng phản ánh cả khả năng suy thoái, không chỉ kịch bản cơ sở."
+pretest: [q-f3e-stage, q-f3e-lifetime]
+applications:
+  - id: app-f3e-pipeline
+    title: "Pipeline tính ECL tái lập được"
+    context: "Danh mục cho vay tổng hợp (dán nhãn mô phỏng) với PD theo năm, LGD, dư nợ theo lịch trả nợ."
+    task: "Viết quy tắc giai đoạn dưới dạng dữ liệu (ngưỡng tăng PD tương đối, số ngày quá hạn — ghi rõ là giả định của tổ chức); tính ECL 12 tháng và toàn kỳ có chiết khấu; ba kịch bản kinh tế có trọng số; báo cáo biến động dự phòng (khoản mới, chuyển giai đoạn, thay đổi tham số, xoá nợ); test tái lập theo snapshot."
+    deliverable: "Pipeline + báo cáo biến động dự phòng + test tái lập."
+sources: [ifrs9-bis-summary, bcbs-basel2-2004]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích mô hình ba giai đoạn của IFRS 9, khác biệt giữa ECL 12 tháng và toàn kỳ, và những phần nào cần phán đoán."
+  rubric:
+    - { id: stages, criterion: "Giai đoạn 1: ECL 12 tháng; giai đoạn 2 (tăng đáng kể rủi ro): ECL toàn kỳ; giai đoạn 3 (đã suy giảm): ECL toàn kỳ, lãi tính trên giá trị ròng" }
+    - { id: sicr, criterion: "Tăng đáng kể so với lúc ghi nhận ban đầu; có thể chuyển ngược khi rủi ro giảm" }
+    - { id: calc, criterion: "ECL = tổng theo kỳ PD biên × LGD × EAD × hệ số chiết khấu; 12 tháng chỉ lấy rủi ro vỡ nợ trong 12 tháng tới" }
+    - { id: forward, criterion: "Nhiều kịch bản kinh tế có trọng số; quy tắc và tham số là phán đoán phải tài liệu hoá, tái lập được" }
+---
+
+<Callout kind="story" title="Dự phòng đến quá muộn">
+Theo cách kế toán cũ dựa trên "tổn thất đã phát sinh", một ngân hàng giả định chỉ tăng dự phòng khi khoản vay đã trễ hạn. Khi kinh tế xấu đi, mọi người đều thấy trước nợ xấu sẽ tăng, nhưng báo cáo vẫn đẹp cho tới khi khoản trễ hạn ập đến cùng lúc — dự phòng tăng vọt trong một quý, đúng lúc ngân hàng yếu nhất.
+</Callout>
+
+## Từ tổn thất đã phát sinh sang tổn thất kỳ vọng
+
+IFRS 9 yêu cầu dự phòng theo **tổn thất tín dụng kỳ vọng (ECL)**, nhìn về phía trước, ngay từ khi ghi nhận khoản vay. Nhắc lại EL = PD × LGD × EAD (bài rủi ro tín dụng); ECL kế toán mở rộng thành tổng theo từng kỳ, có chiết khấu và có xét kịch bản kinh tế.
+
+## Ba giai đoạn
+
+| Giai đoạn | Điều kiện | Dự phòng |
+|---|---|---|
+| 1 | Rủi ro tín dụng chưa tăng đáng kể kể từ lúc ghi nhận ban đầu | ECL **12 tháng** |
+| 2 | Rủi ro tín dụng **tăng đáng kể** nhưng chưa suy giảm | ECL **toàn kỳ** |
+| 3 | Đã **suy giảm** tín dụng | ECL toàn kỳ; lãi tính trên giá trị ròng sau dự phòng |
+
+Lưu ý quan trọng: **ECL 12 tháng** là tổn thất toàn kỳ do các sự kiện vỡ nợ **có thể xảy ra trong 12 tháng tới** — không phải "dòng tiền thiếu hụt trong 12 tháng". Khoản vay có thể **chuyển ngược** từ giai đoạn 2 về 1 khi rủi ro không còn tăng đáng kể.
+
+<Quiz id="q-f3e-stage" />
+
+## Tính ECL
+
+ECL ≈ Σ_t PD biên(t) × LGD(t) × EAD(t) × hệ số chiết khấu(t)
+
+- **PD biên**: xác suất vỡ nợ trong kỳ t với điều kiện sống tới đầu kỳ t.
+- **12 tháng**: chỉ cộng các kỳ trong 12 tháng đầu; **toàn kỳ**: cộng hết thời hạn còn lại.
+- **Kịch bản**: tính ECL dưới kịch bản cơ sở, tốt, xấu; lấy trung bình có trọng số xác suất.
+
+<WorkedExample id="we-ecl-stages" />
+
+<Quiz id="q-f3e-lifetime" />
+
+## Những phần là phán đoán
+
+Theo các tóm tắt của chuẩn mực, xác định **tăng đáng kể rủi ro tín dụng** là phần cần phán đoán nhất. Thường dùng: PD hiện tại so với PD lúc khởi tạo (tương đối và tuyệt đối), danh sách theo dõi, và một mốc dự phòng ngược (ví dụ quá hạn trên một số ngày). Mọi ngưỡng là **chính sách của tổ chức**, phải tài liệu hoá và kiểm định — đúng tinh thần quản trị rủi ro mô hình (chặng F6).
+
+## Yêu cầu kỹ thuật
+
+- **Quy tắc giai đoạn là dữ liệu** có phiên bản, không if/else rải rác.
+- **Snapshot** dữ liệu tại ngày báo cáo; chạy lại phải ra cùng số (bài Basel).
+- **Báo cáo biến động dự phòng**: vì sao dự phòng tăng/giảm — khoản mới, chuyển giai đoạn, đổi tham số, đổi kịch bản, xoá nợ.
+- **Lưu PD lúc khởi tạo** của từng khoản: không có nó thì không xác định được "tăng đáng kể".
+
+<Callout kind="field" title="Lưu baseline ngay từ ngày đầu">
+Dự án IFRS 9 khó nhất tôi từng thấy không vướng ở công thức, mà vướng ở chỗ hệ thống cũ không lưu xếp hạng rủi ro tại thời điểm giải ngân. Muốn so "rủi ro bây giờ với lúc đầu" thì phải dựng lại quá khứ từ dữ liệu rời rạc. Bài học cho mọi hệ thống cho vay mới: lưu bất biến ảnh chụp rủi ro lúc khởi tạo cùng phiên bản mô hình đã dùng.
+</Callout>

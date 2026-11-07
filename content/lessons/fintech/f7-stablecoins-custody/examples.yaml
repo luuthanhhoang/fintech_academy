@@ -1,0 +1,21 @@
+examples:
+  - id: we-custody-recon
+    title: "Đối soát nghĩa vụ khách với số dư trên chuỗi"
+    conceptId: digital-asset-custody
+    problem: "Dữ liệu tổng hợp (mô phỏng): sổ nội bộ ghi khách sở hữu 5.000 token; ví lạnh 4.600, ví nóng 380 trên chuỗi. Có 50 token khách nạp đã thấy trên chuỗi (trong ví nóng) nhưng chưa đủ xác nhận nên chưa ghi có cho khách; 40 token rút đã trừ sổ nhưng chưa gửi lên chuỗi."
+    steps:
+      - text: "Trên chuỗi công ty kiểm soát: 4.600 + 380 = 4.980."
+      - text: "Nghĩa vụ thật với khách = 5.000 + 40 (rút chưa gửi) + 50 (nạp sẽ ghi có) = 5.090."
+        faded: true
+        prompt: "Nghĩa vụ thật với khách là bao nhiêu token?"
+        answer: 5090
+        tolerance: { kind: abs, value: 0 }
+        unit: "token"
+      - text: "Chênh lệch = 4.980 − 5.090 = −110: thiếu 110 token."
+        faded: true
+        prompt: "Chênh lệch (chuỗi − nghĩa vụ) là bao nhiêu token?"
+        answer: -110
+        tolerance: { kind: abs, value: 0 }
+        unit: "token"
+      - text: "Thiếu hụt là sự cố mức cao nhất: dừng rút tự động, điều tra ngay (lộ khoá, giao dịch không ghi sổ, lỗi tính phí)."
+    takeaway: "Đối soát phải tính các giao dịch đang trên đường ở cả hai chiều; số dư gộp đơn thuần che giấu thiếu hụt."

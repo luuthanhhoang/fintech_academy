@@ -1,0 +1,104 @@
+---
+id: f7-stablecoins-custody
+track: fintech
+stage: f7
+order: 1
+title: { vi: "Stablecoin, lưu ký tài sản số và khung quản lý", en: "Stablecoins, digital asset custody and regulation" }
+summary: "Stablecoin là token trên blockchain hứa giữ giá ổn định so với một đồng tiền pháp định hoặc rổ tài sản. Độ tin cậy của lời hứa đó nằm ngoài chuỗi: dự trữ gồm gì, ai giữ, có kiểm toán không, người nắm token có quyền đổi lại không. Lưu ký tài sản số thực chất là quản lý khoá riêng: ví nóng và ví lạnh, đa chữ ký, phân quyền, tách biệt tài sản khách hàng, đối soát trên chuỗi với sổ nội bộ. Khung quản lý đang hình thành: EU áp dụng MiCA, Uỷ ban Basel ban hành chuẩn cho phơi nhiễm tài sản số của ngân hàng."
+concepts: [stablecoins, digital-asset-custody]
+estMinutes: 50
+whyQuestion: "Một stablecoin nói '1 token = 1 USD'. Bạn kiểm chứng lời hứa đó bằng gì — và nếu bạn là sàn giữ hộ token cho khách, rủi ro lớn nhất của bạn nằm ở đâu?"
+facts:
+  - id: mica-dates
+    text: "Mốc áp dụng của Quy định MiCA (EU 2023/1114)"
+    value: "phần token tham chiếu tài sản và token tiền điện tử (stablecoin) từ 30/06/2024; phần còn lại từ 30/12/2024"
+    sourceId: eu-mica-2023
+    asOf: 2026-11-07
+    status: verified
+  - id: bcbs-crypto-date
+    text: "Thời điểm triển khai chuẩn an toàn của Uỷ ban Basel cho phơi nhiễm tài sản số của ngân hàng (sau khi lùi một năm)"
+    value: "01/01/2026"
+    sourceId: bcbs-crypto-2022
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Dự trữ của stablecoin"
+    dev: "Tài sản đảm bảo cho một khoản nợ — như số dư ví điện tử phải khớp tài khoản bảo đảm"
+    explanation: "Token là nghĩa vụ của bên phát hành; giá trị phụ thuộc tài sản đứng sau và quyền đổi lại."
+  - finance: "Ví lạnh / ví nóng"
+    dev: "Bí mật offline trong HSM so với bí mật online để ký tự động"
+    explanation: "Phần lớn tài sản giữ ở nơi không kết nối mạng; ví nóng chỉ giữ đủ cho rút tiền hằng ngày."
+  - finance: "Đa chữ ký"
+    dev: "Phê duyệt M-trên-N (four-eyes) bằng mật mã"
+    explanation: "Không một người hay một máy nào tự chuyển được tài sản."
+pretest: [q-f7s-backing, q-f7s-custody]
+applications:
+  - id: app-f7s-recon
+    title: "Đối soát tài sản số của khách hàng"
+    context: "Một nền tảng giữ hộ token cho khách (dữ liệu tổng hợp dán nhãn mô phỏng)."
+    task: "Thiết kế đối soát hằng ngày: tổng số dư khách trên sổ nội bộ (theo từng loại token) so với số dư trên chuỗi của các ví công ty; xử lý giao dịch đang chờ xác nhận; tách số dư công ty và khách; cảnh báo khi số dư trên chuỗi thấp hơn nghĩa vụ; mô tả quy trình rút tiền với đa chữ ký và hạn mức ví nóng."
+    deliverable: "Thiết kế đối soát + máy trạng thái rút tiền + danh sách kiểm soát khoá."
+sources: [eu-mica-2023, bcbs-crypto-2022, nakamoto-2008, fatf-recommendations]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Giải thích cách đánh giá một stablecoin và cách thiết kế lưu ký tài sản số an toàn."
+  rubric:
+    - { id: types, criterion: "Stablecoin có dự trữ tiền pháp định/tài sản vs thuật toán; giá trị dựa vào dự trữ và quyền đổi lại" }
+    - { id: verify, criterion: "Kiểm chứng: thành phần dự trữ, bên giữ, kiểm toán/chứng thực, quyền đổi, khung quản lý" }
+    - { id: custody, criterion: "Lưu ký = quản lý khoá: ví lạnh/nóng, đa chữ ký/MPC, HSM, phân quyền, hạn mức" }
+    - { id: ops, criterion: "Tách biệt tài sản khách, đối soát trên chuỗi với sổ nội bộ, tuân thủ AML (quy tắc chuyển tiền)" }
+---
+
+<Callout kind="story" title="Số dư đúng trên sổ, thiếu trên chuỗi">
+Một nền tảng giả định ghi số dư token của khách trong cơ sở dữ liệu nội bộ, còn token thật nằm trong vài ví chung của công ty. Một khoá của ví nóng bị lộ qua một máy chủ cấu hình sai. Sổ nội bộ vẫn hiển thị số dư đầy đủ cho mọi khách — trong khi trên chuỗi, ví đã trống. Không có đối soát hằng ngày nào so hai con số đó.
+</Callout>
+
+## Stablecoin là gì
+
+Token trên blockchain hứa **giữ giá ổn định** so với một tài sản tham chiếu (thường là một đồng tiền pháp định). Các kiểu chính:
+
+- **Có dự trữ tiền pháp định/tài sản an toàn**: bên phát hành giữ tiền và tài sản tương đương, hứa cho đổi 1:1.
+- **Có tài sản số thế chấp**: thế chấp vượt mức bằng tài sản số biến động.
+- **Thuật toán**: giữ giá bằng cơ chế cung–cầu, không có dự trữ đầy đủ — dễ sụp đổ khi niềm tin mất.
+
+Bản chất giống **số dư ví điện tử** (bài ví): token là **nghĩa vụ** của bên phát hành; giá trị phụ thuộc **dự trữ** và **quyền đổi lại**. Câu hỏi kiểm chứng:
+
+1. Dự trữ gồm những gì (tiền gửi, trái phiếu ngắn hạn, tài sản rủi ro hơn)?
+2. Ai giữ dự trữ, có tách biệt khỏi tài sản bên phát hành không?
+3. Có kiểm toán/chứng thực độc lập định kỳ không?
+4. Người nắm token có quyền đổi lại trực tiếp không, điều kiện và phí ra sao?
+5. Bên phát hành chịu khung quản lý nào?
+
+<Quiz id="q-f7s-backing" />
+
+## Khung quản lý
+
+- **EU — MiCA**: <Fact id="mica-dates" />. MiCA phân biệt token tham chiếu một đồng tiền pháp định (e-money token) và token tham chiếu tài sản khác, kèm yêu cầu về cấp phép, dự trữ và quyền đổi lại.
+- **Ngân hàng — Uỷ ban Basel**: chuẩn an toàn cho phơi nhiễm tài sản số ban hành 12/2022, sửa đổi 2024 (siết điều kiện để stablecoin được đối xử ưu đãi); triển khai từ <Fact id="bcbs-crypto-date" />. Đầu 2026, Uỷ ban đẩy nhanh rà soát một số phần của chuẩn — kiểm tra tình trạng mới nhất.
+- **AML**: khuyến nghị của FATF áp dụng cho nhà cung cấp dịch vụ tài sản số, gồm việc truyền thông tin người gửi/người nhận (bài KYC/AML).
+- **Việt Nam**: khung pháp lý cho tài sản số đang được xây dựng; bài không nêu chi tiết vì chưa đối chiếu được văn bản hiện hành.
+
+## Lưu ký: quản lý khoá riêng
+
+Ai có khoá riêng là người có tài sản (bài blockchain). Lưu ký an toàn:
+
+- **Ví lạnh**: phần lớn tài sản, khoá không bao giờ chạm máy có kết nối mạng.
+- **Ví nóng**: chỉ đủ cho rút tiền dự kiến; hạn mức; tự động nạp lại từ ví lạnh qua quy trình phê duyệt.
+- **Đa chữ ký hoặc tính toán đa bên (MPC)**: cần M trên N bên ký; không một người/máy nào tự chuyển được.
+- **HSM**, phân quyền, nhật ký mọi thao tác ký, diễn tập khôi phục khoá.
+- **Danh sách địa chỉ được phép rút** và độ trễ cho địa chỉ mới.
+
+<Diagram id="dg-custody-withdrawal" />
+
+<Quiz id="q-f7s-custody" />
+
+## Đối soát hai thế giới
+
+Sổ nội bộ (bài sổ cái) ghi khách nào sở hữu bao nhiêu; blockchain cho biết công ty thực sự kiểm soát bao nhiêu. **Bất biến**: tổng nghĩa vụ với khách ≤ số dư trên chuỗi của các ví công ty (cùng loại token), sau khi tính giao dịch đang chờ. Đối soát hằng ngày — hoặc liên tục — là kiểm soát phát hiện quan trọng nhất (câu chuyện đầu bài).
+
+<WorkedExample id="we-custody-recon" />
+
+<Callout kind="field" title="Ví nóng là chi phí vận hành, không phải kho">
+Tôi coi số dư ví nóng như tiền mặt trong két quầy giao dịch: chỉ đủ cho nhu cầu dự kiến, có hạn mức cứng, và mọi khoản vượt hạn mức đều phải qua quy trình nhiều người duyệt với độ trễ. Câu hỏi đánh giá đầu tiên của tôi với một hệ thống lưu ký: nếu ngày mai lộ toàn bộ khoá của ví nóng, mất tối đa bao nhiêu? Câu trả lời phải là một con số nhỏ, đã biết trước.
+</Callout>

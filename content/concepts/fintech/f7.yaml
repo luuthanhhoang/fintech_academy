@@ -1,0 +1,7 @@
+track: fintech
+stage: f7
+concepts:
+  - { id: "blockchain-basics", name: { vi: "Blockchain cơ bản", en: "Blockchain basics" }, short: "Sổ cái phân tán, băm, chữ ký số, đồng thuận, chống chi tiêu hai lần.", prerequisites: [ledger-design], difficulty: 3, tags: [blockchain, consensus] }
+  - { id: "smart-contracts", name: { vi: "Hợp đồng thông minh", en: "Smart contracts" }, short: "Chương trình chạy trên chuỗi; bất biến sau triển khai, phí gas, rủi ro lỗ hổng.", prerequisites: [blockchain-basics], difficulty: 3, tags: [smart contract, DeFi] }
+  - { id: "stablecoins", name: { vi: "Stablecoin", en: "Stablecoins" }, short: "Token neo giá trị vào tiền pháp định hoặc tài sản; dự trữ, quyền đổi lại, quản lý.", prerequisites: [blockchain-basics, digital-wallets], difficulty: 3, tags: [stablecoin, MiCA] }
+  - { id: "digital-asset-custody", name: { vi: "Lưu ký tài sản số", en: "Digital asset custody" }, short: "Quản lý khoá riêng, ví nóng/lạnh, đa chữ ký, tách biệt tài sản khách hàng.", prerequisites: [blockchain-basics, operational-risk], difficulty: 4, tags: [custody, key management] }

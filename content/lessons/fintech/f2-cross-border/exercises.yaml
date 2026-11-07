@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f2x-fees
+    conceptId: cross-border-payments
+    prompt: "Khách gửi 1.000 USD. Phí ngân hàng gửi 15 USD (trừ vào khoản gửi), ngân hàng trung gian trừ 10 USD, ngân hàng nhận đổi ở 24.700 VND/USD trong khi tham chiếu là 25.000. Người nhận được bao nhiêu VND, và tổng chi phí so với 'lý tưởng' (1.000 USD × tham chiếu) là bao nhiêu phần trăm?"
+    hint: "Trừ phí USD trước, rồi đổi."
+    solution: "Còn 1.000 − 15 − 10 = 975 USD; × 24.700 = 24.082.500 VND. Lý tưởng: 25.000.000 VND. Chênh lệch 917.500 VND ≈ 3,67%. Trong đó phí USD 25 USD ≈ 625.000 VND, phần tỉ giá 975 × 300 = 292.500 VND."
+  - id: ex-f2x-recon
+    conceptId: cross-border-payments
+    prompt: "Ví của bạn báo giá cho khách: gửi 10.000.000 VND, người nhận được 395 USD, báo giá hiệu lực 30 phút. Đến lúc thực sự mua USD từ ngân hàng đối tác, tỉ giá đã khác. Ai chịu chênh lệch và bút toán ra sao?"
+    hint: "Báo giá là cam kết; công ty giữ vị thế ngoại tệ."
+    solution: "Báo giá còn hiệu lực là cam kết với khách: khách vẫn nhận đúng 395 USD. Chênh lệch giữa tỉ giá báo giá và tỉ giá mua thực tế là lãi/lỗ ngoại hối của công ty, ghi vào tài khoản lãi/lỗ chênh lệch tỉ giá, tách khỏi doanh thu phí. Giảm rủi ro: thời hạn báo giá ngắn, phòng ngừa vị thế, mua ngoại tệ theo lô với biên an toàn đã tính vào giá."

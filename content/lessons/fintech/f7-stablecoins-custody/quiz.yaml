@@ -1,0 +1,30 @@
+items:
+  - id: q-f7s-backing
+    type: mcq
+    conceptId: stablecoins
+    prompt: "Thông tin nào giúp đánh giá lời hứa '1 token = 1 USD' của một stablecoin? (chọn tất cả)"
+    options:
+      - { id: a, text: "Thành phần dự trữ và bên giữ dự trữ" }
+      - { id: b, text: "Báo cáo kiểm toán/chứng thực độc lập định kỳ" }
+      - { id: c, text: "Quyền và điều kiện đổi lại token lấy USD" }
+      - { id: d, text: "Giá token hôm nay đang đúng 1 USD" }
+    correct: [a, b, c]
+    explanation: "Giá hôm nay không chứng minh gì về khả năng giữ giá khi bị rút ồ ạt; dự trữ và quyền đổi mới là nền tảng."
+  - id: q-f7s-custody
+    type: mcq
+    conceptId: digital-asset-custody
+    prompt: "Thiết kế nào giảm thiệt hại tối đa khi khoá của ví nóng bị lộ?"
+    options:
+      - { id: a, text: "Giữ toàn bộ tài sản khách trong ví nóng để rút nhanh" }
+      - { id: b, text: "Giữ phần lớn tài sản ở ví lạnh, hạn mức cứng cho ví nóng, nạp lại ví nóng qua đa chữ ký" }
+      - { id: c, text: "Đổi mật khẩu cơ sở dữ liệu thường xuyên" }
+    correct: [b]
+    explanation: "Thiệt hại tối đa khi lộ ví nóng bằng hạn mức của nó; phần còn lại cần nhiều bên ký."
+  - id: q-f7s-recon
+    type: numeric
+    conceptId: digital-asset-custody
+    prompt: "Sổ nội bộ: khách sở hữu tổng 1.000 token. Trên chuỗi: ví lạnh 900, ví nóng 80. Có 30 token khách rút đã trừ trên sổ nhưng giao dịch chưa được gửi lên chuỗi (vẫn nằm trong ví nóng). Thiếu hụt so với nghĩa vụ là bao nhiêu token?"
+    answer: 50
+    tolerance: { kind: abs, value: 0 }
+    unit: "token"
+    explanation: "Nghĩa vụ thật = 1.000 (đã trừ phần rút) + 30 đang chờ gửi = 1.030; trên chuỗi 980 → thiếu 50."

@@ -1,0 +1,31 @@
+items:
+  - id: q-f2v-which
+    type: mcq
+    conceptId: vn-payment-regulation
+    prompt: "Bạn xây tính năng ví điện tử cho khách cá nhân ở Việt Nam. Văn bản nào là điểm khởi đầu chính cho quy định về ví và trung gian thanh toán?"
+    options:
+      - { id: a, text: "Nghị định 52/2024/NĐ-CP về thanh toán không dùng tiền mặt" }
+      - { id: b, text: "Nghị định 101/2012/NĐ-CP" }
+      - { id: c, text: "Một bài blog tổng hợp năm 2020" }
+    correct: [a]
+    explanation: "Nghị định 52/2024 thay thế Nghị định 101/2012 và 80/2016 từ 01/07/2024; vẫn phải kiểm tra văn bản sửa đổi, hướng dẫn hiện hành."
+  - id: q-f2v-config
+    type: mcq
+    conceptId: vn-payment-regulation
+    prompt: "Hạn mức giao dịch ví theo quy định nên được cài đặt thế nào?"
+    options:
+      - { id: a, text: "Hằng số trong code" }
+      - { id: b, text: "Dữ liệu cấu hình có phiên bản, ngày hiệu lực và căn cứ văn bản; đổi không cần sửa code" }
+      - { id: c, text: "Do từng kỹ sư nhớ" }
+    correct: [b]
+    explanation: "Tham số pháp lý thay đổi theo văn bản; cấu hình có phiên bản cho phép đổi an toàn và truy vết."
+  - id: q-f2v-current
+    type: mcq
+    conceptId: vn-payment-regulation
+    prompt: "Ai nên diễn giải một điều khoản chưa rõ trong văn bản quy định?"
+    options:
+      - { id: a, text: "Kỹ sư đọc rồi tự quyết định" }
+      - { id: b, text: "Bộ phận pháp chế/tuân thủ; kỹ sư ánh xạ diễn giải đó thành yêu cầu kiểm tra được" }
+      - { id: c, text: "Không cần, cứ triển khai rồi sửa sau" }
+    correct: [b]
+    explanation: "Diễn giải pháp lý là trách nhiệm của pháp chế; kỹ sư đảm bảo cài đặt và bằng chứng."

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f7s-run
+    conceptId: stablecoins
+    prompt: "Một stablecoin có 10 tỉ USD lưu hành, dự trữ gồm 40% tiền gửi ngân hàng, 50% trái phiếu chính phủ ngắn hạn, 10% trái phiếu doanh nghiệp (giả định). Trong một tuần, 30% chủ sở hữu yêu cầu đổi lại. Phân tích rủi ro và đề xuất chính sách dự trữ."
+    hint: "Thanh khoản của từng loại tài sản; bán gấp."
+    solution: "Cần 3 tỉ USD trong một tuần. Tiền gửi 4 tỉ đủ về lượng, nhưng nếu tập trung ở một ngân hàng gặp sự cố thì mất khả năng tiếp cận (rủi ro tập trung). Trái phiếu ngắn hạn bán được nhanh với chiết khấu nhỏ; trái phiếu doanh nghiệp có thể phải bán lỗ. Chính sách: tài sản rất ngắn hạn và thanh khoản cao, phân tán ngân hàng giữ tiền, tách biệt pháp lý khỏi tài sản bên phát hành, công bố thành phần định kỳ, mô phỏng kịch bản rút ồ ạt — giống phân tích LCR ở bài rủi ro thanh khoản."
+  - id: ex-f7s-withdraw
+    conceptId: digital-asset-custody
+    prompt: "Viết máy trạng thái cho một yêu cầu rút token của khách, gồm kiểm tra AML, hạn mức ví nóng và đa chữ ký."
+    hint: "Trạng thái và điều kiện chuyển; khi nào trừ sổ nội bộ."
+    solution: "requested → (kiểm tra số dư, giữ số dư trên sổ) held → (sàng lọc địa chỉ nhận, AML, danh sách được phép) screened | rejected(hoàn giữ) → nếu số tiền ≤ hạn mức ví nóng: signing_hot (ký tự động trong HSM) ; ngược lại: pending_approval (M-trên-N duyệt, độ trễ) → signed → broadcast (lưu txid) → confirming (chờ đủ xác nhận) → completed (bút toán cuối cùng) | failed (hoàn giữ, điều tra). Mọi chuyển trạng thái ghi sự kiện bất biến; đối soát txid với chuỗi."

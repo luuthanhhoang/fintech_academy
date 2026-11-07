@@ -1,0 +1,20 @@
+diagrams:
+  - id: dg-custody-withdrawal
+    kind: sequence
+    title: "Rút tài sản số qua ví nóng và ví lạnh"
+    caption: "Quy trình khái niệm; hạn mức, số chữ ký và độ trễ là chính sách của từng tổ chức."
+    actors:
+      - { id: customer, label: "Khách" }
+      - { id: platform, label: "Nền tảng (sổ nội bộ)" }
+      - { id: hot, label: "Ví nóng (HSM)" }
+      - { id: cold, label: "Ví lạnh (đa chữ ký)" }
+      - { id: chain, label: "Blockchain" }
+    steps:
+      - { from: customer, to: platform, label: "Yêu cầu rút" }
+      - { from: platform, to: platform, label: "Giữ số dư, sàng lọc AML/địa chỉ" }
+      - { from: platform, to: hot, label: "Ký nếu ≤ hạn mức ví nóng" }
+      - { from: hot, to: chain, label: "Phát giao dịch" }
+      - { from: platform, to: cold, label: "Ví nóng dưới ngưỡng → yêu cầu nạp lại" }
+      - { from: cold, to: cold, label: "M-trên-N người duyệt ký (offline)" }
+      - { from: cold, to: chain, label: "Chuyển sang ví nóng" }
+      - { from: chain, to: platform, label: "Xác nhận → đối soát với sổ" }

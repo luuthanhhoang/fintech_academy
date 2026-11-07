@@ -1,0 +1,99 @@
+---
+id: f2-vn-payment-regulation
+track: fintech
+stage: f2
+order: 6
+title: { vi: "Khung pháp lý thanh toán Việt Nam cho kỹ sư", en: "Vietnam's payment regulation for engineers" }
+summary: "Ở Việt Nam, thanh toán không dùng tiền mặt, ví điện tử và dịch vụ trung gian thanh toán được quy định chủ yếu tại Nghị định 52/2024/NĐ-CP; Open API ngân hàng tại Thông tư 64/2024/TT-NHNN; nghĩa vụ phòng chống rửa tiền tại Luật 14/2022/QH15. Bài này không thay thế tư vấn pháp lý: mục tiêu là giúp kỹ sư biết văn bản nào điều chỉnh tính năng mình xây, và biến các yêu cầu đó thành yêu cầu hệ thống có thể kiểm tra."
+concepts: [vn-payment-regulation]
+estMinutes: 35
+whyQuestion: "Bạn được giao xây tính năng ví cho một ứng dụng thương mại điện tử ở Việt Nam. Trước khi viết dòng code đầu tiên, cần đọc những văn bản nào, và chúng biến thành yêu cầu kỹ thuật gì?"
+facts:
+  - id: decree52-effective
+    text: "Nghị định 52/2024/NĐ-CP về thanh toán không dùng tiền mặt (thay thế Nghị định 101/2012 và 80/2016) có hiệu lực từ"
+    value: "01/07/2024"
+    sourceId: vn-decree-52-2024
+    asOf: 2026-11-07
+    status: verified
+  - id: tt64-effective-vn
+    text: "Thông tư 64/2024/TT-NHNN về triển khai Open API trong ngành Ngân hàng có hiệu lực từ"
+    value: "01/03/2025"
+    sourceId: sbv-tt64-2024
+    asOf: 2026-11-07
+    status: verified
+  - id: aml-effective-vn
+    text: "Luật Phòng, chống rửa tiền số 14/2022/QH15 có hiệu lực từ"
+    value: "01/03/2023"
+    sourceId: vn-aml-law-2022
+    asOf: 2026-11-07
+    status: verified
+devMapping:
+  - finance: "Văn bản pháp luật"
+    dev: "Đặc tả yêu cầu bên ngoài, có phiên bản và ngày hiệu lực"
+    explanation: "Như một API contract do bên khác sở hữu: đọc bản hiện hành, theo dõi bản sửa đổi, ánh xạ sang yêu cầu hệ thống."
+  - finance: "Ma trận tuân thủ"
+    dev: "Bảng truy vết yêu cầu → thiết kế → test → bằng chứng"
+    explanation: "Mỗi nghĩa vụ có chỗ cài đặt, test chứng minh và người chịu trách nhiệm."
+  - finance: "Văn bản sửa đổi"
+    dev: "Breaking change từ upstream"
+    explanation: "Đăng ký theo dõi; khi có văn bản mới, rà ma trận tuân thủ như khi nâng cấp phụ thuộc."
+pretest: [q-f2v-which, q-f2v-current]
+applications:
+  - id: app-f2v-matrix
+    title: "Ma trận tuân thủ cho một tính năng thanh toán"
+    context: "Một tính năng ví, liên kết ngân hàng hoặc thanh toán QR bạn đang làm."
+    task: "Cùng bộ phận pháp chế, liệt kê văn bản áp dụng (bản hiện hành, ngày hiệu lực); với mỗi nghĩa vụ: điều khoản, yêu cầu hệ thống tương ứng, thành phần cài đặt, test tự động hoặc bằng chứng vận hành, người chịu trách nhiệm; thêm quy trình theo dõi văn bản sửa đổi."
+    deliverable: "Ma trận truy vết + danh sách việc còn thiếu + lịch rà soát định kỳ."
+sources: [vn-decree-52-2024, sbv-tt64-2024, vn-aml-law-2022, napas-vietqr]
+lastVerified: 2026-11-07
+status: verified
+selfExplain:
+  prompt: "Kể tên các văn bản chính điều chỉnh thanh toán số ở Việt Nam và giải thích cách kỹ sư biến chúng thành yêu cầu hệ thống."
+  rubric:
+    - { id: docs, criterion: "Nghị định 52/2024 (thanh toán không dùng tiền mặt, ví, trung gian), Thông tư 64/2024 (Open API), Luật 14/2022 (phòng chống rửa tiền)" }
+    - { id: current, criterion: "Luôn đọc bản hiện hành và văn bản hướng dẫn/sửa đổi; ghi ngày hiệu lực" }
+    - { id: map, criterion: "Ánh xạ nghĩa vụ → yêu cầu hệ thống → test/bằng chứng → người chịu trách nhiệm" }
+    - { id: legal, criterion: "Phối hợp pháp chế; kỹ sư không tự diễn giải điều khoản" }
+---
+
+<Callout kind="story" title="Ví 'nạp không giới hạn'">
+Một đội giả định xây ví cho ứng dụng của mình, đọc vài bài blog từ vài năm trước rồi bắt đầu code. Tới gần ngày ra mắt, bộ phận pháp chế chỉ ra rằng bài blog dựa trên văn bản đã bị thay thế, ví phải liên kết tài khoản theo cách khác, và một số luồng nạp/rút phải làm lại. Ba tháng code bị viết lại một phần — không vì lỗi kỹ thuật mà vì đọc sai phiên bản "đặc tả".
+</Callout>
+
+## Các văn bản chính
+
+| Văn bản | Điều chỉnh | Hiệu lực |
+|---|---|---|
+| Nghị định 52/2024/NĐ-CP | Tài khoản thanh toán, dịch vụ thanh toán, trung gian thanh toán, tiền điện tử và ví điện tử, hệ thống thanh toán | <Fact id="decree52-effective" /> |
+| Thông tư 64/2024/TT-NHNN | Open API trong ngành ngân hàng | <Fact id="tt64-effective-vn" /> |
+| Luật 14/2022/QH15 | Phòng chống rửa tiền: nhận biết khách hàng, đánh giá rủi ro, báo cáo giao dịch đáng ngờ | <Fact id="aml-effective-vn" /> |
+
+Mỗi văn bản có **văn bản hướng dẫn** và có thể đã/đang được **sửa đổi** (theo các nguồn, có dự thảo sửa đổi Nghị định 52 năm 2026 chưa xác nhận ban hành). Bài này cố ý **không nêu các con số cụ thể** như hạn mức giao dịch, vì chúng thay đổi và chưa được đối chiếu với văn bản gốc hiện hành.
+
+<Quiz id="q-f2v-which" />
+
+## Từ điều khoản tới yêu cầu hệ thống
+
+Các nhóm nghĩa vụ thường gặp và cách chúng xuất hiện trong hệ thống:
+
+- **Liên kết và đảm bảo số dư ví**: số dư ví gắn với tài khoản bảo đảm tại ngân hàng → đối soát tổng số dư ví với tài khoản bảo đảm hằng ngày (bài ví điện tử).
+- **Định danh và xác thực khách hàng**: luồng eKYC, xác thực giao dịch theo mức rủi ro → hồ sơ khách hàng có trạng thái, lịch sử xác thực.
+- **Hạn mức**: hạn mức giao dịch/ngày theo loại khách → **dữ liệu cấu hình có phiên bản và ngày hiệu lực**, không hardcode trong code.
+- **Hành vi bị cấm**: ví dụ cho thuê, mượn tài khoản, giao dịch cho mục đích bất hợp pháp → quy tắc giám sát (bài KYC/AML).
+- **Báo cáo và lưu trữ**: báo cáo định kỳ, lưu hồ sơ theo thời hạn → pipeline báo cáo tái lập được, chính sách lưu trữ.
+- **Open API**: đặc tả kỹ thuật, bảo mật, đồng ý của khách hàng (bài open banking).
+
+<Quiz id="q-f2v-config" />
+
+## Quy trình làm việc với pháp chế
+
+1. **Pháp chế** xác định văn bản áp dụng và diễn giải điều khoản; **kỹ sư không tự diễn giải**.
+2. Kỹ sư ánh xạ mỗi nghĩa vụ thành **yêu cầu kiểm tra được** và **bằng chứng** (test, log, báo cáo).
+3. Mọi tham số pháp lý (hạn mức, thời hạn) nằm trong **cấu hình có phiên bản**, kèm căn cứ văn bản.
+4. **Theo dõi sửa đổi**: khi có văn bản mới, rà lại ma trận như khi nâng cấp một phụ thuộc có thay đổi phá vỡ.
+
+<Quiz id="q-f2v-current" />
+
+<Callout kind="field" title="Căn cứ pháp lý nằm cạnh tham số">
+Trong các hệ thống tôi từng làm, mỗi tham số mang tính pháp lý trong file cấu hình đều có thêm hai trường: văn bản và điều khoản căn cứ, và ngày hiệu lực. Khi thanh tra hỏi "vì sao hạn mức là con số này", câu trả lời nằm ngay trong cấu hình, có lịch sử thay đổi — và khi văn bản đổi, tìm được ngay mọi tham số bị ảnh hưởng.
+</Callout>

@@ -1,0 +1,11 @@
+exercises:
+  - id: ex-f7b-hash
+    conceptId: blockchain-basics
+    prompt: "Viết (giả mã) cấu trúc một chuỗi khối tối thiểu và hàm kiểm tra tính toàn vẹn. Điều gì xảy ra khi ai đó sửa giao dịch trong khối thứ 3 của chuỗi 10 khối?"
+    hint: "Mỗi khối: chỉ số, băm khối trước, danh sách giao dịch, băm của chính nó."
+    solution: "Khối = (index, prev_hash, transactions, nonce, hash) với hash = H(index, prev_hash, transactions, nonce). verify(chain): với mọi i > 0, chain[i].prev_hash == chain[i−1].hash và chain[i].hash == H(...) tính lại. Sửa khối 3 làm hash của khối 3 đổi → khối 4 có prev_hash không khớp → kiểm tra thất bại. Muốn che giấu, kẻ gian phải tính lại khối 3–10; trong proof of work, việc đó tốn công tính toán, và mạng trung thực vẫn tiếp tục kéo dài chuỗi thật."
+  - id: ex-f7b-contract
+    conceptId: smart-contracts
+    prompt: "Một hợp đồng thông minh ký quỹ giữ tiền tới khi bên mua xác nhận nhận hàng. Liệt kê ba rủi ro kỹ thuật và một biện pháp cho mỗi rủi ro."
+    hint: "Lỗi code, dữ liệu bên ngoài, khoá."
+    solution: "(1) Lỗi logic khiến tiền bị khoá vĩnh viễn hoặc bị rút trái phép → kiểm toán độc lập, test bao phủ mọi nhánh, giới hạn giá trị mỗi hợp đồng. (2) Tranh chấp 'đã nhận hàng chưa' là dữ liệu ngoài chuỗi → bên phân xử/oracle có quy trình rõ ràng (và chấp nhận đây là điểm tin cậy). (3) Khoá riêng của một bên bị mất hoặc lộ → cơ chế thời hạn hoàn tiền, đa chữ ký cho thao tác rút. Kèm cơ chế tạm dừng khẩn cấp có quản trị minh bạch."
